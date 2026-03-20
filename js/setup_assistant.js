@@ -255,10 +255,13 @@ const SetupAssistant = {
   // ── Step 2: Cloud LLM ───────────────────────────────────
 
   _renderCloudStep(panel) {
+    const isRemote = location.hostname !== 'localhost' && location.hostname !== '127.0.0.1';
+
     panel.innerHTML = `
       <h2>Step 2: Cloud AI (Optional)</h2>
       <p class="sa-desc">Cloud LLMs provide richer, multilingual AI interviews (English, Spanish, German, Chinese, Russian). Free tiers are available.</p>
       ${this._settings.ollamaDetected ? '<p class="sa-note">You already have Ollama set up for English interviews. A cloud provider adds multilingual support and richer responses.</p>' : '<p class="sa-note">Without a cloud provider, AI interviews won\'t be available (you skipped local AI). The game still works — you\'ll get rule-based NPC responses instead.</p>'}
+      <p class="sa-note" style="margin-top:4px;font-size:0.8rem;"><strong>VPN users:</strong> Cloud AI providers may not work while a VPN is active. If the test fails, try disabling your VPN.</p>
       <div class="sa-cloud-cards">
         <div class="sa-cloud-card" id="sa-card-groq">
           <h3>Groq</h3>
@@ -341,7 +344,7 @@ const SetupAssistant = {
         statusEl.innerHTML = `<span class="sa-error">Invalid key (HTTP ${resp.status})</span>`;
       }
     } catch (e) {
-      statusEl.innerHTML = `<span class="sa-error">Test failed: ${e.message}</span>`;
+      statusEl.innerHTML = `<span class="sa-error">Test failed: ${e.message}. If you're using a VPN, try disabling it.</span>`;
     }
   },
 
