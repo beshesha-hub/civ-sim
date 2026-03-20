@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Civilization Simulation</title>
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     TITLE SCREEN
+════════════════════════════════════════════════ -->
+<div id="title-screen" class="screen">
+  <div class="title-logo">CIVILIZATION SIM</div>
+  <div class="title-attribution">Created by Barak Water and Claude Code</div>
+  <div id="title-subtitle" class="title-subtitle">
+    A simulation that makes no assumptions about what forms of economics, governance,
+    or social organization are inevitable — only what any given paradigm reinforces.
+  </div>
+  <div class="title-buttons">
+    <button id="btn-new-game" class="btn btn-primary">▶ New Game</button>
+    <button id="btn-continue" class="btn btn-secondary" style="display:none">⏩ Continue</button>
+  </div>
+  <div id="title-note" class="title-note">
+    No assumptions. No inevitabilities. What emerges depends entirely on what you build.
+  </div>
+  <div class="title-language-wrap">
+    <label class="title-lang-label">🌐 Language / Idioma / Sprache / 語言 / Язык</label>
+    <select id="title-language-select" class="title-lang-select">
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="de">Deutsch</option>
+      <option value="zh-TW">繁體中文</option>
+      <option value="ru">Русский</option>
+    </select>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SETUP SCREEN
+════════════════════════════════════════════════ -->
+<div id="setup-screen" class="screen" style="display:none; overflow-y:auto; justify-content:flex-start; padding:24px 16px;">
+  <div class="setup-container">
+    <div class="setup-header">
+      <h1>Configure Your Civilization</h1>
+      <p style="color:var(--text-dim); margin-top:4px;">Every parameter is independent. No axis is linked to another by assumption.</p>
+    </div>
+    <div id="setup-content"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     GAME SCREEN
+════════════════════════════════════════════════ -->
+<div id="game-screen" class="screen" style="display:none; flex-direction:row;">
+
+  <!-- Left: Map + Controls -->
+  <div class="game-left">
+
+    <!-- Top bar: HUD -->
+    <div class="top-bar">
+      <div class="hud-year" id="hud-year">—</div>
+      <div class="hud-era" id="hud-era"></div>
+      <div class="hud-stats">
+        <div class="hud-stat"><label data-i18n="hud_pop">Pop</label><strong id="hud-pop">—</strong></div>
+        <div class="hud-stat"><label data-i18n="hud_wellbeing">Wellbeing</label><strong id="hud-wellbeing">—</strong></div>
+        <div class="hud-warming-wrap" title="Global Warming Index">
+          🌡️ <strong id="hud-warming" style="display:none">—</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map Canvas -->
+    <div class="map-wrap">
+      <canvas id="map-canvas"></canvas>
+    </div>
+
+    <!-- Bottom bar: Actions -->
+    <div class="bottom-bar">
+      <button id="btn-next-turn" class="btn btn-primary" data-i18n="btn_next_turn">⏭ Next Turn</button>
+      <button id="btn-auto-play" class="btn btn-secondary" data-i18n="btn_auto">▶ Auto</button>
+      <button id="btn-interview" class="btn btn-secondary" title="Interview a citizen (I)" data-i18n="btn_interview">🗣️ Interview</button>
+      <button id="btn-events" class="btn btn-secondary" title="World events (E)" data-i18n="btn_events">⚡ Events</button>
+      <button id="btn-world-state" class="btn btn-secondary" title="World state (W)" data-i18n="btn_world">🌍 World</button>
+      <button id="btn-history" class="btn btn-secondary" title="History (H)" data-i18n="btn_history">📜 History</button>
+      <button id="btn-stratification" class="btn btn-secondary" title="Social stratification (P)">⚖️ Strata</button>
+
+      <!-- Target civilization selector for events -->
+      <div class="target-civ-wrap" title="Event target">
+        <label>Target:</label>
+        <select id="target-civ-selector">
+          <option value="all">All Civs</option>
+        </select>
+      </div>
+
+      <!-- Tile info -->
+      <div id="tile-info"></div>
+
+      <!-- Overlay selector -->
+      <div class="overlay-wrap" style="margin-left:auto">
+        <label>Overlay:</label>
+        <select id="overlay-select">
+          <option value="terrain">Terrain</option>
+          <option value="fertility">Fertility</option>
+          <option value="wellbeing">Wellbeing</option>
+        </select>
+      </div>
+
+      <!-- Map view toggle -->
+      <button id="btn-map-view" class="btn btn-secondary btn-sm" title="Toggle map view (M)">🗺️ Map</button>
+
+      <!-- Technology panel -->
+      <button id="btn-technology" class="btn btn-secondary btn-sm" title="Technology Introduction &amp; Discontinuation (T)">🔬 Tech</button>
+      <!-- Society panel -->
+      <button id="btn-society" class="btn btn-secondary btn-sm" title="Economy &amp; Society (S)">📊 Society</button>
+      <!-- Sustainability panel -->
+      <button id="btn-sustainability" class="btn btn-secondary btn-sm" title="Sustainability &amp; Resources (R)">🌿 Sustainability</button>
+      <!-- Paradigm Shifts panel (Pass 7) -->
+      <button id="btn-paradigm" class="btn btn-secondary btn-sm" title="Paradigm Shifts — governance &amp; economic transitions (Shift+P)">🔄 Paradigm</button>
+      <!-- Research panel (Pass 9) -->
+      <button id="btn-research" class="btn btn-secondary btn-sm" title="Research Mode — Track 2 exports, parameter docs, contagion analysis">🔬 Research</button>
+
+      <!-- Notification Log / Settings / Save -->
+      <div class="notif-btn-wrap">
+        <button id="btn-notif-log" class="btn btn-secondary btn-sm" title="Notification log (N)">🔔</button>
+        <span id="notif-badge" class="notif-badge"></span>
+      </div>
+      <button id="btn-settings" class="btn btn-secondary btn-sm" title="Settings">⚙️</button>
+      <button id="btn-save" class="btn btn-secondary btn-sm" title="Save">💾</button>
+    </div>
+  </div>
+
+  <!-- Right: Civ info panel -->
+  <div class="game-right">
+    <div class="right-panel-header" data-i18n="panel_civ_dashboard">
+      Civilization Dashboard
+    </div>
+    <div id="civ-panel"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     OVERLAY PANELS
+════════════════════════════════════════════════ -->
+
+<!-- Events Panel -->
+<div id="tech-panel" class="overlay-panel" style="display:none; flex-direction:column; max-width:min(780px,95vw);"></div>
+
+<div id="society-panel" class="overlay-panel" style="display:none; flex-direction:column; max-width:min(820px,95vw);"></div>
+
+<div id="sustainability-panel" class="overlay-panel" style="display:none; flex-direction:column; max-width:min(780px,95vw);"></div>
+
+<!-- Paradigm Shifts Panel (Pass 7) -->
+<div id="paradigm-panel" class="overlay-panel" style="display:none; flex-direction:column; max-width:min(820px,95vw);"></div>
+
+<!-- Research Panel (Pass 9) -->
+<div id="research-panel" class="overlay-panel" style="display:none; flex-direction:column; max-width:min(820px,95vw);"></div>
+
+<div id="events-panel" class="overlay-panel" style="display:none; flex-direction:column; width:min(700px,95vw);">
+</div>
+
+<!-- Interview Panel -->
+<div id="interview-panel" class="full-overlay-panel" style="display:none;">
+</div>
+
+<!-- History Panel -->
+<div id="history-panel" class="overlay-panel" style="display:none; flex-direction:column;">
+</div>
+
+<!-- World State Panel -->
+<div id="world-state-panel" class="overlay-panel" style="display:none; flex-direction:column;">
+</div>
+
+<!-- Settings Panel -->
+<div id="settings-panel" class="overlay-panel" style="display:none; flex-direction:column;">
+</div>
+
+<!-- Notification Log Panel -->
+<div id="notification-log-panel" class="overlay-panel" style="display:none; flex-direction:column;">
+</div>
+
+<!-- Social Stratification Panel -->
+<div id="stratification-panel" class="overlay-panel" style="display:none; flex-direction:column; width:min(720px,95vw);">
+</div>
+
+<!-- ══════════════════════════════════════════════
+     NOTIFICATIONS
+════════════════════════════════════════════════ -->
+<div id="notifications"></div>
+
+<!-- ══════════════════════════════════════════════
+     SCRIPTS (order matters: dependencies first)
+════════════════════════════════════════════════ -->
+<script src="js/i18n.js"></script>
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/map.js"></script>
+<script src="js/civilization.js"></script>
+<script src="js/npc.js"></script>
+<script src="js/religion.js"></script>
+<script src="js/simulation.js"></script>
+<script src="js/events.js"></script>
+<script src="js/tech_panel.js"></script>
+<script src="js/chart_utils.js"></script>
+<script src="js/society_panel.js"></script>
+<script src="js/sustainability_panel.js"></script>
+<script src="js/paradigm_panel.js"></script>
+<script src="js/research_panel.js"></script>
+<script src="js/interview.js"></script>
+<script src="js/setup_assistant.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/game.js"></script>
+
+</body>
+</html>

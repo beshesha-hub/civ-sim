@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.claude/
+*.docx
+package-lock.json
+.DS_Store

@@ -1,0 +1,42 @@
+{
+  "name": "civ-sim",
+  "version": "1.0.0",
+  "description": "Civilization Simulator — structural plausibility simulation for comparative analysis",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "node server.js",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:all": "electron-builder --mac --win"
+  },
+  "build": {
+    "appId": "com.barakwater.civ-sim",
+    "productName": "Civilization Simulator",
+    "files": [
+      "index.html",
+      "main.js",
+      "preload.js",
+      "server.js",
+      "js/**/*",
+      "css/**/*",
+      "!js/scenario_test_harness.js"
+    ],
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.games",
+      "minimumSystemVersion": "10.13"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^40.7.0",
+    "electron-builder": "^26.8.1"
+  }
+}
