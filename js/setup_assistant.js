@@ -103,24 +103,39 @@ const SetupAssistant = {
     const progressEl = panel.querySelector('#sa-ollama-progress');
 
     if (!isElectron) {
-      // Web/dev mode — can't auto-install, give instructions
-      statusEl.innerHTML = `
-        <div class="sa-info-box">
-          <p>You're running in a browser. To use local AI interviews:</p>
-          <ol>
-            <li>Install Ollama from <a href="https://ollama.com/download" target="_blank" rel="noopener">ollama.com/download</a></li>
-            <li>Open Terminal and run: <code>ollama pull tinyllama</code></li>
-            <li>Leave Ollama running in the background</li>
-          </ol>
-        </div>
-      `;
-      actionsEl.style.display = '';
-      actionsEl.innerHTML = `
-        <button class="sa-btn sa-btn-primary" id="sa-ollama-recheck">I've Installed It — Check Again</button>
-        <button class="sa-btn sa-btn-skip" id="sa-ollama-skip">Skip Local AI</button>
-      `;
-      actionsEl.querySelector('#sa-ollama-recheck').onclick = () => this._checkOllamaWeb(statusEl, actionsEl);
-      actionsEl.querySelector('#sa-ollama-skip').onclick = () => this._showStep(2);
+      const isRemote = location.hostname !== 'localhost' && location.hostname !== '127.0.0.1';
+
+      if (isRemote) {
+        // Hosted version — Ollama can't work from a remote site
+        statusEl.innerHTML = `
+          <div class="sa-info-box">
+            <p>Local AI (Ollama) is not available when running from a website. To use local AI, <a href="https://github.com/beshesha-hub/civ-sim/releases" target="_blank" rel="noopener">download the desktop app</a>.</p>
+            <p>You can still use cloud AI (Groq or Gemini) in the next step — free tiers are available.</p>
+          </div>
+        `;
+        actionsEl.style.display = '';
+        actionsEl.innerHTML = '<button class="sa-btn sa-btn-primary" id="sa-ollama-skip">Next</button>';
+        actionsEl.querySelector('#sa-ollama-skip').onclick = () => this._showStep(2);
+      } else {
+        // Running locally (node server.js) — can detect Ollama
+        statusEl.innerHTML = `
+          <div class="sa-info-box">
+            <p>To use local AI interviews:</p>
+            <ol>
+              <li>Install Ollama from <a href="https://ollama.com/download" target="_blank" rel="noopener">ollama.com/download</a></li>
+              <li>Open Terminal and run: <code>ollama pull tinyllama</code></li>
+              <li>Leave Ollama running in the background</li>
+            </ol>
+          </div>
+        `;
+        actionsEl.style.display = '';
+        actionsEl.innerHTML = `
+          <button class="sa-btn sa-btn-primary" id="sa-ollama-recheck">I've Installed It — Check Again</button>
+          <button class="sa-btn sa-btn-skip" id="sa-ollama-skip">Skip Local AI</button>
+        `;
+        actionsEl.querySelector('#sa-ollama-recheck').onclick = () => this._checkOllamaWeb(statusEl, actionsEl);
+        actionsEl.querySelector('#sa-ollama-skip').onclick = () => this._showStep(2);
+      }
       return;
     }
 
