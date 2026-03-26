@@ -151,6 +151,7 @@ The Society panel has tabs spanning economy, governance, demographics, psycholog
 - **Land Ownership Concentration** (0-100) — How concentrated land ownership is. Drifts upward under oligarchic/autocratic governance, downward under democratic/cooperative. High concentration erodes social mobility, food security, and trust. Policy button: Land Reform (-15 concentration, effectiveness scaled by state capacity)
 - **Caste / Rigid Stratification** (0-100) — Degree of hereditary social stratification. Reinforced by theocratic governance and religious dominance; reduced by education and democratic reform. When high, imposes a hard ceiling on social mobility. Policy button: Caste Abolition (-15 rigidity)
 - **Technological Unemployment** (0-100) — Displacement from automation. Starts at 0; grows when automation level reaches 2+. High tech unemployment erodes stability, increases anomie, and reduces lower-stratum wellbeing. Retraining Capacity bar shows society's ability to absorb displaced workers. Policy button: Worker Retraining Program (boosts retraining capacity, reduces unemployment)
+- **Bottom-Up Economic Restructuring** — When a structural movement is active, this section displays: Alternative Economy share (%), Formal Economy share (%), Coordination Cost, Supply Chain Disruption, Governance Response (accommodating / cracking down), Coordination Model in use, and post-transition Coordination Instability. A green note confirms "Taxation has ceased — resources are accessed directly" once the transition completes and the economy is currencyless
 
 ### 👥 Demographics
 - Population by stratum (5 strata: elite → disenfranchised)
@@ -691,6 +692,41 @@ Based on Fearon & Laitin (2003), Collier & Hoeffler (2004), Cederman et al. (201
 **Epistemic Health:** Driven entirely by behavior (freedom level + science freedom), not governance type. A theocracy with high science freedom (Abbasid House of Wisdom, Islamic Golden Age) maintains strong EH. A theocracy with suppressed science (Taliban) sees EH collapse. The label doesn't determine the outcome; the choices do.
 
 **Stage 5 Fertility Floor:** Prosperous civilizations (wellbeing > 70, food > 70) maintain minimum fertility of 8 (≈TFR 1.6) instead of 3 (≈TFR 1.0). Models France/Sweden pro-natalist policy with generous parental support.
+
+### Bottom-Up Economic Restructuring
+
+Structural movements allow a population to bypass governance and directly restructure the economy from the bottom up. Unlike regular movements (which only shift behavioral dimensions), structural movements trigger a **dual economy** — a transition phase where the formal and alternative economic systems coexist.
+
+**How It Works:**
+1. Player triggers a structural movement from Events → Movements → Structural Movements
+2. A dual economy emerges: alternative system starts at 1% and grows via S-curve adoption (Rogers diffusion model)
+3. Coordination costs peak when the economy is split ~50/50, then decline as the alternative system becomes dominant
+4. Governance responds: flat/consensus governments accommodate; autocratic governments crack down (but abandon crackdown when enforcement costs exceed capacity)
+5. When the alternative economy exceeds 85% with coordination cost below 30%, the economic model transitions
+
+**Five Preset Structural Movements:**
+- **Currency Refusal Movement** — Population ceases using currency, exchanging through gift/barter/mutual aid. Scaling: Polycentric Governance (Ostrom)
+- **Cooperative Production Movement** — Workers reorganize as cooperatives with shared ownership. Scaling: Democratic Confederalism (Rojava model)
+- **Commons Reclamation Movement** — Communities reclaim shared resources from private ownership. Scaling: Polycentric Governance
+- **Direct Exchange Network** — Decentralized direct exchange replaces market intermediaries. Scaling: Liquid Democracy
+- **Workers' Self-Management Movement** — Workers take direct control through rotating committees and congresses. Scaling: People's Congress System (adapted Jamahiriya)
+
+**Five Scaling Models** (coordination mechanisms for national-scale operation):
+- **Polycentric Governance (Ostrom)** — Multiple overlapping governance centers. Strong at all scales. Requires tech level 3+, institutional quality > 40
+- **Democratic Confederalism (Rojava)** — Nested commune → council → assembly. Strong up to ~4M population. Requires cooperation > 60
+- **Liquid Democracy** — Per-issue proxy delegation with revocability. Scales computationally. Requires tech level 4+, education > 50
+- **People's Congress System (adapted Jamahiriya)** — Local congresses → regional → national with rotating committees. Adapted from the Libyan Jamahiriya model with Ostrom's design principles as safeguards (monitoring, graduated sanctions, conflict resolution). The historical shadow-state/Revolutionary Committee structure is excluded. Requires population > 100K
+- **Participatory Planning (Parecon-inspired)** — Iterative facilitation between worker and consumer councils. Requires tech level 4+, cooperation > 65
+
+**Transition Phases:** Emerging (0-15%) → Dual (15-40%) → Tipping (40-60%) → Dominant (60-85%) → Complete (85%+)
+
+**Financial System During Transition:**
+- Minsky cycle scales down proportionally with the formal share and reaches 0 in a fully currencyless economy
+- Financial depth and debt load similarly scale to 0
+- Post-transition, **coordination instability** replaces Minsky as the ongoing stability risk
+- In a fully currencyless economy, taxation is neither necessary nor possible — governance accesses resources directly through the alternative system's allocation mechanism
+
+**Empirical Grounding:** Informal economy dynamics (ILO/World Bank), currency crisis transitions (Weimar, Zimbabwe, Argentina), cooperative economics (Mondragon, kibbutzim, Rojava), commons governance (Ostrom Nobel-winning research), diffusion of innovation (Rogers), institutional adaptation (North, Acemoglu & Robinson), fiscal sociology (Schumpeter, Tilly).
 
 ---
 

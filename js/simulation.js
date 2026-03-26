@@ -65,6 +65,7 @@ class SimulationEngine {
       this._processFinance(civ);
       this._processSovereignDebt(civ);       // Feature 2: sovereign debt/fiscal crisis
       this._processLaborShare(civ);
+      this._processDualEconomy(civ);           // Bottom-up economic restructuring
       this._processSocialTrust(civ);
       this._processStateCapacity(civ);
       this._processEnergy(civ);
@@ -3332,6 +3333,8 @@ class SimulationEngine {
       } else if (event.type === 'technology') {
         const techData = this._findTechByName(event.techName);
         if (techData) civ.applyTechnology(techData);
+      } else if (event.type === 'structural_movement') {
+        civ.applyStructuralMovement({ ...event, year: this.game.currentYear });
       } else if (event.type === 'movement') {
         civ.applyMovement({ ...event, year: this.game.currentYear });
       } else if (event.type === 'resource') {
@@ -5098,7 +5101,316 @@ class SimulationEngine {
         civ.economic.wealthConcentration * (1 + laborBoost), 0, 93);
     }
 
+    // Dual economy effect: labor share in the informal sector trends toward
+    // the target model's baseline, weighted by informal share
+    const deDat = civ.state?.dualEconomy;
+    if (deDat && deDat.informalShare > 5 && deDat.transitionPhase !== 'none') {
+      const tgt = STRUCTURAL_TARGETS[deDat.structuralTarget];
+      if (tgt) {
+        const targetModelId = tgt.targetModels.default;
+        const targetModel = ECONOMIC_MODELS[targetModelId];
+        if (targetModel) {
+          // Blend labor share toward target model's baseline by informal fraction
+          const targetLS = { gift: 82, commons: 80, labor_credit: 75, barter: 65, none: 70 }[targetModelId] ?? 65;
+          const infFrac = deDat.informalShare / 100;
+          ls = ls * (1 - infFrac) + targetLS * infFrac;
+        }
+      }
+    }
+
     civ.economic.laborShare = Utils.clamp(ls, 5, 95);
+  }
+
+  // ── Bottom-Up Economic Restructuring (Dual Economy) ─────────
+  // Models bottom-up economic restructuring through structural movements.
+  // Adoption follows Rogers' S-curve; coordination cost follows Ostrom's
+  // commons principles; governance adapts per selectorate theory.
+  // In a fully currencyless economy, taxation is unnecessary — resources
+  // are accessed directly. Minsky cycle ceases to apply.
+  _processDualEconomy(civ) {
+    if (!civ.state?.dualEconomy) return;
+    const de = civ.state.dualEconomy;
+    if (de.transitionPhase === 'none' || de.transitionPhase === 'complete') return;
+
+    const s = civ.state;
+    const b = s.behaviorReinforcement || {};
+    const timeScale = (this.game?.timeScale ?? 25) / 25;
+    const year = this.game?.currentYear ?? 0;
+
+    // ── 1. Behavioral alignment with structural target ──────
+    const target = STRUCTURAL_TARGETS[de.structuralTarget];
+    if (!target) return;
+    let alignment = 0;
+    let alignCount = 0;
+    const rb = target.requiredBehaviors || {};
+    for (const [key, val] of Object.entries(rb)) {
+      if (key.endsWith('_max')) {
+        const bKey = key.replace('_max', '');
+        alignment += Math.max(0, val - (b[bKey] ?? 50)) / val;
+      } else {
+        alignment += Math.min(1, (b[key] ?? 50) / val);
+      }
+      alignCount++;
+    }
+    alignment = alignCount > 0 ? (alignment / alignCount) : 0.5;
+
+    // ── 2. Scaling model effectiveness ──────────────────────
+    const sm = SCALING_MODELS[de.scalingModel];
+    let scalingEffectiveness = 0.1; // baseline without a scaling model
+    if (sm) {
+      scalingEffectiveness = sm.coordinationReduction;
+      // Check requirements
+      const pop = s.population ?? 1000;
+      if (sm.scaleCeiling !== Infinity && pop > sm.scaleCeiling) {
+        scalingEffectiveness *= sm.scaleCeiling / pop; // degrades above ceiling
+      }
+      const reqs = sm.requires || {};
+      if (reqs.techLevel && (s.techLevel ?? 1) < reqs.techLevel) {
+        scalingEffectiveness *= 0.5;
+      }
+      if (reqs.institutionalQuality && (s.institutionalQuality ?? 50) < reqs.institutionalQuality) {
+        scalingEffectiveness *= 0.6;
+      }
+      if (reqs.cooperation && (b.cooperation ?? 50) < reqs.cooperation) {
+        scalingEffectiveness *= 0.7;
+      }
+      if (reqs.educationQuality && (s.educationQuality ?? 50) < reqs.educationQuality) {
+        scalingEffectiveness *= 0.6;
+      }
+      if (reqs.conformity_max && (b.conformity ?? 50) > reqs.conformity_max) {
+        scalingEffectiveness *= 0.7;
+      }
+      if (reqs.ethnicFractionalization_max && (s.ethnicFractionalization ?? 30) > reqs.ethnicFractionalization_max) {
+        scalingEffectiveness *= 0.6;
+      }
+    }
+
+    // ── 3. Adoption S-curve (Rogers diffusion) ──────────────
+    const infShare = de.informalShare;
+    // Logistic growth: fastest at 50%, slow at extremes
+    const logisticFactor = 4 * (infShare / 100) * (1 - infShare / 100);
+    // Network effect: nonlinear acceleration (Metcalfe analog)
+    const networkEffect = Math.pow(infShare / 100, 0.7);
+    // Friction brakes
+    const coordFriction = de.coordinationCost / 100;
+    const disruptionFriction = de.supplyChainDisruption / 100;
+    // Adoption threshold: below this, adoption is very slow
+    const threshold = (de.activeStructuralMovement && STRUCTURAL_MOVEMENT_PRESETS.find(
+      m => m.name === de.activeStructuralMovement
+    )?.adoptionThreshold) ?? 25;
+    const thresholdMult = infShare < threshold ? 0.3 : 1.0;
+
+    const adoptionDelta = (
+      alignment * 2.5 *
+      (0.3 + logisticFactor * 0.7) *
+      (0.4 + networkEffect * 0.6) *
+      (1 - coordFriction * 0.6) *
+      (1 - disruptionFriction * 0.4) *
+      thresholdMult *
+      timeScale
+    );
+
+    // Possible reversal if coordination cost is too high
+    const reversalPressure = (coordFriction > 0.7 && alignment < 0.5) ? (coordFriction - 0.5) * 1.5 * timeScale : 0;
+
+    de.informalShare = Utils.clamp(de.informalShare + adoptionDelta - reversalPressure, 0, 100);
+    de.formalShare = 100 - de.informalShare;
+    de.adoptionRate = Utils.clamp(adoptionDelta - reversalPressure, -10, 10);
+
+    // ── 4. Coordination cost (Ostrom-derived) ───────────────
+    // Peaks at mid-scale, reduced by scaling model
+    const rawCoordCost = 100 * Math.sin(Math.PI * de.informalShare / 100); // peaks at 50%
+    de.coordinationCost = Utils.clamp(
+      rawCoordCost * (1 - scalingEffectiveness) *
+      (1 - (s.educationQuality ?? 50) / 200) * // education helps
+      (1 - ((s.techLevel ?? 1) > 4 ? 0.15 : 0)), // high tech helps
+      0, 100
+    );
+
+    // ── 5. Supply chain disruption (Leontief-derived) ───────
+    // Peaks when economy is split 50/50, worse for complex economies
+    const splitFactor = 1 - Math.abs(de.formalShare - de.informalShare) / 100;
+    const complexityFactor = Math.min(1, (s.techLevel ?? 1) / 5); // high-tech = more disruption
+    const learningCurve = Math.max(0.3, 1 - de.turnsInPhase * 0.03); // improves over time
+    de.supplyChainDisruption = Utils.clamp(
+      splitFactor * 60 * complexityFactor * learningCurve,
+      0, 100
+    );
+
+    // ── 6. Governance response ──────────────────────────────
+    if (de.informalShare > 15 && de.governanceResponse === 'none') {
+      const govType = civ.governance?.modelId ?? 'representative';
+      const isAutocratic = ['autocratic', 'oligarchy', 'shadow_state'].includes(govType);
+      const isFlat = ['flat', 'consensus', 'elder_council'].includes(govType);
+
+      if (isFlat) {
+        de.governanceResponse = 'accommodating';
+        civ.addHistoryEntry(year, 'Governance Accommodation',
+          'The governance structure naturally aligns with the bottom-up economic restructuring.');
+      } else if (isAutocratic && (s.stateCapacity ?? 50) > 40) {
+        de.governanceResponse = 'cracking_down';
+        de.coordinationCost = Utils.clamp(de.coordinationCost + 15, 0, 100);
+        civ.addHistoryEntry(year, 'Government Crackdown',
+          'Authorities attempt to suppress the alternative economy through enforcement.');
+      } else {
+        de.governanceResponse = 'accommodating';
+        civ.addHistoryEntry(year, 'Government Adaptation',
+          'Governance begins adapting to the emerging alternative economy.');
+      }
+    }
+
+    // Crackdown dynamics: enforcement cost grows, effectiveness diminishes
+    if (de.governanceResponse === 'cracking_down') {
+      // Enforcement costs drain state capacity
+      s.stateCapacity = Utils.clamp((s.stateCapacity ?? 50) - 0.5 * timeScale, 0, 100);
+      // Beyond 40% informal, crackdown becomes unsustainable
+      if (de.informalShare > 40 || (s.stateCapacity ?? 50) < 25) {
+        de.governanceResponse = 'accommodating';
+        de.coordinationCost = Utils.clamp(de.coordinationCost - 10, 0, 100);
+        civ.addHistoryEntry(year, 'Crackdown Abandoned',
+          'Enforcement costs exceed capacity — governance shifts to accommodation.');
+      }
+    }
+
+    // Tax base erosion during dual phase (only while governance still needs currency)
+    if (de.transitionPhase !== 'complete' && de.informalShare > 10) {
+      const taxLoss = (de.informalShare / 100) * 0.3;
+      s.stateCapacity = Utils.clamp((s.stateCapacity ?? 50) - taxLoss * timeScale, 0, 100);
+    }
+
+    // ── 7. Financial system scaling during transition ────────
+    // Minsky, financialDepth, debtLoad scale down with formal share
+    const formalFraction = de.formalShare / 100;
+    if (de.informalShare > 20) {
+      // Scale financial metrics by formal economy fraction
+      s.minskyPhase = Utils.clamp((s.minskyPhase ?? 25) * (0.3 + formalFraction * 0.7), 0, 100);
+      s.financialDepth = Utils.clamp((s.financialDepth ?? 30) * (0.5 + formalFraction * 0.5), 0, 100);
+      // Debt cannot accumulate in the informal share
+      s.debtLoad = Utils.clamp((s.debtLoad ?? 20) * (0.6 + formalFraction * 0.4), 0, 100);
+    }
+
+    // ── 8. Phase transitions ────────────────────────────────
+    const prevPhase = de.transitionPhase;
+    if (de.informalShare >= 85 && de.coordinationCost < 30) {
+      de.transitionPhase = 'complete';
+    } else if (de.informalShare >= 60) {
+      de.transitionPhase = 'dominant';
+    } else if (de.informalShare >= 40) {
+      de.transitionPhase = 'tipping';
+    } else if (de.informalShare >= 15) {
+      de.transitionPhase = 'dual';
+    } else {
+      de.transitionPhase = 'emerging';
+    }
+
+    if (de.transitionPhase !== prevPhase) {
+      de.turnsInPhase = 0;
+      const phaseNames = {
+        emerging: 'Emerging Alternative Economy',
+        dual: 'Dual Economy Phase',
+        tipping: 'Economic Tipping Point',
+        dominant: 'Alternative Economy Dominant',
+        complete: 'Economic Transition Complete',
+      };
+      civ.addHistoryEntry(year,
+        phaseNames[de.transitionPhase] || de.transitionPhase,
+        `Alternative economy reaches ${Math.round(de.informalShare)}% — ${
+          de.transitionPhase === 'complete'
+            ? 'the economic restructuring is complete.'
+            : 'transition phase: ' + de.transitionPhase + '.'
+        }`
+      );
+    } else {
+      de.turnsInPhase++;
+    }
+
+    // ── 9. Economic model transition on completion ──────────
+    if (de.transitionPhase === 'complete' && target) {
+      // Determine target model
+      let targetModelId = target.targetModels.default;
+      if (target.targetModels.highAccumulation && (b.acquisitiveness ?? 50) > 45) {
+        targetModelId = target.targetModels.highAccumulation;
+      }
+      if (target.targetModels.highMutualAid && (b.mutualAid ?? 50) > 60) {
+        targetModelId = target.targetModels.highMutualAid;
+      }
+
+      const newModel = ECONOMIC_MODELS[targetModelId];
+      if (newModel && civ.economic.modelId !== targetModelId) {
+        const oldModelId = civ.economic.modelId;
+        civ.economic.modelId = targetModelId;
+        civ.economic.model = newModel;
+        civ.economic.currencyType = newModel.currencyType;
+        civ.economic.accumulationAllowed = newModel.accumulationAllowed;
+        civ.economic.scarcityOrientation = newModel.scarcityOrientation;
+
+        // Apply post-transition overrides (zeroing Minsky, financialDepth, etc.)
+        if (target.postTransition) {
+          for (const [key, val] of Object.entries(target.postTransition)) {
+            if (key in s) { s[key] = val; }
+            else if (key in civ.economic) { civ.economic[key] = val; }
+          }
+        }
+
+        // Post-transition governance resource model:
+        // Governance no longer collects taxes — accesses resources directly.
+        // stateCapacity now driven by institutional quality and participation.
+        if (newModel.currencyType === 'none') {
+          s.stateCapacity = Utils.clamp(
+            (s.institutionalQuality ?? 50) * 0.5 +
+            (b.cooperation ?? 50) * 0.3 +
+            (s.educationQuality ?? 50) * 0.2,
+            10, 90
+          );
+        }
+
+        // Coordination instability replaces Minsky as the ongoing risk
+        de.coordinationInstability = de.coordinationCost;
+
+        civ.addHistoryEntry(year, 'Economic Model Transition',
+          `Bottom-up restructuring complete: economy transitions from ${oldModelId} to ${targetModelId}. ${
+            newModel.currencyType === 'none'
+              ? 'Currency is no longer used — resources are accessed directly. Taxation ceases.'
+              : 'The economic structure has fundamentally changed.'
+          }`
+        );
+      }
+    }
+
+    // ── 10. Post-completion: coordination instability ────────
+    // Replaces Minsky cycle as the ongoing stability risk
+    if (de.transitionPhase === 'complete') {
+      // Coordination instability drifts based on institutional quality and cooperation
+      const instTarget = Math.max(5,
+        50 - (s.institutionalQuality ?? 50) * 0.3 -
+        (b.cooperation ?? 50) * 0.2 -
+        (s.educationQuality ?? 50) * 0.1 +
+        (s.ethnicFractionalization ?? 30) * 0.15
+      );
+      de.coordinationInstability = Utils.lerp(de.coordinationInstability, instTarget, 0.05);
+      // High instability reduces wellbeing (replaces financial crisis effects)
+      if (de.coordinationInstability > 50) {
+        s.averageWellbeing = Utils.clamp(
+          (s.averageWellbeing ?? 50) - (de.coordinationInstability - 50) * 0.05 * timeScale,
+          0, 100
+        );
+      }
+    }
+
+    // Milestone events
+    const milestones = [25, 50, 75];
+    for (const m of milestones) {
+      if (de.informalShare >= m && de.informalShare - de.adoptionRate < m) {
+        civ.addHistoryEntry(year, `${m}% Alternative Economy`,
+          `${m}% of economic activity now operates outside the formal system.`);
+      }
+    }
+
+    // Reversal event
+    if (de.adoptionRate < -1 && de.informalShare > 5) {
+      civ.addHistoryEntry(year, 'Economic Restructuring Stalling',
+        'High coordination costs are causing participants to return to the formal economy.');
+    }
   }
 
   // ── Social Trust ─────────────────────────────────────────────

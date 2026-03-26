@@ -590,6 +590,132 @@ class EventsPanel {
     grid.appendChild(customSection);
 
     content.appendChild(grid);
+
+    // ── Structural Movements (bottom-up economic restructuring) ──
+    const structTitle = Utils.createEl('div', 'section-title', '🏗️ Structural Movements');
+    content.appendChild(structTitle);
+    const structDesc = Utils.createEl('p', 'section-desc',
+      'Structural movements bypass governance to directly restructure the economy from the bottom up. ' +
+      'A dual economy emerges as adoption grows, with coordination costs peaking during transition. ' +
+      'In a fully currencyless economy, taxation becomes unnecessary — resources are accessed directly.');
+    content.appendChild(structDesc);
+
+    const structGrid = Utils.createEl('div', 'event-grid');
+    for (const sm of STRUCTURAL_MOVEMENT_PRESETS) {
+      const behaviorEffects = Object.entries(sm.behaviorModifiers)
+        .map(([k, v]) => `${k}: ${v > 0 ? '+' : ''}${v}`)
+        .join(' | ');
+      const scalingName = SCALING_MODELS[sm.scalingModel]?.name ?? sm.scalingModel;
+      const details = `Target: ${sm.structuralTarget.replace(/_/g, ' ')}\n` +
+        `Adoption threshold: ${sm.adoptionThreshold}%\n` +
+        `Scaling model: ${scalingName}\n` +
+        behaviorEffects;
+      const card = this._createEventCard(
+        sm.icon + ' ' + sm.name,
+        sm.description + '\n\n' + details,
+        [{
+          label: 'Introduce',
+          action: () => this._applyStructuralMovement(sm),
+          cls: 'btn-primary',
+        }]
+      );
+      structGrid.appendChild(card);
+    }
+
+    // Custom structural movement
+    const customStructural = Utils.createEl('div', 'custom-section');
+    customStructural.innerHTML = `
+      <h4>Custom Structural Movement</h4>
+      <input type="text" id="struct-movement-name" placeholder="Movement name" />
+      <textarea id="struct-movement-desc" placeholder="Description"></textarea>
+      <label>Structural Target:
+        <select id="struct-target">
+          <option value="currency_abandonment">Currency Abandonment</option>
+          <option value="cooperative_production">Cooperative Production</option>
+          <option value="commons_transition">Commons Transition</option>
+          <option value="barter_network">Direct Exchange Network</option>
+          <option value="worker_selfmanagement">Workers' Self-Management</option>
+        </select>
+      </label>
+      <label>Scaling Model:
+        <select id="struct-scaling">
+          <option value="polycentric">Polycentric Governance (Ostrom)</option>
+          <option value="confederal">Democratic Confederalism (Rojava)</option>
+          <option value="delegative">Liquid Democracy</option>
+          <option value="jamahiriya_congress">People's Congress System</option>
+          <option value="participatory_planning">Participatory Planning (Parecon)</option>
+        </select>
+      </label>
+      <label>Adoption Threshold (%):
+        <input type="number" id="struct-threshold" min="10" max="50" value="25" />
+      </label>
+    `;
+    const structApplyBtn = Utils.createEl('button', 'btn btn-primary', 'Introduce Structural Movement');
+    structApplyBtn.onclick = () => this._applyCustomStructuralMovement();
+    customStructural.appendChild(structApplyBtn);
+    structGrid.appendChild(customStructural);
+
+    content.appendChild(structGrid);
+
+    // ── Active structural movement status ───────────────────────
+    const activeCiv = this.game?.civilizations?.[0];
+    const de = activeCiv?.state?.dualEconomy;
+    if (de && de.transitionPhase !== 'none') {
+      const statusSection = Utils.createEl('div', 'section-title', '📊 Active Structural Transition');
+      content.appendChild(statusSection);
+      const statusBox = Utils.createEl('div', 'custom-section');
+      const phaseLabels = {
+        emerging: '🌱 Emerging', dual: '⚖️ Dual Economy', tipping: '⚡ Tipping Point',
+        dominant: '🏔️ Dominant', complete: '✅ Complete',
+      };
+      statusBox.innerHTML = `
+        <p><strong>Movement:</strong> ${de.activeStructuralMovement ?? 'Unknown'}</p>
+        <p><strong>Phase:</strong> ${phaseLabels[de.transitionPhase] ?? de.transitionPhase}</p>
+        <p><strong>Alternative Economy:</strong> ${Math.round(de.informalShare)}%</p>
+        <p><strong>Formal Economy:</strong> ${Math.round(de.formalShare)}%</p>
+        <p><strong>Coordination Cost:</strong> ${Math.round(de.coordinationCost)}%</p>
+        <p><strong>Supply Chain Disruption:</strong> ${Math.round(de.supplyChainDisruption)}%</p>
+        <p><strong>Governance Response:</strong> ${de.governanceResponse.replace(/_/g, ' ')}</p>
+        ${de.transitionPhase === 'complete' ? `<p><strong>Coordination Instability:</strong> ${Math.round(de.coordinationInstability ?? 0)}%</p>` : ''}
+      `;
+      content.appendChild(statusBox);
+    }
+  }
+
+  _applyStructuralMovement(movement) {
+    const targetCivs = this._getTargetCivs();
+    this.game.simulation.applyExternalEvent({
+      type: 'structural_movement',
+      name: movement.name,
+      description: movement.description,
+      label: `Structural Movement: ${movement.name}`,
+      behaviorModifiers: movement.behaviorModifiers,
+      structuralTarget: movement.structuralTarget,
+      adoptionThreshold: movement.adoptionThreshold,
+      scalingModel: movement.scalingModel,
+    }, targetCivs);
+    this._showNotification(`${movement.icon} ${movement.name} — bottom-up restructuring begins!`);
+    this.render();
+  }
+
+  _applyCustomStructuralMovement() {
+    const name = Utils.el('struct-movement-name')?.value || 'Custom Structural Movement';
+    const desc = Utils.el('struct-movement-desc')?.value || '';
+    const target = Utils.el('struct-target')?.value || 'currency_abandonment';
+    const scaling = Utils.el('struct-scaling')?.value || 'polycentric';
+    const threshold = parseInt(Utils.el('struct-threshold')?.value || '25', 10);
+    this.game.simulation.applyExternalEvent({
+      type: 'structural_movement',
+      name,
+      description: desc,
+      label: `Structural Movement: ${name}`,
+      behaviorModifiers: {},
+      structuralTarget: target,
+      adoptionThreshold: threshold,
+      scalingModel: scaling,
+    }, this._getTargetCivs());
+    this._showNotification(`🏗️ ${name} — bottom-up restructuring begins!`);
+    this.render();
   }
 
   _applyMovement(movement) {

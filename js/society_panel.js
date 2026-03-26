@@ -895,6 +895,62 @@ class SocietyPanel {
         '⚠️ Euphoria with high debt — Ponzi financing units growing. Consider regulation to slow the cycle.'));
     }
 
+    // ── Dual Economy Status ──────────────────────────────────
+    const deDat = s.dualEconomy;
+    if (deDat && deDat.transitionPhase !== 'none') {
+      const phaseLabels = {
+        emerging: '🌱 Emerging', dual: '⚖️ Dual Economy', tipping: '⚡ Tipping Point',
+        dominant: '🏔️ Alternative Dominant', complete: '✅ Transition Complete',
+      };
+      const govLabels = {
+        none: 'No Response', accommodating: 'Accommodating', cracking_down: 'Cracking Down', integrated: 'Integrated',
+      };
+      c.appendChild(this._section('Bottom-Up Economic Restructuring'));
+      const deBadge = Utils.createEl('div', 'society-badge');
+      deBadge.innerHTML = `<strong>${phaseLabels[deDat.transitionPhase] ?? deDat.transitionPhase}</strong>` +
+        `<span style="margin-left:8px;font-size:0.82em;opacity:0.8">${deDat.activeStructuralMovement ?? ''}</span>`;
+      deBadge.style.cssText = 'padding:4px 10px;border-radius:4px;margin-bottom:6px;display:inline-block;' +
+        'background:#2980b9;color:#fff;font-size:0.85em;';
+      c.appendChild(deBadge);
+      c.appendChild(this._bar('Alternative Economy', Math.round(deDat.informalShare), 100,
+        deDat.informalShare > 60 ? 'bar-green' : deDat.informalShare > 30 ? 'bar-amber' : ''));
+      c.appendChild(this._bar('Formal Economy', Math.round(deDat.formalShare), 100, ''));
+      c.appendChild(this._bar('Coordination Cost', Math.round(deDat.coordinationCost), 100,
+        deDat.coordinationCost > 50 ? 'bar-red' : deDat.coordinationCost > 25 ? 'bar-amber' : 'bar-green'));
+      c.appendChild(this._bar('Supply Chain Disruption', Math.round(deDat.supplyChainDisruption), 100,
+        deDat.supplyChainDisruption > 40 ? 'bar-red' : deDat.supplyChainDisruption > 20 ? 'bar-amber' : 'bar-green'));
+      // Governance response
+      const govNote = Utils.createEl('div', 'society-note',
+        `Governance response: ${govLabels[deDat.governanceResponse] ?? deDat.governanceResponse}`);
+      govNote.style.cssText = 'font-size:0.82em;color:#888;margin:4px 0 8px 0;';
+      c.appendChild(govNote);
+      // Scaling model
+      const smName = SCALING_MODELS[deDat.scalingModel]?.name ?? deDat.scalingModel;
+      if (smName) {
+        const smNote = Utils.createEl('div', 'society-note', `Coordination model: ${smName}`);
+        smNote.style.cssText = 'font-size:0.82em;color:#888;margin:2px 0 8px 0;';
+        c.appendChild(smNote);
+      }
+      // Post-transition: show coordination instability instead of Minsky
+      if (deDat.transitionPhase === 'complete') {
+        c.appendChild(this._bar('Coordination Instability', Math.round(deDat.coordinationInstability ?? 0), 100,
+          (deDat.coordinationInstability ?? 0) > 50 ? 'bar-red' : (deDat.coordinationInstability ?? 0) > 25 ? 'bar-amber' : 'bar-green'));
+        const postNote = Utils.createEl('div', 'society-note',
+          'Taxation has ceased — resources are accessed directly. Minsky cycle no longer applies.');
+        postNote.style.cssText = 'font-size:0.82em;color:#27ae60;margin:4px 0 8px 0;';
+        c.appendChild(postNote);
+      }
+      // Alerts
+      if (deDat.coordinationCost > 60) {
+        c.appendChild(Utils.createEl('div', 'society-alert',
+          '⚠️ High coordination costs — the alternative economy may stall or reverse.'));
+      }
+      if (deDat.governanceResponse === 'cracking_down') {
+        c.appendChild(Utils.createEl('div', 'society-alert',
+          '⚠️ Government is cracking down on the alternative economy — coordination costs increase.'));
+      }
+    }
+
     // ── Tariff slider ───────────────────────────────────────
     c.appendChild(this._section('Tariff Policy'));
     if (tar > 60) {

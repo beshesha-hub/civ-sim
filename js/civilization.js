@@ -346,6 +346,21 @@ class Civilization {
       waterConflictStages: {},         // { civId: 'cooperation'|'tension'|'dispute'|'confrontation'|'conflict' }
       waterTreatyStatus: {},           // { civId: 'none'|'negotiating'|'signed'|'violated' }
       waterDiplomacyScore: 50,         // 0-100
+      // ── Feature 10: Bottom-Up Economic Restructuring ──────────
+      dualEconomy: {
+        formalShare: 100,              // % of economy in formal/existing system
+        informalShare: 0,              // % in alternative system
+        adoptionRate: 0,               // current adoption momentum (0-100)
+        coordinationCost: 0,           // friction from operating two systems (0-100)
+        supplyChainDisruption: 0,      // disruption from partial transition (0-100)
+        coordinationInstability: 0,    // post-transition risk metric (replaces Minsky) (0-100)
+        activeStructuralMovement: null,// name of active structural movement
+        structuralTarget: null,        // which economic layer is being restructured
+        scalingModel: null,            // which coordination model is in use
+        transitionPhase: 'none',       // 'none'|'emerging'|'dual'|'tipping'|'dominant'|'complete'
+        turnsInPhase: 0,               // how long in current phase
+        governanceResponse: 'none',    // 'none'|'accommodating'|'cracking_down'|'integrated'
+      },
     };
 
     // Apply society initial values derived from founding configuration
@@ -1148,6 +1163,25 @@ class Civilization {
   applyMovement(movement) {
     this.movements.push({ ...movement, active: true, strength: 50, turnActive: 0 });
     this.addHistoryEntry(movement.year || this.state?.turn || 0, `New Movement: ${movement.name ?? 'Unknown'}`, movement.description ?? '');
+  }
+
+  applyStructuralMovement(movement) {
+    // Store as a regular movement (for behavior modifiers) AND activate dual economy
+    this.movements.push({ ...movement, active: true, strength: 50, turnActive: 0, structural: true });
+    const de = this.state.dualEconomy;
+    de.activeStructuralMovement = movement.name;
+    de.structuralTarget = movement.structuralTarget;
+    de.scalingModel = movement.scalingModel;
+    de.transitionPhase = 'emerging';
+    de.informalShare = 1;  // seed with 1% early adopters
+    de.formalShare = 99;
+    de.turnsInPhase = 0;
+    de.governanceResponse = 'none';
+    this.addHistoryEntry(
+      movement.year || this.state?.turn || 0,
+      `Structural Movement: ${movement.name ?? 'Unknown'}`,
+      `${movement.description ?? ''} A bottom-up economic restructuring has begun.`
+    );
   }
 
   // ── Regime Change ─────────────────────────────────────────────

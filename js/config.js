@@ -129,6 +129,155 @@ const ECONOMIC_MODELS = {
   },
 };
 
+// ── Scaling Models (for bottom-up economic restructuring) ─────
+// Each model defines how a structural movement coordinates at scale.
+// Based on: Ostrom (polycentric), Öcalan/Rojava (confederal),
+// liquid democracy (delegative), Gaddafi Green Book (jamahiriya_congress),
+// Albert/Parecon (participatory_planning).
+const SCALING_MODELS = {
+  polycentric: {
+    id: 'polycentric',
+    name: 'Polycentric Governance',
+    description: 'Multiple overlapping centers of authority, each managing a domain (Ostrom).',
+    coordinationReduction: 0.35,   // how much it reduces coordination cost (0-1)
+    scaleCeiling: Infinity,        // population ceiling for effectiveness
+    requires: { techLevel: 3, institutionalQuality: 40 },
+    weaknesses: { crossDomainLatency: 0.2, centerConflict: 0.15 },
+    bestFor: ['currency_abandonment', 'commons_transition'],
+  },
+  confederal: {
+    id: 'confederal',
+    name: 'Democratic Confederalism',
+    description: 'Nested commune → council → regional assembly (Rojava model).',
+    coordinationReduction: 0.40,
+    scaleCeiling: 4000000,
+    requires: { cooperation: 60, ethnicFractionalization_max: 70 },
+    weaknesses: { coordinationLatency: 0.25, militaryVulnerability: 0.20 },
+    bestFor: ['cooperative_production', 'commons_transition'],
+  },
+  delegative: {
+    id: 'delegative',
+    name: 'Liquid Democracy',
+    description: 'Per-issue proxy delegation with revocability (digital).',
+    coordinationReduction: 0.30,
+    scaleCeiling: Infinity,
+    requires: { techLevel: 4, educationQuality: 50 },
+    weaknesses: { superVoterConcentration: 0.25, digitalDivide: 0.20 },
+    bestFor: ['barter_network', 'currency_abandonment'],
+  },
+  jamahiriya_congress: {
+    id: 'jamahiriya_congress',
+    name: 'People\'s Congress System',
+    description: 'Local congresses → regional → national, rotating committees (adapted Jamahiriya).',
+    coordinationReduction: 0.25,
+    scaleCeiling: Infinity,
+    requires: { population: 100000 },
+    weaknesses: { eliteCaptureRisk: 0.30, institutionalMemoryLoss: 0.20 },
+    congressParticipationRange: [0.10, 0.30],
+    bestFor: ['worker_selfmanagement', 'cooperative_production'],
+  },
+  participatory_planning: {
+    id: 'participatory_planning',
+    name: 'Participatory Planning',
+    description: 'Iterative facilitation between worker and consumer councils (Parecon-inspired).',
+    coordinationReduction: 0.20,
+    scaleCeiling: Infinity,
+    requires: { techLevel: 4, cooperation: 65, conformity_max: 60 },
+    weaknesses: { iterationUncertainty: 0.30, meetingFatigue: 0.25, facilitatorPower: 0.15 },
+    bestFor: ['currency_abandonment', 'worker_selfmanagement'],
+  },
+};
+
+// ── Structural Movement Presets ────────────────────────────────
+// Movements that target economic structure, not just behavioral shifts.
+const STRUCTURAL_MOVEMENT_PRESETS = [
+  {
+    name: 'Currency Refusal Movement',
+    description: 'Population segments cease using currency, exchanging goods and services directly through gift, barter, and mutual aid networks.',
+    icon: '🚫💰',
+    structuralTarget: 'currency_abandonment',
+    adoptionThreshold: 25,
+    scalingModel: 'polycentric',
+    behaviorModifiers: { acquisitiveness: -25, cooperation: 20, mutualAid: 20, competition: -15 },
+  },
+  {
+    name: 'Cooperative Production Movement',
+    description: 'Workers reorganize production as cooperatives — partners rather than wage-earners, with shared ownership and democratic management.',
+    icon: '🏭🤝',
+    structuralTarget: 'cooperative_production',
+    adoptionThreshold: 20,
+    scalingModel: 'confederal',
+    behaviorModifiers: { cooperation: 25, mutualAid: 15, acquisitiveness: -15, collectivism: 15 },
+  },
+  {
+    name: 'Commons Reclamation Movement',
+    description: 'Communities reclaim shared resources — land, water, knowledge — removing them from private ownership and managing them collectively.',
+    icon: '🌍✊',
+    structuralTarget: 'commons_transition',
+    adoptionThreshold: 30,
+    scalingModel: 'polycentric',
+    behaviorModifiers: { cooperation: 20, mutualAid: 25, acquisitiveness: -20, individualism: -10 },
+  },
+  {
+    name: 'Direct Exchange Network',
+    description: 'A decentralized network of direct exchange replaces market intermediaries — producers and consumers connect without financial middlemen.',
+    icon: '🔄',
+    structuralTarget: 'barter_network',
+    adoptionThreshold: 15,
+    scalingModel: 'delegative',
+    behaviorModifiers: { cooperation: 15, acquisitiveness: -10, innovation: 10, competition: -5 },
+  },
+  {
+    name: 'Workers\' Self-Management Movement',
+    description: 'Workers take direct control of enterprises through rotating management committees and local congresses, bypassing both private owners and state bureaucracy.',
+    icon: '⚙️👷',
+    structuralTarget: 'worker_selfmanagement',
+    adoptionThreshold: 25,
+    scalingModel: 'jamahiriya_congress',
+    behaviorModifiers: { cooperation: 20, deference: -15, collectivism: 15, innovation: 10, acquisitiveness: -10 },
+  },
+];
+
+// ── Structural Target Definitions ──────────────────────────────
+// Maps structural targets to their economic model transition endpoints.
+const STRUCTURAL_TARGETS = {
+  currency_abandonment: {
+    id: 'currency_abandonment',
+    name: 'Currency Abandonment',
+    targetModels: { default: 'gift', highAccumulation: 'barter' },
+    requiredBehaviors: { cooperation: 55, acquisitiveness_max: 40 },
+    postTransition: { currencyType: 'none', minskyPhase: 0, financialDepth: 0, debtLoad: 0 },
+  },
+  cooperative_production: {
+    id: 'cooperative_production',
+    name: 'Cooperative Production',
+    targetModels: { default: 'labor_credit', highMutualAid: 'commons' },
+    requiredBehaviors: { cooperation: 50, mutualAid: 45 },
+    postTransition: { currencyType: 'labor_time' },
+  },
+  commons_transition: {
+    id: 'commons_transition',
+    name: 'Commons Transition',
+    targetModels: { default: 'commons' },
+    requiredBehaviors: { cooperation: 55, mutualAid: 50, acquisitiveness_max: 35 },
+    postTransition: { currencyType: 'none', accumulationAllowed: false, minskyPhase: 0, financialDepth: 0, debtLoad: 0 },
+  },
+  barter_network: {
+    id: 'barter_network',
+    name: 'Direct Exchange Network',
+    targetModels: { default: 'barter' },
+    requiredBehaviors: { cooperation: 40 },
+    postTransition: { currencyType: 'none' },
+  },
+  worker_selfmanagement: {
+    id: 'worker_selfmanagement',
+    name: 'Workers\' Self-Management',
+    targetModels: { default: 'labor_credit' },
+    requiredBehaviors: { cooperation: 50, collectivism: 45 },
+    postTransition: { currencyType: 'labor_time' },
+  },
+};
+
 // ── Governance Models ─────────────────────────────────────────
 const GOVERNANCE_MODELS = {
   none: {

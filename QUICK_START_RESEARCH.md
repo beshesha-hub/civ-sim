@@ -99,6 +99,9 @@ Paradigm shifts do not produce instant behavioral change. All behavioral shifts 
 ### Cross-Civilization Contagion
 In multi-civilization runs, cooperation norms, cynicism, and epistemic health spread through trade contact at different speeds (cooperation fastest, EH slowest). Theocratic civilizations suppress incoming out-group influences proportional to out-group empathy deficit.
 
+### Bottom-Up Economic Restructuring (Dual Economy)
+Structural movements allow populations to bypass governance and restructure the economy directly. A dual economy emerges with S-curve adoption dynamics. Five scaling models (polycentric, confederal, delegative, congress, participatory planning) reduce coordination costs at scale. Autocratic governance cracks down but abandons enforcement when state capacity is drained. Financial metrics (Minsky, debt, financial depth) scale to zero in currencyless transitions. Post-transition, coordination instability replaces financial instability as the primary risk. Taxation ceases in currencyless economies. Access: Events → Movements → Structural Movements. Monitor: Society → Finance & Trade.
+
 ---
 
 ## Research Workflow
@@ -295,6 +298,14 @@ All prosperity, wealth dispersion, corruption decay, climate resilience, and env
 - Under what conditions do religious/ideological schisms produce innovation vs destruction? (schism system)
 - How do diaspora remittances affect origin-country development trajectories? (diaspora networks)
 - What role do generational value shifts play in environmental policy adoption? (Inglehart + ecological systems)
+- Can a population restructure its economy from the bottom up without governance support? Under what conditions does it succeed vs stall? (structural movements + dual economy)
+- How does governance type affect bottom-up economic transitions? Do autocracies successfully suppress them or just delay them? (crackdown dynamics)
+- What scaling model (polycentric, confederal, liquid democracy, congress system, participatory planning) is most effective for coordinating national-scale economic restructuring? (scaling model comparison)
+- At what behavioral alignment threshold does a currency-refusal movement reach critical mass? (S-curve adoption dynamics)
+- How does a currencyless post-transition economy compare in stability to a market economy? (coordination instability vs Minsky cycle)
+
+### Bottom-Up Economic Restructuring
+Structural movements bypass governance to directly restructure the economy. A dual economy emerges during transition with S-curve adoption (Rogers), coordination costs (Ostrom), supply chain disruption (Leontief), and governance adaptation (selectorate theory). Five scaling models provide national-scale coordination: Polycentric (Ostrom), Confederal (Rojava), Liquid Democracy, People's Congress (adapted Jamahiriya with Ostrom safeguards), and Participatory Planning (Parecon). Financial system metrics (Minsky, debt, financial depth) scale to zero in currencyless transitions; coordination instability replaces them. Taxation ceases post-transition. Grounded in: ILO informal economy data, currency crisis literature, Ostrom's commons governance (Nobel 2009), Rojava cooperative experiment, Parecon (Albert 2003). Access via Events → Movements → Structural Movements; monitor via Society → Finance & Trade.
 
 ### Out-of-Sample Validation
 8 untested scenarios (Tokugawa Japan, Mughal India, Venetian Republic, Ptolemaic Egypt + 4 novel configurations) were run without tuning. Novel scenarios produced plausible, differentiated results. Historical authoritarian scenarios showed convergence toward similar endpoints — a documented limitation. See `HISTORICAL_SCENARIO_RESULTS.md`.

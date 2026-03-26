@@ -133,6 +133,10 @@ Interview NPCs from different social strata. Ask a marginalized citizen about in
 
 - **The Late-Stage Capture**: Any economy running 100+ turns without accountability reforms. Watch the wealth capture degree climb and the consequence deficit acceleration loop kick in.
 
+- **The Currency Revolt**: Start a Market/Representative civilization, advance 50+ turns, then go to Events → Movements and scroll down to Structural Movements. Introduce the "Currency Refusal Movement" and watch the dual economy emerge. The alternative economy will grow through phases (emerging → dual → tipping → dominant → complete), with coordination costs peaking mid-transition. Check Society → Finance & Trade to see the transition status, and notice how the Minsky cycle fades to zero as currency disappears.
+
+- **The Autocratic Crackdown**: Same as above, but with an autocratic government. The government will crack down on the alternative economy, but as enforcement drains state capacity, the crackdown eventually collapses and the transition continues.
+
 ---
 
 ## New Systems You'll Encounter
@@ -164,6 +168,8 @@ Interview NPCs from different social strata. Ask a marginalized citizen about in
 **Religious/ideological schisms:** If your institutions are rigid and legitimacy is low, a schism can erupt. You choose how to respond: suppress it (short-term fix, long-term trauma), accommodate it (messy but peaceful), or allow reformation (chaotic but can spark innovation).
 
 **Water conflicts:** Adjacent civilizations sharing water resources can escalate from cooperation through tension to outright conflict. Build desalination plants or propose water treaties to manage this.
+
+**Bottom-up economic restructuring:** You can trigger structural movements that bypass governance entirely. Go to Events → Movements and scroll to "Structural Movements." Five presets let you model scenarios like a population refusing to use currency, workers seizing cooperative control of production, or communities reclaiming commons resources. A dual economy emerges — watch it progress through phases in Society → Finance & Trade. In a fully currencyless economy, taxation ceases and the Minsky financial cycle no longer applies — coordination instability replaces it as the ongoing risk.
 
 ---
 
