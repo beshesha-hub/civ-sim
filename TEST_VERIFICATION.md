@@ -1,8 +1,16 @@
-# Test Verification Guide — Pass 6
+# Test Verification Guide — Pass 6 (ARCHIVED)
 ## Healthcare · Resource Management · Information Ecosystem
 
 **Version:** Pass 6 (March 2026)
-**Scope:** All new functionality added in this development pass
+**Scope:** Manual test cases for Pass 6 functionality only
+**Status:** Passes 7-11 (March-September 2026) are verified through the automated validation framework rather than manual test cases.
+
+> **For current validation**, use the automated suite:
+> - `node js/validation_suite.js uq --seeds=20` — UQ coverage (12 countries x 3 targets)
+> - `node js/hindcast_runner.js --seeds=10` — Hindcast scenarios (4 countries)
+> - `node js/scenario_test_harness.js` — 12 calibration scenarios
+> - See [MODEL_DIAGNOSTICS.md](MODEL_DIAGNOSTICS.md) for current scores and findings.
+
 **Format:** Step-by-step manual test cases; each has a clear Expected Result so a tester can confirm pass/fail without source-code access.
 
 ---
@@ -2261,3 +2269,400 @@ Start a Market/Representative game. Advance 50 turns. Verify:
 ---
 
 *Document updated: March 2026 | Rounds 12-15 supplements appended*
+
+---
+
+# Section 119 — Pass 10: Production Decentralization
+
+Independent energy and agriculture production-scale parameters, enabling
+support, distribution/loss chain, participation and coercion.
+Reference: `pass10-spec.md`, `MODELING_ASSUMPTIONS.md` §12.
+
+**Set a `researchSeed` for every test below.** Seeded reproducibility was
+repaired in this pass; unseeded runs are not comparable.
+
+## 119.1 Config anchors (no simulation required)
+
+| # | Check | Expected |
+|---|-------|----------|
+| 1 | `lerFromIntensity(0)` | 1.00 |
+| 2 | `lerFromIntensity(50)` | 1.27 |
+| 3 | `lerFromIntensity(100)` | 1.70 |
+| 4 | `lerFromIntensity(150)` | ≤ 2.00 (hard cap) |
+| 5 | `ENERGY_WELLBEING.ceiling(50)` | ≈ 71.8 |
+| 6 | `ENERGY_WELLBEING.ceiling(150)` | ≈ 84.2 |
+| 7 | `COERCION_PRODUCTIVITY.penalty(0)` | 1.00 |
+| 8 | `COERCION_PRODUCTIVITY.penalty(85)` | ≈ 0.55 |
+| 9 | `DECENTRALIZATION_PATHWAYS` keys | none, grassroots, incentive, decree_ownership, decree_participation, hybrid |
+
+## 119.2 Seeded reproducibility
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Same seed, 3 runs × 150 turns | Bit-identical population/wellbeing/stability/food |
+| 2 | Different seed | Trajectory differs |
+| 3 | Same seed, two page loads | Identical (noise table is deterministic) |
+
+## 119.3 Pathway ordering
+
+Measure ordering by **`pathwayOffset` (programme contribution)**, not total
+share. Total share includes the structural baseline, which is physics rather
+than policy, and conflating them hides the effect being tested.
+
+| # | Regime | Expected |
+|---|--------|----------|
+| 1 | Functioning state, no crisis | compulsory > mandated-ownership > hybrid > incentive > grassroots > none |
+| 2 | State collapse + crisis + capital | grassroots > hybrid > compulsory > mandated-ownership > incentive > none |
+| 3 | Grassroots vs mandate under collapse | ≈1.65× on programme contribution (anchor >2×; model conservative) |
+| 4 | Structural baseline, good infrastructure | ≈29 (centralized grid) |
+| 5 | Structural baseline, collapsed infrastructure | ≈68 (forced local) |
+| 6 | Abandon a programme | `pathwayOffset` decays; share returns toward baseline |
+| 7 | Industrialization turn | No unearned jump in distributed share (preIndustrial derives from `adoptedTechnologies`, not stale `energySource`) |
+
+## 119.4 Capital gate
+
+| # | Condition | Expected |
+|---|-----------|----------|
+| 1 | High crisis, high capital | Rapid adoption |
+| 2 | High crisis, low capital | Little adoption; wellbeing falls |
+| 3 | UI warning below capital 30 with crisis > 45 | Warning text shown |
+
+## 119.5 Coercion
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Identical LER/ecosystem function, vary pathway only | `coercionYieldFactor` 1.00 → 0.55 |
+| 2 | Compulsion with STRONG institutions (IQ 78, cap 80) | Still penalised — no rescue |
+| 3 | Wellbeing across pathways | Monotonic in coercion (≈70/71/65/59) |
+| 4 | Legitimacy under compulsory reorganization | Falls (≈82 vs 100) |
+| 5 | Anomie floor under sustained compulsion | ≈15 vs 0 |
+| 6 | Legibility failure event, weak institutions | Fires in a minority of runs, not all |
+
+## 119.6 Ecosystem function
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Raise diversification with good education | `ecosystemFunction` rises slowly |
+| 2 | Drop education/state capacity/trust | Decays |
+| 3 | Low tech vs high tech | `inputSubstitution` much larger at low tech |
+| 4 | High ecosystem function | Pollution falls, soil and water recover |
+
+## 119.7 Enabling support
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Support 0 → 80 at low capital | Large adoption gain (≈ +137%) |
+| 2 | Support 0 → 80 at high capital | Smaller gain (≈ +90%) — progressivity |
+| 3 | Land concentration 20 → 85 | `supportEffectiveness` falls (≈69 → 55) |
+| 4 | Support active | State capacity drains slowly |
+| 5 | Stop funding | Support and ecosystem function both decay |
+| 6 | Agriculture support | Raises ecosystem-function knowledge ceiling |
+
+## 119.8 Distribution and loss chain
+
+| # | Scenario | Locality | Chain loss | Cosmetic | Maturity | Nutrition |
+|---|----------|----------|-----------|----------|----------|-----------|
+| 1 | Rural, self-reliant, local | ≈83 | ≈8.5% | ≈1.4% | ≈85 | ≈65 |
+| 2 | Mixed | ≈46 | ≈12.9% | ≈4.8% | ≈63 | ≈51 |
+| 3 | Urban, import-dependent | ≈13 | ≈16.2% | ≈9.9% | ≈43 | ≈38 |
+| 4 | Urbanization 90 | Locality capped ≈30 | | | | |
+| 5 | Nutritional quality | Moves disease burden / infant mortality, **not** food security | | | | |
+
+## 119.9 Energy integration
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Pre-industrial (wood, tech < 3) | Distributed share pinned ≈88–92 |
+| 2 | Distributed share up, poor infrastructure | EROI gains from avoided T&D losses |
+| 3 | Distributed share up, low tech | EROI penalised (scale cost) |
+| 4 | Energy deficit with high distributed share | Stability hit reduced ≈35% (islanding) |
+| 5 | Wellbeing above energy ceiling | Decays toward ceiling; never raised by it |
+| 6 | Energy per capita calibration | Pre-industrial ≈10–20 GJ; industrial ≈100–150; fusion ≈400+ |
+
+## 119.10 Regression
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | 6 presets × 2 seeds × 600 turns | ≥10/12 survive |
+| 2 | Known-fragile presets | `theocratic_autocracy` and `barter_tribal` may collapse — pre-existing, confirmed against baseline |
+| 3 | Food security shift | 8–16 points lower, attributable to the loss chain (isolate by zeroing `DISTRIBUTION.baseChainLoss`/`perishableChainLoss`/`cosmeticRejectionMax`) |
+| 4 | All JS files | `node --check` passes |
+| 5 | Console | No errors |
+
+## 119.11 Research panel exposure
+
+| # | Check | Expected |
+|---|-------|----------|
+| 1 | Research panel → Parameters | 10 Pass 10 sections present in DOM |
+| 2 | Section titles | Evidence Tiers, LER, Ecosystem Function, Coercion, Participation Caps, Diffusion Limits, Pathways, Enabling Support, Distribution & Loss Chain, Energy |
+| 3 | Every row | carries an M / I / T tier tag |
+| 4 | Pathway rows | generated from `DECENTRALIZATION_PATHWAYS`, so they cannot drift from the model |
+
+## 119.12 Nutritional quality channel
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Isolate by stubbing `_processNutritionalHealth` | Disease span ≈8, infant mortality span ≈9 |
+| 2 | Food security < 25 | Channel suppressed entirely |
+| 3 | Turn order | Runs at END of chain; mid-chain it is erased by `_processHealthcare` |
+| 4 | Tiering | Disease burden M; infant mortality **I** (halved — extrapolation, not measured) |
+
+## 119.13 Known gaps
+
+- **Localization is project-wide, not Pass 10 specific.** No panel in civ-sim
+  uses i18n; `I18N` covers NPC/interview content and a few top-level buttons.
+  Localizing only Pass 10 strings would reduce consistency.
+- Pre-existing fragile presets (`theocratic_autocracy`, `barter_tribal`) collapse
+  on some seeds. Confirmed against a stashed baseline as unrelated to Pass 10.
+- Crisis crossover is 1.71× against a >2× measured anchor; left conservative
+  rather than overfitted to one case.
+
+---
+
+# Section 120 — Pass 11: Active Travel Networks
+
+Set a `researchSeed` for every test.
+
+## 120.1 Mode-shift ladder (high-urbanization civ, tech 8, 40 turns)
+
+| # | Build | Mode share | Marginal gain |
+|---|-------|-----------|---------------|
+| 1 | Nothing (= baseline) | ≈18 | 0 |
+| 2 | Paths only (cov 80, cont 80) | ≈23 | 5.3 |
+| 3 | + transit integration 80 | ≈30 | 12.0 |
+| 4 | + safety layer 80 | ≈32 | 14.3 |
+| 5 | + jobs–housing 85 | ≈37 | 19.1 |
+| 6 | Same, continuity 20 | ≈29 | 11.2 (−41%) |
+| 7 | Mode share with no programme | Must equal `structuralBaseline` |  |
+
+## 120.2 Gendered access
+
+Measure on the **marginal gain above baseline**, not total mode share — the
+pre-existing walking baseline is not gendered by network safety.
+
+| # | Condition | Expected |
+|---|-----------|----------|
+| 1 | No safety layer | female gain ≈ 0.50 × male gain (7.9 vs 15.9) |
+| 2 | Safety layer 80 | female gain ≈ 0.70 × male gain (11.9 vs 16.9) |
+| 3 | `perceivedSafety` floor | ≈30 with nothing built |
+
+## 120.3 Environment at scale
+
+| # | Check | Expected |
+|---|-------|----------|
+| 1 | `atEnergySavedShare` at ~19% mode share | ≈1.9% of total energy |
+| 2 | Isolated pollution effect (stub `_processActiveTravel`) | ≈−4 |
+| 3 | Isolated disease burden | ≈−5 |
+| 4 | Isolated life expectancy / wellbeing | ≈+1 each |
+| 5 | Sanity ceiling | energy saved must stay in low single digits |
+
+## 120.4 Animal power density inversion
+
+**Average ≥5 seeds.** A single seed showed +9 wellbeing where the true averaged
+effect is −1.4; configuration changes alter RNG consumption.
+
+| # | Urbanization | Expected |
+|---|--------------|----------|
+| 1 | 25% | Wellbeing ≈+0.7; no pollution or sanitation penalty |
+| 2 | 70% | Wellbeing ≈−1.4, pollution +5.4, disease +23.4, sanitation −15 |
+| 3 | Sign check | Dense must be net-NEGATIVE on wellbeing, town net-positive |
+
+## 120.5 Regression
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Reproducibility incl. `activeTravel` fields | Bit-identical ×3 |
+| 2 | 24 edge cases (6 pathways × 4 extremes) | Zero NaN, zero range breaches |
+| 3 | 6 presets × 2 seeds × 600 turns | 10/12 — unchanged from pre-Pass-11 |
+| 4 | Idle state in fully motorized presets | Mode share ≈1, animal power 0 |
+| 5 | Panels | 7 tabs render; 7 mobility buttons fire; zero console errors |
+| 6 | Research panel | 6 Pass 11 sections; 132 total rows |
+
+## 120.6 Deliberately absent
+
+Drone patrol (no effect in the one rigorous trial); call boxes as a use
+channel; noise as its own variable.
+
+
+## 120.7 Era-scaling of benefits (added after second audit)
+
+Benefits must scale with what is actually displaced. A society without motorized
+transport gains nothing from "adopting" active travel.
+
+| # | Era | Baseline | No programme | Full build | Isolated disease benefit |
+|---|-----|----------|--------------|-----------|--------------------------|
+| 1 | Neolithic | 84 | 83 | 99 | ≈−0.4 |
+| 2 | Classical | 76 | 76 | 98 | ≈−2 |
+| 3 | Industrial | 60 | 59 | 84 | ≈−6 |
+| 4 | Modern | 17 | 17 | 38 | ≈−10.2 |
+| 5 | Monotonicity | Benefit must RISE with motorization | | | |
+
+## 120.8 Cross-system interaction
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | All three Pass 10/11 systems at max | Sub-additive; no double-counting |
+| 2 | Shared channels under max load | Wellbeing, food, pollution, land all remain in range |
+| 3 | Methodology | Average ≥5 seeds for any cross-system claim |
+
+
+---
+
+# Section 121 — Collapse Realism & Energy Transition Smoothing
+
+## 121.1 Collapse base rates (reference, not a test)
+
+| Anchor | Value |
+|--------|-------|
+| Mean empire duration (Arbesman, 41 empires 3000 BCE–600 CE) | **220 years** |
+| Distribution | Exponential, memoryless |
+| ≥200yr vs ≥800yr empires | ~6× as common |
+| Seshat survival analysis | Termination risk rises steeply over first ~2 centuries, then plateaus |
+| 5,000-year run | ≈23 mean empire lifetimes |
+
+**11/12 surviving is optimistic, not harsh.** Do not "fix" the collapses.
+
+## 121.2 Collapse mechanism checks
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Stability recovery from 10, events suppressed | Reaches ~72 in ~32 turns — recovery works |
+| 2 | Fragile preset stability budget | Large single-turn shock (≈−39) then positive net recovery (≈+0.6/turn) |
+| 3 | Secular cycling | `barter_tribal` should oscillate (e.g. 89→39→64→30→89) |
+| 4 | Forest regrowth from 0 with pressure eased | Rises to ≈23 over 60 turns |
+| 5 | Equality vs wealth concentration | Coherent in normal runs (e.g. 62 vs 49) |
+
+## 121.3 Energy transition smoothing
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Any single-turn EROI change | No instantaneous source-to-source jump |
+| 2 | Coal transition trace | ≈3 → 8.4 → 26.1 → 42.5 over ~10 turns |
+| 3 | Downward transition (nuclear → renewable) | Also gradual, not an 80% one-turn drop |
+| 4 | Transition duration | ≈10 turns ≈ 100 years (Grübler 5–10 decades) |
+| 5 | `_energyEROITarget` | Exposes the unsmoothed target for inspection |
+| 6 | Preset regression | 11/12, unchanged |
+| 7 | Era energy | neolithic ≈11 GJ/cap, industrial ≈84, modern ≈193 |
+
+
+---
+
+# Section 122 — Seeded Historical Scenario Suite
+
+Load the harness (not in `index.html`) by fetching `js/scenario_test_harness.js`
+and injecting it as a script element, then call `runSeededSuite([1001,2002,3003])`.
+
+## 122.1 Harness
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | `runSingleScenario(sc, seed)` twice on one seed | Identical final snapshot |
+| 2 | Two different seeds | Different trajectories |
+| 3 | `runSingleScenario(sc)` with no seed | Still varies (unseeded path preserved) |
+| 4 | `evaluateScenario` | Returns PASS / FAIL / UNSCOREABLE per expectation |
+
+## 122.2 Suite score
+
+| # | Metric | Expected |
+|---|--------|----------|
+| 1 | PASS | 16 |
+| 2 | FAIL | 0 |
+| 3 | UNSCOREABLE | 19 (prose expectations — not counted as passes) |
+| 4 | Pass rate on scoreable subset | 100% |
+
+**Interpretation warning:** the suite guided the military fix, so it is a
+regression guard rather than independent validation.
+
+## 122.3 Military doctrine
+
+| # | Configuration | Expected military power |
+|---|---------------|------------------------|
+| 1 | Pacifist democracy (welcoming, peace values) | ≈0 |
+| 2 | Trading democracy | ≈21 |
+| 3 | Isolationist elder council | ≈39 |
+| 4 | Militarist autocracy (aggressive, military values) | ≈100 |
+| 5 | Monotonicity | Must increase across the four |
+| 6 | Momentum bound | Must not exceed `doctrineTarget + 8` |
+
+Per-scenario maxima: rome 80, ottoman 80, soviet 70, song 56, khmer 50,
+british 30, post_colonial 26, athens 24, scandinavia 23, haudenosaunee 21.
+
+## 122.4 Regression after the military change
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Preset regression | 11/12, unchanged |
+| 2 | Reproducibility | Bit-identical ×3 |
+| 3 | Posture × institutional extremes | Zero NaN, military in [0,100] |
+| 4 | Preset military spread | pacifist 11–30, tribal 49–65, theocratic-autocratic 66–68 |
+
+
+---
+
+# Section 123 — Automated Diagnostics & Two-Set Validation
+
+See `MODEL_DIAGNOSTICS.md`. Neither tool is loaded by `index.html` — inject via
+fetch, and reload between injections (re-declaring a top-level `const` fails
+silently).
+
+## 123.1 Invariant suite
+
+| # | Check | Expected |
+|---|-------|----------|
+| 1 | `runInvariantSuite()` | 13/13 pass |
+| 2 | Any failure | Names the original defect it guards against |
+| 3 | Noisy-channel invariants | Must use ≥7 seeds |
+
+## 123.2 State-variable scanner
+
+| # | Check | Expected |
+|---|-------|----------|
+| 1 | `scanStateVariables({turns:600})` | ≤4 HIGH findings, all expected-zero cases |
+| 2 | Expected-zero filter | distributedShare/structuralBaseline pinned at 88 pre-industrially; coercionYieldFactor 1 with no coercive pathway; perceivedSafety 30 with nothing built |
+| 3 | Regression signal | Any NEW `DEAD`, `PINNED`, `IDENTICAL_MAX` or `DISCONTINUITY` finding is a defect until explained |
+
+## 123.3 Two-set scenario protocol
+
+| # | Set | Expected |
+|---|-----|----------|
+| 1 | Tuning (`HISTORICAL_SCENARIOS`) | 25 PASS / 4 FAIL / 5 unscoreable — 86.2% |
+| 2 | Held-out (`VALIDATION_SCENARIOS`) | 15 PASS / 7 FAIL / 11 unscoreable — 68.2% |
+| 3 | Scoreable coverage | 51 expectations total |
+| 4 | Protocol | Thresholds authored from history BEFORE running; never tune against held-out |
+
+## 123.4 Regression
+
+| # | Test | Expected |
+|---|------|----------|
+| 1 | Preset regression | **12/12** |
+| 2 | Reproducibility | Bit-identical |
+| 3 | Invariants | 13/13 |
+
+## 123.5 Open findings — do NOT fix without a fresh held-out set
+
+- `schismRisk` barely fires (3 held-out failures; tech_theocracy reaches exactly 0)
+- `wealthConcentration` does not rise where history says it should (athens, british_industrial, post_colonial)
+
+
+---
+
+# Section 124 — System Audit & Sensitivity (Items 2, 6)
+
+## 124.1 `auditSystemEffects()`
+
+| # | Check | Expected |
+|---|-------|----------|
+| 1 | 120 turns | 27/83 systems with zero effect |
+| 2 | 400 turns | 24/83 — three activate later |
+| 3 | Confirmed defect | `_processSchismRisk` inert with `schismRisk` in the watch list |
+| 4 | Any NEW inert system | A defect until explained as conditional or a watch-list gap |
+
+## 124.2 `runSensitivity()`
+
+| # | Check | Expected |
+|---|-------|----------|
+| 1 | Top driver | `ECOSYSTEM_FUNCTION.lowInputWeight` ≈57 |
+| 2 | I-tier in top 11 | `maxYieldGain` (#2), `transitReachMultiplier` (#11) — evidence priorities |
+| 3 | Redundancy | The three transport-energy shares must have identical sensitivity |
+| 4 | Inert count | ≈24 of 57 |
+| 5 | Method caveat | OAT misses interactions; config-dependent; ≥3 seeds before acting |

@@ -144,6 +144,9 @@ class ResearchPanel {
       ['Contagion History',          (s?.contagionState?.contagionHistory ?? []).length],
       ['Threshold Events',           (s?.thresholdEvents?.fired ?? []).length],
       ['History Events',             (civ?.history ?? []).length],
+      ['Companion: Demographics',    (s?.companion?.demographicHistory ?? []).length],
+      ['Companion: Temporal Dampen', (s?.companion?.temporalDampenHistory ?? []).length],
+      ['Companion: Micro-foundations',(s?.companion?.microFoundationsHistory ?? []).length],
     ];
     for (const [name, count] of sections) {
       const row = Utils.createEl('div', 'research-avail-row');
@@ -234,6 +237,126 @@ class ResearchPanel {
     wrap.appendChild(this._paramRow('Deficit gain per turn', 'abusePressure × (1−accountability) × 3.0'));
     wrap.appendChild(this._paramRow('Deficit recovery per turn', 'accountability × 2.0', 'asymmetric: accumulates faster than it heals'));
     wrap.appendChild(this._paramRow('Acceleration multiplier', '1.0 + (level/100) × 1.5', 'applied to wealth capture lerp rate'));
+
+    // ── Pass 10: Production Decentralization ──────────────────
+    // Every coefficient carries a confidence tier:
+    //   M = measured empirical anchor
+    //   I = interpolated strictly between >=2 measured anchors
+    //   T = mechanism supported, magnitude assumed
+    wrap.appendChild(this._paramSection('Pass 10 — Evidence Tiers'));
+    wrap.appendChild(this._paramRow('M — Measured', 'direct empirical anchor', 'coefficient traces to a published measurement'));
+    wrap.appendChild(this._paramRow('I — Interpolated', 'bounded between ≥2 anchors', 'never extrapolated past the outermost anchor'));
+    wrap.appendChild(this._paramRow('T — Theoretical', 'mechanism supported, magnitude assumed', 'treat as a structural hypothesis'));
+
+    wrap.appendChild(this._paramSection('Pass 10 — Land Equivalent Ratio'));
+    wrap.appendChild(this._paramRow('Monoculture', 'LER 1.00', 'M • definitional'));
+    wrap.appendChild(this._paramRow('Diversification 50', 'LER 1.27', 'M • intercropping meta-analyses 1.22–1.32; maize/soy 1.32±0.02'));
+    wrap.appendChild(this._paramRow('Diversification 100', 'LER 1.70', 'I • below measured silvoarable ceiling'));
+    wrap.appendChild(this._paramRow('Hard cap', `LER ${typeof LER_HARD_CAP !== 'undefined' ? LER_HARD_CAP.toFixed(2) : '2.00'}`, 'M • measured silvoarable maximum; never exceeded'));
+    wrap.appendChild(this._paramRow('Soil gate', 'poorer soil → larger benefit', 'M • advantage strongest in poor/arid/tropical, variable in temperate'));
+
+    wrap.appendChild(this._paramSection('Pass 10 — Ecosystem Function'));
+    wrap.appendChild(this._paramRow('Max yield gain', `${(ECOSYSTEM_FUNCTION.maxYieldGain*100).toFixed(0)}%`, 'I • conservative vs push-pull (1→3.5 t/ha, 122,650+ farms)'));
+    wrap.appendChild(this._paramRow('Input-scarcity weighting', `${ECOSYSTEM_FUNCTION.baseWeight} + ${ECOSYSTEM_FUNCTION.lowInputWeight}×(1−tech/6)`, 'M • substitutes for inputs that are missing'));
+    wrap.appendChild(this._paramRow('Knowledge decay/turn', `${ECOSYSTEM_FUNCTION.knowledgeDecay}`, 'M • lapses without follow-up training'));
+    wrap.appendChild(this._paramRow('Knowledge gate', 'edu×0.55 + stateCap×0.25 + trust×0.20 + extension', 'M • knowledge-intensive, needs local adaptation'));
+
+    wrap.appendChild(this._paramSection('Pass 10 — Coercion'));
+    wrap.appendChild(this._paramRow('Productivity penalty', `1 − ${COERCION_PRODUCTIVITY.maxPenalty} × (coercion/100)^${COERCION_PRODUCTIVITY.exponent}`, 'M • Soviet private plots: 1–3% of land → 25–27% of output'));
+    wrap.appendChild(this._paramRow('Applied to', 'structural gain only, not baseline', 'forcing a better design destroys that design\u2019s advantage'));
+    wrap.appendChild(this._paramRow('Negative threshold', `coercion > ${PARTICIPATION_EFFECTS.coercionNegativeThreshold}`, 'M • does NOT require weak institutions'));
+    wrap.appendChild(this._paramRow('Institutional role', 'modulator, not gate', 'M • USSR / Great Leap / Romania were high-capacity states'));
+    wrap.appendChild(this._paramRow('Anomie floor', 'up to 28 under sustained compulsion', 'T/M • Scott: destroyed reciprocity networks persist'));
+
+    wrap.appendChild(this._paramSection('Pass 10 — Participation Effects (caps)'));
+    wrap.appendChild(this._paramRow('Wellbeing', `+${PARTICIPATION_EFFECTS.wellbeingCap}`, 'M • gardening meta ES ≈0.55; SDT autonomy g=0.81'));
+    wrap.appendChild(this._paramRow('Anomie', `−${PARTICIPATION_EFFECTS.anomieCap}`, 'M • Karasek / Whitehall II decision latitude'));
+    wrap.appendChild(this._paramRow('Social trust', `+${PARTICIPATION_EFFECTS.trustCap}`, 'M • CSA / cooperative participation'));
+    wrap.appendChild(this._paramRow('Legitimacy', `+${PARTICIPATION_EFFECTS.legitimacyCap}`, 'M • procedural > distributional justice'));
+    wrap.appendChild(this._paramRow('Coercion discount', `(1 − coercion/100)^${PARTICIPATION_EFFECTS.coercionExponent}`, 'M • participation studies are self-selected'));
+    wrap.appendChild(this._paramRow('Domain weighting', `energy ${PARTICIPATION_EFFECTS.energyWeight} / agriculture ${PARTICIPATION_EFFECTS.agricultureWeight}`, 'food production is more hands-on and daily'));
+
+    wrap.appendChild(this._paramSection('Pass 10 — Diffusion Limits (pts/decade)'));
+    wrap.appendChild(this._paramRow('Baseline', `${DIFFUSION_LIMITS.baseline}`, 'M • Grübler ~95yr invention→80% share'));
+    wrap.appendChild(this._paramRow('Crisis + capital', `${DIFFUSION_LIMITS.crisis}`, 'M • Puerto Rico: 81% of all new capacity 2016–25'));
+    wrap.appendChild(this._paramRow('Short burst', `${DIFFUSION_LIMITS.burst}`, 'M • South Africa +349%/15mo; Cuba 3.6→10%/yr'));
+
+    wrap.appendChild(this._paramSection('Pass 10 — Pathways'));
+    for (const pw of Object.values(DECENTRALIZATION_PATHWAYS)) {
+      if (pw.id === 'none') continue;
+      wrap.appendChild(this._paramRow(pw.label,
+        `base ${pw.baseRate} • crisis ×${pw.crisisMultiplier} • ownership ${pw.ownershipBreadth} • coercion ${pw.coercion}`,
+        `${pw.tier} • ${pw.stateDependent ? 'state-dependent' : 'capital-dependent'} • capSens ${pw.capitalSensitivity}`));
+    }
+
+    wrap.appendChild(this._paramSection('Pass 10 — Enabling Support'));
+    wrap.appendChild(this._paramRow('Adoption elasticity', `${ENABLING_SUPPORT.adoptionElasticity}`, 'M • PV price elasticity; halving incentives → −9% installs'));
+    wrap.appendChild(this._paramRow('Max adoption boost', `×${(1+ENABLING_SUPPORT.maxAdoptionBoost).toFixed(2)}`, 'M'));
+    wrap.appendChild(this._paramRow('Progressive', `${ENABLING_SUPPORT.progressive}`, 'M • refundable credits lift low-income adoption only'));
+    wrap.appendChild(this._paramRow('Knowledge boost', `${ENABLING_SUPPORT.knowledgeBoost}`, 'I • FFS reviews: no low-risk-of-bias study; effects likely overstated'));
+    wrap.appendChild(this._paramRow('Spillover', `${ENABLING_SUPPORT.spillover}`, 'M • no evidence non-participant neighbours benefit'));
+    wrap.appendChild(this._paramRow('Elite capture weight', `${ENABLING_SUPPORT.eliteCaptureWeight}`, 'M • Malawi FISP: benefits skewed to larger/connected farmers'));
+    wrap.appendChild(this._paramRow('Fiscal drain / decay', `${ENABLING_SUPPORT.fiscalDrain} / ${ENABLING_SUPPORT.decayRate}`, 'M • lapses without long-term follow-up'));
+
+    wrap.appendChild(this._paramSection('Pass 10 — Distribution & Loss Chain'));
+    wrap.appendChild(this._paramRow('Base chain loss', `${DISTRIBUTION.baseChainLoss}%`, 'M • FAO post-harvest loss 2021'));
+    wrap.appendChild(this._paramRow('Perishable chain loss', `${DISTRIBUTION.perishableChainLoss}%`, 'M • FAO fruit & vegetables 2023'));
+    wrap.appendChild(this._paramRow('Cosmetic rejection max', `${DISTRIBUTION.cosmeticRejectionMax}%`, 'M • 17.1% China apples; 41% NC field study'));
+    wrap.appendChild(this._paramRow('Cosmetic recovery', `${(DISTRIBUTION.cosmeticRecoveryFraction*100).toFixed(0)}%`, 'M • diverted to processing/feed, not destroyed'));
+    wrap.appendChild(this._paramRow('Applied as', 'multiplicative on production', 'loss is a proportion of what was grown'));
+    wrap.appendChild(this._paramRow('Distribution energy share', `${(DISTRIBUTION.distributionEnergyShare*100).toFixed(0)}%`, 'M • production remains 83% of food-system emissions'));
+    wrap.appendChild(this._paramRow('Cold chain share', `${(DISTRIBUTION.coldChainShare*100).toFixed(0)}%`, 'M • ~40% of foods require refrigeration'));
+    wrap.appendChild(this._paramRow('Urbanization cap', `locality ≤ 100 − urban×${DISTRIBUTION.urbanizationPenalty}`, 'M • a city cannot be fed within cart range'));
+    wrap.appendChild(this._paramRow('Nutritional quality', 'health only, never calories', 'M • vitamins rise during ripening; mature-green for long haul'));
+
+    wrap.appendChild(this._paramSection('Pass 10 — Energy'));
+    wrap.appendChild(this._paramRow('Wellbeing ceiling', `${ENERGY_WELLBEING.floor} + ${ENERGY_WELLBEING.span}(1 − e^(−GJ/${ENERGY_WELLBEING.scale}))`, 'M • HDI>0.7 at 50 GJ/cap; saturates 100–150'));
+    wrap.appendChild(this._paramRow('Ceiling behaviour', 'soft ceiling only, never a bonus', 'constrains low-energy, rewards nothing above'));
+    wrap.appendChild(this._paramRow('Power density (W/m²)', `biomass ${POWER_DENSITY.biomass} • wind ${POWER_DENSITY.wind} • dist. solar ${POWER_DENSITY.distributedSolar} • hydro/nuclear ${POWER_DENSITY.hydroNuclear} • fossil ${POWER_DENSITY.fossilExtraction}`, 'M • Smil'));
+    wrap.appendChild(this._paramRow('T&D loss avoided', '2%–19% by infrastructure quality', 'M • global mean ~5%, India ~19%, Singapore ~2%'));
+    wrap.appendChild(this._paramRow('Scale cost penalty', 'up to −30% EROI at full distribution', 'M • Lazard: rooftop $122–284/MWh vs utility $38–78'));
+    wrap.appendChild(this._paramRow('Islanding resilience', '−35% deficit severity', 'M • variance reduction, not mean gain'));
+
+    // ── Pass 11: Active Travel Networks ───────────────────────
+    wrap.appendChild(this._paramSection('Pass 11 — Active Travel: Mode Shift'));
+    wrap.appendChild(this._paramRow('Seville baseline → achieved', `${ACTIVE_TRAVEL.sevilleBaseShare}% → ${ACTIVE_TRAVEL.sevilleAchievedShare}%`, 'M • 80km continuous protected network, 2006-2010, EUR 32M'));
+    wrap.appendChild(this._paramRow('Continuity vs coverage weight', `${ACTIVE_TRAVEL.continuityWeight} / ${ACTIVE_TRAVEL.coverageWeight}`, 'M • gaps kill a network; length alone does not deliver'));
+    wrap.appendChild(this._paramRow('Polycentric non-motorized ceiling', `${ACTIVE_TRAVEL.polycentricNonMotorizedCeiling}%`, 'M • Wuhan subcenters; 91.3% of commutes internal'));
+
+    wrap.appendChild(this._paramSection('Pass 11 — Distance Decay'));
+    wrap.appendChild(this._paramRow('Median cycling trip', `${ACTIVE_TRAVEL.medianTripKm} km`, 'M'));
+    wrap.appendChild(this._paramRow('Mode share falls off beyond', `${ACTIVE_TRAVEL.falloffKm} km`, 'M • the binding metropolitan constraint'));
+    wrap.appendChild(this._paramRow('Comfortable / hard limit', `${ACTIVE_TRAVEL.comfortMaxKm} / ${ACTIVE_TRAVEL.hardLimitKm} km`, 'M'));
+    wrap.appendChild(this._paramRow('Walking reach', `${ACTIVE_TRAVEL.walkingReachKm} km`, 'M'));
+
+    wrap.appendChild(this._paramSection('Pass 11 — Transit Integration (the solution)'));
+    wrap.appendChild(this._paramRow('Bicycle as rail access mode', `${(ACTIVE_TRAVEL.transitAccessShare*100).toFixed(0)}%`, 'M • Netherlands; up to 70% at some stations'));
+    wrap.appendChild(this._paramRow('Rail access cycling distance', `${ACTIVE_TRAVEL.transitAccessKm} km`, 'M'));
+    wrap.appendChild(this._paramRow('Reach multiplier', `×${ACTIVE_TRAVEL.transitReachMultiplier}`, 'I • bounded by the measured access share'));
+    wrap.appendChild(this._paramRow('Jobs–housing gate floor', `${ACTIVE_TRAVEL.jobsHousingGateFloor}`, 'M • polycentricity does NOT automatically reduce travel'));
+
+    wrap.appendChild(this._paramSection('Pass 11 — Health & Environment'));
+    wrap.appendChild(this._paramRow('Cycle commuting mortality', `HR ${ACTIVE_TRAVEL.mortalityHR}`, 'M • Celis-Morales BMJ 2017 (95% CI 0.42-0.83)'));
+    wrap.appendChild(this._paramRow('Max disease burden reduction', `−${ACTIVE_TRAVEL.maxDiseaseBurdenReduction}`, 'I • bounded by the HR at full uptake'));
+    wrap.appendChild(this._paramRow('Barcelona decomposition', 'air 291 / noise 163 / heat 117 / green 60', 'M(modelled) • 667 deaths/yr, +200 days life expectancy'));
+    wrap.appendChild(this._paramRow('Noise channel', 'no noise variable → wellbeing', 'M→T'));
+    wrap.appendChild(this._paramRow('Addressable energy', `${(ACTIVE_TRAVEL.transportEnergyShare*ACTIVE_TRAVEL.passengerShareOfTransport*ACTIVE_TRAVEL.urbanShareOfPassenger*100).toFixed(1)}% of total`, 'M • transport 1/3, passenger 65%, urban 55%'));
+    wrap.appendChild(this._paramRow('Scale check', '10pt mode shift ≈ 2% of total energy', 'M • real, not transformational'));
+
+    wrap.appendChild(this._paramSection('Pass 11 — Safety & Gendered Access'));
+    wrap.appendChild(this._paramRow('Lighting → crime', `−${(ACTIVE_TRAVEL.lightingCrimeReduction*100).toFixed(0)}%`, 'M • Welsh & Farrington 2022 (down from 20-21%)'));
+    wrap.appendChild(this._paramRow('Composite weights', `patrol ${ACTIVE_TRAVEL.patrolWeight} / lighting ${ACTIVE_TRAVEL.lightingWeight} / amenity ${ACTIVE_TRAVEL.amenityWeight}`, 'M/M/T'));
+    wrap.appendChild(this._paramRow('Patrol evidence', 'Braga: significant, DIFFUSION not displacement', 'M • benefits spread to surrounding areas'));
+    wrap.appendChild(this._paramRow('Female / male safety elasticity', `${ACTIVE_TRAVEL.femaleSafetyElasticity} / ${ACTIVE_TRAVEL.maleSafetyElasticity}`, 'M • women 29% vs men 20% fearful; 30% vs 49% feel safe'));
+    wrap.appendChild(this._paramRow('Fear of collision', 'no gendered difference', 'M • protected paths alone do NOT close the gap'));
+    wrap.appendChild(this._paramRow('Drone patrol', 'NOT MODELLED', 'the one rigorous aerial-patrol trial found no effect'));
+
+    wrap.appendChild(this._paramSection('Pass 11 — Animal Power (density-conditional)'));
+    wrap.appendChild(this._paramRow('Viable urbanization ceiling', `${ANIMAL_TRANSPORT.viableUrbanizationCeiling}%`, 'M • above this, costs dominate'));
+    wrap.appendChild(this._paramRow('Manure', `${ANIMAL_TRANSPORT.manureLbPerDay} lb/horse/day`, 'M • ~1,000 tons/day in 1890s London'));
+    wrap.appendChild(this._paramRow('Sanitation penalty max', `${ANIMAL_TRANSPORT.sanitationPenaltyMax}`, 'M • flies, water contamination, typhoid and cholera'));
+    wrap.appendChild(this._paramRow('Land competition max', `${ANIMAL_TRANSPORT.landCompetitionMax}`, 'M • hay acreage vs human food; couples to agriculture emergently'));
+    wrap.appendChild(this._paramRow('Freight benefit max', `${ANIMAL_TRANSPORT.freightBenefitMax}`, 'M • genuinely useful at low density'));
 
     // ── Thresholds ────────────────────────────────────────────
     wrap.appendChild(this._paramSection('Threshold Definitions'));

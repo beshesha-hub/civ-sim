@@ -1,0 +1,581 @@
+{
+  "rome": {
+    "source": "Seshat Equinox-2020",
+    "polityIds": [
+      "ItRomPr",
+      "ItRomLR"
+    ],
+    "timeRange": [
+      -100.0,
+      100.0,
+      200.0
+    ],
+    "metrics": {
+      "institutionalQuality": {
+        "seshat_mean": 37.0,
+        "seshat_range": [
+          16,
+          44
+        ],
+        "n": 4
+      },
+      "militaryPower": {
+        "seshat_mean": 92.2,
+        "seshat_range": [
+          69,
+          100
+        ],
+        "n": 4
+      },
+      "epistemicHealth": {
+        "seshat_mean": 92.0,
+        "seshat_range": [
+          92,
+          92
+        ],
+        "n": 4
+      },
+      "urbanization": {
+        "seshat_mean": 88.0,
+        "seshat_range": [
+          88,
+          88
+        ],
+        "n": 4
+      },
+      "stateCapacity": {
+        "seshat_mean": 80.2,
+        "seshat_range": [
+          39,
+          94
+        ],
+        "n": 4
+      },
+      "infrastructureLevel": {
+        "seshat_mean": 100.0,
+        "seshat_range": [
+          100,
+          100
+        ],
+        "n": 4
+      },
+      "economicComplexity": {
+        "seshat_mean": 78.2,
+        "seshat_range": [
+          76,
+          79
+        ],
+        "n": 4
+      }
+    }
+  },
+  "venice": {
+    "source": "Seshat Equinox-2020",
+    "polityIds": [
+      "ItVenR3",
+      "ItVenR4"
+    ],
+    "timeRange": [
+      1300.0,
+      1400.0,
+      1500.0,
+      1600.0
+    ],
+    "metrics": {
+      "institutionalQuality": {
+        "seshat_mean": 83.0,
+        "seshat_range": [
+          83,
+          83
+        ],
+        "n": 4
+      },
+      "militaryPower": {
+        "seshat_mean": 100.0,
+        "seshat_range": [
+          100,
+          100
+        ],
+        "n": 4
+      },
+      "epistemicHealth": {
+        "seshat_mean": 99.0,
+        "seshat_range": [
+          99,
+          99
+        ],
+        "n": 4
+      },
+      "urbanization": {
+        "seshat_mean": 62.0,
+        "seshat_range": [
+          62,
+          62
+        ],
+        "n": 4
+      },
+      "stateCapacity": {
+        "seshat_mean": 61.0,
+        "seshat_range": [
+          61,
+          61
+        ],
+        "n": 4
+      },
+      "infrastructureLevel": {
+        "seshat_mean": 97.0,
+        "seshat_range": [
+          97,
+          97
+        ],
+        "n": 4
+      },
+      "economicComplexity": {
+        "seshat_mean": 100.0,
+        "seshat_range": [
+          100,
+          100
+        ],
+        "n": 4
+      }
+    }
+  },
+  "ptolemaic": {
+    "source": "Seshat Equinox-2020",
+    "polityIds": [
+      "EgPtol1",
+      "EgPtol2"
+    ],
+    "timeRange": [
+      -300.0,
+      -200.0,
+      -200.0,
+      -100.0
+    ],
+    "metrics": {
+      "institutionalQuality": {
+        "seshat_mean": 83.5,
+        "seshat_range": [
+          83,
+          84
+        ],
+        "n": 4
+      },
+      "militaryPower": {
+        "seshat_mean": 94.0,
+        "seshat_range": [
+          88,
+          100
+        ],
+        "n": 4
+      },
+      "epistemicHealth": {
+        "seshat_mean": 98.0,
+        "seshat_range": [
+          98,
+          98
+        ],
+        "n": 4
+      },
+      "urbanization": {
+        "seshat_mean": 75.0,
+        "seshat_range": [
+          75,
+          75
+        ],
+        "n": 4
+      },
+      "stateCapacity": {
+        "seshat_mean": 67.0,
+        "seshat_range": [
+          67,
+          67
+        ],
+        "n": 4
+      },
+      "infrastructureLevel": {
+        "seshat_mean": 99.0,
+        "seshat_range": [
+          99,
+          99
+        ],
+        "n": 4
+      },
+      "economicComplexity": {
+        "seshat_mean": 86.0,
+        "seshat_range": [
+          86,
+          86
+        ],
+        "n": 4
+      }
+    }
+  },
+  "mughal": {
+    "source": "Seshat Equinox-2020",
+    "polityIds": [
+      "InMugl*"
+    ],
+    "timeRange": [
+      1600.0,
+      1700.0,
+      1800.0
+    ],
+    "metrics": {
+      "institutionalQuality": {
+        "seshat_mean": 97.0,
+        "seshat_range": [
+          97,
+          97
+        ],
+        "n": 3
+      },
+      "militaryPower": {
+        "seshat_mean": 77.0,
+        "seshat_range": [
+          77,
+          77
+        ],
+        "n": 3
+      },
+      "epistemicHealth": {
+        "seshat_mean": 91.0,
+        "seshat_range": [
+          91,
+          91
+        ],
+        "n": 3
+      },
+      "urbanization": {
+        "seshat_mean": 50.0,
+        "seshat_range": [
+          50,
+          50
+        ],
+        "n": 3
+      },
+      "stateCapacity": {
+        "seshat_mean": 78.0,
+        "seshat_range": [
+          78,
+          78
+        ],
+        "n": 3
+      },
+      "infrastructureLevel": {
+        "seshat_mean": 99.0,
+        "seshat_range": [
+          99,
+          99
+        ],
+        "n": 3
+      },
+      "economicComplexity": {
+        "seshat_mean": 85.0,
+        "seshat_range": [
+          85,
+          85
+        ],
+        "n": 3
+      }
+    }
+  },
+  "song_dynasty": {
+    "source": "Seshat Equinox-2020",
+    "polityIds": [
+      "CnNSong"
+    ],
+    "timeRange": [
+      1000.0,
+      1100.0
+    ],
+    "metrics": {
+      "institutionalQuality": {
+        "seshat_mean": 99.0,
+        "seshat_range": [
+          99,
+          99
+        ],
+        "n": 2
+      },
+      "militaryPower": {
+        "seshat_mean": 100.0,
+        "seshat_range": [
+          100,
+          100
+        ],
+        "n": 2
+      },
+      "epistemicHealth": {
+        "seshat_mean": 92.0,
+        "seshat_range": [
+          92,
+          92
+        ],
+        "n": 2
+      },
+      "urbanization": {
+        "seshat_mean": 88.0,
+        "seshat_range": [
+          88,
+          88
+        ],
+        "n": 2
+      },
+      "stateCapacity": {
+        "seshat_mean": 83.0,
+        "seshat_range": [
+          83,
+          83
+        ],
+        "n": 2
+      },
+      "infrastructureLevel": {
+        "seshat_mean": 100.0,
+        "seshat_range": [
+          100,
+          100
+        ],
+        "n": 2
+      },
+      "economicComplexity": {
+        "seshat_mean": 100.0,
+        "seshat_range": [
+          100,
+          100
+        ],
+        "n": 2
+      }
+    }
+  },
+  "tokugawa": {
+    "source": "Seshat Equinox-2020",
+    "polityIds": [
+      "JpTokgw"
+    ],
+    "timeRange": [
+      1700.0,
+      1800.0
+    ],
+    "metrics": {
+      "institutionalQuality": {
+        "seshat_mean": 86.0,
+        "seshat_range": [
+          86,
+          86
+        ],
+        "n": 2
+      },
+      "militaryPower": {
+        "seshat_mean": 77.0,
+        "seshat_range": [
+          77,
+          77
+        ],
+        "n": 2
+      },
+      "epistemicHealth": {
+        "seshat_mean": 100.0,
+        "seshat_range": [
+          100,
+          100
+        ],
+        "n": 2
+      },
+      "urbanization": {
+        "seshat_mean": 75.0,
+        "seshat_range": [
+          75,
+          75
+        ],
+        "n": 2
+      },
+      "stateCapacity": {
+        "seshat_mean": 78.0,
+        "seshat_range": [
+          78,
+          78
+        ],
+        "n": 2
+      },
+      "infrastructureLevel": {
+        "seshat_mean": 100.0,
+        "seshat_range": [
+          100,
+          100
+        ],
+        "n": 2
+      },
+      "economicComplexity": {
+        "seshat_mean": 86.0,
+        "seshat_range": [
+          86,
+          86
+        ],
+        "n": 2
+      }
+    }
+  },
+  "ottoman": {
+    "source": "Seshat Equinox-2020",
+    "polityIds": [
+      "TrOttm1",
+      "TrOttm2",
+      "TrOttm3",
+      "TrOttm4"
+    ],
+    "timeRange": [
+      1400.0,
+      1500.0,
+      1600.0,
+      1700.0,
+      1800.0
+    ],
+    "metrics": {
+      "institutionalQuality": {
+        "seshat_mean": 97.0,
+        "seshat_range": [
+          77,
+          100
+        ],
+        "n": 5,
+        "notes": "Gov=1.0 at peak (TrOttm3), devshirme bureaucracy; TrOttm1 lower at Gov=0.77"
+      },
+      "militaryPower": {
+        "seshat_mean": 85.0,
+        "seshat_range": [
+          72,
+          100
+        ],
+        "n": 5,
+        "notes": "MilTech 28-30.9, Janissary professional standing army, gunpowder"
+      },
+      "epistemicHealth": {
+        "seshat_mean": 97.0,
+        "seshat_range": [
+          95,
+          100
+        ],
+        "n": 5,
+        "notes": "Info=0.96-1.0, extensive medrese system, imperial libraries"
+      },
+      "urbanization": {
+        "seshat_mean": 78.0,
+        "seshat_range": [
+          58,
+          83
+        ],
+        "n": 5,
+        "notes": "Cap=4.4-5.8 (log10), Istanbul/Edirne among largest cities globally"
+      },
+      "stateCapacity": {
+        "seshat_mean": 81.0,
+        "seshat_range": [
+          67,
+          84
+        ],
+        "n": 5,
+        "notes": "Hier=5.0-8.17, SPC=6.7-7.94; multi-level provincial timar system"
+      },
+      "infrastructureLevel": {
+        "seshat_mean": 92.0,
+        "seshat_range": [
+          89,
+          92
+        ],
+        "n": 5,
+        "notes": "Infra=0.89-0.917, extensive road/bridge/caravanserai network"
+      },
+      "economicComplexity": {
+        "seshat_mean": 83.0,
+        "seshat_range": [
+          83,
+          83
+        ],
+        "n": 5,
+        "notes": "Money=0.833, akce standard coinage, complex guild economy"
+      }
+    }
+  },
+  "khmer": {
+    "source": "Seshat Equinox-2020",
+    "polityIds": [
+      "KhAngkE",
+      "KhAngkC",
+      "KhAngkL"
+    ],
+    "timeRange": [
+      900.0,
+      1000.0,
+      1100.0,
+      1200.0,
+      1300.0,
+      1400.0
+    ],
+    "metrics": {
+      "institutionalQuality": {
+        "seshat_mean": 82.0,
+        "seshat_range": [
+          81,
+          84
+        ],
+        "n": 6,
+        "notes": "Gov=0.81-0.84, sakti-based Hindu-Buddhist administrative system"
+      },
+      "militaryPower": {
+        "seshat_mean": 65.0,
+        "seshat_range": [
+          60,
+          70
+        ],
+        "n": 6,
+        "notes": "MilTech 23.2-24.8, large levied armies, elephant warfare, less professional than Ottoman/Mughal"
+      },
+      "epistemicHealth": {
+        "seshat_mean": 95.0,
+        "seshat_range": [
+          92,
+          99
+        ],
+        "n": 6,
+        "notes": "Info=0.92-0.99, Sanskrit literary tradition, extensive inscriptions"
+      },
+      "urbanization": {
+        "seshat_mean": 82.0,
+        "seshat_range": [
+          70,
+          85
+        ],
+        "n": 6,
+        "notes": "Cap=5.0-5.94, Angkor one of largest pre-industrial urban areas globally"
+      },
+      "stateCapacity": {
+        "seshat_mean": 55.0,
+        "seshat_range": [
+          50,
+          58
+        ],
+        "n": 6,
+        "notes": "Hier=5.33-5.67, SPC=6.9-7.06; hydraulic state, fewer administrative levels than empires"
+      },
+      "infrastructureLevel": {
+        "seshat_mean": 88.0,
+        "seshat_range": [
+          80,
+          92
+        ],
+        "n": 6,
+        "notes": "Infra=0.80-0.92, massive hydraulic infrastructure (barays, canals)"
+      },
+      "economicComplexity": {
+        "seshat_mean": 55.0,
+        "seshat_range": [
+          50,
+          60
+        ],
+        "n": 6,
+        "notes": "Money=0.5-0.67, less monetized economy than contemporary empires"
+      }
+    }
+  }
+}

@@ -26,13 +26,46 @@ class SimulationEngine {
     this.activeWars = [];
   }
 
+  // ── Cleavage-Adjusted Fractionalization ────────────────────────
+  // Dunning & Harrison 2010: cross-cutting cleavages reduce discrimination
+  // by 35-50%. Gubler & Selway 2012: cross-cutting cleavages reduce civil
+  // war risk by 60%. Selway 2011: developed cross-cuttingness index for 122
+  // countries. Horowitz 1985: reinforcing cleavages amplify ethnic conflict.
+  //
+  // When identity dimensions (ethnicity, class, religion, region) crosscut,
+  // political coalitions must bridge group lines, dampening negative effects.
+  // When they reinforce (ethnicity = class = region), all divisions point
+  // the same direction and amplify each other.
+  //
+  // cleavageCrosscutting: 0 = fully reinforcing, 50 = neutral (default,
+  //   preserves existing calibration), 100 = fully crosscutting.
+  // Returns adjusted fractionalization value on 0-100 scale.
+  _effectiveFractionalization(civ) {
+    const raw = civ.state.ethnicFractionalization ?? 0;
+    const crosscut = civ.state.cleavageCrosscutting ?? 50;
+    // At 50 (default): modifier = 1.0 (no change)
+    // At 0 (reinforcing): modifier = 1.3 (amplified)
+    // At 100 (crosscutting): modifier = 0.5 (dampened)
+    const modifier = 1.0 + 0.6 * (50 - crosscut) / 100;
+    return Utils.clamp(raw * modifier, 0, 100);
+  }
+
   // ── Main Turn Processor ───────────────────────────────────────
   processTurn() {
     const { civilizations, map, currentYear, yearsDelta } = this.game;
 
     // 1. Process each civilization
+    const companion = this.game.companion;
     for (const civ of civilizations) {
       const tiles = map.getTilesForCiv(civ.id);
+
+      // Snapshot initial education quality for structural ceiling
+      if (civ.state._baseEducationQuality === undefined) {
+        civ.state._baseEducationQuality = civ.state.educationQuality ?? 50;
+      }
+
+      // Companion pre-turn snapshot (captures state before civ-sim modifies it)
+      if (companion?.isActive) companion.capturePreTurnSnapshot(civ);
 
       // Core civ turn
       civ.processTurn(yearsDelta, tiles, civilizations);
@@ -68,7 +101,9 @@ class SimulationEngine {
       this._processDualEconomy(civ);           // Bottom-up economic restructuring
       this._processSocialTrust(civ);
       this._processStateCapacity(civ);
+      this._processEnergyDecentralization(civ);   // Pass 10: energy production structure
       this._processEnergy(civ);
+      this._processEconomicEnvironmentalImpact(civ);
       this._processCarryingCapacity(civ);
       this._processInfrastructure(civ);
       this._processAnomie(civ);
@@ -76,6 +111,7 @@ class SimulationEngine {
       this._processUrbanization(civ);
       this._processMilitaryCivilianBalance(civ);
       this._processLegitimacy(civ);
+      this._processAgricultureDecentralization(civ); // Pass 10: agricultural production structure
       this._processFoodSecurity(civ);
       this._processCollectiveTrauma(civ);
       // Round 14: Tier 3 per-turn systems
@@ -90,9 +126,11 @@ class SimulationEngine {
       this._processReproductiveHealth(civ);
       this._processWomensRights(civ);
       this._processScience(civ);
+      this._processInnovation(civ);
       this._processSpaceProgram(civ);            // Feature 6: space program prestige
       this._processArts(civ);
       this._processHealthcare(civ);
+      this._processResourceMediation(civ);
       this._processResourceStrategy(civ);
       this._processInformationEcosystem(civ);
       this._processMediaEcosystem(civ);          // Feature 3: media/press freedom
@@ -117,6 +155,11 @@ class SimulationEngine {
       this._processCulturalHomogeneity(civ);
       this._processSchismRisk(civ);              // Feature 7: religious/ideological schism
 
+      // Planned economy stagnation (must run before natural economic forces)
+      this._processPlannedEconomyDynamics(civ);
+      // Developmental state capacity building (Johnson 1982, Amsden 1989, Evans 1995)
+      this._processDevelopmentalStateDynamics(civ);
+
       // Advanced systems: pandemic risk, disinformation, AI disruption
       this._processPandemicRisk(civ);
       this._processDisinformation(civ);
@@ -125,22 +168,46 @@ class SimulationEngine {
       // Ecological systems: biodiversity and ocean health
       this._processBiodiversity(civ);
       this._processOceanHealth(civ);
+      this._processEnvironmentalSocietyFeedbacks(civ);
       this._processNaturalDisasterRisk(civ);     // Feature 1: earthquakes, tsunamis, volcanoes
       this._processAddictionEpidemic(civ);       // Feature 4: drug/addiction epidemics
 
       // Balance: natural economic forces and recovery (runs last, after all degradation)
       this._processNaturalEconomicForces(civ);
+      this._processAuthoritarianAntiCorruption(civ); // after corruption, before recovery
       this._processStabilityRecovery(civ);
       this._processWellbeingRecovery(civ);
       this._applyResilienceDampening(civ);
+      // Pass 10: both of these must run at the END of the chain.
+      // Run mid-chain, their effects are silently overwritten by the
+      // recovery and dampening systems above.
+      this._processParticipation(civ);      // participation/coercion → wellbeing
+      this._processActiveTravel(civ);       // Pass 11: active travel networks
+      this._processNutritionalHealth(civ);  // diet quality → disease burden
+      this._processEnergyWellbeing(civ);    // energy saturation ceiling
+      this._processAttractorDynamics(civ);  // oligarchic vs egalitarian basin pull
+      // Economic↔governance co-evolution (after attractor dynamics, before enforcement)
+      this._processEconomicGovernancePressure(civ);
+      this._processGovernanceEvolution(civ);
+      this._processEconomicCrisisTransition(civ);
+      this._enforceHierarchyCapFloor(civ);  // must run LAST — after all cap drains
+      this._enforceEduCapCeiling(civ);       // education-based cap ceiling after all growth
+      this._enforceIqFloor(civ);             // IQ floor after all secondary erosion
+      this._enforceTrustBounds(civ);          // trust ceiling/floor after all trust modifications
 
       // Record economic history snapshot (for in-panel charts + Track 2 export)
       this._recordEconomicSnapshot(civ);
       // Record resource history snapshot (for Sustainability Panel)
       this._recordResourceSnapshot(civ);
+      // Record comprehensive trajectory snapshot (for analysis + narrative)
+      this._recordTrajectorySnapshot(civ, yearsDelta);
 
       // Tick alien contact relationship score
       this._tickAlienRelationship(civ);
+
+      // Companion post-turn: temporal corrections, demographics, micro-foundations
+      if (companion?.isActive) companion.processTurn(civ, yearsDelta);
+
     }
 
     // 2. Global warming
@@ -193,6 +260,18 @@ class SimulationEngine {
     for (const civ of civilizations) {
       if (civ.state) {
         if (civ.state.averageWellbeing < 10) civ.state.averageWellbeing = 10;
+        // Post-event rentier stability floor: events can deal -30
+        // stability; hard floor prevents complete collapse for
+        // centralized resource states with coercive apparatus.
+        const resRentPost = (civ.state.resourceRentDependence ?? 0) / 100;
+        if (resRentPost > 0.1) {
+          const hierPost = (civ.governance?.hierarchyLevel ?? 50) / 100;
+          const rentCentPost = hierPost > 0.5 ? Utils.clamp((hierPost - 0.5) * 2.0, 0, 1) : 0;
+          const rentStabMinPost = 22 + resRentPost * 20 + rentCentPost * 6;
+          if ((civ.state.stabilityIndex ?? 70) < rentStabMinPost) {
+            civ.state.stabilityIndex = rentStabMinPost;
+          }
+        }
       }
     }
 
@@ -256,6 +335,31 @@ class SimulationEngine {
         }
       }
     }
+
+    // 12. Final rentier stability enforcement — after all events and
+    // post-catastrophe checks, ensure centralized petrostates maintain
+    // the resource-funded stability minimum.
+    for (const civ of civilizations) {
+      this._enforceRentierStabilityFloor(civ);
+    }
+  }
+
+  // Rentier stability is applied at step 10 but can be undermined by
+  // governance shifts, companion-module corrections, or global systems
+  // that modify stabilityIndex after step 10. This final pass ensures
+  // the empirical invariant holds: centralized petrostates maintain
+  // stability above a resource-funded minimum.
+  _enforceRentierStabilityFloor(civ) {
+    if (!civ.state) return;
+    const resRent = (civ.state.resourceRentDependence ?? 0) / 100;
+    if (resRent <= 0.1) return;
+    const hier = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    const rentCent = hier > 0.5 ? Utils.clamp((hier - 0.5) * 2.0, 0, 1) : 0;
+    if (rentCent <= 0) return;
+    const floor = 22 + resRent * 20 + rentCent * 6;
+    if (civ.state.stabilityIndex < floor) {
+      civ.state.stabilityIndex = floor;
+    }
   }
 
   // ── Global Warming — Simplified DICE IAM ──────────────────────
@@ -278,12 +382,67 @@ class SimulationEngine {
       totalEmissions += contrib;
     }
 
+    // ── 1b. LAND-USE CARBON FLUX ──────────────────────────────────
+    // IPCC AR6 WG3 Ch7: land use change accounts for ~10% of anthropogenic
+    // CO2 (net ~4.1 GtCO2/yr in 2010-2019). Deforestation releases stored
+    // carbon; reforestation sequesters it. Soil degradation releases carbon
+    // from the world's largest terrestrial carbon pool (Lal 2004: soils hold
+    // ~2500 GtC in top 3m — 2x atmospheric C). Agricultural intensification,
+    // urbanization, and erosion deplete soil carbon stocks.
+    let landUseFlux = 0;
+    if (!this._prevForests) this._prevForests = new Map();
+    if (!this._prevSoil) this._prevSoil = new Map();
+    for (const civ of civilizations) {
+      const forests = civ.state.resourceDepletion?.forests ?? 100;
+      const soil = civ.state.resourceDepletion?.soil ?? 100;
+      const prevF = this._prevForests.get(civ.id) ?? forests;
+      const prevS = this._prevSoil.get(civ.id) ?? soil;
+
+      // Forest change: each point ≈ 1% of territory's forest cover.
+      // Loss releases carbon; gain sequesters (slower — young forests
+      // absorb less than old forests release, Pan et al. 2011).
+      const forestDelta = forests - prevF;
+      if (forestDelta < 0) {
+        landUseFlux += Math.abs(forestDelta) * 0.08; // deforestation release
+      } else {
+        landUseFlux -= forestDelta * 0.04; // reforestation sequestration (slower)
+      }
+
+      // Soil carbon flux: degradation releases, improvement sequesters.
+      // Rate is slower than deforestation but cumulative (Sanderman et al. 2017:
+      // 133 GtC lost from top 2m of world soils since agriculture began).
+      const soilDelta = soil - prevS;
+      if (soilDelta < 0) {
+        landUseFlux += Math.abs(soilDelta) * 0.04;
+      } else {
+        landUseFlux -= soilDelta * 0.02;
+      }
+
+      this._prevForests.set(civ.id, forests);
+      this._prevSoil.set(civ.id, soil);
+    }
+
     // ── 2. ATMOSPHERIC CO2 CONCENTRATION ─────────────────────────
     // Simplified carbon cycle: ~50% airborne fraction (IPCC AR5 Ch6)
     // Natural sinks absorb ~1.5%/decade of excess CO2 (ocean + biosphere)
+    // Land-use flux already accounts for its own airborne fraction.
     const emissionFlux = totalEmissions * 0.5 * timeScale;
-    const naturalSink = this.atmosphericCO2 * 0.015 * timeScale;
-    this.atmosphericCO2 = Math.max(0, this.atmosphericCO2 + emissionFlux - naturalSink);
+    const landFlux = landUseFlux * timeScale;
+    // Natural sink modulated by global forest/soil health (Friedlingstein
+    // et al. 2022: land sink is ~30% of emissions but weakening under stress).
+    // Temperature feedback: Cox et al. 2000 — tropical forests become net
+    // carbon sources above ~3°C warming due to respiration exceeding uptake.
+    let avgForest = 0, avgSoil = 0, nCivs = civilizations.length || 1;
+    for (const civ of civilizations) {
+      avgForest += (civ.state.resourceDepletion?.forests ?? 100);
+      avgSoil += (civ.state.resourceDepletion?.soil ?? 100);
+    }
+    avgForest /= nCivs; avgSoil /= nCivs;
+    const sinkHealth = 0.4 + 0.3 * (avgForest / 100) + 0.3 * (avgSoil / 100);
+    const tempStress = this.surfaceTemp > 2.5
+      ? Math.max(0.5, 1.0 - (this.surfaceTemp - 2.5) * 0.1) : 1.0;
+    const naturalSink = this.atmosphericCO2 * 0.015 * sinkHealth * tempStress * timeScale;
+    this.atmosphericCO2 = Math.max(0, this.atmosphericCO2 + emissionFlux + landFlux - naturalSink);
 
     // Cooperative mitigation: carbon capture analog (post-2000, high cooperation)
     const avgCooperation = this._getWorldAverageCooperation();
@@ -381,7 +540,10 @@ class SimulationEngine {
         // NOT governance-dependent: high-trust societies adapt better regardless of model
         // Real-world: Japan (high trust, rapid disaster response), Cuba (strong community
         // networks, effective hurricane prep despite authoritarian governance)
-        const cohesion = civ.state.socialCohesion ?? 50;
+        // socialCohesion does not exist on state; the field is
+    // culturalHomogeneity.value. The old reference always resolved to
+    // the default 50, so the cohesion dampener below never fired.
+    const cohesion = civ.state.culturalHomogeneity?.value ?? 50;
         if (cohesion > 60) wellbeingImpact *= 0.7 + (100 - cohesion) / 100 * 0.3;
 
         // State capacity enables adaptation infrastructure
@@ -898,15 +1060,68 @@ class SimulationEngine {
     rel1.attitude = Utils.clamp(rel1.attitude, -100, 100);
     rel2.attitude = Utils.clamp(rel2.attitude, -100, 100);
 
-    // Trade
+    // Trade gate (attitude-driven)
     const avgAttitude = (rel1.attitude + rel2.attitude) / 2;
     if (avgAttitude > 50 && !rel1.war) {
       rel1.trade = rel2.trade = true;
-      // Trade boosts knowledge
       c1.state.resourceStores.knowledge += 0.5;
       c2.state.resourceStores.knowledge += 0.5;
     } else if (avgAttitude < 20) {
       rel1.trade = rel2.trade = false;
+    }
+
+    // ── Bilateral trade intensity ────────────────────────────────
+    // Gravity model (Tinbergen 1962): trade ∝ (size₁ × size₂) / friction
+    // Augmented with geographic capacity and economic complementarity.
+    if (rel1.tradeIntensity == null) rel1.tradeIntensity = 0;
+    if (rel2.tradeIntensity == null) rel2.tradeIntensity = 0;
+    const timeScale = yearsDelta / 10;
+
+    if (rel1.trade && !rel1.war) {
+      const pop1 = (c1.state?.population ?? 1000) / 1000;
+      const pop2 = (c2.state?.population ?? 1000) / 1000;
+      const gravityBase = Math.sqrt(pop1 * pop2) * 0.5;
+
+      // Geographic capacity: maritime trade historically dwarfed overland
+      const ocean1 = c1.geography?.oceanAccess;
+      const ocean2 = c2.geography?.oceanAccess;
+      const bothCoastal = (ocean1 === true || ocean1 === 'island') &&
+                          (ocean2 === true || ocean2 === 'island');
+      const eitherCoastal = (ocean1 === true || ocean1 === 'island') ||
+                            (ocean2 === true || ocean2 === 'island');
+      const geoBonus = bothCoastal ? 2.0 : eitherCoastal ? 1.3 : 0.7;
+
+      // Complementarity: different production profiles trade more
+      const urban1 = (c1.state?.urbanizationRate ?? 15) / 100;
+      const urban2 = (c2.state?.urbanizationRate ?? 15) / 100;
+      const scarcity1 = (c1.economic?.scarcityOrientation ?? 50) / 100;
+      const scarcity2 = (c2.economic?.scarcityOrientation ?? 50) / 100;
+      const profileDiff = Math.abs(urban1 - urban2) + Math.abs(scarcity1 - scarcity2) * 0.5;
+      const complementarity = 1.0 + profileDiff;
+
+      // Tariff friction (bilateral — both sides matter)
+      const tariff1 = (c1.state?.tariffLevel ?? 30) / 100;
+      const tariff2 = (c2.state?.tariffLevel ?? 30) / 100;
+      const tariffFriction = 1.0 - (tariff1 + tariff2) * 0.35;
+
+      // Treaty bonus
+      const hasTreaty = rel1.treaty?.type === 'trade_agreement' ||
+                        rel1.treaty?.type === 'alliance';
+      const treatyBonus = hasTreaty ? 1.4 : 1.0;
+
+      // Target intensity for this pair
+      const target = Utils.clamp(
+        gravityBase * geoBonus * complementarity * tariffFriction * treatyBonus * 15,
+        0, 100);
+
+      // Move toward target (slow adjustment — trade relationships build gradually)
+      const adjust = (target - rel1.tradeIntensity) * 0.15 * timeScale;
+      rel1.tradeIntensity = Utils.clamp(rel1.tradeIntensity + adjust, 0, 100);
+      rel2.tradeIntensity = rel1.tradeIntensity;
+    } else {
+      // No trade: intensity decays
+      rel1.tradeIntensity = Utils.clamp(rel1.tradeIntensity - 3 * timeScale, 0, 100);
+      rel2.tradeIntensity = rel1.tradeIntensity;
     }
 
     // Religion spread between civs
@@ -1205,9 +1420,11 @@ class SimulationEngine {
 
       // ── Corruption Crisis ────────────────────────────────────
       if (corruption > 60 && randCheck(0.20)) {
-        const mechanism = govId === 'autocratic' || govId === 'oligarchy'
+        const corrPowerConc = civ.governance?.powerConcentration ?? 50;
+        const corrRelDom = civ.religion?.dominance ?? 0;
+        const mechanism = corrPowerConc > 65
           ? `concentrated power has created conditions where those in authority extract resources with limited accountability`
-          : govId === 'theocratic'
+          : corrRelDom > 60
             ? `religious authority has been used to redirect communal resources toward institutional interests`
             : `the gap between formal rules and actual practice has widened as individuals exploit institutional weaknesses`;
         const cost = isGift
@@ -2093,26 +2310,34 @@ class SimulationEngine {
       }
 
       // ── Revolution Check ─────────────────────────────────────
-      // Failed state: revolution is impossible (nothing to overthrow)
+      // When the companion module is active, its MicroFoundationEngine
+      // handles regime transitions with richer pressure/threshold logic.
+      // These legacy checks serve as a fallback when the companion is off.
+      const companionHandlesTransitions = !!this.game.companion?.isActive;
+
       const isShadowGov = govId === 'shadow_government_complicit' || govId === 'shadow_government_covert';
       const isFailedState = govId === 'failed_state';
-      // Shadow govs suppress revolution probability significantly
-      const shadowRevSuppression = isShadowGov
-        ? (govId === 'shadow_government_complicit' ? 0.4 : 0.6)  // complicit suppresses more
-        : 1.0;
 
-      // Democratic revolution: very low wellbeing + high power concentration + low equality + instability
-      if (!isFailedState && wellbeing < 16 && powerConc > 68 && equality < 28 && stability < 40 && randCheck(0.08 * shadowRevSuppression)) {
-        const recentRevolution = civ.history.slice(-10).some(h => h.type === 'revolution');
-        if (!recentRevolution) {
-          events.push({ title: '_REVOLUTION_DEMOCRATIC', type: '_internal_trigger' });
+      if (!companionHandlesTransitions) {
+        const shadowRevSuppression = isShadowGov
+          ? (govId === 'shadow_government_complicit' ? 0.4 : 0.6)
+          : 1.0;
+        const resRentRev = (civ.state.resourceRentDependence ?? 0) / 100;
+        const hierRev = (civ.governance?.hierarchyLevel ?? 50) / 100;
+        const rentRevSuppress = resRentRev > 0.1
+          ? Math.max(0.05, 1.0 - resRentRev * hierRev * 1.5)
+          : 1.0;
+        if (!isFailedState && wellbeing < 16 && powerConc > 68 && equality < 28 && stability < 40 && randCheck(0.08 * shadowRevSuppression * rentRevSuppress)) {
+          const recentRevolution = civ.history.slice(-10).some(h => h.type === 'revolution');
+          if (!recentRevolution) {
+            events.push({ title: '_REVOLUTION_DEMOCRATIC', type: '_internal_trigger' });
+          }
         }
-      }
-      // Authoritarian seizure: instability + weakness + no existing autocracy
-      if (!isFailedState && stability < 20 && wellbeing < 25 && govId !== 'autocratic' && randCheck(0.06 * shadowRevSuppression)) {
-        const recentRevolution = civ.history.slice(-10).some(h => h.type === 'revolution');
-        if (!recentRevolution) {
-          events.push({ title: '_REVOLUTION_AUTHORITARIAN', type: '_internal_trigger' });
+        if (!isFailedState && stability < 20 && wellbeing < 25 && randCheck(0.06 * shadowRevSuppression * rentRevSuppress)) {
+          const recentRevolution = civ.history.slice(-10).some(h => h.type === 'revolution');
+          if (!recentRevolution) {
+            events.push({ title: '_REVOLUTION_AUTHORITARIAN', type: '_internal_trigger' });
+          }
         }
       }
 
@@ -2333,19 +2558,28 @@ class SimulationEngine {
       const tradeOpenness  = 1 - ((civ.state.tariffLevel ?? 50) / 100); // 0=closed, 1=open
 
       // Check if any trading partner has adopted each tech (imitation effect)
-      const partnerTechs = new Set();
+      // Track per-tech best trade intensity for graduated diffusion
+      const partnerTechIntensity = new Map();
       if (civ.relations) {
         for (const [otherId, rel] of civ.relations) {
           if (rel.trade) {
             const other = this.game.civilizations.find(c => c.id === otherId);
             if (other) {
+              const intensity = rel.tradeIntensity ?? 0;
               for (const t of (other.state.adoptedTechnologies ?? [])) {
-                partnerTechs.add(t);
+                const prev = partnerTechIntensity.get(t) ?? 0;
+                if (intensity > prev) partnerTechIntensity.set(t, intensity);
               }
             }
           }
         }
       }
+
+      // Outsider relationship modulates openness to external knowledge
+      const outsiderRel = civ.operatingPrinciples?.outsiderRelationship ?? 'trading';
+      const opennessMult = ({
+        welcoming: 1.3, trading: 1.0, isolationist: 0.3, aggressive: 0.7,
+      })[outsiderRel] ?? 1.0;
 
       for (const tech of availableTechs) {
         const techEra = ERAS.find(e => e.id === tech.era);
@@ -2370,8 +2604,14 @@ class SimulationEngine {
         const energyMult = energyPenalty; // 0.2 – 1.0
 
         // Trade imitation effect (Bass "imitation coefficient")
-        // If a trading partner already has this tech, pressure accelerates
-        const imitationBonus = partnerTechs.has(tech.name) ? (1.0 + tradeOpenness * 0.5) : 1.0;
+        // Scaled by bilateral trade intensity — strong trading partners
+        // transfer knowledge faster than weak ones. Outsider relationship
+        // modulates willingness to adopt foreign innovations.
+        const bestIntensity = partnerTechIntensity.get(tech.name) ?? 0;
+        const intensityFactor = bestIntensity > 0 ? (0.5 + (bestIntensity / 100) * 0.5) : 0;
+        const imitationBonus = bestIntensity > 0
+          ? (1.0 + intensityFactor * tradeOpenness * opennessMult * 0.6)
+          : 1.0;
 
         // Value resistance (theocracies, power structures, eco values)
         const resistanceMult = this._techResistanceFactor(civ, tech);
@@ -2639,7 +2879,7 @@ class SimulationEngine {
         this.game.ui?.showNotification(`${civ.name}: Social trust raised to ${Math.round(civ.state.socialTrust)}`, 'info');
         continue;
       } else if (event.type === 'anti_corruption_campaign') {
-        const corr = civ.state.corruptionLevel ?? 0;
+        const corr = civ.state.corruptionLevel ?? civ.governance?.corruptionLevel ?? 0;
         const reduction = Math.min(corr, 8);
         civ.state.corruptionLevel = Math.max(0, corr - reduction);
         civ.state.socialTrust = Utils.clamp((civ.state.socialTrust ?? 50) + 3, 0, 100);
@@ -2964,6 +3204,163 @@ class SimulationEngine {
         civ.addHistoryEntry(hcIYr, `❤️ HC Incentive: ${hcI?.label ?? civ.state.healthcareIncentive}`,
           `Healthcare incentive model set to ${hcI?.label ?? civ.state.healthcareIncentive}.`, 'set_healthcare_incentive');
         this.game.ui?.showNotification(`❤️ ${civ.name}: HC incentive → ${hcI?.label ?? civ.state.healthcareIncentive}`, 'info');
+        continue;
+      // ── Pass 10: Production Decentralization (player-triggered) ──
+      } else if (event.type === 'set_energy_pathway') {
+        const pid = event.pathway ?? 'none';
+        const pw = DECENTRALIZATION_PATHWAYS[pid];
+        if (pw && civ.state.energySystem) {
+          civ.state.energySystem.pathway = pid;
+          const yr = this.game?.currentYear ?? 0;
+          civ.addHistoryEntry(yr, `${pw.icon} Energy Pathway: ${pw.label}`,
+            `${pw.description}${pw.anchor ? ` (Historical anchor: ${pw.anchor})` : ''}`,
+            'set_energy_pathway');
+          this.game.ui?.showNotification(`${pw.icon} ${civ.name}: Energy pathway → ${pw.label}`, 'info');
+        }
+        continue;
+      } else if (event.type === 'set_mobility_pathway') {
+        const pid = event.pathway ?? 'none';
+        const pw = DECENTRALIZATION_PATHWAYS[pid];
+        if (pw && civ.state.activeTravel) {
+          civ.state.activeTravel.pathway = pid;
+          const yr = this.game?.currentYear ?? 0;
+          civ.addHistoryEntry(yr, `${pw.icon} Mobility Pathway: ${pw.label}`,
+            `${pw.description}`, 'set_mobility_pathway');
+          this.game.ui?.showNotification(`${pw.icon} ${civ.name}: Mobility pathway → ${pw.label}`, 'info');
+        }
+        continue;
+      } else if (event.type === 'set_agriculture_pathway') {
+        const pid = event.pathway ?? 'none';
+        const pw = DECENTRALIZATION_PATHWAYS[pid];
+        if (pw && civ.state.agricultureSystem) {
+          civ.state.agricultureSystem.pathway = pid;
+          const yr = this.game?.currentYear ?? 0;
+          civ.addHistoryEntry(yr, `${pw.icon} Agricultural Pathway: ${pw.label}`,
+            `${pw.description}${pw.anchor ? ` (Historical anchor: ${pw.anchor})` : ''}`,
+            'set_agriculture_pathway');
+          this.game.ui?.showNotification(`${pw.icon} ${civ.name}: Agricultural pathway → ${pw.label}`, 'info');
+        }
+        continue;
+      } else if (event.type === 'promote_diversification') {
+        const ag = civ.state.agricultureSystem;
+        if (ag) {
+          const cap = civ.state.stateCapacity ?? 50;
+          const edu = civ.state.educationQuality ?? 50;
+          // Diversification requires knowledge transfer, not just decree
+          const gain = Math.round(8 * (0.4 + 0.6 * (edu / 100)) * Math.max(0.5, Math.min(1.4, cap / 50)));
+          ag.diversificationIntensity = Utils.clamp(ag.diversificationIntensity + gain, 0, 100);
+          const newLer = lerFromIntensity(ag.diversificationIntensity);
+          const yr = this.game?.currentYear ?? 0;
+          civ.addHistoryEntry(yr, '🌱 Diversification Programme',
+            `Extension services promote intercropping, rotation and agroforestry. Diversification +${gain} (now ${Math.round(ag.diversificationIntensity)}). Land Equivalent Ratio approaching ${newLer.toFixed(2)}. Labor demand rises.`,
+            'promote_diversification');
+          this.game.ui?.showNotification(`🌱 ${civ.name}: Diversification +${gain} (LER ~${newLer.toFixed(2)})`, 'success');
+        }
+        continue;
+      } else if (event.type === 'promote_monoculture') {
+        const ag = civ.state.agricultureSystem;
+        if (ag) {
+          const cap = civ.state.stateCapacity ?? 50;
+          const drop = Math.round(10 * Math.max(0.5, Math.min(1.4, cap / 50)));
+          ag.diversificationIntensity = Utils.clamp(ag.diversificationIntensity - drop, 0, 100);
+          const yr = this.game?.currentYear ?? 0;
+          civ.addHistoryEntry(yr, '🚜 Specialization Programme',
+            `Production consolidates around a few high-output crops. Diversification −${drop}. Labor demand falls and workers are released toward cities; yield variance rises.`,
+            'promote_monoculture');
+          this.game.ui?.showNotification(`🚜 ${civ.name}: Specialization — diversification −${drop}`, 'info');
+        }
+        continue;
+      } else if (event.type === 'build_active_network') {
+        const at = civ.state.activeTravel;
+        if (at) {
+          const cap = civ.state.stateCapacity ?? 50;
+          const infra = civ.state.infrastructureLevel ?? 40;
+          const f = Math.max(0.4, Math.min(1.4, (cap * 0.6 + infra * 0.4) / 50));
+          const covGain = Math.round(12 * f);
+          const contGain = Math.round(10 * f);
+          at.networkCoverage = Utils.clamp(at.networkCoverage + covGain, 0, 100);
+          at.networkContinuity = Utils.clamp(at.networkContinuity + contGain, 0, 100);
+          const yr = this.game?.currentYear ?? 0;
+          civ.addHistoryEntry(yr, '🚶 Path Network Construction',
+            `Segregated paths built connecting residential areas to local destinations. Coverage +${covGain}, continuity +${contGain}. Seville raised cycling from 0.5% to about 6.5% with a continuous 80km network — continuity mattered more than length.`,
+            'build_active_network');
+          this.game.ui?.showNotification(`🚶 ${civ.name}: Path network +${covGain} coverage`, 'success');
+        }
+        continue;
+      } else if (event.type === 'integrate_transit') {
+        const at = civ.state.activeTravel;
+        if (at) {
+          const cap = civ.state.stateCapacity ?? 50;
+          const gain = Math.round(14 * Math.max(0.4, Math.min(1.4, cap / 50)));
+          at.transitIntegration = Utils.clamp(at.transitIntegration + gain, 0, 100);
+          const yr = this.game?.currentYear ?? 0;
+          civ.addHistoryEntry(yr, '🚉 Transit Integration',
+            `Secure cycle parking and direct path connections built at transit nodes. Integration +${gain}. In the Netherlands the bicycle is the access mode for roughly 47% of rail passengers — this is what lets local networks serve a large metropolis despite the ~5km limit on cycling trips.`,
+            'integrate_transit');
+          this.game.ui?.showNotification(`🚉 ${civ.name}: Transit integration +${gain}`, 'success');
+        }
+        continue;
+      } else if (event.type === 'improve_path_safety') {
+        const at = civ.state.activeTravel;
+        if (at) {
+          const cap = civ.state.stateCapacity ?? 50;
+          const f = Math.max(0.4, Math.min(1.4, cap / 50));
+          const lg = Math.round(12 * f), pt = Math.round(10 * f), am = Math.round(8 * f);
+          at.lightingLevel = Utils.clamp(at.lightingLevel + lg, 0, 100);
+          at.patrolIntensity = Utils.clamp(at.patrolIntensity + pt, 0, 100);
+          at.amenityLevel = Utils.clamp(at.amenityLevel + am, 0, 100);
+          const yr = this.game?.currentYear ?? 0;
+          civ.addHistoryEntry(yr, '💡 Path Safety Programme',
+            `Lighting +${lg}, patrols +${pt}, rest areas and facilities +${am}. Lighting reduces crime about 14%; focused patrols reduce it further and the benefit diffuses to surrounding areas rather than displacing crime there. This addresses the barrier that keeps women off the network — a barrier protected paths alone do not touch.`,
+            'improve_path_safety');
+          this.game.ui?.showNotification(`💡 ${civ.name}: Path safety improved`, 'success');
+        }
+        continue;
+      } else if (event.type === 'balance_jobs_housing') {
+        const at = civ.state.activeTravel;
+        if (at) {
+          const cap = civ.state.stateCapacity ?? 50;
+          const gain = Math.round(10 * Math.max(0.4, Math.min(1.4, cap / 50)));
+          at.jobsHousingBalance = Utils.clamp(at.jobsHousingBalance + gain, 0, 100);
+          const yr = this.game?.currentYear ?? 0;
+          civ.addHistoryEntry(yr, '🏘️ Jobs–Housing Rebalancing',
+            `Employment and housing brought closer together within each local centre. Balance +${gain}. Polycentric form does not reduce travel by itself: decentralizing people while centralizing work makes matters worse. Balance is the gate.`,
+            'balance_jobs_housing');
+          this.game.ui?.showNotification(`🏘️ ${civ.name}: Jobs-housing balance +${gain}`, 'success');
+        }
+        continue;
+      } else if (event.type === 'fund_enabling_support') {
+        const dom = event.domain === 'energy' ? 'energySystem'
+                  : event.domain === 'mobility' ? 'activeTravel' : 'agricultureSystem';
+        const sys = civ.state[dom];
+        if (sys) {
+          const cap = civ.state.stateCapacity ?? 50;
+          const gain = Math.round(15 * Math.max(0.4, Math.min(1.4, cap / 50)));
+          sys.enablingSupport = Utils.clamp((sys.enablingSupport ?? 0) + gain, 0, 100);
+          const capture = Math.round(ENABLING_SUPPORT.eliteCaptureWeight *
+            (((civ.state.landConcentration ?? 30) * 0.5
+              + (100 - (civ.state.institutionalQuality ?? 50)) * 0.5)));
+          const yr = this.game?.currentYear ?? 0;
+          const label = event.domain === 'energy' ? 'Energy' : 'Agricultural';
+          civ.addHistoryEntry(yr, `🎓 ${label} Support Programme`,
+            `Equipment and material access, training, expert consultation, tax relief and reimbursement of household costs. Support +${gain} (now ${Math.round(sys.enablingSupport)}). ${capture > 30 ? `Warning: land concentration and weak institutions mean roughly ${capture}% of the benefit is captured by those who least need it.` : 'Targeting is reasonably effective.'} Ongoing fiscal cost applies.`,
+            'fund_enabling_support');
+          this.game.ui?.showNotification(`🎓 ${civ.name}: ${label} support +${gain}`, 'success');
+        }
+        continue;
+      } else if (event.type === 'reduce_enabling_support') {
+        const dom2 = event.domain === 'energy' ? 'energySystem'
+                   : event.domain === 'mobility' ? 'activeTravel' : 'agricultureSystem';
+        const sys2 = civ.state[dom2];
+        if (sys2) {
+          const drop = 20;
+          sys2.enablingSupport = Utils.clamp((sys2.enablingSupport ?? 0) - drop, 0, 100);
+          const yr2 = this.game?.currentYear ?? 0;
+          civ.addHistoryEntry(yr2, '✂️ Support Programme Cut',
+            `Training, material access and reimbursement scaled back. Support −${drop}. Fiscal relief is immediate; knowledge-dependent practices will decay without follow-up.`,
+            'reduce_enabling_support');
+          this.game.ui?.showNotification(`✂️ ${civ.name}: support −${drop}`, 'info');
+        }
         continue;
       // ── Environmental Policy Actions (player-triggered) ──────
       } else if (event.type === 'reforestation_program') {
@@ -4324,9 +4721,16 @@ class SimulationEngine {
       (civ.state.equalityIndex ?? 50) + tier.equalityBonus * 0.5 * timeScale, 0, 100);
 
     // ── State capacity: education builds bureaucratic competence ──
+    // Fukuyama (2011): educated populations CAN build state capacity,
+    // but corruption diverts human capital into rent-seeking rather than
+    // governance improvement. Russia has world-class STEM education but
+    // cap≈40 because trained administrators face perverse incentives.
+    // Singapore has similar education AND low corruption → cap≈92.
     if (quality > 0.6) {
+      const corrLvl = civ.state.corruptionLevel ?? 50;
+      const corrDamp = Math.max(0.15, 1 - corrLvl / 80);
       civ.state.stateCapacity = Utils.clamp(
-        (civ.state.stateCapacity ?? 50) + 0.2 * timeScale, 0, 100);
+        (civ.state.stateCapacity ?? 50) + 0.2 * corrDamp * timeScale, 0, 100);
     }
 
     // ── Epistemic health: critical thinking from quality education ──
@@ -4340,6 +4744,86 @@ class SimulationEngine {
     if (hcm > 0.6 && quality < 0.3) {
       civ.state.anomieLevel = Utils.clamp(
         (civ.state.anomieLevel ?? 0) + 0.2 * timeScale, 0, 100); // educated unemployment
+    }
+
+    // ── Economic pressure on education (Psacharopoulos & Patrinos 2018) ──
+    // In high-scarcity economies with extreme inequality, financial
+    // pressure forces potential students into the workforce prematurely.
+    // Child labor, opportunity cost of schooling, and inability to afford
+    // materials/transport degrade effective education quality. Effect
+    // scales with both scarcity and inequality — rich unequal societies
+    // (high WC, low scarcity) don't see this because elites still educate;
+    // poor equal societies (high scarcity, low WC) share the burden.
+    const scarcity = (civ.economic?.scarcityOrientation ?? 50) / 100;
+    const wealthConc = (civ.economic?.wealthConcentration ?? 40) / 100;
+    if (scarcity > 0.5 && wealthConc > 0.5) {
+      const econPressure = (scarcity - 0.5) * (wealthConc - 0.5) * 4;
+      // Rentier dampening (Beblawi 1990, Herb 2005): in rentier states,
+      // wealth concentration reflects the rent economy's structure, not
+      // failure to fund public goods. The state IS the wealth concentrator
+      // AND the education funder — Saudi spends ~25% of national budget
+      // on education directly from rents. High hierarchy means centralized
+      // allocation can direct rents to education without legislative gridlock.
+      const rentEduDep = (civ.state.resourceRentDependence ?? 0) / 100;
+      const hierEduDamp = (civ.governance?.hierarchyLevel ?? 50) / 100;
+      const hierCentEduDamp = hierEduDamp > 0.5 ? Utils.clamp((hierEduDamp - 0.5) * 2.0, 0, 1) : 0;
+      const rentEduDamp = rentEduDep > 0.1
+        ? Utils.clamp(1.0 - rentEduDep * hierCentEduDamp * 0.8, 0.2, 1.0)
+        : 1.0;
+      civ.state.educationQuality = Utils.clamp(
+        (civ.state.educationQuality ?? 50) - 0.04 * econPressure * rentEduDamp * timeScale, 0, 100);
+    }
+
+    // ── Resource-rent education investment ──────────────────────────
+    // Petrostates reinvest resource revenue into education infrastructure:
+    // Saudi KASP (200k+ scholarship students abroad), KAUST ($20B endowment),
+    // Qatar Foundation/Education City, UAE Knowledge Village, Botswana's
+    // diamond-funded universal education (~10% of GDP on education).
+    // Effect: creates a resource-funded education floor that counteracts
+    // brain drain. Scales with state capacity (well-governed states deploy
+    // education spending more effectively).
+    const rentDep = (civ.state.resourceRentDependence ?? 0) / 100;
+    const capVal = civ.state.stateCapacity ?? 50;
+    if (rentDep > 0.1) {
+      // Hierarchy scaling: centralized petrostates direct larger shares of
+      // rent to education (Saudi ~25% of budget, Qatar Foundation, UAE
+      // Knowledge Village). Decentralized/patronage states dissipate more
+      // through clientelist networks (Nigeria, Iraq).
+      const hierEduTgt = (civ.governance?.hierarchyLevel ?? 50) / 100;
+      const hierCentEduTgt = hierEduTgt > 0.5 ? Utils.clamp((hierEduTgt - 0.5) * 2.0, 0, 1) : 0;
+      const rentEdTarget = rentDep * capVal * 0.5 + rentDep * hierCentEduTgt * 25;
+      const educQ = civ.state.educationQuality ?? 50;
+      if (educQ < rentEdTarget) {
+        civ.state.educationQuality = Utils.clamp(
+          educQ + (rentEdTarget - educQ) * 0.15 * timeScale, 0, 100);
+      }
+    }
+
+    // ── Development-driven education growth (Barro & Lee 2013) ──
+    // State capacity and institutional quality enable education investment.
+    // Higher-tier access policies sustain growth at higher levels.
+    // Growth rate modulated by capacity (implementation) and stability
+    // (long-term planning horizon for school construction, teacher training).
+    const tierCeilings = { universal: 90, universal_lower: 75, free_basic_expensive_higher: 55, limited: 35 };
+    const eduCeiling = tierCeilings[tierId] ?? 50;
+    const curEdu = civ.state.educationQuality ?? 50;
+    if (curEdu < eduCeiling) {
+      const capFactor = (capVal / 100) * 0.6 + 0.4;
+      const stabilFactor = Math.max(0.3, (civ.state.stabilityIndex ?? 50) / 100);
+      const gap = eduCeiling - curEdu;
+      const growthRate = gap * 0.04 * capFactor * stabilFactor;
+      civ.state.educationQuality = Utils.clamp(
+        curEdu + growthRate * timeScale, 0, 100);
+    }
+
+    // Education persistence floor (Benavot & Riddle 1988)
+    const tierFloors = { universal: 30, universal_lower: 20, free_basic_expensive_higher: 12, limited: 5 };
+    const tierBase = tierFloors[tierId] ?? 10;
+    const eduFloor = Math.min(tierBase + capVal * 0.15, 70);
+    const updEdu = civ.state.educationQuality ?? 50;
+    if (updEdu < eduFloor) {
+      civ.state.educationQuality = Utils.clamp(
+        updEdu + (eduFloor - updEdu) * 0.30 * timeScale, 0, 100);
     }
   }
 
@@ -4380,7 +4864,22 @@ class SimulationEngine {
 
     // Education: female education is transformative (Sen 1999)
     if (educQ > 60) gei += 0.5 * ceilingDamp * timeScale;
-    else if (educQ < 25) gei -= 0.3 * timeScale;
+
+    // Detect developmental state for gender equity policy
+    const hierGE = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    const infoEcoGE = civ.state.informationEcosystem ?? 'free_market_media';
+    const ecoModelGE = civ.economic?.modelId ?? '';
+    const innovTolGE = (civ.state.innovationTolerance ?? 50) / 100;
+    const isExtractiveGE = (infoEcoGE === 'total_information_control' && ecoModelGE === 'planned')
+                        || (infoEcoGE === 'total_information_control' && innovTolGE < 0.25);
+    const isDevGE = !isExtractiveGE && (
+      (hierGE > 0.55 && educQ > 25) ||
+      (hierGE > 0.70 && educQ > 10)
+    );
+
+    // Low education suppresses equity — but developmental states can
+    // override through mandates (Rwanda quotas, Korea workforce programs)
+    if (educQ < 25) gei -= (isDevGE ? 0.1 : 0.3) * timeScale;
 
     // ── Institutional support (policy channel) ──────────────────
     if (iq > 60) gei += 0.3 * ceilingDamp * timeScale; // Legal frameworks, enforcement
@@ -4394,20 +4893,40 @@ class SimulationEngine {
     const caste = civ.state.casteRigidity ?? 15;
     if (caste > 40) gei -= 0.3 * (caste / 100) * timeScale;
 
-    // Patriarchal inertia: restrictive tiers resist equity growth (Fix R3-3b)
-    const wrTierGE = civ.state.womensRightsTier ?? 'mostly_full';
-    if (wrTierGE === 'forbidden' || wrTierGE === 'minimal') {
-      if (gei > 10) gei -= 0.3 * timeScale;
+    // ── Deliberate equity policy by developmental states ──
+    // Rwanda mandated 30% female parliament (2003 constitution), now 61%.
+    // Korea's workforce integration programs, Ethiopia's constitutional
+    // reforms. Developmental autocracies push equity through top-down
+    // policy even with low initial education/development.
+    const capGE = civ.state.stateCapacity ?? 50;
+    if (isDevGE && capGE > 15) {
+      const capFactor = Math.min(1.0, capGE / 40);
+      const policyPush = capFactor * hierGE * 3.0;
+      gei += policyPush * ceilingDamp * timeScale;
     }
 
-    // Women's rights tier gate: hard ceiling based on configured tier (Fix R3-3a)
+    // Patriarchal inertia: restrictive tiers resist equity growth (Fix R3-3b)
+    // Developmental states partially override through institutional mandates
+    const wrTierGE = civ.state.womensRightsTier ?? 'mostly_full';
+    if (wrTierGE === 'forbidden' || wrTierGE === 'minimal') {
+      if (gei > 10) gei -= (isDevGE ? 0.1 : 0.3) * timeScale;
+    }
+
+    // Women's rights tier gate: ceiling based on configured tier (Fix R3-3a)
+    // Developmental state policy can push past the 'minimal' ceiling
+    // when state capacity is high enough (the policy mechanism above adds
+    // growth that can exceed 35, so we raise the effective ceiling).
     const geTierCeilings = {
       'forbidden': 15,
       'minimal': 35,
       'mostly_full': 80,
       'full_parity': 100
     };
-    const geCeiling = geTierCeilings[wrTierGE] ?? 80;
+    let geCeiling = geTierCeilings[wrTierGE] ?? 80;
+    // Developmental states with growing capacity can push 'minimal' ceiling up
+    if (wrTierGE === 'minimal' && isDevGE && capGE > 20) {
+      geCeiling = 35 + Math.max(0, capGE - 20) * 0.5;
+    }
     if (gei > geCeiling) gei = geCeiling;
 
     civ.state.genderEquity = Utils.clamp(gei, 0, 100);
@@ -4455,7 +4974,7 @@ class SimulationEngine {
   _processInstitutions(civ) {
     if (!civ.state) return;
     let iq = civ.state.institutionalQuality ?? 50;
-    const corruption = civ.state.behaviorReinforcement?.acquisitiveness ?? 50;
+    const corruption = civ.state.corruptionLevel ?? 50;
     const stability  = civ.state.stabilityIndex ?? 70;
     const atWar      = this.activeWars.some(w => w.attacker === civ.id || w.defender === civ.id);
     const govId      = civ.governance?.modelId ?? '';
@@ -4464,13 +4983,21 @@ class SimulationEngine {
     const trust      = civ.state.socialTrust ?? 50;
     const education  = civ.state.educationQuality ?? 50;
     const civControl = civ.state.civilianControl ?? 50;
-    const wc         = civ.state.wealthConcentration ?? 40;
+    const wc         = civ.economic?.wealthConcentration ?? 40;
     const ep         = civ.state.epistemicHealth ?? 50;
     const freedom    = civ.operatingPrinciples?.freedomLevel ?? 50;
 
     // Calibrated to V-Dem: +2-5 pts/decade improvement, -5-15 pts/decade decay
     const timeScale = (this.game.yearsDelta || 10) / 10;
-    const isDemocratic = ['representative', 'direct_congress', 'flat_consensus', 'rotating'].includes(govId);
+    const powerConc = civ.governance?.powerConcentration ?? 50;
+
+    // Oligarchic capture: wealth concentration creates functional hierarchy
+    // regardless of formal democratic structures (Gilens & Page 2014,
+    // Winters 2011). Economic power translates into political power through
+    // lobbying, campaign finance, media ownership, and regulatory capture.
+    // Effect is capped relative to formal power to prevent runaway feedback.
+    const wcCapture = Math.max(0, (wc - 40) / 60) * 15;
+    const effectivePowerConc = Math.min(powerConc + wcCapture, powerConc + 20, 95);
 
     // Track governance duration (Fix R3-1a)
     const prevGov = civ.state._prevGovernanceType ?? civ.state.governanceType ?? govId;
@@ -4487,22 +5014,58 @@ class SimulationEngine {
     // rule of law, property rights, low corruption
     let inclusivePressure = 0;
 
-    // Low corruption + stability = space for institutional development (V-Dem)
-    if (corruption < 30 && stability > 55) inclusivePressure += 1.5;
-    else if (corruption < 50 && stability > 45) inclusivePressure += 0.5;
+    // Low corruption + stability = space for institutional development
+    // (V-Dem, Kaufmann et al. 2010). Sigmoid response: saturation at both
+    // ends, steep transition at moderate corruption. Empirical: corruption-
+    // growth relationship is non-linear (Mauro 1995, Méon & Sekkat 2005).
+    // Inflection at corruption=25 — below this, institutions self-reinforce
+    // (Przeworski 2000 democratic consolidation threshold). Stability gates
+    // onset at stab=30, full effect at stab=70.
+    {
+      const corrFactor = 1 / (1 + Math.exp((corruption - 25) / 8));
+      const stabScale = Math.min(Math.max((stability - 30) / 40, 0), 1);
+      inclusivePressure += 0.5 * corrFactor * stabScale;
+    }
 
-    // Democratic governance: pluralism enables inclusive reform (scaled by maturity, Fix R3-1b)
-    if (isDemocratic) inclusivePressure += 0.2 * maturityScale;
-    // Civilian control: professional bureaucracy (Fukuyama 2011)
-    if (civControl > 60) inclusivePressure += 0.3;
-    // Education: informed citizenry demands accountability (Lipset 1959)
-    if (education > 60) inclusivePressure += 0.4;
-    // Social trust: enables complex institutions (Putnam 1993)
-    if (trust > 60) inclusivePressure += 0.3;
-    // Epistemic health: free information → transparency → accountability
-    if (ep > 60) inclusivePressure += 0.2;
+    // Distributed power: pluralism enables inclusive reform (scaled by maturity)
+    // Uses effective power concentration — oligarchic capture reduces pluralism
+    // even in formally democratic systems.
+    if (effectivePowerConc < 50) inclusivePressure += 0.4 * ((50 - effectivePowerConc) / 50) * maturityScale;
+    // Sigmoid response: continuous with diminishing returns. Center=55,
+    // width=4 (steep): values above 65 retain >92% of coefficient (preserves
+    // NPC dynamics), value=60 gives ~78% (partial credit for near-threshold
+    // countries like China edu=60), values below 45 give <8%.
+    inclusivePressure += 0.3 / (1 + Math.exp((55 - civControl) / 4));
+    inclusivePressure += 0.4 / (1 + Math.exp((55 - education) / 4));
+    inclusivePressure += 0.3 / (1 + Math.exp((55 - trust) / 4));
+    inclusivePressure += 0.2 / (1 + Math.exp((55 - ep) / 4));
     // High legitimacy: stable foundation for reform
     if (legitimacy > 65) inclusivePressure += 0.2;
+
+    // Authoritarian state-building (Evans 1995, Amsden 1989, Fukuyama 2011):
+    // concentrated power can build effective institutions through meritocratic
+    // selection, technocratic governance, and party discipline. Singapore PMO,
+    // China's CCP Organization Department, South Korea's EPB (1960-87),
+    // Meiji bureaucracy, Prussian civil service, Ottoman devshirme.
+    // Corruption gate uses reference point of 70 (systemic dysfunction
+    // threshold) rather than 50 — moderate corruption (China ~48) reduces
+    // but does not eliminate developmental capacity. Exponent 1.5 creates
+    // convex scaling: low corruption barely penalized, high corruption
+    // sharply penalized (Evans 1995 spectrum from "embedded autonomy"
+    // to "predatory state").
+    const corrLevel = civ.state.corruptionLevel ?? 50;
+    if (powerConc > 50 && cap > 40) {
+      const hierBuild = (powerConc - 50) / 50;
+      const capBuild = 1 / (1 + Math.exp((50 - cap) / 6));
+      // Organized corruption (Shleifer & Vishny 1993): strong hierarchies
+      // coordinate bribe structures, making corruption predictable and less
+      // damaging to state-building. Reference point scales with hierarchy:
+      // at hierBuild=0 (weak hierarchy), corrRef=70 (baseline);
+      // at hierBuild=1 (strong hierarchy), corrRef=90.
+      const corrRef = 70 + 20 * hierBuild;
+      const corrBuild = Math.max(0.1, 1 - Math.pow(corrLevel / corrRef, 1.5));
+      inclusivePressure += 1.0 * hierBuild * capBuild * corrBuild;
+    }
 
     // R4b: Reform pressure from extreme inequality — even non-democratic
     // societies generate inclusive pressure when WC is extreme. Elites fragment,
@@ -4516,13 +5079,56 @@ class SimulationEngine {
     // Elites resist inclusive reform to preserve rents
     let extractivePressure = 0;
 
-    // High wealth concentration: elite capture (AJR 2012)
-    if (wc > 70) extractivePressure += 2.0;
-    else if (wc > 55) extractivePressure += 1.0;
+    // High wealth concentration: elite capture (Gilens & Page 2014).
+    // Dampened when political power is already concentrated: wealth
+    // can't capture institutions already controlled by concentrated
+    // power (Evans 1995 "embedded autonomy"). In developmental states
+    // (China, Singapore), the party controls both wealth and governance;
+    // WC creates institutional drag through different mechanisms (already
+    // captured by power-concentration and freedom channels above).
+    // In democracies (USA, Brazil), wealth captures otherwise autonomous
+    // institutions through lobbying and regulatory capture — full effect.
+    if (wc > 55) {
+      const wcExtract = 0.7 + 0.6 * Math.min((wc - 55) / 25, 1.0);
+      const powerOverlap = powerConc > 50
+        ? Math.max(0.1, 1.0 - 0.9 * Math.min((powerConc - 50) / 35, 1.0))
+        : 1.0;
+      extractivePressure += wcExtract * powerOverlap;
+      // Extreme inequality: oligarchic entrenchment strengthens
+      // extractive pressures non-linearly (Winters 2011 "Oligarchy",
+      // Piketty 2014 r>g wealth-politics spiral). The super-rich
+      // invest in perpetuating favorable institutions.
+      if (wc > 75) extractivePressure += 0.4 * Math.pow((wc - 75) / 25, 1.5) * powerOverlap;
+    }
 
-    // Corruption erodes institutional quality
-    if (corruption > 60) extractivePressure += 2.0 * ((corruption - 60) / 40);
-    else if (corruption > 40) extractivePressure += 0.5;
+    // Corruption-inequality institutional trap: high corruption combined
+    // with concentrated wealth creates self-reinforcing degradation where
+    // corruption enables wealth accumulation and wealth perpetuates
+    // corruption through institutional capture (North, Wallis & Weingast
+    // 2009 "Violence and Social Orders", Acemoglu & Robinson 2006).
+    // "Limited access orders" persist because elites benefit from
+    // restricting institutional development. Trap threshold scales
+    // with WC: extreme inequality sustains extractive dynamics even
+    // at moderate corruption (Brazil WC=89, corr=62 is sustained).
+    if (wc > 65) {
+      const wcTrap = Math.min(1, (wc - 65) / 25);
+      const trapThreshold = 40 - 10 * wcTrap;
+      if (corruption > trapThreshold) {
+        const corrTrap = Math.min(1, (corruption - trapThreshold) / 30);
+        extractivePressure += 0.6 * corrTrap * wcTrap;
+      }
+    }
+
+    // Corruption erodes institutional quality — continuous, monotonically
+    // increasing. Base ramp from corr=30 to 60 (onset to full base rate);
+    // above 60 an additional steeper ramp reflects systemic dysfunction
+    // (Mauro 1995, Shleifer & Vishny 1993). Both branches are ADDITIVE
+    // to avoid discontinuity at the 60 boundary.
+    let corrExtract = 0;
+    if (corruption > 30) corrExtract += 0.5 * Math.min((corruption - 30) / 30, 1.0);
+    if (corruption > 60) corrExtract += 1.3 * ((corruption - 60) / 40);
+
+    extractivePressure += corrExtract;
 
     // War: institutional stress (resources diverted, emergency powers)
     // R4b: Reduced from 2.5 to 1.5. War doesn't always destroy institutions —
@@ -4531,12 +5137,71 @@ class SimulationEngine {
     // War damages institutions mainly when it causes DEFEAT and occupation.
     if (atWar) extractivePressure += 1.5;
 
-    // Autocratic governance: concentrated power resists checks (reduced from 1.0/0.5)
-    if (govId === 'autocratic') extractivePressure += 0.3;
-    if (govId === 'theocratic') extractivePressure += 0.15; // doctrine limits reform
+    // Concentrated power resists institutional checks — effective concentration
+    // includes both formal hierarchy AND oligarchic capture from wealth
+    // concentration. Fewer veto points = more scope for rent extraction.
+    if (effectivePowerConc > 50) extractivePressure += 0.4 * ((effectivePowerConc - 50) / 50);
+    // Doctrinal authority limits reform — religion sacralizes the status quo
+    // regardless of formal governance type (Ottoman sultanate, medieval papacy,
+    // modern Iran all exhibit this through different structures).
+    const relDomInst = civ.religion?.dominance ?? 0;
+    if (relDomInst > 50) extractivePressure += 0.15 * ((relDomInst - 50) / 50);
 
-    // Low freedom: can't build inclusive institutions without freedoms
-    if (freedom < 30) extractivePressure += 0.5;
+    // Low freedom: without accountability mechanisms, concentrated power
+    // serves narrow interests. Effect scales continuously with corruption
+    // (Evans 1995 spectrum): clean autocracies (Singapore corr=8 → 0.07)
+    // channel power to public goods; moderate corruption (China corr=48
+    // → 0.40) partially extracts; high corruption (Russia corr=66 → 0.50)
+    // fully extracts. Continuous scaling to 60 replaces the cliff at 40.
+    // Developmental offset (Evans 1995 "embedded autonomy"): high-capacity
+    // authoritarian states channel concentrated power toward institutional
+    // maintenance rather than pure extraction. South Korea EPB (1960-87),
+    // Singapore's PMO, China's State Council achieve institutional quality
+    // DESPITE low freedom because state capacity provides the organizational
+    // infrastructure for it. Low-cap states (Russia, DRC) lack the
+    // bureaucratic capacity to redirect power to public goods.
+    if (freedom < 30) {
+      const freeCorr = Math.min(corrLevel / 60, 1.0);
+      const devCapOffset = cap > 50 ? Math.min((cap - 50) / 80, 0.20) : 0;
+      extractivePressure += 0.5 * freeCorr * (1 - devCapOffset);
+    }
+
+    // ── Resource rents mechanism (Ross 2012, Karl 1997) ──
+    // Resource-dependent economies (petrostates, mineral exporters) have
+    // distinctive institutional dynamics:
+    // 1. Rentier state effect: revenue without taxation → reduced
+    //    accountability pressure → institutions maintained through
+    //    patronage rather than performance
+    // 2. State capacity through rents: resource wealth funds the state
+    //    apparatus directly, providing a cap FLOOR independent of
+    //    institutional quality (Saudi ARAMCO funds the state)
+    // 3. Institutional quality ceiling: rents reduce incentive for
+    //    genuine institutional reform (why build meritocratic systems
+    //    when you can buy compliance?)
+    const resourceRent = (civ.state.resourceRentDependence ?? 0) / 100;
+    if (resourceRent > 0.1) {
+      // Rents dampen inclusive pressure: less need for accountable institutions
+      inclusivePressure *= (1.0 - resourceRent * 0.4);
+      // Rents dampen extractive pressure too: elites don't need to extract
+      // from institutions when they can extract from resource revenues
+      extractivePressure *= (1.0 - resourceRent * 0.3);
+      // Net effect: institutions stagnate rather than develop or decay
+    }
+
+    // ── Companion integration: micro-foundations → institutional dynamics ──
+    // Read companion's micro-foundation analysis from previous turn to
+    // inform institutional processing (the "two lobes" approach).
+    const companionData = civ.state.companion ?? {};
+    const massGrievance = companionData.massGrievance ?? 0;
+    const eliteCohesion = companionData.eliteCohesion ?? 80;
+
+    // Low elite cohesion → institutional fragmentation (Acemoglu & Robinson
+    // 2006). When elites fragment, they stop defending institutions and
+    // start competing for control — institutions become spoils, not rules.
+    if (eliteCohesion < 40) {
+      const fragmentation = (40 - eliteCohesion) / 40;
+      extractivePressure += 0.3 * fragmentation;
+    }
 
     // ── 3. Net institutional drift ──
     // R4b: Diminishing extractive returns at low IQ — you can't extract rents
@@ -4546,9 +5211,24 @@ class SimulationEngine {
     // couldn't destroy local kadı courts because those courts were the only
     // remaining governance; Roman latifundia couldn't destroy ALL law because
     // property rights (including theirs) depended on it.
-    const extractDamping = iq < 25 ? Math.max(0.2, iq / 25) : 1.0;
+    const extractDamping = iq < 40 ? Math.max(0.15, Math.pow(iq / 40, 2.3)) : 1.0;
     const dampedExtractive = extractivePressure * extractDamping;
-    const netDrift = (inclusivePressure - dampedExtractive) * timeScale;
+    let netDrift = (inclusivePressure - dampedExtractive) * timeScale;
+
+    // WC dampening of institutional improvement: concentrated wealth
+    // systematically slows reform through lobbying, regulatory capture,
+    // and dilution of reform intent (Acemoglu & Robinson 2012, Gilens &
+    // Page 2014, Bartels 2008). Only dampens positive drift (improving
+    // institutions) — decay from extraction is not slowed. Stronger in
+    // participatory systems where wealth buys political access.
+    const wcInst = civ.state.wealthConcentration ?? (civ.economic?.wealthConcentration ?? 50);
+    if (wcInst > 55 && netDrift > 0) {
+      const wcDampFrac = Math.min(1, (wcInst - 55) / 35);
+      const isPartInst = civ.governance?.participationModel === 'voluntary';
+      const instCaptureDamp = isPartInst ? 0.6 : 0.2;
+      netDrift *= 1 - instCaptureDamp * wcDampFrac;
+    }
+
     iq += netDrift;
 
     // ── 4. AJR critical junctures — institutional flux moments ──
@@ -4582,20 +5262,68 @@ class SimulationEngine {
     if (iq > 75) iq -= 0.1 * timeScale; // diminishing returns to reform
     if (iq < 25) iq += 0.1 * timeScale; // even extractive states build some order
 
-    // Institutional lock-in drag (Fix R3-4a): high lock-in actively degrades IQ + feeds corruption
+    // Institutional lock-in drag: high lock-in actively degrades IQ + feeds corruption.
+    // Diminishing returns at low IQ: can't ossify institutions that barely exist —
+    // Ottoman kadı courts, Roman property law survived because they were the minimum
+    // viable institutional infrastructure (same logic as extractDamping above).
     const lockinDrag = civ.state.institutionalLockin ?? 0;
     if (lockinDrag > 50) {
-      const lockDragAmt = (lockinDrag - 50) * 0.015 * timeScale;
+      const lockDragBase = (lockinDrag - 50) * 0.015 * timeScale;
+      const lockIqDamp = iq < 30 ? Math.max(0.15, iq / 30) : 1.0;
+      // Lock-in preserves existing institutional quality, not just sclerosis.
+      // High-IQ societies with lock-in maintain effective structures (North
+      // 1990): Switzerland's federal system, Singapore's PAP governance.
+      // Low-IQ societies with lock-in preserve extractive/dysfunctional
+      // structures (Acemoglu & Robinson 2012): Nigerian patronage networks,
+      // Russian oligarchic capture.
+      const lockIqQuality = Math.max(0.3, 1 - Math.max(0, iq - 70) / 30);
+      const lockDragAmt = lockDragBase * lockIqDamp * lockIqQuality;
       iq -= lockDragAmt;
+      const currCorr = civ.state.corruptionLevel ?? civ.governance?.corruptionLevel ?? 0;
+      const lcFreeInfo = !['state_controlled', 'state_guided',
+        'total_information_control'].includes(civ.state.informationEcosystem ?? 'free_market_media');
+      const lcBroadPart = civ.governance?.participationModel === 'voluntary';
+      const lcIqBonus = iq > 60 ? 0.3 : iq > 40 ? 0.1 : 0;
+      const lcAcct = Math.max(0.2,
+        (lcFreeInfo ? 0.4 : 0) + (lcBroadPart ? 0.3 : 0) + lcIqBonus);
+      const lcSatThresh = 80 - Math.max(0, lcAcct - 0.25) * 40;
+      const lockCorrSat = Math.max(0, 1.0 - currCorr / lcSatThresh);
+      const lockCorrRes = Math.min(currCorr / 35, 1.0);
       civ.state.corruptionLevel = Utils.clamp(
-        (civ.state.corruptionLevel ?? 0) + lockDragAmt * 0.5, 0, 100);
+        currCorr + lockDragAmt * 0.5 * lockCorrSat * lockCorrRes, 0, 100);
     }
 
-    // Diminishing returns at very high IQ (Fix R3-1): even the best institutions face bureaucratic
-    // rigidity, regulatory capture, interest group politics (Olson 1982 institutional sclerosis)
-    if (iq > 80) {
-      const excess = iq - 80;
-      iq -= excess * excess * 0.008 * timeScale;
+    // Diminishing returns at high IQ (Olson 1982 institutional sclerosis):
+    // Onset depends on accountability — without feedback mechanisms (free
+    // press, broad participation), institutional quality hits diminishing
+    // returns earlier: no correction loops, no renewal pressure (North 2009,
+    // Sen 1999). Pluralist systems accumulate interest-group sclerosis at
+    // higher levels; hierarchical states face information distortion and
+    // principal-agent limits earlier (Haggard 2018).
+    const infoEcoScl = civ.state.informationEcosystem ?? 'free_market_media';
+    const infoSclVal = ['state_controlled', 'total_information_control'].includes(infoEcoScl) ? 0.0
+      : infoEcoScl === 'state_guided' ? 0.15 : 0.35;
+    const broadPartScl = civ.governance?.participationModel === 'voluntary';
+    const acctScl = infoSclVal + (broadPartScl ? 0.35 : 0.0) + Math.min(0.3, freedom / 100);
+    const sclOnset = 55 + 30 * acctScl;
+    const sclerosisFactor = Utils.clamp(0.3 + Math.pow(freedom / 70, 2), 0.3, 1.5);
+    if (iq > sclOnset) {
+      const excess = iq - sclOnset;
+      iq -= excess * excess * 0.012 * sclerosisFactor * timeScale;
+    }
+
+    // Democratic capture (Gilens & Page 2014, Winters 2011): In open
+    // political systems, economic elites capture institutional quality
+    // gains. Gilens & Page: average citizens have "near-zero" independent
+    // influence on US policy outcomes. Sqrt scaling: first units of
+    // concentrated wealth have outsized lobbying impact (diminishing
+    // marginal returns to political spending — Ansolabehere et al. 2003).
+    const partOpenness = (civ.governance?.participationModel ?? 'voluntary') === 'voluntary' ? 1.0
+      : civ.governance?.participationModel === 'mandatory' ? 0.3 : 0.0;
+    if (wc > 40 && iq > 60) {
+      const wcFrac = Math.min(Math.sqrt(Math.max(wc - 40, 0) / 40), 1.0);
+      const iqExcess = (iq - 60) / 40;
+      iq -= 8.0 * partOpenness * wcFrac * iqExcess * timeScale;
     }
 
     // ── R4-1: State-capacity-maintained IQ floor (entropy-inspired) ──
@@ -4610,12 +5338,19 @@ class SimulationEngine {
     // Population-scaled: a city of 10,000 has more institutions than a village of 100.
     // A governance system IS an institution — if governance !== 'none', IQ ≥ 10.
     const popIqMin = Math.min(Math.log10(Math.max(civ.state.population ?? 100, 100)) * 5, 15);
-    const iqFloor = Math.min(Math.max(cap * 0.4 + legLvl * 0.15, popIqMin), 45);
+    // Resource rents directly fund institutional infrastructure: ARAMCO
+    // funds Saudi ministries, Gazprom funds Russian state apparatus,
+    // Botswana's diamonds fund civil service. This raises the minimum
+    // institutional quality a resource-dependent state can sustain.
+    // Hierarchy scaling: centralized petrostates translate rents to
+    // institutions more effectively (technocratic enclaves, imported
+    // regulatory systems, consulting-driven reform programs).
+    const hierIqFloorVal = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    const hierIqFloor = hierIqFloorVal > 0.5 ? Utils.clamp((hierIqFloorVal - 0.5) * 2.0, 0, 1) : 0;
+    const rentIqContrib = resourceRent > 0.1 ? resourceRent * cap * (0.15 + hierIqFloor * 0.08) : 0;
+    const iqFloor = Math.min(Math.max(cap * 0.3 + legLvl * 0.1 + education * 0.45 + rentIqContrib, popIqMin), 55);
     if (iq < iqFloor) {
-      // Proportional convergence: 25% of gap/decade. Strong enough to counterbalance
-      // extractive pressure (~4/decade) when floor is 15-20 points above current IQ.
-      // At iq=5, floor=25: recovery = (25-5)*0.25 = 5.0 → balances extractive forces.
-      iq += (iqFloor - iq) * 0.25 * timeScale;
+      iq += (iqFloor - iq) * 0.50 * timeScale;
     }
 
     iq = Utils.clamp(iq, 0, 100);
@@ -4629,7 +5364,7 @@ class SimulationEngine {
     }
     // High IQ → state capacity building (virtuous cycle, Fukuyama 2011)
     if (iq > 65 && cap < 80) {
-      civ.state.stateCapacity = Utils.clamp(cap + 0.3 * timeScale, 0, 100);
+      civ.state.stateCapacity = Utils.clamp(cap + 0.25 * timeScale, 0, 100);
     }
     // Very low IQ → state capacity decay (R4-1c: raised threshold from 25 to 15)
     if (iq < 15) {
@@ -4802,7 +5537,8 @@ class SimulationEngine {
   _processFinance(civ) {
     if (!civ.state) return;
     const model = (typeof DEBT_MODEL_TYPES !== 'undefined')
-      ? DEBT_MODEL_TYPES.find(m => m.id === (civ.state.debtModel || 'regulated_credit'))
+      ? (DEBT_MODEL_TYPES.find(m => m.id === civ.state.debtModel)
+         || DEBT_MODEL_TYPES.find(m => m.id === 'regulated_credit'))
       : null;
     if (!model) return;
 
@@ -4836,11 +5572,25 @@ class SimulationEngine {
     // Increment years since crisis
     yearsSinceCrisis += (this.game.yearsDelta || 10);
 
-    // ── 1. PHASE ADVANCEMENT ─────────────────────────────────────────────
+    // Non-monetary economies have fundamentally different stability
+    // dynamics. Minsky cycles describe leveraged credit market dynamics
+    // (speculative lending, Ponzi finance, margin calls) that are
+    // conceptually inapplicable to economies without credit markets.
+    // Stability risks in these systems come from coordination failure,
+    // resource adequacy, and trust breakdown (Ostrom 1990, Sahlins
+    // 1972, Graeber 2011). For novel civilizations designed without
+    // currency, Minsky has no analogue — stability must be modeled
+    // through the mechanisms the society actually uses.
+    const isNonMonetary = (econId === 'gift' || econId === 'commons'
+      || econId === 'none' || econId === 'barter') || model.id === 'debtless';
+
+    const techLevel = civ.state?.technologyLevel ?? 3;
+
+    if (!isNonMonetary) {
+    // ── 1. PHASE ADVANCEMENT (monetary economies only) ─────────────────
     // "Stability is destabilizing" — Minsky's core insight
     // Base drift: ~2 pts/turn → full cycle ~50 turns (500 years) without modifiers
     // Pre-modern gate: financial depth < 30 → cycle nearly dormant
-    const techLevel = civ.state?.technologyLevel ?? 3;
     const depthGate = Math.min(1.0, Math.max(0, depthLevel - 20) / 40); // 0 at depth<=20, 1 at depth>=60
     let phaseAdvance = 2.0 * depthGate;
 
@@ -4857,13 +5607,9 @@ class SimulationEngine {
     phaseAdvance -= Math.max(0, iq - 60) * 0.05;              // Strong institutions = "thwarting mechanisms" (Kindleberger)
     phaseAdvance -= Math.max(0, 30 - depthLevel) * 0.06;      // Low depth = limited speculation scope
     phaseAdvance -= Math.max(0, 20 - yearsSinceCrisis) * 0.15; // Recent crisis memory
-    if (model.id === 'debtless') phaseAdvance -= 15;           // Structurally immune
     if (model.id === 'community_debt') phaseAdvance -= 5;      // Jubilee cycles brake accumulation
     if (model.id === 'regulated_credit') phaseAdvance -= 1.5;  // Regulation slows cycle
     if (atWar) phaseAdvance -= 1;                              // War redirects capital from finance
-    // Non-market economies: financial cycles largely irrelevant (no private credit markets)
-    // Gift/commons/barter have no speculative lending; cycle should stay near hedge phase
-    if (econId === 'gift' || econId === 'commons' || econId === 'none' || econId === 'barter') phaseAdvance *= 0.1;
 
     // Apply phase advance (scaled by timeScale)
     phase += phaseAdvance * timeScale;
@@ -4885,31 +5631,49 @@ class SimulationEngine {
       debtDelta = -3;   // Panic: defaults reduce debt, bailouts add govt debt (net small decline)
     }
     // Debt model multiplier
-    // Non-market economies (barter, gift) have minimal or no debt instruments
-    const debtModelMult = { debtless: 0, community_debt: 0.3, regulated_credit: 0.7, market_debt: 1.0, predatory_debt: 1.3, barter: 0.05, gift: 0, commons: 0 };
+    const debtModelMult = { community_debt: 0.3, regulated_credit: 0.7, market_debt: 1.0, predatory_debt: 1.3 };
     debtDelta *= (debtModelMult[model.id] ?? 1.0);
     if (atWar) debtDelta += 5.0;                              // War increases debt regardless of phase
     if (wellbeing > 70 && phase < 55) debtDelta -= 1.5;       // Surplus reduces debt during stable phases
     civ.state.debtLoad = Utils.clamp(debtLoad + debtDelta * timeScale, 0, 100);
 
-    // ── 3. FINANCIAL DEPTH (tech-gated: pre-modern finance grows slowly) ─
-    // Pre-industrial (tech < 4): financial markets are rudimentary
+    } else {
+      // Non-monetary economies: no leveraged credit cycle, no debt
+      phase = Math.min(phase, 25);
+      civ.state.debtLoad = 0;
+    }
+
+    // ── 3. FINANCIAL DEPTH (tech + IQ gated) ───────────────────────────
+    // Financial market development requires both technological capacity
+    // and institutional framework. North & Weingast (1989): credible
+    // commitments enable financial contracts. La Porta et al. (1998):
+    // rule of law, accounting standards, and creditor rights predict
+    // financial depth cross-nationally. IQ gate prevents weak-institution
+    // countries from developing deep financial markets at the same rate
+    // as strong-institution countries.
+    const iqDepthMult = Utils.clamp((iq - 20) / 50, 0.15, 1.0);
     const techDepthMult = techLevel < 2 ? 0.15 : techLevel < 4 ? 0.3 : techLevel < 6 ? 0.6 : 1.0;
     const depthGrowth = { gift: 0, commons: 0, barter: 0, market: 2.0, commodity: 1.2, hierarchical: 0.5 };
     const depthDamp = depthLevel > 70 ? 0.4 : 1.0;
     civ.state.financialDepth = Utils.clamp(
-      depthLevel + (depthGrowth[econId] ?? 0) * depthDamp * techDepthMult * timeScale, 0, 100);
+      depthLevel + (depthGrowth[econId] ?? 0) * depthDamp * techDepthMult * iqDepthMult * timeScale, 0, 100);
 
-    // ── 4. STRATUM WELLBEING EFFECTS (existing, preserved) ───────────────
+    // ── 4. STRATUM WELLBEING & EQUALITY EFFECTS ─────────────────────────
+    // Debt model shapes wellbeing distribution across strata and structural
+    // equality. These effects were previously inoperative (debtModel ID
+    // mismatch caused _processFinance to return early). Multipliers are
+    // calibrated for gradual structural drift rather than rapid saturation:
+    // equality 0.06x: market_debt drifts equality down ~7.5 over 250yr,
+    // predatory_debt ~18; wellbeing 0.12x: distributional effects moderate.
     const STRATA_WEIGHTS = { elite: 0.05, upper_middle: 0.15, lower_middle: 0.25, working_class: 0.35, disenfranchised: 0.20 };
     let popWeightedWB = 0;
     for (const [k, w] of Object.entries(STRATA_WEIGHTS)) {
       popWeightedWB += (model.strataWellbeingEffects[k] ?? 0) * w;
     }
     civ.state.averageWellbeing = Utils.clamp(
-      (civ.state.averageWellbeing ?? 50) + popWeightedWB * 0.5 * timeScale, 0, 100);
+      (civ.state.averageWellbeing ?? 50) + popWeightedWB * 0.12 * timeScale, 0, 100);
     civ.state.equalityIndex = Utils.clamp(
-      (civ.state.equalityIndex ?? 50) + model.equalityEffect * 0.3 * timeScale, 0, 100);
+      (civ.state.equalityIndex ?? 50) + model.equalityEffect * 0.06 * timeScale, 0, 100);
 
     // ── 5. CURRENCY CONSTRAINTS (existing, preserved) ────────────────────
     const ct = civ.economic?.currencyType ?? 'fiat';
@@ -4922,35 +5686,44 @@ class SimulationEngine {
       civ.state.debtLoad = Math.max(0, (civ.state.debtLoad ?? 0) * Math.pow(0.85, timeScale));
     }
 
-    // ── 6. FINANCIAL STABILITY (driven by phase + debt) ──────────────────
-    if (phase < 15) {
-      finStab += 5 * timeScale;      // Recovery: stability slowly rebuilds
-    } else if (phase < 35) {
-      finStab += 3 * timeScale;      // Hedge: stable, slow improvement
-    } else if (phase < 55) {
-      finStab -= 2 * timeScale;      // Boom: hidden fragility building
-    } else if (phase < 75) {
-      finStab -= 6 * timeScale;      // Euphoria: fragility accelerating
+    // ── 6. FINANCIAL STABILITY ──────────────────────────────────────────
+    if (isNonMonetary) {
+      // Non-monetary stability: driven by cooperation, institutional
+      // quality, and resource adequacy rather than credit cycle phase.
+      // Ostrom (1990): commons governance stability depends on clear
+      // boundaries, monitoring, graduated sanctions, and collective
+      // choice. Sahlins (1972): gift economies stabilize through
+      // reciprocity norms and social trust.
+      const cooperation = (civ.state.behaviorReinforcement?.cooperation ?? 50) / 100;
+      const trust = (civ.state.socialTrust ?? 50) / 100;
+      const iqNorm = iq / 100;
+      const stabTarget = 40 + cooperation * 25 + iqNorm * 20 + trust * 15;
+      finStab = Utils.lerp(finStab, stabTarget, 0.05 * timeScale);
     } else {
-      finStab -= 10 * timeScale;     // Distress/panic: rapid destabilization
+      if (phase < 15) {
+        finStab += 5 * timeScale;      // Recovery: stability slowly rebuilds
+      } else if (phase < 35) {
+        finStab += 3 * timeScale;      // Hedge: stable, slow improvement
+      } else if (phase < 55) {
+        finStab -= 2 * timeScale;      // Boom: hidden fragility building
+      } else if (phase < 75) {
+        finStab -= 6 * timeScale;      // Euphoria: fragility accelerating
+      } else {
+        finStab -= 10 * timeScale;     // Distress/panic: rapid destabilization
+      }
+      // Debt overhang: >90% debt/GDP → 1.2pp lower growth (Reinhart & Rogoff 2010)
+      if (civ.state.debtLoad > 60) {
+        finStab -= (civ.state.debtLoad - 60) / 40 * 2 * timeScale;
+      }
+      if (iq > 60) finStab += 1 * timeScale;    // Strong institutions support stability
     }
-    // Debt overhang: >90% debt/GDP → 1.2pp lower growth (Reinhart & Rogoff 2010)
-    if (civ.state.debtLoad > 60) {
-      finStab -= (civ.state.debtLoad - 60) / 40 * 2 * timeScale;
-    }
-    if (iq > 60) finStab += 1 * timeScale;    // Strong institutions support stability
     civ.state.financialStability = Utils.clamp(finStab, 0, 100);
 
-    // ── 7. CRISIS TRIGGER — Minsky Moment ────────────────────────────────
+    // ── 7. CRISIS TRIGGER — Minsky Moment (monetary economies only) ────
+    if (!isNonMonetary) {
     // Crisis probability rises sharply above phase 70 (Schularick & Taylor 2012)
-    // Non-market economies (gift/commons/barter/none) lack credit markets — no financial crises.
-    // Resource shortages for these economies are handled by food security, energy, and carrying capacity systems.
-    const nonMarketEcon = (econId === 'gift' || econId === 'commons' || econId === 'none' || econId === 'barter');
     let crisisProb = 0;
-    if (nonMarketEcon) {
-      // Clamp phase to prevent accumulation into crisis territory
-      phase = Math.min(phase, 30);
-    } else if (phase > 70 && phase <= 80) {
+    if (phase > 70 && phase <= 80) {
       crisisProb = 0.15 + Math.max(0, civ.state.debtLoad - 50) * 0.005;
     } else if (phase > 80 && phase <= 90) {
       crisisProb = 0.35 + Math.max(0, civ.state.debtLoad - 50) * 0.008;
@@ -4979,24 +5752,32 @@ class SimulationEngine {
       phase = 5 + Utils.random() * 10;
       yearsSinceCrisis = 0;
     }
+    } // end monetary-only crisis trigger
 
     phase = Utils.clamp(phase, 0, 100);
 
-    // ── 8. CROSS-EFFECTS ─────────────────────────────────────────────────
-    // Late-cycle fragility destabilizes society
-    if (phase > 80) {
-      civ.state.stabilityIndex = Utils.clamp(
-        (civ.state.stabilityIndex ?? 70) - 2 * timeScale, 0, 100);
-    }
-    // Boom/euphoria: temporary wellbeing boost (wealth effect)
-    if (phase >= 35 && phase < 75) {
-      civ.state.averageWellbeing = Utils.clamp(
-        (civ.state.averageWellbeing ?? 50) + 0.5 * timeScale, 0, 100);
-    }
-    // Post-crisis: bailouts favor wealthy → inequality rises (Piketty 2014)
-    if (phase < 15 && yearsSinceCrisis < 15) {
-      civ.economic.wealthConcentration = Utils.clamp(
-        (civ.economic.wealthConcentration ?? 30) + 1.5 * timeScale, 0, 93);
+    // ── 8. CROSS-EFFECTS (monetary economies only) ────────────────────────
+    if (!isNonMonetary) {
+      // Late-cycle fragility destabilizes society
+      if (phase > 80) {
+        civ.state.stabilityIndex = Utils.clamp(
+          (civ.state.stabilityIndex ?? 70) - 2 * timeScale, 0, 100);
+      }
+      // Boom/euphoria: temporary wellbeing boost (wealth effect)
+      if (phase >= 35 && phase < 75) {
+        civ.state.averageWellbeing = Utils.clamp(
+          (civ.state.averageWellbeing ?? 50) + 0.5 * timeScale, 0, 100);
+      }
+      // Post-crisis: bailouts favor wealthy → inequality rises (Piketty 2014)
+      // Gated by IQ: Minsky-style financial crises and bailouts require
+      // a developed financial system. At IQ<25 the financial system is
+      // too primitive for leveraged cycles and organized bailout responses.
+      if (phase < 15 && yearsSinceCrisis < 15) {
+        const iqMinsky = civ.state.institutionalQuality ?? 50;
+        const minskyGate = Utils.clamp((iqMinsky - 25) / 35, 0, 1);
+        civ.economic.wealthConcentration = Utils.clamp(
+          (civ.economic.wealthConcentration ?? 30) + 1.5 * minskyGate * timeScale, 0, 93);
+      }
     }
 
     // Store state
@@ -5056,25 +5837,29 @@ class SimulationEngine {
     // Corruption erosion: corruption channels income to elites
     if (corr > 20) ls -= 0.005 * (corr - 20) * timeScale;
 
-    // Autocratic/oligarchic governance: structural suppression
-    // Non-market economies lack the financial instruments for systematic extraction
-    const autoExtract = (civ.economic?.currencyType === 'none') ? 0.15 : 0.5;
-    if (govId === 'autocratic' || govId === 'oligarchy' ||
-        govId === 'shadow_government_complicit' || govId === 'shadow_government_covert') {
-      ls -= autoExtract * timeScale;
-    }
+    // Concentrated power → structural labor extraction. Those who control
+    // the state apparatus can channel surplus to themselves. Scales with
+    // concentration — an oligarchy extracts more than a tribal chief.
+    // Non-market economies lack the financial instruments for systematic extraction.
+    const powerConcLS = civ.governance?.powerConcentration ?? 50;
+    const extractScale = (civ.economic?.currencyType === 'none') ? 0.15 : 0.5;
+    if (powerConcLS > 50) ls -= extractScale * ((powerConcLS - 50) / 50) * timeScale;
 
     // Education quality > 60: skilled workers capture more value (human capital share)
     if (educQ > 60) ls += 0.5 * timeScale;
 
-    // Direct/consensus governance: workers have more institutional voice
-    if (govId === 'flat_consensus' || govId === 'direct_congress') ls += 1.0 * timeScale;
-    else if (govId === 'rotating' || govId === 'representative') ls += 0.3 * timeScale;
+    // Distributed power → workers have institutional voice to negotiate
+    // their share. The mechanism: more veto points, collective bargaining
+    // rights, franchise breadth. Scales continuously — flat consensus
+    // (powerConc 5) gives far more voice than representative (35).
+    if (powerConcLS < 50) ls += 1.0 * ((50 - powerConcLS) / 50) * timeScale;
 
-    // Progressive taxation / redistribution (strong institutions + democratic)
-    if (civ.state?.institutionalQuality > 65 &&
-        (govId === 'representative' || govId === 'direct_congress')) {
-      ls += 0.3 * timeScale; // Institutional countervailing power
+    // Progressive taxation / redistribution: strong institutions +
+    // accountable governance → countervailing power. Not specific to a
+    // regime label — Singapore (powerConc ~35-50, high IQ) redistributes
+    // effectively through HDB/CPF without being a "democracy" by label.
+    if (civ.state?.institutionalQuality > 65 && powerConcLS < 45) {
+      ls += 0.3 * timeScale;
     }
 
     // Non-accumulation models drift toward higher labor share
@@ -5094,12 +5879,37 @@ class SimulationEngine {
     if (ls < 30) ls += 0.3 * timeScale;  // Extreme exploitation → pressure builds
     if (ls > 85) ls -= 0.2 * timeScale;  // Very high labor share → investment deficit
 
+    // State employment floor: high-capacity states maintain labor share
+    // through public employment, SOEs, and state spending programs
+    // (ILO data: Saudi 70% government employment, China 37% SOE
+    // industrial employment, Singapore CPF + public sector). States
+    // with fiscal capacity pay workers directly from state revenue
+    // (resource rents, SOE profits, trade duties), creating a labor
+    // share floor independent of market dynamics.
+    const capLS = civ.state?.stateCapacity ?? 50;
+    if (capLS > 40) {
+      const collectivismLS = (civ.operatingPrinciples?.collectivismLevel ?? 50) / 100;
+      const lsFloor = 15 + 20 * ((capLS - 40) / 60) * collectivismLS;
+      if (ls < lsFloor) {
+        ls += (lsFloor - ls) * 0.3 * timeScale;
+      }
+    }
+
     // Cross-effect: low labor share boosts wealth concentration (r > g amplification)
     if (ls < 40 && civ.economic.accumulationAllowed) {
       const laborBoost = (40 - ls) / 40 * 0.015 * timeScale;
       civ.economic.wealthConcentration = Utils.clamp(
         civ.economic.wealthConcentration * (1 + laborBoost), 0, 93);
     }
+
+    // ── Piketty self-reinforcing concentration (r > g persistence) ──
+    // Above a threshold, wealth concentration becomes self-reinforcing:
+    // higher wealth → more capital income → higher savings → more wealth.
+    // Piketty 2014: "fundamental force for divergence" when r > g.
+    // Modeled as dampened correction: when WC would decrease, the decrease
+    // is reduced proportionally to how entrenched concentration is —
+    // making inequality "sticky" without causing runaway spikes.
+    // Only operates in accumulation economies with restricted participation.
 
     // Dual economy effect: labor share in the informal sector trends toward
     // the target model's baseline, weighted by informal share
@@ -5239,15 +6049,13 @@ class SimulationEngine {
 
     // ── 6. Governance response ──────────────────────────────
     if (de.informalShare > 15 && de.governanceResponse === 'none') {
-      const govType = civ.governance?.modelId ?? 'representative';
-      const isAutocratic = ['autocratic', 'oligarchy', 'shadow_state'].includes(govType);
-      const isFlat = ['flat', 'consensus', 'elder_council'].includes(govType);
+      const govPowerConc = civ.governance?.powerConcentration ?? 50;
 
-      if (isFlat) {
+      if (govPowerConc < 25) {
         de.governanceResponse = 'accommodating';
         civ.addHistoryEntry(year, 'Governance Accommodation',
           'The governance structure naturally aligns with the bottom-up economic restructuring.');
-      } else if (isAutocratic && (s.stateCapacity ?? 50) > 40) {
+      } else if (govPowerConc > 60 && (s.stateCapacity ?? 50) > 40) {
         de.governanceResponse = 'cracking_down';
         de.coordinationCost = Utils.clamp(de.coordinationCost + 15, 0, 100);
         civ.addHistoryEntry(year, 'Government Crackdown',
@@ -5425,81 +6233,281 @@ class SimulationEngine {
     const govId   = civ.governance?.modelId ?? '';
     const stab    = civ.state.stabilityIndex ?? 70;
     const atWar   = (civ.state.atWar ?? false) || (civ.state.warTurns ?? 0) > 0;
+    const ethFrac = this._effectiveFractionalization(civ);
+    const ethFracRaw = civ.state.ethnicFractionalization ?? 0;
+    const cap = civ.state.stateCapacity ?? 50;
+    const wb = civ.state.averageWellbeing ?? 50;
+    const eh = civ.state.epistemicHealth ?? 50;
 
-    // Calibrated to WVS: +/-1-4 pts/decade, asymmetric (erosion 2-3x faster than building)
     const timeScale = (this.game.yearsDelta || 10) / 10;
+    const trustStart = trust;
 
+    // Civic openness: institutional performance builds regime/political trust
+    // in all societies, but converts to generalized social trust (WVS measure)
+    // primarily through participatory civic life (Putnam 2000, Rothstein &
+    // Stolle 2008, Li 2013, Delhey & Newton 2005).
+    const partModelT = civ.governance?.participationModel;
+    const infoEcoTrust = civ.state.informationEcosystem ?? 'free_market_media';
+    let civicOpen = 0;
+    if (partModelT === 'voluntary') civicOpen += 0.5;
+    else if (partModelT === 'mandatory') civicOpen += 0.15;
+    if (['open_civic', 'free_market_media'].includes(infoEcoTrust)) civicOpen += 0.5;
+    else if (infoEcoTrust === 'state_guided') civicOpen += 0.15;
+    // Hierarchical collectivism: vertical social structures + group-oriented
+    // norms channel trust into particularized (in-group) rather than
+    // generalized (stranger) trust. Institutional performance builds system
+    // trust but converts poorly to WVS generalized trust in these contexts
+    // (Yamagishi 2011, Delhey & Newton 2005). Egalitarian collectivism
+    // (low hierarchy + high collectivism, Nordic model) does NOT suppress
+    // generalized trust — shared identity and horizontal solidarity build
+    // cross-group trust (Rothstein 2005). Gate by civicOpen² so autocracies
+    // with controlled information (which achieve trust through performance
+    // legitimacy, not social trust conversion) are not affected.
+    const collectivismT = (civ.operatingPrinciples?.collectivismLevel ?? 50) / 100;
+    const hierLevelT = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    const hierCollFactor = collectivismT * Utils.clamp((hierLevelT - 0.28) / 0.42, 0, 1);
+    const hierCollEffect = hierCollFactor * Math.pow(civicOpen, 2);
+    const perfTrustConvert = (0.3 + 0.7 * civicOpen) * (1 - hierCollEffect * 0.9);
+
+    // Information environment modulates how much corruption and inequality
+    // erode trust. Citizens can only lose trust over problems they know
+    // about. In information-controlled environments, these issues exist
+    // but don't produce the same trust erosion (Huang 2015, Zhu et al.
+    // 2019, Cruces et al. 2013). Floor of 0.4/0.5 because direct
+    // personal experience (bribing officials, seeing poverty) persists
+    // regardless of media environment.
+    const corrAwareness = 0.4 + 0.6 * (eh / 100);
+    const wcAwareness = 0.5 + 0.5 * (eh / 100);
+
+    // Trust generation saturation: institutional performance builds
+    // generalized trust but with strongly diminishing returns (Rothstein
+    // 2005). WVS cross-country data shows trust-performance relationship is
+    // concave — gains from 20→40 are much larger than 50→70. This prevents
+    // high-performing democracies from relentlessly climbing toward their
+    // ceiling, matching the empirical pattern where Germany (IQ~85, corr~12)
+    // sustains trust ~44, not ~75. The saturation applies to all generation
+    // channels equally since the mechanism is the same: at high trust, each
+    // additional unit of institutional delivery yields less marginal
+    // interpersonal trust because the "easy trust" from basic reliability
+    // is already captured. Onset at trust=20 with aggressive curve —
     // Baseline trust recovery: human social instinct (Henrich 2016).
-    // People naturally cooperate and rebuild trust networks even without
-    // institutional support. Post-war Germany, post-apartheid South Africa.
-    trust += 0.3 * timeScale;
-    // Stronger recovery when very low: regression to mean — societies at trust=5
-    // rapidly reorganize around new trust networks (kinship, religious, local).
-    // The lower trust goes, the faster people find alternative trust structures.
-    // At trust=0, recovery is +1.0/decade; at trust=20, +0.2/decade.
-    if (trust < 25) trust += 0.3 * timeScale + 0.7 * ((25 - trust) / 25) * timeScale;
+    // WVS data: trust changes <5 pts/decade even in favorable conditions
+    trust += 0.15 * timeScale;
+    if (trust < 25) trust += 0.5 * Math.pow((25 - trust) / 25, 0.5) * timeScale;
 
-    // Corruption erodes trust (strongest factor — Knack & Keefer 1997)
-    if (corr > 30) trust -= 1.5 * ((corr - 30) / 70) * timeScale;
+    // Institutional trust-building: accountable institutions that deliver
+    // fair outcomes build generalized trust over time (Rothstein & Stolle
+    // 2008, Kumlin & Rothstein 2005). Requires strong institutions AND
+    // accountability (free info + broad participation). Corruption degrades
+    // this channel gradually rather than cutting it off — even with moderate
+    // corruption (USA corr~40), functioning courts/contracts/elections still
+    // generate some interpersonal trust, just less effectively. Full shutoff
+    // at corr=60 where institutional rot is systemic. Autocracies with high
+    // IQ but no transparency don't gain (gated by accountability score).
+    if (iq > 50) {
+      const isVolInst = civ.governance?.participationModel === 'voluntary';
+      const freeInfoInst = !['state_controlled', 'state_guided', 'total_information_control']
+        .includes(civ.state.informationEcosystem ?? 'free_market_media');
+      const instAcct = (isVolInst ? 0.4 : 0) + (freeInfoInst ? 0.3 : 0) + Math.max(0, (iq - 50) / 50) * 0.3;
+      if (instAcct > 0.3) {
+        const corrMod = Math.max(0, 1 - Math.pow(corr / 60, 2));
+        trust += 0.3 * instAcct * corrMod * (1 - hierCollEffect * 0.7) * timeScale;
+      }
+    }
 
-    // Institutional quality builds trust through consistent performance
-    // Increased from 0.8 to 1.2 (WVS: strong institutional performance
-    // rebuilds trust within a generation — Nordic countries, Singapore)
-    if (iq > 60) trust += 1.2 * timeScale;
-    else if (iq < 30) trust -= 0.5 * timeScale;
+    // Corruption erodes trust (Knack & Keefer 1997) — modulated by
+    // information access.
+    if (corr > 30) trust -= 1.5 * ((corr - 30) / 70) * corrAwareness * timeScale;
 
-    // Inequality (high wealth concentration) erodes trust
-    if (wc > 60) trust -= 1.0 * ((wc - 60) / 40) * timeScale;
+    // Performance legitimacy: states that deliver outcomes build trust
+    // regardless of governance form (Lipset 1959, Zhao 2009).
+    // State capacity is discounted by corruption: a high-capacity
+    // kleptocracy extracts, not delivers (Acemoglu & Robinson 2012).
+    const polNow = civ.state.polarizationLevel ?? 0;
+    const polDamp = 1 - (polNow / 100) * 0.4;
+    const corrDiscount = 1 - Math.pow(corr / 100, 0.5) * 0.7;
+    const perfScore = (cap / 100 * corrDiscount) * 0.4 + (iq / 100) * 0.3 + (wb / 100) * 0.3;
+    if (perfScore > 0.35) {
+      trust += (perfScore - 0.35) * 1.5 * polDamp * perfTrustConvert * timeScale;
+    }
+    if (iq < 30) trust -= 0.5 * timeScale;
 
-    // Governance type (reduced from ±1.0-1.5 to ±0.2-0.4; institution quality does the heavy lifting)
-    const isDemTrust = ['representative', 'direct_congress', 'flat_consensus', 'rotating'].includes(govId);
-    if (govId === 'flat_consensus' || govId === 'direct_congress') trust += 0.3 * timeScale;
-    else if (govId === 'representative' || govId === 'rotating') trust += 0.2 * timeScale;
-    else if (govId === 'autocratic') trust -= 0.3 * timeScale;
-    else if (govId === 'shadow_government_complicit' || govId === 'shadow_government_covert') trust -= 0.4 * timeScale;
+    // Petrostate social contract: resource-rich states with hierarchical
+    // governance generate trust through direct material provision —
+    // subsidized housing, healthcare, education, employment (Ross 2012,
+    // Hertog 2010, Beblawi 1987). This "rentier bargain" operates through
+    // state delivery rather than civic engagement, so it bypasses the
+    // civicOpen gate. High corruption undermines it by redirecting rents
+    // to elites rather than citizens.
+    const resRentTrustBuild = (civ.state.resourceRentDependence ?? 0) / 100;
+    if (resRentTrustBuild > 0.4 && civicOpen < 0.35) {
+      const stateDelivery = (cap / 100) * (1 - corr / 100 * 0.6);
+      trust += resRentTrustBuild * stateDelivery * 1.2 * timeScale;
+    }
 
-    // Democratic stress factors (Fix R3-1c)
-    if (isDemTrust) {
-      // Populism pressure: high wealth concentration erodes democratic trust
-      if (wc > 55) trust -= (wc - 55) * 0.02 * timeScale;
-      // Oligarchic capture: wealth concentration degrades institutions over time
+    // Inequality erodes trust — the single strongest cross-country predictor
+    // of generalized trust (Uslaner 2002, Rothstein & Uslaner 2005). Lower
+    // threshold than before (40 vs 50) because moderate inequality erodes
+    // trust when visible (Cruces et al. 2013). Coefficient increased from
+    // 0.25 to 0.4 — still mild relative to corruption (-1.5) and
+    // polarization (-1.3), reflecting that inequality erodes slowly through
+    // perceived unfairness rather than through direct institutional failure.
+    if (wc > 40) {
+      let wcErosionMod = 1;
+      if (iq > 50) {
+        const isVolWC = civ.governance?.participationModel === 'voluntary';
+        wcErosionMod = 1 - Math.min(0.35, (iq / 100) * 0.25 + (isVolWC ? 0.1 : 0));
+      }
+      trust -= 0.4 * ((wc - 40) / 60) * wcAwareness * wcErosionMod * timeScale;
+    }
+
+    // Ethnic fractionalization suppresses generalized trust
+    // (Alesina & La Ferrara 2002). High-frac societies build trust
+    // within ethnic groups but not across them. However, strong
+    // inclusive institutions partially bridge ethnic divides through
+    // shared civic identity and cross-cutting participation (Varshney
+    // 2002, Kymlicka 2001). USA (frac 49) sustains trust≈37 partly
+    // through inclusive institutional frameworks that Nigeria (frac 85,
+    // trust 13) lacks. The institutional modulator captures this:
+    // high IQ + broad participation + free information create bridging
+    // social capital across ethnic lines.
+    if (ethFrac > 20) {
+      const isVolTrust = civ.governance?.participationModel === 'voluntary';
+      const freeInfoTrust = !['state_controlled', 'state_guided', 'total_information_control']
+        .includes(civ.state.informationEcosystem ?? 'free_market_media');
+      const instBridge = Math.min(0.5, (iq / 100) * 0.3 + (isVolTrust ? 0.15 : 0.0) + (freeInfoTrust ? 0.1 : 0.0));
+      trust -= 0.6 * ((ethFrac - 20) / 80) * (1 - instBridge) * timeScale;
+    }
+
+    // Strata satisfaction erosion: when non-elite strata are dissatisfied,
+    // generalized trust declines (Wilkinson & Pickett 2009, Putnam 2000).
+    // Working-class and disenfranchised dissatisfaction erodes trust most
+    // strongly because these groups experience institutional failure directly.
+    const compSat = civ.state.companion?.strataSatisfaction;
+    if (compSat) {
+      const wkSat = compSat.working ?? 50;
+      const disSat = compSat.disenfranchised ?? 50;
+      const lmSat = compSat.lowerMiddle ?? 50;
+      const popWeightedSat = wkSat * 0.4 + disSat * 0.3 + lmSat * 0.3;
+      if (popWeightedSat < 35) {
+        trust -= 0.5 * ((35 - popWeightedSat) / 35) * timeScale;
+      }
+    }
+
+    // Procedural legitimacy: broad participation builds trust through
+    // perceived fairness and voice (Rothstein & Stolle 2008). One of
+    // several trust sources, alongside performance legitimacy.
+    const powerConcTrust = civ.governance?.powerConcentration ?? 50;
+    let trustGovEffect = (50 - powerConcTrust) / 50 * 0.20;
+    if (trustGovEffect < 0) {
+      const perfMod = Math.max(0.2, 1 - perfScore);
+      trustGovEffect *= perfMod;
+    }
+    trust += trustGovEffect * timeScale;
+
+    // Low-concentration stress factors
+    if (powerConcTrust < 40) {
+      if (wc > 55) trust -= (wc - 55) * 0.005 * timeScale;
       if (wc > 50) civ.state.institutionalQuality = Math.max(0, iq - (wc - 50) * 0.01 * timeScale);
-      // Complacency: very high institutional quality causes stagnation
       if (iq > 90) trust -= 0.1 * timeScale;
     }
 
     // War erodes trust
     if (atWar) trust -= 1.5 * timeScale;
 
-    // Stable + low-corruption → trust builds (increased from 0.5 to 0.8)
-    if (corr < 20 && stab > 60) trust += 0.8 * timeScale;
+    // Stable + low-corruption → trust builds, dampened by polarization.
+    // Reduced from 0.8 — partially captured by performance legitimacy.
+    // Subject to generation saturation like all positive channels.
+    if (corr < 20 && stab > 60) trust += 0.3 * (1 - (polNow / 100) * 0.3) * (1 - hierCollEffect * 0.5) * timeScale;
 
-    // Recent paradigm shift disruption (reduced from -2.0 to -1.2)
+    // Paradigm shift disruption
     const activeShifts = civ.state.activeParadigmShifts || [];
     if (activeShifts.length > 0) trust -= 1.2 * timeScale;
 
-    // Cross-effects: trust ↔ institutional quality feedback loop
-    // IQ drain reduced from -0.3 to -0.15, with floor at 15 (institutions
-    // don't disappear just because trust is low — bureaucracies persist)
+    // Cross-effects: trust ↔ institutional quality feedback loop.
+    // State capacity shields IQ from trust erosion: high-capacity states
+    // maintain institutions through enforcement rather than consent
+    // (Singapore: trust 34%, IQ~85; China: trust 64%, IQ~48 but stable).
+    // Without this, the trust→IQ→corruption→trust cascade destroys
+    // autocratic states that historically maintained governance for centuries.
     if (trust < 30) {
       const iqFloor = 15;
+      const capShield = Math.min(1, cap / 80);
+      const iqErosionRate = 0.15 * (1 - capShield * 0.7);
       if ((civ.state.institutionalQuality ?? 50) > iqFloor) {
         civ.state.institutionalQuality = Utils.clamp(
-          (civ.state.institutionalQuality ?? 50) - 0.15 * timeScale, iqFloor, 100);
+          (civ.state.institutionalQuality ?? 50) - iqErosionRate * timeScale, iqFloor, 100);
       }
     } else if (trust > 70) {
       civ.state.institutionalQuality = Utils.clamp(
         (civ.state.institutionalQuality ?? 50) + 0.15 * timeScale, 0, 100);
     }
 
-    // Diminishing returns at very high trust (Fix R3-1): no society sustains perfect trust
-    // Even high-trust Scandinavian countries score ~65-70 on WVS, not 100.
-    // Internal tensions, generational shifts, immigration friction, media polarization.
-    if (trust > 80) {
-      const excess = trust - 80;
-      trust -= excess * excess * 0.01 * timeScale; // Quadratic: steeper pushback at extremes
+    // Polarization erodes trust directly (Haidt 2012, Putnam 2000).
+    const pol = civ.state.polarizationLevel ?? 0;
+    if (pol > 20) trust -= 1.3 * Math.pow((pol - 20) / 80, 1.3) * timeScale;
+
+    // Erosion dampener: at very low trust, further erosion diminishes.
+    // People who already distrust institutions have less "trust to lose";
+    // evolutionary in-group bonding resists complete collapse (Henrich 2016).
+    // No WVS-surveyed country shows generalized trust below ~3%.
+    if (trustStart < 20) {
+      const netChange = trust - trustStart;
+      if (netChange < 0) {
+        const damp = 0.3 + 0.7 * (trustStart / 20);
+        trust = trustStart + netChange * damp;
+      }
     }
 
+    // Structural trust ceiling: no WVS country sustains trust above ~76%.
+    // Base lowered from 90 to 78 to reflect this empirical cap. Inequality
+    // and corruption drags modulated by information access — citizens in
+    // low-information environments don't fully internalize these issues.
+    // Ethnic fractionalization and polarization are directly experienced
+    // and unmodulated.
+    const wcDrag = Math.max(0, wc - 25) / 75 * wcAwareness;
+    const fracDrag = ethFrac / 100;
+    const corrDrag = corr / 100 * corrAwareness;
+    const polDrag = Math.pow(pol / 100, 1.5);
+    const civicCeilingDrag = (1 - civicOpen) * 10 * (1 - collectivismT * 0.7);
+    const hierCollCeilingDrag = hierCollEffect * 55;
+    const trustCeiling = 78 - 25 * wcDrag - 15 * fracDrag - 15 * corrDrag - 35 * polDrag - civicCeilingDrag - hierCollCeilingDrag;
+    if (trust > trustCeiling) {
+      trust -= (trust - trustCeiling) * 0.35 * timeScale;
+    }
+    // Structural trust floor: even in the most challenging environments,
+    // informal trust networks sustain economic exchange and community
+    // function. Floor components: (1) ethnic homogeneity → shared identity
+    // (Fukuyama 1995), (2) institutional quality → reliable interactions,
+    // (3) community bonds from collective orientation — kin networks,
+    // religious communities, and mutual-aid structures generate trust
+    // independent of state institutions (Henrich 2016, Putnam 2000). In
+    // Nigeria (trust 15) and India (trust 21), community-level trust
+    // through temples, mosques, ethnic associations sustains interpersonal
+    // trust even with weak/corrupt states. (4) basic economic function —
+    // market participation creates minimal trust through repeated exchange
+    // (Greif 2006).
+    const trustFloorIQ = (civ.state.institutionalQuality ?? 50) / 100;
+    const trustFloorHomog = 1 - ethFracRaw / 100;
+    const communityBonds = collectivismT * 5;
+    const economicTrust = Math.min(cap, 50) / 50 * 3;
+    const freedom = civ.operatingPrinciples?.freedomLevel ?? 50;
+    const voluntaryAssoc = Math.min(freedom, 70) / 70 * 3;
+    const resRentTrust = (civ.state.resourceRentDependence ?? 0) / 100;
+    const hierTrustFloor = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    let rentWelfareFloor = 0;
+    if (resRentTrust > 0.3 && hierTrustFloor > 0.5) {
+      const rentCtrl = Math.min(1, (hierTrustFloor - 0.5) * 2);
+      const rentCoeff = resRentTrust > 0.6 ? 20 : 15;
+      rentWelfareFloor = resRentTrust * rentCtrl * rentCoeff;
+    }
+    const trustFloor = 5 + trustFloorHomog * 8 + trustFloorIQ * 7 + communityBonds + economicTrust + voluntaryAssoc + rentWelfareFloor;
+    if (trust < trustFloor) {
+      trust += (trustFloor - trust) * 0.4 * timeScale;
+    }
+
+    civ.state._trustCeiling = trustCeiling;
+    civ.state._trustFloor = trustFloor;
     civ.state.socialTrust = Utils.clamp(trust, 0, 100);
   }
 
@@ -5515,46 +6523,252 @@ class SimulationEngine {
     const educQ = civ.state.educationQuality ?? 50;
     const stab  = civ.state.stabilityIndex ?? 70;
     const wc    = civ.economic?.wealthConcentration ?? 30;
+    const freedom = civ.operatingPrinciples?.freedomLevel ?? 50;
     const atWar = (civ.state.atWar ?? false) || (civ.state.warTurns ?? 0) > 0;
 
     // Calibrated to V-Dem/WGI: +1-8 pts/decade build, -15-40 pts/decade collapse (highly asymmetric)
     const timeScale = (this.game.yearsDelta || 10) / 10;
 
-    // Baseline capacity growth: bureaucracies naturally professionalize over time
-    // through institutional learning (March & Olsen 1989). Even without favorable
-    // conditions, states slowly accumulate administrative knowledge.
-    cap += 0.2 * timeScale;
+    // ── Information quality → capacity growth efficiency (Sen 1999) ──
+    // Free information enables bureaucratic error correction, meritocratic
+    // talent selection, and policy learning. Restricted information suppresses
+    // feedback loops that detect and fix governance failures: China's Great
+    // Leap Forward famine, Soviet agricultural misreporting, Saudi NEOM
+    // overruns all reflect information pathologies constraining capacity.
+    // Hayek (1945): distributed knowledge is necessary for complex coordination.
+    // Page (2007): cognitive diversity drives collective problem-solving.
+    const infoEco = civ.state.informationEcosystem ?? 'free_market_media';
+    const infoType = INFORMATION_ECOSYSTEM_TYPES.find(t => t.id === infoEco);
+    const truthAnchor = (infoType?.truthAnchor ?? 60) / 100;
+    const infoCapFactor = 0.3 + 0.7 * Math.sqrt(truthAnchor);
 
-    // R4b: Diminishing decay at low capacity — when state capacity is already
-    // near zero, there's nothing left to erode. You can't dismantle institutions
-    // that don't exist. This prevents the death spiral where cap=5 still loses
-    // -4/decade from multiple drains. Historical: collapsed states (Somalia, Libya)
-    // reach a stable low equilibrium, not zero — some local governance always persists.
+    // Baseline capacity growth scaled by information quality
+    cap += 0.2 * infoCapFactor * timeScale;
+
+    // R4b: Diminishing decay at low capacity
     const decayDamping = cap < 25 ? (cap / 25) : 1.0;
 
-    // Corruption directly undermines capacity (Ibn Khaldun cycle)
-    if (corr > 40) cap -= 1.5 * ((corr - 40) / 60) * timeScale * decayDamping;
+    // ── Developmental state detection ──
+    const hier = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    const innovTol = (civ.state.innovationTolerance ?? 50) / 100;
+    const ecoModel = civ.economic?.modelId ?? '';
+    const isExtractive = (infoEco === 'total_information_control' && ecoModel === 'planned')
+                      || (infoEco === 'total_information_control' && innovTol < 0.25);
+    // Post-conflict developmental states (Rwanda) may start with very low
+    // education but still build capacity through military discipline and
+    // donor-assisted institution building. A higher hierarchy threshold
+    // compensates for lower education.
+    const resRentDev = (civ.state.resourceRentDependence ?? 0) / 100;
+    const isDevelopmental = !isExtractive && (
+      (hier > 0.55 && educQ > 25) ||
+      (hier > 0.70 && educQ > 10)
+    );
 
-    // Good institutional design helps capacity grow (increased from 0.8 to 1.0)
-    if (iq > 60) cap += 1.0 * timeScale;
-    else if (iq < 25) cap -= 0.5 * timeScale * decayDamping;
+    // Developmental states have "embedded autonomy" (Evans 1995):
+    // military-organizational discipline partially substitutes for
+    // formal institutional quality and political stability in
+    // maintaining administrative capacity. Degrades continuously as
+    // corruption rises — at corr=25 full protection, at corr=65 none.
+    // A hierarchical state with high corruption (Russia, Nigeria) has
+    // the structure but not the discipline. Continuous rather than
+    // binary to avoid cascade-triggering cliffs in the dynamics.
+    const devCorrPenalty = isDevelopmental
+      ? Utils.clamp((corr - 30) / 50, 0, 1) : 1.0;
+    const devDamp = isDevelopmental ? 0.3 + 0.7 * devCorrPenalty : 1.0;
 
-    // Education: skilled bureaucrats improve administration
-    if (educQ > 50) cap += 0.3 * timeScale;
+    // Accountability: institutional checks that provide alternative
+    // capacity-growth channels even under corruption (Grindle 2004).
+    const capAcctFreeInfo = !['state_controlled', 'state_guided',
+      'total_information_control'].includes(infoEco);
+    const capAcctBroadPart = civ.governance?.participationModel === 'voluntary';
+    const capAcctIqBonus = iq > 60 ? 0.3 : iq > 40 ? 0.1 : 0;
+    const capAccountability = Math.max(0.2,
+      (capAcctFreeInfo ? 0.4 : 0) + (capAcctBroadPart ? 0.3 : 0) + capAcctIqBonus);
 
-    // Stability lets bureaucracy professionalize
-    if (stab > 70) cap += 0.5 * timeScale;
-    else if (stab < 30) cap -= 1.5 * timeScale * decayDamping;
+    // Institutional corruption gate: convex penalty matching the
+    // empirical nonlinearity between CPI and WGI Government Effectiveness
+    // (Kaufmann et al. 2010, r=0.95). Floor rises with accountability:
+    // institutional checks provide alternative capacity channels that
+    // corruption can't fully block (Grindle 2004, "good enough governance").
+    const gateFloor = 0.15 + Math.max(0, capAccountability - 0.25) * 0.3;
+    const instCorrGate = Utils.clamp(1.0 - Math.pow(corr / 60, 1.5), gateFloor, 1);
+
+    // Continuous IQ→cap channel: good institutional design helps capacity
+    // grow, dampened by corruption (Fukuyama 2011). Ramps from iq=40 to
+    // full effect at iq=80 — avoids the bistability cliff where crossing
+    // iq=60 threshold triggers cascade collapse/explosion.
+    if (iq > 40) {
+      const iqFrac = Math.min((iq - 40) / 40, 1.0);
+      cap += 1.0 * iqFrac * instCorrGate * timeScale;
+    } else if (iq < 25) {
+      cap -= 0.5 * timeScale * decayDamping * devDamp;
+    }
+
+    if (educQ > 50) {
+      cap += 0.3 * instCorrGate * timeScale;
+    }
+
+    // Stability lets bureaucracy professionalize — continuous, no cliff.
+    // Gated by corruption: stable corrupt regimes entrench patronage
+    // rather than professionalizing (Acemoglu & Robinson 2012).
+    const stabEffect = (stab - 50) / 50;
+    // Institutional resilience: strong institutions (high IQ) resist
+    // destabilization from political turmoil (Evans & Rauch 1999,
+    // Rauch & Evans 2000). Japan's bureaucracy, S.Korea's civil service
+    // operate independently of political instability.
+    const iqStabResilience = iq > 45 ? Math.min(0.5, (iq - 45) / 60) : 0;
+    if (stabEffect > 0) cap += 0.5 * stabEffect * instCorrGate * timeScale;
+    else cap += 1.0 * stabEffect * (1 - iqStabResilience) * timeScale * decayDamping * devDamp;
 
     // War diverts resources from civilian administration
     if (atWar) cap -= 1.0 * timeScale * decayDamping;
 
-    // Broad tax base (lower wealth concentration) improves fiscal capacity
+    // Broad tax base (lower wealth concentration) improves fiscal capacity.
+    // Institutional resilience: strong institutions resist oligarchic
+    // state capture even when wealth is concentrated (Acemoglu et al. 2005).
+    const iqWcResilience = iq > 40 ? Math.min(0.6, (iq - 40) / 50) : 0;
     if (wc < 40) cap += 0.3 * timeScale;
-    else if (wc > 75) cap -= 0.5 * timeScale * decayDamping; // oligarchic capture weakens state
+    else if (wc > 75) cap -= 0.5 * (1 - iqWcResilience) * timeScale * decayDamping;
 
-    // Cross-effect: low state capacity reduces policy effectiveness
-    // (This is checked by event handlers that multiply magnitudes)
+    if (cap < 30) cap += (30 - cap) * 0.03 * timeScale;
+
+    // Rentier capacity attractor (Molla & Levin PNAS 2026, Ross 2012,
+    // Herb 1999): resource rents create a specific capacity EQUILIBRIUM
+    // the state gravitates toward — qualitatively different from
+    // developmental capacity (built through institutional channels).
+    // 72% of Saudi nationals work in public sector; capacity is purchased
+    // through rent allocation, not built through bureaucratic development.
+    // Modeled as bidirectional exponential relaxation: dx/dt = -k(x-x_eq).
+    // Pulls overshoot DOWN and undershoot UP — same mechanism handles both
+    // the initial cap overshoot and the death-spiral recovery.
+    const resRent = (civ.state.resourceRentDependence ?? 0) / 100;
+    if (resRent > 0.1) {
+      const rentCentralization = hier > 0.5 ? Utils.clamp((hier - 0.5) * 2.0, 0, 1) : 0;
+      if (rentCentralization > 0) {
+        const rentEqCap = 25 + resRent * 45 * (0.5 + 0.5 * rentCentralization);
+        const rentK = Math.pow(resRent, 2) * rentCentralization * 0.25;
+        cap += rentK * (rentEqCap - cap) * timeScale;
+      }
+      // Resource rents fund minimum capacity — higher hierarchy means
+      // more effective rent-to-capacity translation (Ross 2012, Herb 1999).
+      // Low-hier states dissipate rents through patronage networks.
+      const rentFloorHier = hier > 0.6 ? Utils.clamp((hier - 0.6) * 2.5, 0, 1) : 0;
+      const basicRentFloor = 25 + resRent * (20 + rentFloorHier * 15);
+      if (cap < basicRentFloor) {
+        cap += (basicRentFloor - cap) * 0.15 * timeScale;
+      }
+    }
+
+    // Hierarchy cap floor moved to _enforceHierarchyCapFloor() — runs at the
+    // END of the per-civ pipeline so it isn't overwritten by later systems.
+
+    // ── Developmental state capacity bonus ──
+    // Developmental states build capacity through centralized resource
+    // allocation directed at education, infrastructure, and export industry
+    // (Amsden 1989, Wade 1990). Gated on corruption: Evans's "embedded
+    // autonomy" requires bureaucratic discipline — Singapore's CPIB,
+    // South Korea's EPB had corruption under control BEFORE capacity
+    // surged. Kleptocracies (Russia, Nigeria) are hierarchical but not
+    // developmental. Empirical rates: South Korea +3.7/decade WGI,
+    // China +3.0/decade — coefficient calibrated to match.
+    if (isDevelopmental && corr < 80) {
+      const eduFactor = Math.min(1.0, educQ / 60 + Math.max(0, hier - 0.55) * 0.8);
+      // Corruption is a continuous drag on developmental state-building.
+      // However, Shleifer & Vishny (1993 QJE) show that ORGANIZED
+      // corruption (single principal controlling bribes, as in developmental
+      // autocracies) is less damaging to capacity building than DISORGANIZED
+      // corruption (multiple independent extractors). This distinction only
+      // applies to developmental states — non-developmental high-hierarchy
+      // states (e.g. Brazil, India) do not exhibit organized corruption
+      // in the capacity-building sense (their hierarchy serves patronage,
+      // not developmental coordination).
+      const corrEffective = isDevelopmental
+        ? corr * (1 - Utils.clamp(hier * 1.5 * (1 - resRentDev * 1.5), 0, 1) * 0.5)
+        : corr;
+      const corrGate = Utils.clamp(1.0 - Math.pow(corrEffective / 60, 1.5), 0.1, 1);
+      // Gerschenkron (1962) "advantage of backwardness": centralized
+      // coordination yields decreasing marginal returns as institutional
+      // complexity rises. Easy capacity gains (basic infrastructure,
+      // standardized education, industrial planning) are captured first.
+      // Higher-level capacity requires distributed problem-solving that
+      // hierarchical structures can't easily provide (Hayek 1945).
+      // Ceiling at cap=85: the last 15 points of WGI require rule of law,
+      // regulatory quality, and accountability that autocratic structures
+      // rarely achieve (Fukuyama 2014 "getting to Denmark" problem).
+      // regulatory quality, and accountability that autocratic structures
+      // rarely achieve (Fukuyama 2014 "getting to Denmark" problem).
+      const capSaturation = Math.max(0, 1 - Math.pow(Math.max(0, cap - 40) / 45, 2));
+      const devBonus = (hier - 0.55) * 6.0
+                     * eduFactor
+                     * (0.4 + innovTol * 0.6)
+                     * corrGate
+                     * capSaturation
+                     * infoCapFactor;
+      // Resource rents substitute for developmental capacity: rentier
+      // states (Saudi, Russia) build through rent allocation, not
+      // directed industrial policy (Sachs & Warner 1995, Karl 1997).
+      // Continuous fade: China/Singapore (resRent=0) get full bonus;
+      // Russia (0.50) gets partial; Saudi (0.75) gets near-zero.
+      const rentDevFade = Utils.clamp(1 - resRentDev, 0, 1);
+      cap += devBonus * rentDevFade * timeScale;
+    }
+
+    // Meritocratic governance premium (Evans 1995, Rauch & Evans 2000):
+    // Developmental states with professional bureaucracies achieve capacity
+    // growth beyond what IQ or corruption predict individually. The synergy
+    // of merit-based recruitment (high IQ) + faithful implementation (low
+    // corruption) + long-horizon planning (developmental structure) produces
+    // "embedded autonomy" — superlinear capacity-building that explains
+    // Singapore's WGI 2.2 without democratic accountability.
+    if (isDevelopmental && iq > 70 && corr < 15 && !atWar) {
+      const meritFactor = Math.min((iq - 70) / 25, 1) * Math.min((15 - corr) / 10, 1);
+      cap += 0.4 * meritFactor * timeScale;
+    }
+
+    // ── Capacity maintenance drag ──
+    // Complex bureaucracies face coordination overhead, regulatory
+    // complexity, and institutional inertia that scale superlinearly
+    // with capacity (Weber 1922, Olson 1982). Freedom-scaled: open-
+    // access orders pay a maintenance premium from multiple veto players
+    // (Tsebelis 2002), accumulated interest groups (Olson 1982), and
+    // accountability overhead (North et al. 2009). Hierarchical states
+    // maintain capacity more cheaply through command authority but face
+    // different risks (information distortion, principal-agent) handled
+    // by other channels.
+    if (cap > 60) {
+      const freedomMaint = 0.6 + 0.8 * freedom / 100;
+      const maintenanceDrag = 0.035 * Math.pow((cap - 60) / 40, 2) * cap / 100 * freedomMaint * timeScale;
+      cap -= maintenanceDrag * cap;
+    }
+
+    // ── Corruption capacity ceiling (Kaufmann et al. 2010) ──
+    // The r=0.95 correlation between corruption control and government
+    // effectiveness implies a maximum sustainable capacity at each
+    // corruption level. Above this ceiling, institutional complexity
+    // exceeds what the corruption-degraded feedback system can maintain:
+    // principal-agent chains break down (Shleifer & Vishny 1993),
+    // patronage displaces merit (North et al. 2009). The ceiling rises
+    // with accountability: free press, elections, and strong institutions
+    // provide self-correction that sustains higher capacity despite
+    // corruption (USA, Singapore). One-directional: only pulls cap DOWN
+    // toward the ceiling, never pushes it up. Rentier states offset via
+    // resource-funded capacity maintenance (already handled by attractor).
+    // Developmental states partially bypass: they build capacity through
+    // directed channels (EPB, MITI, industrial planning boards) that
+    // operate parallel to the general bureaucracy (Johnson 1982,
+    // Amsden 1989). The ceiling still exists but is raised.
+    if (corr > 15) {
+      let corrCapCeiling = 95 - 0.8 * corr + capAccountability * 22;
+      if (isDevelopmental && resRentDev < 0.2) {
+        const devCeilingBoost = Math.min(1, (hier - 0.55) / 0.25) *
+                                (1 - resRentDev * 5) * 22;
+        corrCapCeiling += devCeilingBoost;
+      }
+      const rentCeilDamp = resRent > 0.1 ? Utils.clamp(1 - resRent * 1.2, 0, 1) : 1.0;
+      if (cap > corrCapCeiling) {
+        cap -= (cap - corrCapCeiling) * 0.018 * rentCeilDamp * timeScale;
+      }
+    }
 
     // ── R4b-2: Legitimacy-maintained cap floor (entropy-inspired) ──
     // A society with strong legitimacy (religious, traditional, ideological)
@@ -5572,6 +6786,1015 @@ class SimulationEngine {
     }
 
     civ.state.stateCapacity = Utils.clamp(cap, 0, 100);
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // Pass 10 — Production Decentralization
+  // Two independent parameters (energy, agriculture). No coded
+  // coupling; they interact through shared land, labor and state
+  // capacity. All coefficients traced in pass10-spec.md.
+  // ═══════════════════════════════════════════════════════════
+
+  // Crisis pressure: failure of the centralized system.
+  // M — the strongest finding in the Pass 10 evidence sweep.
+  // Scarcity drives decentralization harder than subsidy does.
+  // Anchors: South Africa load shedding, Puerto Rico post-Maria,
+  // Cuba grid collapse 2024-25, Nigeria generator substitution.
+  _decentralizationCrisisPressure(civ) {
+    const s = civ.state;
+    let p = 0;
+    // Infrastructure failure is the primary signal
+    p += (s.maintenanceDebt ?? 0) * 0.40;
+    p += Math.max(0, 60 - (s.infrastructureLevel ?? 40)) * 0.45;
+    p += Math.max(0, 50 - (s.stateCapacity ?? 50)) * 0.30;
+    // Energy deficit (EROI below the complexity threshold)
+    const surplus = s.energySurplus ?? 0;
+    if (surplus < 0) p += Math.min(25, Math.abs(surplus) * 1.5);
+    // Food deficit
+    if ((s.foodSecurity ?? 60) < 40) p += (40 - (s.foodSecurity ?? 60)) * 0.5;
+    // War and blockade
+    if ((s.atWar ?? false) || (s.warTurns ?? 0) > 0) p += 15;
+    return Utils.clamp(p, 0, 100);
+  }
+
+  // Capital access gate. Crisis without capital produces suffering,
+  // not solar. M — every observed case had a funding channel:
+  // South African middle-class purchasing power, Chinese finance
+  // for Cuba, IDCOL grants, M-KOPA pay-as-you-go.
+  _decentralizationCapitalAccess(civ) {
+    const s = civ.state;
+    let c = 0;
+    c += (s.averageWellbeing ?? 50) * 0.30;       // household purchasing power
+    c += (s.financialDepth ?? 30) * 0.25;         // credit availability
+    c += (s.institutionalQuality ?? 50) * 0.20;   // contract enforcement
+    c += (s.educationQuality ?? 50) * 0.10;       // technical capacity
+    // External finance — the Cuba/China and IDCOL channel
+    c += Math.min(20, (s.tradeDependency ?? 20) * 0.35);
+    return Utils.clamp(c, 0, 100);
+  }
+
+  // Enabling-support bookkeeping. MUST run unconditionally, before
+  // any early return in the decentralization processors — otherwise a
+  // civilization with no active pathway funds support that never
+  // decays and never costs the treasury anything.
+  _processEnablingSupport(civ, sys) {
+    const s = civ.state;
+    const timeScale = (this.game?.yearsDelta || 10) / 10;
+    const rawSupport = sys.enablingSupport ?? 0;
+
+    // Elite capture: Malawi's FISP saw a significant share of benefits
+    // accrue to better-connected and larger farmers already using inputs.
+    const capture = ENABLING_SUPPORT.eliteCaptureWeight
+                  * (((s.landConcentration ?? 30) * 0.5
+                    + (100 - (s.institutionalQuality ?? 50)) * 0.5) / 100);
+    sys.supportEffectiveness = Utils.clamp(rawSupport * (1 - capture), 0, 100);
+
+    if (rawSupport <= 0) return;
+
+    // Lapses without renewal ("lack of long-term follow-up of received
+    // trainings") and costs the treasury for as long as it runs.
+    sys.enablingSupport = Utils.clamp(
+      rawSupport - rawSupport * ENABLING_SUPPORT.decayRate * timeScale, 0, 100);
+    s.stateCapacity = Utils.clamp(
+      (s.stateCapacity ?? 50) - (rawSupport / 100) * ENABLING_SUPPORT.fiscalDrain * timeScale,
+      0, 100);
+  }
+
+  // Shared adoption engine for both parameters.
+  // Grübler diffusion speed limits are enforced here (M).
+  _decentralizationAdoption(civ, sys, share) {
+    const s = civ.state;
+    const pw = DECENTRALIZATION_PATHWAYS[sys.pathway] ?? DECENTRALIZATION_PATHWAYS.none;
+    const timeScale = (this.game?.yearsDelta || 10) / 10;
+
+    sys.crisisPressure = this._decentralizationCrisisPressure(civ);
+    sys.capitalAccess  = this._decentralizationCapitalAccess(civ);
+
+    if (pw.baseRate <= 0 && sys.crisisPressure < 35) {
+      sys.adoptionRate = 0;
+      return 0;
+    }
+
+    // ── Enabling support (M) ──
+    // Equipment and seed access, training, expert consultation, tax
+    // relief and reimbursement of household expenditure. Capability,
+    // not compulsion — it carries no coercion cost.
+    // Effectiveness is reduced by elite capture: Malawi's FISP saw a
+    // significant share of benefits accrue to better-connected and
+    // larger farmers already using inputs.
+    const support = (sys.supportEffectiveness ?? 0) / 100;
+
+    // Capital gate — scales the whole response.
+    // Support substitutes for private capital, and does so
+    // PROGRESSIVELY: refundable credits lift low-income adoption
+    // substantially while barely moving high-income adoption. The
+    // marginal value of support therefore falls as capital rises.
+    const effCapital = ENABLING_SUPPORT.progressive
+      ? Math.min(100, sys.capitalAccess + support * 100 * (1 - sys.capitalAccess / 100))
+      : Math.min(100, sys.capitalAccess + support * 50);
+    // capitalSensitivity = how far this pathway's adoption COLLAPSES
+    // when capital is scarce. Grassroots (1.0) needs households able
+    // to pay and falls to almost nothing without them; state-funded
+    // routes (0.2-0.3) keep working because the treasury, not the
+    // household, is paying.
+    const cs = pw.capitalSensitivity ?? 0.5;
+    const capGate = Utils.clamp((1 - cs) * 0.75 + cs * (effCapital / 100) + 0.10, 0.10, 1.0);
+
+    // Direct adoption boost, bounded by the measured subsidy elasticity
+    const supportBoost = 1 + Math.min(ENABLING_SUPPORT.maxAdoptionBoost,
+                                      support * ENABLING_SUPPORT.adoptionElasticity);
+
+    // Crisis amplification
+    const crisisAmp = 1 + (sys.crisisPressure / 100) * (pw.crisisMultiplier || 0);
+
+    // ── State-capacity gate (M) ──
+    // Subsidies and mandates are STATE PROGRAMMES: they require a
+    // functioning state to fund, administer and enforce. Grassroots
+    // adoption needs only capital. This is why South Africa's private
+    // rooftop installs exceeded Eskom's four procurement bid windows
+    // by more than 2x precisely while the utility was failing, and why
+    // Cuba's state route required external finance.
+    // Without this gate the model would wrongly predict that mandates
+    // outperform self-organization during state collapse.
+    // Floor is deliberately low: a genuinely collapsing state does not
+    // merely administer its programmes more slowly, it largely stops.
+    // Eskom could not procure while the grid was failing; Cuba's state
+    // route required FOREIGN finance because the domestic one could not
+    // fund it. A 0.25 floor implied a state at 20/100 capacity still
+    // delivering ~46% programme effectiveness, which understated the
+    // measured crossover (South Africa: private installs >2x the
+    // utility's four bid windows).
+    let stateGate = 1.0;
+    if (pw.stateDependent) {
+      const cap = s.stateCapacity ?? 50;
+      stateGate = Utils.clamp(0.10 + 0.90 * (cap / 70), 0.10, 1.0);
+    }
+
+    // Logistic S-curve + peer effect
+    // M — Bollinger & Gillingham: +1 prior install in a ZIP raises
+    // adoption probability 0.78%, stronger at street level.
+    const logistic = 4 * (share / 100) * (1 - share / 100);
+    const peerEffect = 0.35 + 0.65 * Math.pow(share / 100, 0.6);
+
+    let delta = pw.baseRate * crisisAmp * capGate * stateGate * supportBoost
+              * (0.30 + logistic * 0.70) * peerEffect * timeScale;
+
+    // Crisis alone can drive adoption with no pathway set — the
+    // South Africa / Nigeria case (market response, no programme)
+    if (pw.baseRate <= 0 && sys.crisisPressure >= 35) {
+      delta = 0.5 * (sys.crisisPressure / 100) * capGate * supportBoost * timeScale;
+    }
+
+    // ── Grübler speed limits (M) ──
+    let cap = DIFFUSION_LIMITS.baseline;
+    if (sys.crisisPressure > 45 && sys.capitalAccess > 45) cap = DIFFUSION_LIMITS.crisis;
+    if (sys.crisisPressure > DIFFUSION_LIMITS.burstCrisisThreshold &&
+        sys.capitalAccess > DIFFUSION_LIMITS.burstCapitalThreshold) {
+      if (sys.burstTurns < 4) { cap = DIFFUSION_LIMITS.burst; sys.burstTurns++; }
+    } else {
+      sys.burstTurns = Math.max(0, sys.burstTurns - 1);
+    }
+    delta = Math.min(delta, cap * timeScale);
+
+    // Reversal: if the centralized system is restored and the
+    // pathway is withdrawn, some distributed capacity is abandoned
+    if (pw.baseRate <= 0 && sys.crisisPressure < 15 && share > 5) {
+      delta = -0.3 * timeScale;
+    }
+
+    sys.adoptionRate = Math.round(delta * 100) / 100;
+    return delta;
+  }
+
+  // Ownership breadth — who actually ends up owning the capacity.
+  // M — Germany's citizen share fell >50% (2014) → ~1/3 (2021)
+  // after the 2017 switch from feed-in tariffs to auctions.
+  _decentralizationOwnership(sys, share) {
+    const pw = DECENTRALIZATION_PATHWAYS[sys.pathway] ?? DECENTRALIZATION_PATHWAYS.none;
+    let breadth = pw.ownershipBreadth || 0;
+    if (pw.degradesAtScale && share > pw.degradeThreshold) {
+      const t = Math.min(1, (share - pw.degradeThreshold) / (100 - pw.degradeThreshold));
+      breadth = breadth + t * (pw.degradedBreadth - breadth);
+    }
+    // Unplanned/market adoption: ownership follows the existing
+    // distribution of assets rather than any policy design. Broad
+    // where wealth and land are dispersed, narrow where concentrated.
+    if (sys.pathway === 'none' && share > 0) {
+      const conc = ((sys._landConc ?? 30) * 0.5 + (sys._wealthConc ?? 40) * 0.5) / 100;
+      breadth = Utils.clamp(0.90 - 0.55 * conc, 0.30, 0.90);
+    }
+    sys.ownershipBreadth = Math.round(breadth * 100) / 100;
+    return breadth;
+  }
+
+  // ── Energy Decentralization ─────────────────────────────────
+  _processEnergyDecentralization(civ) {
+    if (!civ.state?.energySystem) return;
+    const s = civ.state;
+    const es = s.energySystem;
+    const year = this.game?.currentYear ?? 0;
+    const timeScale = (this.game?.yearsDelta || 10) / 10;
+
+    // Unconditional — must precede the pre-industrial early return
+    this._processEnablingSupport(civ, es);
+
+    // ── Boundary condition (M): pre-industrial energy was
+    // distributed by default. Domesday 1086: 5,624 watermills;
+    // ~15,000 by c.1300. The parameter only becomes free once a
+    // centralized grid is technically possible.
+    const techLevel = s.technologyLevel ?? 1;
+    // Derive industrialization from adopted technologies rather than
+    // s.energySource: energySource is written by _processEnergy, which
+    // runs AFTER this method, so reading it here is stale by one turn.
+    // On the transition turn that staleness let the pre-industrial
+    // branch slam distributedShare to a high value the civ had not
+    // earned.
+    const techs = s.adoptedTechnologies ?? [];
+    const hasIndustrialEnergy = techs.includes('Coal Power') || techs.includes('Steam Engine')
+      || techs.includes('Oil / Petroleum') || techs.includes('Nuclear Power')
+      || techs.includes('Renewable Energy') || techs.includes('Fusion Power');
+    const source = s.energySource ?? 'wood';
+    const preIndustrial = (!hasIndustrialEnergy && techLevel < 3) || (!hasIndustrialEnergy && source === 'wood');
+    if (preIndustrial) {
+      es.distributedShare = Utils.clamp(
+        Math.max(es.distributedShare, 92 - techLevel * 4), 0, 100);
+      // Pre-industrial energy is household- and village-scale: mills,
+      // hearths, draft animals. Ownership follows land tenure, so a
+      // civilization with concentrated landholding has concentrated
+      // energy ownership even at full physical decentralization.
+      const preConc = ((s.landConcentration ?? 30) * 0.6
+                     + (civ.economic?.wealthConcentration ?? 40) * 0.4) / 100;
+      es.ownershipBreadth = Utils.clamp(0.90 - 0.55 * preConc, 0.30, 0.90);
+      es.participationShare = Utils.clamp(es.distributedShare * es.ownershipBreadth, 0, 100);
+      es.landIntensity = 12;
+      es.adoptionRate = 0;
+      // The pre-industrial branch previously returned without setting
+      // structuralBaseline, so the panel showed a baseline of 0 beside a
+      // distributed share of 88. Pre-industrial energy IS the baseline.
+      es.structuralBaseline = Math.round(
+        es.structuralBaseline > 0
+          ? es.structuralBaseline + (es.distributedShare - es.structuralBaseline) * 0.25 * timeScale
+          : es.distributedShare);
+      es.pathwayOffset = 0;
+      es.crisisPressure = this._decentralizationCrisisPressure(civ);
+      es.capitalAccess = this._decentralizationCapitalAccess(civ);
+      return;
+    }
+
+    const prevShare = es.distributedShare;
+
+    // ── Structural baseline (M) ──
+    // Distributed generation did not merely fail to grow during
+    // electrification — it COLLAPSED, from near-universal mills and
+    // hearths to a few percent, as grids, cities and capable utilities
+    // were built. Without a baseline the share could only ratchet
+    // upward, which made post-industrial civilizations implausibly
+    // decentralized and left no room for the re-decentralization the
+    // parameter is meant to represent.
+    // A pathway pushes ABOVE this baseline; absent one, the share
+    // relaxes back toward it.
+    const infraE = s.infrastructureLevel ?? 40;
+    const urbanE = s.urbanizationRate ?? 15;
+    const capE   = s.stateCapacity ?? 50;
+    const targetBaselineE = Utils.clamp(95 - infraE * 0.55 - urbanE * 0.25 - capE * 0.15, 4, 95);
+    // Smooth the industrialization handover. The pre-industrial branch
+    // pins the baseline near-total; the moment an industrial energy
+    // technology is adopted the computed value applies. Switching between
+    // them directly produced an 88 -> 4 drop in a single turn — the same
+    // discontinuity class as the unsmoothed EROI transition. Grids are
+    // built over decades, so the baseline follows at a comparable rate.
+    const priorBaseE = es.structuralBaseline;
+    const baselineE = (Number.isFinite(priorBaseE) && priorBaseE > 0)
+      ? priorBaseE + (targetBaselineE - priorBaseE) * 0.15 * timeScale
+      : targetBaselineE;
+    es.structuralBaseline = Math.round(baselineE);
+    es._structuralBaselineTarget = Math.round(targetBaselineE);
+
+    // A sustained programme shifts the EQUILIBRIUM, not merely the
+    // level. Germany's feed-in tariff did not temporarily bump
+    // distributed share — it changed what the German grid is. So
+    // adoption accumulates into a persistent offset above the
+    // structural baseline, which decays slowly if the programme is
+    // abandoned. Grübler speed limits still bound how fast the offset
+    // can grow, because they bound `delta`.
+    const delta = this._decentralizationAdoption(civ, es, es.distributedShare);
+    es.pathwayOffset = Utils.clamp(
+      (es.pathwayOffset ?? 0) + Math.max(0, delta)
+        - (es.pathwayOffset ?? 0) * 0.02 * timeScale, 0, 70);
+    const targetE = Utils.clamp(baselineE + es.pathwayOffset, 0, 100);
+    es.distributedShare = Utils.clamp(
+      es.distributedShare + (targetE - es.distributedShare) * 0.15 * timeScale, 0, 100);
+    es.transitionTurns++;
+
+    es._landConc = s.landConcentration ?? 30;
+    es._wealthConc = civ.economic?.wealthConcentration ?? 40;
+    const breadth = this._decentralizationOwnership(es, es.distributedShare);
+    es.participationShare = Utils.clamp(es.distributedShare * breadth, 0, 100);
+
+    // ── Land intensity — Smil power density (M) ──
+    // Distributed renewables occupy far more land per unit energy
+    // than centralized extraction. This is the mechanism through
+    // which energy and agriculture couple emergently.
+    const distFrac = es.distributedShare / 100;
+    const centralDensity = (source === 'nuclear') ? POWER_DENSITY.hydroNuclear
+                          : (source === 'fusion') ? POWER_DENSITY.hydroNuclear
+                          : POWER_DENSITY.fossilExtraction;
+    const distDensity = (source === 'renewable' || source === 'fusion')
+                        ? POWER_DENSITY.distributedSolar : POWER_DENSITY.biomass;
+    const invSum = (distFrac / distDensity) + ((1 - distFrac) / centralDensity);
+    // Harmonic blend of power densities (W/m^2). Guarded explicitly: a
+    // NaN here would fall through as maximum land intensity.
+    const blended = (Number.isFinite(invSum) && invSum > 0) ? (1 / invSum) : distDensity;
+    es.landIntensity = Utils.clamp(100 * (1 - Math.log10(Math.max(1, blended)) / 3.5), 0, 100);
+
+    // Land burden competes with agriculture and forest — emergent,
+    // not a coded energy↔agriculture link
+    if (es.landIntensity > 45 && s.resourceDepletion) {
+      const burden = (es.landIntensity - 45) / 55;
+      s.resourceDepletion.forests = Utils.clamp(
+        (s.resourceDepletion.forests ?? 100) - burden * 0.35 * timeScale, 0, 100);
+    }
+
+    // ── Decree legibility failure (T/M) ──
+    // Scott: high-modernist mandates fail when the state cannot see
+    // local conditions. Conditional risk, never deterministic —
+    // the Tanzanian case is genuinely confounded by the 1974 drought.
+    const pw = DECENTRALIZATION_PATHWAYS[es.pathway];
+    if (pw?.legibilityFailureRisk && es.distributedShare > 20) {
+      const iq = s.institutionalQuality ?? 50;
+      const eh = s.epistemicHealth ?? 50;
+      if (iq < 40 && eh < 40) {
+        const risk = 0.05 * ((40 - iq) / 40) * timeScale;
+        if (Utils.random() < risk) {
+          es.distributedShare = Utils.clamp(es.distributedShare - 12, 0, 100);
+          s.anomieLevel = Utils.clamp((s.anomieLevel ?? 0) + 6, 0, 100);
+          s.legitimacyLevel = Utils.clamp((s.legitimacyLevel ?? 50) - 5, 0, 100);
+          civ.addHistoryEntry(year, '⚖️ Mandated Energy Scheme Falters',
+            'A centrally designed distributed-energy mandate was imposed without local knowledge. Installations sit unused or unsuited to conditions; the programme partially collapses.',
+            'decentralization_failure');
+          this.game.ui?.showNotification(`⚖️ ${civ.name}: Mandated energy scheme falters`, 'warning');
+        }
+      }
+    }
+
+    // Milestone history
+    for (const mark of [25, 50, 75]) {
+      if (prevShare < mark && es.distributedShare >= mark) {
+        civ.addHistoryEntry(year, `⚡ Distributed Energy ${mark}%`,
+          `${mark}% of energy production is now local and small-scale. Pathway: ${pw?.label ?? 'unplanned'}. Ownership breadth: ${Math.round(breadth * 100)}%.`,
+          'energy_decentralization');
+      }
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // Pass 11 — Active Travel Networks
+  // Interlocking local path networks for human-powered transport.
+  // Reuses the Pass 10 architecture: structural baseline (physics) +
+  // programme contribution (policy) + enabling support.
+  // ═══════════════════════════════════════════════════════════
+  _processActiveTravel(civ) {
+    const s = civ.state;
+    const at = s?.activeTravel;
+    if (!at) return;
+    const A = ACTIVE_TRAVEL;
+    const timeScale = (this.game?.yearsDelta || 10) / 10;
+    const year = this.game?.currentYear ?? 0;
+    const urban = s.urbanizationRate ?? 15;
+    const techL = s.technologyLevel ?? 1;
+
+    this._processEnablingSupport(civ, at);
+
+    // ── Structural baseline (M) ──
+    // Pre-automobile cities were entirely walking and animal powered.
+    // Motorization collapsed that; it does not vanish on its own.
+    // Baseline falls with motorization capability (tech + infrastructure)
+    // and rises again where those fail.
+    const motorization = Utils.clamp(
+      Math.max(0, techL - 4) * 14 + (s.infrastructureLevel ?? 40) * 0.35, 0, 100);
+    const baseline = Utils.clamp(88 - motorization * 0.85, 4, 92);
+    at.structuralBaseline = Math.round(baseline);
+
+    // ── Network quality (M — Seville) ──
+    // Continuity matters more than kilometres: a gapped network of the
+    // same length does not deliver the mode shift.
+    const netQuality = Utils.clamp(
+      at.networkCoverage * A.coverageWeight + at.networkContinuity * A.continuityWeight,
+      0, 100);
+
+    // ── Effective reach (M) — the distance-decay solution ──
+    // A single network cannot serve a large metropolis: median cycling
+    // trip is ~2km and mode share collapses past 5km. Interlocking
+    // local networks plus transit integration resolve this — each
+    // network serves its own ~4km catchment and transit carries the
+    // inter-network leg (Netherlands: bicycle is the access mode for
+    // 47% of rail passengers).
+    const cityScale = Utils.clamp(urban / 100, 0, 1);
+    const rawReach = 1 - cityScale * 0.75;                  // big metro -> low reach
+    const transitBoost = 1 + (at.transitIntegration / 100) * (A.transitReachMultiplier - 1);
+    // Jobs-housing balance is THE gate. Polycentricity does not
+    // automatically reduce travel; decentralizing population while
+    // centralizing employment makes things worse.
+    const jhGate = A.jobsHousingGateFloor
+                 + (1 - A.jobsHousingGateFloor) * (at.jobsHousingBalance / 100);
+    at.effectiveReach = Utils.clamp(rawReach * transitBoost * jhGate * 100, 0, 100);
+
+    // ── Perceived safety (M + T) ──
+    // Composite of lighting (14% crime reduction) and patrol intensity
+    // (Braga: significant, with diffusion of benefits rather than
+    // displacement), plus a small tier-T amenity/perception term.
+    // Drones are deliberately absent — the one rigorous aerial-patrol
+    // trial found no significant effect.
+    const safetyRaw = at.lightingLevel * A.lightingWeight
+                    + at.patrolIntensity * A.patrolWeight
+                    + at.amenityLevel * A.amenityWeight;
+    // Institutions determine whether patrols protect or predate
+    const institutionFactor = 0.55 + 0.45 * ((s.institutionalQuality ?? 50) / 100);
+    at.perceivedSafety = Utils.clamp(
+      30 + safetyRaw * 0.70 * institutionFactor, 0, 100);
+
+    // ── Adoption ──
+    const delta = this._decentralizationAdoption(civ, at, at.modeShare);
+    at.pathwayOffset = Utils.clamp(
+      (at.pathwayOffset ?? 0) + Math.max(0, delta) * (0.3 + netQuality / 100 * 0.7)
+        - (at.pathwayOffset ?? 0) * 0.02 * timeScale, 0, 70);
+
+    // Programme gain ABOVE the structural baseline. Bounded by what a
+    // continuous protected network actually achieves — Seville's
+    // 0.5%→6.5% and the 36.8% non-motorized ceiling observed in
+    // polycentric subcenters — scaled by network quality and reach.
+    const maxGain = (A.polycentricNonMotorizedCeiling - A.sevilleBaseShare)
+                  * (netQuality / 100) * (at.effectiveReach / 100)
+                  + at.pathwayOffset * 0.35;
+
+    // ── Gendered access (M) ──
+    // Women report substantially more fear, shaped by harassment rather
+    // than traffic — and there is NO gendered difference in fear of
+    // collision. Protected lanes alone do not address this, so a
+    // civilization that builds paths but skips the security layer
+    // captures roughly half the available mode shift.
+    const safetyNorm = at.perceivedSafety / 100;
+    const genderEq = (s.genderEquity ?? 50) / 100;
+    const femaleAccess = Utils.clamp(
+      (1 - A.femaleSafetyElasticity) + A.femaleSafetyElasticity * safetyNorm, 0, 1) * (0.4 + 0.6 * genderEq);
+    const maleAccess = Utils.clamp(
+      (1 - A.maleSafetyElasticity) + A.maleSafetyElasticity * safetyNorm, 0, 1);
+    // Baseline is the FLOOR, not a fraction of it. A society without
+    // motorized transport walks nearly everywhere; a first pass used
+    // `baseline * 0.35` and reported 29% active travel for a neolithic
+    // civilization whose own baseline said 83%.
+    at.modeShareMale = Utils.clamp(baseline + maxGain * maleAccess, 0, 100);
+    at.modeShareFemale = Utils.clamp(baseline + maxGain * femaleAccess, 0, 100);
+    const target = Utils.clamp((at.modeShareMale + at.modeShareFemale) / 2, 0, 100);
+
+    const prevShare = at.modeShare;
+    at.modeShare = Utils.clamp(
+      at.modeShare + (target - at.modeShare) * 0.15 * timeScale, 0, 100);
+    at.transitionTurns++;
+
+    // ── Marginal benefit is relative to what is displaced (M) ──
+    // The HR 0.59 for cycle commuting is measured against a SEDENTARY,
+    // CAR-USING counterfactual. In a society without motorized
+    // transport everyone already walks: baseline health, energy use and
+    // air quality already reflect that, and there is no marginal gain
+    // from "adopting" active travel — it was never a choice.
+    // A first pass ignored this and reported a LARGER health benefit
+    // for a neolithic civilization than for a modern motorized one,
+    // which is backwards.
+    const motorContext = Utils.clamp(motorization / 100, 0, 1);
+    const marginalShift = Math.max(0, at.modeShare - baseline) / 100;
+    const uptake = marginalShift * motorContext;
+    at.marginalShift = Math.round(marginalShift * 1000) / 10;
+
+    // ── Health (M) ──
+    if (uptake > 0.005) {
+      // Celis-Morales HR 0.59 is one of the largest effect sizes in the
+      // whole evidence base. Coefficient raised after a first pass left
+      // this inert against the healthcare equilibrium — understating a
+      // well-measured effect is as much an error as overstating one.
+      s.diseaseBurden = Utils.clamp(
+        (s.diseaseBurden ?? 55) - A.maxDiseaseBurdenReduction * uptake * 0.35 * timeScale, 0, 100);
+      if (s.lifeExpectancy !== undefined) {
+        s.lifeExpectancy = Utils.clamp(
+          s.lifeExpectancy + A.maxLifeExpectancyGain * uptake * 0.06 * timeScale, 0, 120);
+      }
+      // Wellbeing: physical activity, plus the noise channel civ-sim
+      // has no variable for (163 of Barcelona's 667 deaths)
+      s.averageWellbeing = Utils.clamp(
+        (s.averageWellbeing ?? 50) + 3.0 * uptake * A.noiseWeight * 0.5 * timeScale, 0, 100);
+      // Social capital: walkable mixed-use neighbourhoods show higher
+      // trust, neighbour familiarity and political participation (Leyden)
+      s.socialTrust = Utils.clamp(
+        (s.socialTrust ?? 50) + 2.5 * uptake * 0.10 * timeScale, 0, 100);
+    }
+
+    // ── Environment at scale (M) ──
+    // Urban passenger car travel is roughly 15-20% of total energy
+    // demand, so a 10-point mode shift is about 2% of total energy.
+    // Real, but not transformational — the model must not overstate it.
+    const addressableEnergy = A.addressableEnergyShare;
+    const displaced = uptake * (urban / 100) * addressableEnergy;
+    at.energySavedShare = Math.round(displaced * 1000) / 10;
+    // Coefficients are deliberately small. Displacing ~2% of total
+    // energy demand cannot halve a civilization's pollution index, and
+    // a first implementation that did so was overstating the effect by
+    // more than an order of magnitude. These settle at a steady-state
+    // displacement of roughly 8-12 points against the restoring forces
+    // of the pollution and warming systems.
+    if (displaced > 0.002) {
+      s.pollutionIndex = Utils.clamp(
+        (s.pollutionIndex ?? 0) - displaced * 100 * A.airPollutionWeight * 0.12 * timeScale, 0, 100);
+      s.globalWarmingContribution = Utils.clamp(
+        (s.globalWarmingContribution ?? 0) - displaced * 100 * 0.08 * timeScale, 0, 100);
+      // Reclaimed roadway and parking returned to vegetation
+      if (s.resourceDepletion) {
+        s.resourceDepletion.forests = Utils.clamp(
+          (s.resourceDepletion.forests ?? 100) + displaced * 100 * A.greenWeight * 0.15 * timeScale, 0, 100);
+      }
+    }
+
+    // ── Neighbourhood economics (M, weak) ──
+    at.localEconomyEffect = Utils.clamp(uptake * netQuality / 100 * A.localEconomyMax * 40, 0, 100);
+
+    // ── Animal power (M, density-conditional) ──
+    // Viable at low density and for freight; actively harmful as
+    // density rises. This is evidence against urban adoption, not a
+    // data gap.
+    this._processAnimalTransport(civ, at, urban, timeScale);
+
+    for (const mark of [15, 30, 45]) {
+      if (prevShare < mark && at.modeShare >= mark) {
+        civ.addHistoryEntry(year, `🚶 Active Travel ${mark}%`,
+          `${mark}% of trips are now made on foot or by human power. Network quality ${Math.round(netQuality)}, effective reach ${Math.round(at.effectiveReach)}, perceived safety ${Math.round(at.perceivedSafety)}. Women's share ${Math.round(at.modeShareFemale)}% vs men's ${Math.round(at.modeShareMale)}%.`,
+          'active_travel');
+      }
+    }
+  }
+
+  // ── Animal-Powered Transport (M) ────────────────────────────
+  _processAnimalTransport(civ, at, urban, timeScale) {
+    const s = civ.state;
+    const N = ANIMAL_TRANSPORT;
+    const techL = s.technologyLevel ?? 1;
+
+    // Animals are the default before mechanization and fade after
+    const preMech = techL < 5;
+    const target = preMech ? Utils.clamp(70 - urban * 0.5, 5, 70)
+                           : Utils.clamp(at.animalPowerShare - 4, 0, 100);
+    at.animalPowerShare = Utils.clamp(
+      at.animalPowerShare + (target - at.animalPowerShare) * 0.12 * timeScale, 0, 100);
+
+    const share = at.animalPowerShare / 100;
+    if (share < 0.02) return;
+
+    if (urban > N.viableUrbanizationCeiling) {
+      // Density penalty. A horse produces 15-35 lb of manure daily;
+      // 1890s London with 50,000+ horses saw ~1,000 tons/day on the
+      // streets. Flies bred in it and contaminated water, spreading
+      // typhoid and cholera. Stabling consumed valuable urban land.
+      const excess = (urban - N.viableUrbanizationCeiling) / (100 - N.viableUrbanizationCeiling);
+      const sanitation = N.sanitationPenaltyMax * excess * share;
+      s.pollutionIndex = Utils.clamp(
+        (s.pollutionIndex ?? 0) + sanitation * 0.10 * timeScale, 0, 100);
+      s.diseaseBurden = Utils.clamp(
+        (s.diseaseBurden ?? 55) + sanitation * 0.12 * timeScale, 0, 100);
+      if (s.sanitationLevel !== undefined) {
+        s.sanitationLevel = Utils.clamp(
+          s.sanitationLevel - sanitation * 0.08 * timeScale, 0, 100);
+      }
+      // Hay acreage competes directly with human food production.
+      // This couples to the Pass 10 agriculture parameter EMERGENTLY,
+      // through shared land — not by a coded link.
+      const landComp = N.landCompetitionMax * excess * share;
+      s.foodSecurity = Utils.clamp(
+        (s.foodSecurity ?? 60) - landComp * 0.08 * timeScale, 0, 100);
+
+      // Direct wellbeing cost. Without this the net signal inverted:
+      // animal power at density produced +23 disease burden and −15
+      // sanitation yet still read as a wellbeing GAIN, because higher
+      // mortality shrank the population and other systems rewarded the
+      // smaller denominator. Streets deep in manure, the flies and the
+      // stench were experienced as misery, and the model should say so
+      // rather than leave it to an indirect path that inverts the sign.
+      s.averageWellbeing = Utils.clamp(
+        (s.averageWellbeing ?? 50) - sanitation * 0.09 * timeScale, 0, 100);
+    } else {
+      // Genuinely useful at low density and for freight
+      const benefit = N.freightBenefitMax * share * (1 - urban / N.viableUrbanizationCeiling * 0.6);
+      s.averageWellbeing = Utils.clamp(
+        (s.averageWellbeing ?? 50) + benefit * 0.04 * timeScale, 0, 100);
+    }
+  }
+
+  // ── Nutritional Quality → Health (M) ────────────────────────
+  // Produce for long-distance marketing is picked mature-green;
+  // produce for local fresh consumption is picked full-ripe. Vitamin C,
+  // flavonoids and total phenolics rise significantly during ripening,
+  // and antioxidant vitamins A, E and C are higher at the red-ripe
+  // stage; transit damage reduces vitamin C further.
+  //
+  // Affects HEALTH ONLY, never calorie availability — a well-fed
+  // population eating nutrient-poor produce is still well-fed, and
+  // conflating the two would be a modelling error.
+  //
+  // Runs at the END of the chain. Placed mid-chain it was applied
+  // before _processHealthcare, which drives disease burden toward its
+  // own equilibrium and silently erased the effect.
+  _processNutritionalHealth(civ) {
+    const s = civ.state;
+    const ag = s?.agricultureSystem;
+    if (!ag) return;
+    const timeScale = (this.game?.yearsDelta || 10) / 10;
+
+    // In famine, calorie shortfall dominates entirely; micronutrient
+    // composition is not the binding constraint.
+    if ((s.foodSecurity ?? 60) < 25) { s._nutritionHealthOffset = 0; return; }
+
+    const nq = ag.nutritionalQuality ?? 50;
+    const nqEffect = Utils.clamp((nq - 50) / 50, -1, 1); // -1 .. +1
+    s._nutritionHealthOffset = Math.round(nqEffect * 100) / 100;
+
+    // Bounded displacement against the healthcare equilibrium. The
+    // steady state settles at a few points, which is the right order
+    // of magnitude: diet quality shifts population health measurably
+    // but does not substitute for healthcare, sanitation or nutrition
+    // quantity.
+    // Disease burden: tier M. Micronutrient status is a well-established
+    // driver of population morbidity.
+    s.diseaseBurden = Utils.clamp(
+      (s.diseaseBurden ?? 55) - nqEffect * 1.2 * timeScale, 0, 100);
+
+    // Infant mortality: tier I, deliberately weaker. The measured
+    // evidence is that vitamin C, A, E, flavonoids and phenolics are
+    // higher in ripe than mature-green produce. The step from that to
+    // population child mortality is an EXTRAPOLATION, not a measured
+    // link — plausible via micronutrient status, but not established at
+    // this magnitude. Coefficient halved accordingly.
+    if (s.infantMortality !== undefined) {
+      s.infantMortality = Utils.clamp(
+        s.infantMortality - nqEffect * 0.4 * timeScale, 0, 100);
+    }
+  }
+
+  // ── Energy → Wellbeing Saturation (M) ───────────────────────
+  // Fills a genuine gap: civ-sim previously had no energy→wellbeing
+  // link at all. Implemented as a SOFT CEILING, never a bonus, so
+  // low-energy civilizations are constrained while high-energy ones
+  // gain nothing extra. Neutral in both directions.
+  _processEnergyWellbeing(civ) {
+    if (!civ.state) return;
+    const s = civ.state;
+    const timeScale = (this.game?.yearsDelta || 10) / 10;
+
+    // GJ/capita/year proxy from tech level, EROI and energy source
+    const techLevel = s.technologyLevel ?? 1;
+    const eroi = s.energyEROI ?? 3;
+    const sourceScale = { wood: 1.0, coal: 2.4, oil: 4.0,
+                          nuclear: 4.6, renewable: 4.2, fusion: 6.0 }[s.energySource ?? 'wood'] ?? 1.0;
+    // Calibrated against the historical range: pre-industrial organic
+    // economies ~10-20 GJ/cap (Malanima, Wrigley), industrial ~100-150,
+    // high-consumption modern ~250-300. The additive floor represents
+    // subsistence energy use, which never falls to zero.
+    const infraTerm = 0.45 + 0.55 * ((s.infrastructureLevel ?? 40) / 100);
+    const eroiTerm = 0.75 + Math.min(0.45, eroi / 90);
+    let gj = 8 + 6.0 * sourceScale * Math.pow(Math.max(1, techLevel), 0.95)
+                 * infraTerm * eroiTerm;
+    s.energyPerCapita = Math.round(gj * 10) / 10;
+
+    const ceiling = ENERGY_WELLBEING.ceiling(s.energyPerCapita);
+    s.wellbeingEnergyCeiling = Math.round(ceiling * 10) / 10;
+
+    // Soft ceiling: decays toward it when above. Never raises wellbeing.
+    // Gentle drag — energy constraints operate over decades, not single turns
+    const wb = s.averageWellbeing ?? 50;
+    if (wb > ceiling) {
+      s.averageWellbeing = Utils.clamp(wb - (wb - ceiling) * 0.15 * timeScale, 0, 100);
+    }
+  }
+
+  // ── Agriculture Decentralization ────────────────────────────
+  _processAgricultureDecentralization(civ) {
+    if (!civ.state?.agricultureSystem) return;
+    const s = civ.state;
+    const ag = s.agricultureSystem;
+    const year = this.game?.currentYear ?? 0;
+    const timeScale = (this.game?.yearsDelta || 10) / 10;
+    const prevShare = ag.localShare;
+
+    this._processEnablingSupport(civ, ag);
+
+    // ── Structural baseline (M) ──
+    // Agriculture, unlike electricity, is meaningful across the whole
+    // arc: pre-industrial food production was overwhelmingly local and
+    // small-scale by default. The baseline falls as trade, cities and
+    // industrial agriculture arrive. A pathway pushes ABOVE this
+    // baseline; absent one, local share relaxes back toward it.
+    const tradeDep = s.tradeDependency ?? 20;
+    const urban = s.urbanizationRate ?? 15;
+    const techL = s.technologyLevel ?? 1;
+    const baseline = Utils.clamp(
+      95 - tradeDep * 0.55 - urban * 0.30 - Math.max(0, techL - 3) * 6, 8, 98);
+    ag.structuralBaseline = Math.round(baseline);
+
+    if (ag.localShare <= 0 && ag.transitionTurns === 0) ag.localShare = baseline;
+
+    // As with energy: a sustained programme shifts the equilibrium
+    // rather than producing a transient bump that the structural pull
+    // immediately erases.
+    const delta = this._decentralizationAdoption(civ, ag, ag.localShare);
+    ag.pathwayOffset = Utils.clamp(
+      (ag.pathwayOffset ?? 0) + Math.max(0, delta)
+        - (ag.pathwayOffset ?? 0) * 0.02 * timeScale, 0, 70);
+    const targetA = Utils.clamp(baseline + ag.pathwayOffset, 0, 100);
+    ag.localShare = Utils.clamp(
+      ag.localShare + (targetA - ag.localShare) * 0.15 * timeScale, 0, 100);
+    ag.transitionTurns++;
+
+    ag._landConc = s.landConcentration ?? 30;
+    ag._wealthConc = civ.economic?.wealthConcentration ?? 40;
+    const breadth = this._decentralizationOwnership(ag, ag.localShare);
+    ag.participationShare = Utils.clamp(ag.localShare * breadth, 0, 100);
+
+    // ── Diversification intensity ──
+    // Drifts toward local share (small producers diversify; large
+    // remote operations specialize) but is separately steerable by
+    // the player and gated by technology and land concentration.
+    const target = ag.localShare * 0.75
+                 + Math.max(0, 40 - (s.landConcentration ?? 30)) * 0.3;
+    ag.diversificationIntensity = Utils.clamp(
+      ag.diversificationIntensity + (target - ag.diversificationIntensity) * 0.12 * timeScale,
+      0, 100);
+
+    // ── Land Equivalent Ratio (M/I) ──
+    // Interpolated strictly between measured anchors, hard-capped at
+    // the measured silvoarable ceiling of 2.0.
+    let ler = lerFromIntensity(ag.diversificationIntensity);
+
+    // Climate/soil gate (M): the intercropping advantage is strongest
+    // in poor soils, arid and tropical conditions, and "variable in
+    // temperate zones". Poorer soil ⇒ larger relative benefit.
+    const soil = s.resourceDepletion?.soil ?? 100;
+    const soilGate = 0.45 + 0.55 * (1 - Math.min(1, soil / 100));
+    ler = 1 + (ler - 1) * Utils.clamp(soilGate + 0.35, 0.45, 1.0);
+    ag.landEquivalentRatio = Math.round(Math.min(LER_HARD_CAP, ler) * 1000) / 1000;
+
+    // ── Ecosystem function (M) ──
+    // Designed species interactions substituting for external inputs:
+    // allelopathic repellents, trap crops, nitrogen fixation,
+    // biological weed and pest control. Distinct from LER, which is
+    // spatial/temporal complementarity alone.
+    // Knowledge is the binding constraint — these systems are
+    // knowledge-intensive and lapse without sustained extension.
+    // Extension services and expert consultation raise the knowledge
+    // ceiling directly. Tiered I rather than M: the Farmer Field
+    // School evidence base contains no study at low risk of bias and
+    // likely overstates effects. Critically, it does NOT spill over —
+    // there is no evidence that non-participant neighbours benefit —
+    // so this scales with delivery reach, not through a network effect.
+    const extension = (ag.supportEffectiveness ?? 0) / 100 * ENABLING_SUPPORT.knowledgeBoost;
+    const knowledgeGate = Utils.clamp(
+      ((s.educationQuality ?? 50) * 0.55 + (s.stateCapacity ?? 50) * 0.25
+       + (s.socialTrust ?? 50) * 0.20) / 100 + extension, 0, 1);
+    const targetEco = ag.diversificationIntensity * knowledgeGate;
+    // Gains accrue slowly and decay when knowledge support lapses
+    if (targetEco > ag.ecosystemFunction) {
+      ag.ecosystemFunction += (targetEco - ag.ecosystemFunction) * 0.10 * timeScale;
+    } else {
+      ag.ecosystemFunction -= (ag.ecosystemFunction - targetEco)
+                            * ECOSYSTEM_FUNCTION.knowledgeDecay * timeScale;
+    }
+    ag.ecosystemFunction = Utils.clamp(ag.ecosystemFunction, 0, 100);
+
+    // Input substitution: the benefit is largest where external inputs
+    // are scarce. Push-pull tripled yields for farmers who could not
+    // afford pesticide or fertilizer; it does far less for an already
+    // input-optimized system.
+    const inputScarcity = 1 - Math.min(1, (s.technologyLevel ?? 1) / 6);
+    ag.inputSubstitution = Utils.clamp(
+      (ag.ecosystemFunction / 100)
+      * (ECOSYSTEM_FUNCTION.baseWeight + ECOSYSTEM_FUNCTION.lowInputWeight * inputScarcity)
+      * 100, 0, 100);
+
+    // ── Labor cost (M — Boserup) ──
+    // LER > 1 buys land efficiency by spending labor. Diversified
+    // systems are land-efficient and labor-intensive; monoculture is
+    // labor-efficient and land-hungry. This is the counterweight.
+    ag.laborIntensity = Utils.clamp(ag.diversificationIntensity * 0.6
+                                  + ag.localShare * 0.2, 0, 100);
+    if (ag.laborIntensity > 30) {
+      const drag = (ag.laborIntensity - 30) / 70;
+      s.urbanizationRate = Utils.clamp(
+        (s.urbanizationRate ?? 15) - drag * 0.5 * timeScale, 0, 100);
+    }
+
+    // ── Reduced input dependence (M) ──
+    // Nitrogen fixation, allelopathic pest repellence and biological
+    // weed control displace synthetic fertilizer and pesticide.
+    // Driven by ecosystem function, not raw diversification — planting
+    // many crops without the functional interactions does not deliver
+    // this.
+    if (ag.ecosystemFunction > 25 && s.resourceDepletion) {
+      const relief = (ag.ecosystemFunction - 25) / 75;
+      s.pollutionIndex = Utils.clamp(
+        (s.pollutionIndex ?? 0) - relief * 0.35 * timeScale, 0, 100);
+      s.resourceDepletion.soil = Utils.clamp(
+        (s.resourceDepletion.soil ?? 100) + relief * 0.45 * timeScale, 0, 100);
+      s.resourceDepletion.water = Utils.clamp(
+        (s.resourceDepletion.water ?? 100) + relief * 0.15 * timeScale, 0, 100);
+    }
+
+    // ── Coercion → productivity penalty (M) ──
+    // The central lesson of forced agricultural reorganization:
+    // Soviet collectivization, the Great Leap Forward's communes, and
+    // Romanian systematization each imposed structures that were, on
+    // paper, collective and participatory — and each destroyed the
+    // productivity of the thing being reorganized. Soviet private
+    // plots on 1-3% of land produced 25-27% of output, same farmers
+    // and same soil.
+    // A well-designed system imposed by force underperforms a
+    // mediocre one freely chosen. None of these were low-capacity
+    // states, so this penalty does NOT require weak institutions.
+    const apwC = DECENTRALIZATION_PATHWAYS[ag.pathway];
+    ag.coercionYieldFactor = COERCION_PRODUCTIVITY.penalty(apwC?.coercion ?? 0);
+
+    // ── Distribution locality and the post-harvest loss chain (M) ──
+    // Distinct from where food is GROWN. A civilization can grow
+    // locally and still route everything through a distant depot.
+    //
+    // Urbanization is the binding physical constraint: a large city
+    // cannot be fed within cart range, which is precisely why dense
+    // populations require a cold chain.
+    const urbanD = s.urbanizationRate ?? 15;
+    const localityCap = Utils.clamp(100 - urbanD * DISTRIBUTION.urbanizationPenalty, 5, 100);
+    const localityTarget = Math.min(localityCap,
+      ag.localShare * 0.75 + (100 - (s.tradeDependency ?? 20)) * 0.25);
+    ag.distributionLocality = Utils.clamp(
+      ag.distributionLocality + (localityTarget - ag.distributionLocality) * 0.12 * timeScale,
+      0, 100);
+    const locality = ag.distributionLocality / 100;
+
+    // (a) Handling / sorting / packaging / transit loss.
+    // Perishable-heavy diversified production loses more in a long
+    // chain and less in a short one.
+    const perishability = 0.35 + 0.45 * (ag.diversificationIntensity / 100);
+    const longChainLoss = DISTRIBUTION.baseChainLoss
+      + (DISTRIBUTION.perishableChainLoss - DISTRIBUTION.baseChainLoss) * perishability;
+    ag.chainLoss = Utils.clamp(longChainLoss * (1 - 0.72 * locality), 1, 30);
+
+    // (b) Cosmetic grading rejection. Formal graded markets impose
+    // appearance standards; local direct distribution largely does
+    // not. Most rejected produce is diverted to processing or feed
+    // rather than destroyed, so it is a partial loss.
+    const marketFormality = Utils.clamp(
+      ((s.tradeDependency ?? 20) * 0.5 + urbanD * 0.3
+       + (s.technologyLevel ?? 1) * 4) / 100, 0, 1);
+    const grossRejection = DISTRIBUTION.cosmeticRejectionMax * marketFormality * (1 - 0.85 * locality);
+    ag.cosmeticRejection = Utils.clamp(
+      grossRejection * (1 - DISTRIBUTION.cosmeticRecoveryFraction), 0, 30);
+
+    // (c) Harvest maturity. Long-distance marketing requires picking
+    // at mature-green; local distribution allows full ripeness.
+    // This is a NUTRITIONAL QUALITY effect, never a calorie effect.
+    ag.harvestMaturity = Utils.clamp(35 + 60 * locality, 0, 100);
+    ag.nutritionalQuality = Utils.clamp(
+      40 + (ag.harvestMaturity - 35) * 0.45
+         + (ag.ecosystemFunction ?? 0) * 0.12
+         - ag.chainLoss * 0.4, 0, 100);
+
+    // (d) Distribution energy. Short chains avoid long-haul transport
+    // and the cold chain. Real and worth modelling — but production
+    // remains 83% of food-system emissions, so the effect is scoped
+    // to the distribution segment only and stays modest.
+    if (locality > 0.2) {
+      const energySaved = (locality - 0.2) / 0.8
+        * DISTRIBUTION.distributionEnergyShare
+        * (0.4 + 0.6 * DISTRIBUTION.coldChainShare);
+      s.pollutionIndex = Utils.clamp(
+        (s.pollutionIndex ?? 0) - energySaved * 2.2 * timeScale, 0, 100);
+      s.globalWarmingContribution = Utils.clamp(
+        (s.globalWarmingContribution ?? 0) - energySaved * 0.8 * timeScale, 0, 100);
+    }
+
+    // ── Decree legibility failure (T/M) — Scott, as above ──
+    const pw = DECENTRALIZATION_PATHWAYS[ag.pathway];
+    if (pw?.legibilityFailureRisk && ag.localShare > 20) {
+      const iq = s.institutionalQuality ?? 50;
+      const eh = s.epistemicHealth ?? 50;
+      if (iq < 40 && eh < 40) {
+        const risk = 0.06 * ((40 - iq) / 40) * timeScale;
+        if (Utils.random() < risk) {
+          ag.localShare = Utils.clamp(ag.localShare - 14, 0, 100);
+          s.foodSecurity = Utils.clamp((s.foodSecurity ?? 60) - 8, 0, 100);
+          s.anomieLevel = Utils.clamp((s.anomieLevel ?? 0) + 8, 0, 100);
+          s.collectiveTrauma = Utils.clamp((s.collectiveTrauma ?? 0) + 4, 0, 100);
+          civ.addHistoryEntry(year, '⚖️ Forced Resettlement Scheme Fails',
+            'A centrally planned agricultural reorganization displaced the reciprocity networks people relied on to survive shortages. Yields fall and the scheme unravels.',
+            'decentralization_failure');
+          this.game.ui?.showNotification(`⚖️ ${civ.name}: Agricultural mandate fails`, 'danger');
+        }
+      }
+    }
+
+    for (const mark of [25, 50, 75]) {
+      if (prevShare < mark && ag.localShare >= mark) {
+        civ.addHistoryEntry(year, `🌾 Local Food Production ${mark}%`,
+          `${mark}% of food now comes from local, small-scale production. Land Equivalent Ratio: ${ag.landEquivalentRatio.toFixed(2)}. Labor intensity: ${Math.round(ag.laborIntensity)}.`,
+          'agriculture_decentralization');
+      }
+    }
+  }
+
+  // ── Participation → Wellbeing (M, bounded) ──────────────────
+  // The share of population who are stakeholders/producers rather
+  // than remote consumers. Effects are deliberately capped:
+  // intervention-scale effect sizes are not civilizational
+  // transformations.
+  _processParticipation(civ) {
+    if (!civ.state?.energySystem || !civ.state?.agricultureSystem) return;
+    const s = civ.state;
+    const P = PARTICIPATION_EFFECTS;
+    const timeScale = (this.game?.yearsDelta || 10) / 10;
+
+    // Food participation weighted higher — more hands-on and daily
+    // (gardening/CSA evidence base is stronger than energy prosumer)
+    const depth = Utils.clamp(
+      s.energySystem.participationShare * P.energyWeight +
+      s.agricultureSystem.participationShare * P.agricultureWeight, 0, 100);
+    s.participationDepth = Math.round(depth * 10) / 10;
+
+    // Coercion is the weighted average of the two pathways
+    const epw = DECENTRALIZATION_PATHWAYS[s.energySystem.pathway] ?? DECENTRALIZATION_PATHWAYS.none;
+    const apw = DECENTRALIZATION_PATHWAYS[s.agricultureSystem.pathway] ?? DECENTRALIZATION_PATHWAYS.none;
+    const coercion = Utils.clamp(
+      (epw.coercion || 0) * P.energyWeight + (apw.coercion || 0) * P.agricultureWeight, 0, 100);
+    s.participationCoercion = Math.round(coercion);
+
+    if (depth < 1) return;
+
+    // ── Coercion discount — the critical bias guard ──
+    // Observational participation studies are self-selected.
+    // Assigning participation is not the same as choosing it.
+    let multiplier = Math.pow(1 - coercion / 100, P.coercionExponent);
+
+    // Compelled participation turns the benefit NEGATIVE.
+    // This does NOT require a weak state. The USSR, China under the
+    // Great Leap Forward, and Romania under systematization all had
+    // formidable state capacity and produced catastrophe anyway.
+    // Institutional quality modulates how bad it gets, not whether it
+    // happens.
+    // The historically correct asymmetry falls out of the pathway
+    // definitions: mandating OFFERS OF OWNERSHIP (Denmark, coercion 25)
+    // stays mildly positive; mandating PARTICIPATION ITSELF
+    // (villagization, collectivization, coercion 85) goes sharply
+    // negative.
+    const iq = s.institutionalQuality ?? 50;
+    if (coercion > P.coercionNegativeThreshold) {
+      const over = (coercion - P.coercionNegativeThreshold)
+                 / (100 - P.coercionNegativeThreshold);
+      const institutionalAmp = 1 + Math.max(0,
+        (P.institutionalFailureThreshold - iq) / P.institutionalFailureThreshold);
+      multiplier = -over * 0.8 * institutionalAmp;
+    }
+
+    // Saturating in depth — diminishing returns, not linear
+    const saturation = 1 - Math.exp(-depth / 40);
+    const eff = multiplier * saturation;
+
+    // Bounded application, expressed as a pull toward a target
+    // rather than an unbounded per-turn accumulation
+    const wbTarget = (s.averageWellbeing ?? 50) + P.wellbeingCap * eff;
+    s.averageWellbeing = Utils.clamp(
+      (s.averageWellbeing ?? 50) + (wbTarget - (s.averageWellbeing ?? 50)) * 0.15 * timeScale, 0, 100);
+
+    s.anomieLevel = Utils.clamp(
+      (s.anomieLevel ?? 0) - P.anomieCap * eff * 0.15 * timeScale, 0, 100);
+
+    // Sustained compulsion imposes an anomie FLOOR rather than a
+    // per-turn increment, which the anomie equilibrium would simply
+    // absorb. Scott's mechanism: forced reorganization destroys the
+    // reciprocity networks people relied on, and the normlessness
+    // persists for as long as the compulsion does.
+    if (coercion > P.coercionNegativeThreshold && depth > 10) {
+      const floor = (coercion - P.coercionNegativeThreshold)
+                  / (100 - P.coercionNegativeThreshold) * 28;
+      if ((s.anomieLevel ?? 0) < floor) {
+        s.anomieLevel = Utils.clamp(
+          (s.anomieLevel ?? 0) + (floor - (s.anomieLevel ?? 0)) * 0.25 * timeScale, 0, 100);
+      }
+    }
+    s.socialTrust = Utils.clamp(
+      (s.socialTrust ?? 50) + P.trustCap * eff * 0.15 * timeScale, 0, 100);
+    s.legitimacyLevel = Utils.clamp(
+      (s.legitimacyLevel ?? 50) + P.legitimacyCap * eff * 0.15 * timeScale, 0, 100);
+
+    // Behavioral reinforcement: stakeholding shifts cooperation and
+    // deference, but only when it is genuinely voluntary
+    const b = s.behaviorReinforcement;
+    if (b && eff > 0) {
+      b.cooperation = Utils.clamp((b.cooperation ?? 50) + 0.20 * eff * timeScale, 0, 100);
+      b.mutualAid   = Utils.clamp((b.mutualAid   ?? 50) + 0.18 * eff * timeScale, 0, 100);
+      b.deference   = Utils.clamp((b.deference   ?? 50) - 0.12 * eff * timeScale, 0, 100);
+    }
   }
 
   // ── Energy Systems / EROI ───────────────────────────────────
@@ -5600,6 +7823,48 @@ class SimulationEngine {
     // Tech level efficiency bonus
     const techBonus = Math.min((civ.state.technologyLevel ?? 1) * 0.03, 0.3);
     eroi *= (1 + techBonus);
+
+    // ── Pass 10: distributed vs centralized production structure ──
+    // The evidence flips sign by metric, so both terms are applied.
+    const es = civ.state.energySystem;
+    if (es && es.distributedShare > 0) {
+      const dFrac = es.distributedShare / 100;
+
+      // (a) Transmission & distribution loss avoidance (M).
+      // Global mean T&D loss ~5%, but ~19% in India and ~2% in
+      // Singapore. Distributed generation avoids part of it — and the
+      // benefit is LARGEST where grid infrastructure is poorest.
+      const infra = civ.state.infrastructureLevel ?? 40;
+      const gridLoss = 0.02 + 0.17 * (1 - infra / 100); // 2%–19%
+      eroi *= (1 + gridLoss * dFrac * 0.8);
+
+      // (b) Scale cost penalty (M). Lazard 2025: utility-scale solar
+      // $38–78/MWh vs residential rooftop $122–284/MWh — a 2–4x
+      // penalty, roughly a third of it customer acquisition and
+      // overhead. Shrinks with technology and institutional quality
+      // but never vanishes.
+      const learn = Math.min(0.55, (civ.state.technologyLevel ?? 1) * 0.055
+                                 + (civ.state.institutionalQuality ?? 50) / 400);
+      eroi *= (1 - 0.30 * dFrac * (1 - learn));
+    }
+
+    // ── Transition smoothing (M — Grübler) ──
+    // The source LABEL can flip in a single turn; the generating fleet,
+    // grid and supply chain cannot. Characteristic time constants for
+    // large energy systems are 5-10 decades, and invention to 80% share
+    // averages ~95 years — the same evidence the Pass 10 diffusion
+    // limits already use for distributed share.
+    // Without this, EROI jumped 3.3 -> 38.9 in one turn on the coal
+    // transition, 41 -> 95 on nuclear, then FELL 97 -> 19 on renewables:
+    // four instantaneous step changes where the historical record shows
+    // multi-decade overlaps.
+    const targetEroi = eroi;
+    const priorEroi = civ.state.energyEROI;
+    if (Number.isFinite(priorEroi) && priorEroi > 0) {
+      const blendRate = Math.min(1, 0.15 * ((this.game.yearsDelta || 10) / 10));
+      eroi = priorEroi + (targetEroi - priorEroi) * blendRate;
+    }
+    civ.state._energyEROITarget = Math.round(targetEroi * 10) / 10;
 
     // Energy surplus: EROI minus minimum for civilizational complexity
     const complexityThreshold = 5;
@@ -5649,7 +7914,13 @@ class SimulationEngine {
     const timeScaleE = (this.game.yearsDelta || 10) / 10;
     if (surplus < -5) {
       // Severe deficit: active Tainter collapse pressure
-      const deficitSeverity = Math.min(1, Math.abs(surplus + 5) / 20); // scales 0-1 for deficit -5 to -25
+      let deficitSeverity = Math.min(1, Math.abs(surplus + 5) / 20); // scales 0-1 for deficit -5 to -25
+      // ── Pass 10: distributed resilience (M) ──
+      // Islanding and microgrid operation keep critical load running
+      // through grid-wide failure. This is a VARIANCE REDUCTION — it
+      // softens the worst outcomes without raising mean output.
+      const esR = civ.state.energySystem;
+      if (esR) deficitSeverity *= (1 - 0.35 * (esR.distributedShare / 100));
       civ.state.stabilityIndex = Utils.clamp((civ.state.stabilityIndex ?? 70) - 1.5 * deficitSeverity * timeScaleE, 0, 100);
       civ.state.averageWellbeing = Utils.clamp((civ.state.averageWellbeing ?? 50) - 1.0 * deficitSeverity * timeScaleE, 0, 100);
     } else if (surplus < 0) {
@@ -5666,6 +7937,78 @@ class SimulationEngine {
       civ.addHistoryEntry(yr, `Energy Transition: ${sourceLabels[source]}`,
         `Primary energy shifted from ${sourceLabels[prevSource]} to ${sourceLabels[source]}. EROI: ${civ.state.energyEROI}:1. Social disruption from transition.`, 'energy_transition');
       this.game.ui?.showNotification(`${civ.name}: Energy transition to ${sourceLabels[source]} (EROI ${civ.state.energyEROI}:1)`, 'info');
+    }
+  }
+
+  // ── Economic Activity → Environmental Impact ─────────────────
+  // Economic intensity drives environmental degradation through multiple
+  // channels beyond energy source: urbanization converts land (Seto et al.
+  // 2012), industrial production pollutes water and air (Grossman & Krueger
+  // 1995 — but do NOT assume an Environmental Kuznets Curve; the inverted-U
+  // is contested, Stern 2004), and material throughput scales with trade
+  // and production intensity. Technology and regulation can decouple
+  // economic activity from environmental impact, but decoupling is partial
+  // and path-dependent (Ward et al. 2016: absolute decoupling not observed
+  // at global scale). This function models the STRUCTURAL drivers of
+  // environmental degradation from economic activity, independent of energy
+  // source (which is handled in _processEnergy).
+  _processEconomicEnvironmentalImpact(civ) {
+    if (!civ.state) return;
+    const dep = civ.state.resourceDepletion;
+    if (!dep) return;
+    const timeScale = (this.game.yearsDelta || 10) / 10;
+    const tech = civ.state.technologyLevel ?? 1;
+    const urban = civ.state.urbanizationRate ?? 15;
+    const pop = civ.state.population ?? 500;
+    const infra = civ.state.infrastructureLevel ?? 35;
+    const iq = civ.state.institutionalQuality ?? 50;
+
+    // Population pressure on resources — log-scaled (Ehrlich & Holdren 1971
+    // IPAT framework: Impact = Population * Affluence * Technology)
+    const popPressure = Math.log10(Math.max(pop, 100)) / 4; // 0.5–1.0 range
+
+    // Urbanization → forest/soil conversion (Seto et al. 2012: urban land
+    // area tripled 1970-2000; ~60% of land projected for urbanization by
+    // 2030 has not yet been converted). Gated: only when urbanization is
+    // actively growing AND above a threshold.
+    // NOTE: Rates here are SUPPLEMENTARY to population-driven depletion
+    // in civilization.js _updateResourceDepletion. Keep low to avoid
+    // compounding to unrealistic early-era resource exhaustion.
+    if (urban > 30) {
+      const urbanPressure = ((urban - 30) / 70) * popPressure;
+      dep.forests = Utils.clamp(dep.forests - urbanPressure * 0.025 * timeScale, 0, 100);
+      dep.soil = Utils.clamp(dep.soil - urbanPressure * 0.015 * timeScale, 0, 100);
+    }
+
+    // Industrial production → water pollution and soil contamination.
+    // Scales with tech level (more intensive production) but partially
+    // offset by regulation capacity (institutional quality).
+    if (tech >= 7) {
+      const industrialIntensity = ((tech - 6) / 6) * popPressure;
+      // Regulation offset: high IQ societies regulate pollutants
+      const regOffset = Math.max(0, (iq - 40) / 60) * 0.6;
+      const netIntensity = industrialIntensity * (1 - regOffset);
+      dep.water = Utils.clamp(dep.water - netIntensity * 0.02 * timeScale, 0, 100);
+      dep.soil = Utils.clamp(dep.soil - netIntensity * 0.01 * timeScale, 0, 100);
+      civ.state.pollutionIndex = Utils.clamp(
+        (civ.state.pollutionIndex ?? 0) + netIntensity * 0.05 * timeScale, 0, 100);
+    }
+
+    // Infrastructure development → mineral consumption.
+    if (infra > 40) {
+      const infraPressure = ((infra - 40) / 60) * 0.015;
+      dep.minerals = Utils.clamp((dep.minerals ?? 100) - infraPressure * timeScale, 0, 100);
+    }
+
+    // Agricultural intensification → soil degradation (Montgomery 2007).
+    const agDec = civ.state.agricultureSystem;
+    const agIntensity = agDec?.distributedShare != null
+      ? 1 - (agDec.distributedShare / 100) * 0.4
+      : 1.0;
+    if (tech >= 7 && pop > 1000) {
+      const agPressure = ((tech - 6) / 6) * popPressure * agIntensity;
+      dep.soil = Utils.clamp(dep.soil - agPressure * 0.015 * timeScale, 0, 100);
+      dep.water = Utils.clamp(dep.water - agPressure * 0.008 * timeScale, 0, 100);
     }
   }
 
@@ -5814,19 +8157,19 @@ class SimulationEngine {
     // recovery slow (+3-5 pts/decade without policy, +5-10 with). Highly asymmetric.
     const timeScale = (this.game.yearsDelta || 10) / 10;
 
-    // Natural recovery: communities adapt, mutual aid grows organically, religious institutions
-    // provide meaning. Increased from 0.8 to 1.5 — Case & Deaton recovery with intervention
-    // is +5-10 pts/decade. 1.5 accounts for non-policy community self-organization.
-    anomie -= 1.5 * timeScale;
-
-    // Self-limiting at extreme levels: anomie above 70 has accelerating recovery.
-    // At 100% anomie, society has fully adapted to dysfunction — the "anomie" itself
-    // becomes the new normal. Crime lords provide order, informal economies emerge,
-    // religious movements spread. The system can't sustain 100% anomie indefinitely.
-    // Historical: post-Soviet Russia, post-collapse societies all find new equilibria.
-    if (anomie > 70) {
-      anomie -= 0.5 * ((anomie - 70) / 30) * timeScale;
-    }
+    // Recovery proportional to anomie level: higher dysfunction triggers
+    // stronger institutional, community, and meaning-making responses.
+    // Durkheim: societies self-regulate against normlessness. Case & Deaton:
+    // opioid crisis response scaled with severity. Putnam: civic renewal
+    // movements emerge from acute social breakdown. Base 1.5 captures
+    // natural community adaptation; proportional term creates equilibrium
+    // rather than unbounded climbing from 15+ distributed sources across
+    // the codebase (rural-urban divide, tech unemployment, ethnic
+    // exclusion, etc.) that bypass the diminishing returns logic below.
+    // Coefficient 0.08 gives realistic equilibria: ~12 for low-source
+    // societies (Denmark), ~65-70 for high-source (USA), ~80 for extreme
+    // dysfunction (failed states).
+    anomie -= (1.5 + anomie * 0.08) * timeScale;
 
     // Community stability reduces anomie
     if (trust > 60) anomie -= 0.5 * timeScale;
@@ -5868,10 +8211,10 @@ class SimulationEngine {
 
     anomie = Utils.clamp(anomie, 0, 100);
 
-    // Cross-effects of anomie (magnitudes reduced for balance)
+    // Cross-effects of anomie (severity-scaled, not flat)
     if (anomie > 30) {
-      // Wellbeing drain: reduced from -0.5 to -0.3
-      civ.state.averageWellbeing = Utils.clamp(wb - 0.3 * timeScale, 0, 100);
+      const anomieWbDrain = Math.pow((anomie - 30) / 70, 0.7) * 0.4 * timeScale;
+      civ.state.averageWellbeing = Utils.clamp(wb - anomieWbDrain, 0, 100);
       // Stability drain: reduced from -0.4 to -0.25
       civ.state.stabilityIndex = Utils.clamp((civ.state.stabilityIndex ?? 70) - 0.25 * timeScale, 0, 100);
     }
@@ -5997,6 +8340,7 @@ class SimulationEngine {
     let civControl = civ.state.civilianControl ?? 50;
     const atWar = (civ.state.atWar ?? false) || (civ.state.warTurns ?? 0) > 0;
     const iq = civ.state.institutionalQuality ?? 50;
+    const corruption = civ.state.corruptionLevel ?? 50;
     const govId = civ.governance?.modelId ?? '';
     const stability = civ.state.stabilityIndex ?? 70;
     const foodSec = civ.state.foodSecurity ?? 60;
@@ -6007,12 +8351,69 @@ class SimulationEngine {
 
     // Calibrated to SIPRI: +/-2-5 pts/decade peacetime, +10-30 wartime
     const timeScale = (this.game.yearsDelta || 10) / 10;
-    const isDemocratic = ['representative', 'direct_congress', 'flat_consensus', 'rotating'].includes(govId);
+    const powerConcMil = civ.governance?.powerConcentration ?? 50;
 
     // ── 1. Military power drift ──
     if (atWar) milPower += 3.0 * timeScale; // wartime mobilization
-    if (milPower > 60) milPower += 0.5 * timeScale; // institutional momentum (MIC)
     if (!atWar && civControl > 60) milPower -= 1.0 * timeScale; // peace dividend
+
+    // ── 1a. Standing military doctrine ──
+    // Nothing above references the civilization's own military
+    // orientation: an expansionist empire and a pacifist commune had
+    // identical peacetime dynamics apart from their starting value.
+    // The only peacetime growth path was `milPower > 60`, a momentum
+    // term unreachable from below — so militarist civilizations stalled
+    // at exactly their initial value. Across all ten historical
+    // scenarios the observed maximum was exactly 60, and the Roman and
+    // Ottoman expectations of a >60 military were unreachable by
+    // construction.
+    // States sustain large peacetime forces because of doctrine and
+    // threat perception, not only because they are already large.
+    const outsider = civ.operatingPrinciples?.outsiderRelationship ?? 'trading';
+    const posture = { aggressive: 78, isolationist: 52, trading: 40, welcoming: 30 }[outsider] ?? 40;
+    // Regime type is NOT used here, deliberately. An earlier version of
+    // this line carried `isDemocratic ? -6 : 0` — a culturally loaded
+    // assumption that democracies sustain smaller peacetime forces. The
+    // record does not support it: the United States, Israel, South Korea
+    // and Switzerland are all democracies with large standing forces or
+    // universal conscription, while Costa Rica abolished its army and
+    // several autocracies keep modest ones.
+    // What actually predicts standing military size is threat
+    // environment, fiscal capacity and declared doctrine — all of which
+    // are already carried by outsider posture, core values and the
+    // affordability gate below. Concentration of decision-making does
+    // independently ease sustaining forces without public consent, so
+    // that term is kept; regime label is not a proxy for it.
+    const concentration = Utils.clamp((civ.governance?.powerConcentration
+                                    ?? civ.governance?.hierarchyLevel ?? 50) / 100, 0, 1);
+    const govPosture = (concentration - 0.5) * 16;
+    // Declared core values are a direct statement of doctrine — the
+    // Roman scenario, for instance, carries 'military strength'
+    // explicitly while its outsider stance is merely 'trading'.
+    const coreVals = (civ.operatingPrinciples?.coreValues ?? []).join(' ').toLowerCase();
+    const valuePosture = /milit|conquest|warrior|martial|expansion|imperial/.test(coreVals) ? 22
+                       : /peace|harmony|pacifis/.test(coreVals) ? -12 : 0;
+    // Economic competitiveness drives defense investment: states with
+    // high scarcity orientation (resource competition, geopolitical
+    // rivalry) invest more in military regardless of outsider posture.
+    // The USA is 'trading' but spends 3.5% GDP on defense; Saudi Arabia
+    // is 'trading' but spends 6.4%. Scarcity orientation captures the
+    // threat perception and resource competition that drive spending.
+    const scarcityMil = (civ.economic?.scarcityOrientation ?? 50) / 100;
+    const ecoMilBoost = Math.max(0, scarcityMil - 0.4) * 20;
+    const doctrineTarget = Utils.clamp(posture + govPosture + valuePosture + ecoMilBoost, 0, 92);
+    // Militaries cost money: convergence is gated by fiscal capacity
+    const affordability = 0.30 + 0.70 * (cap / 100);
+    milPower += (doctrineTarget - milPower) * 0.07 * affordability * timeScale;
+
+    // Military-industrial momentum, bounded by doctrine. Previously an
+    // unconditional `if (milPower > 60) += 0.5` with no counterweight at
+    // the top: a militarist autocracy ratcheted to exactly 100 and sat
+    // there permanently. Momentum can carry a force somewhat beyond what
+    // doctrine calls for, but not without limit.
+    if (milPower > 60 && milPower < doctrineTarget + 8) {
+      milPower += 0.5 * timeScale;
+    }
     // Threat perception: neighbors at war or hostile → mil buildup
     const neighborThreats = this.activeWars.filter(w =>
       w.attacker !== civ.id && w.defender !== civ.id).length;
@@ -6021,8 +8422,15 @@ class SimulationEngine {
     // ── 2. Civilian control drift — Huntington professionalism theory ──
     // Strong institutions build professional, apolitical military
     if (iq > 60) civControl += 0.5 * timeScale;
-    if (isDemocratic) civControl += 0.4 * timeScale; // democratic norm of civ supremacy
-    if (govId === 'autocratic' && milPower > 50) civControl -= 0.6 * timeScale;
+    // Distributed power builds civilian supremacy norm — multiple veto
+    // points prevent military from becoming a political actor. Not about
+    // the "democracy" label: Turkey's military overrode elected governments
+    // for decades; Japan's imperial constitution gave the military cabinet
+    // veto power despite a parliament.
+    if (powerConcMil < 40) civControl += 0.4 * ((40 - powerConcMil) / 40) * timeScale;
+    // Concentrated personal power + strong military → military becomes an
+    // instrument of personal rule, eroding institutional civilian control.
+    if (powerConcMil > 70 && milPower > 50) civControl -= 0.6 * ((powerConcMil - 70) / 30) * timeScale;
     if (atWar) civControl -= 0.4 * timeScale; // Feaver 2003: wartime erosion
     // High legitimacy strengthens civilian authority
     if (legitimacy > 65) civControl += 0.2 * timeScale;
@@ -6037,10 +8445,14 @@ class SimulationEngine {
     let coupRiskBase = 0.02; // 2% per decade baseline
 
     // (a) Powell & Thyne: strongest predictor is recent coup history (coup trap)
+    // Resource-rich states dampen this: new ruler distributes revenue to buy
+    // military and tribal loyalty immediately, stabilizing faster.
     const yearsSinceCoup = civ.state._yearsSinceCoup ?? 100;
-    if (yearsSinceCoup < 10) coupRiskBase *= 3.0;       // recent coup: 3x risk
-    else if (yearsSinceCoup < 30) coupRiskBase *= 1.8;   // within generation
-    else if (yearsSinceCoup < 50) coupRiskBase *= 1.3;   // fading memory
+    const coupTrapResRent = (civ.state.resourceRentDependence ?? 0) / 100;
+    const coupTrapDamp = coupTrapResRent > 0.6 ? Math.max(0.3, 1.0 - coupTrapResRent) : 1.0;
+    if (yearsSinceCoup < 10) coupRiskBase *= 1.0 + 2.0 * coupTrapDamp;
+    else if (yearsSinceCoup < 30) coupRiskBase *= 1.0 + 0.8 * coupTrapDamp;
+    else if (yearsSinceCoup < 50) coupRiskBase *= 1.0 + 0.3 * coupTrapDamp;
 
     // (b) Military-civilian gap: Huntington's gap theory
     const milCivGap = milPower - civControl;
@@ -6058,9 +8470,21 @@ class SimulationEngine {
     // (d) Food crisis: Lagi et al. correlate with military intervention
     if (foodSec < 25) coupRiskBase *= 1.8;
 
-    // (e) Regime type: personalist autocracies most vulnerable (Geddes 2003)
-    if (govId === 'autocratic') coupRiskBase *= 1.5;
-    if (isDemocratic && iq > 60) coupRiskBase *= 0.3; // consolidated democracy
+    // (e) Power concentration: personalist rule most vulnerable (Geddes 2003).
+    // Very high concentration means one person to depose; very low with
+    // strong institutions means too many veto points for a putsch to hold.
+    if (powerConcMil > 80) coupRiskBase *= 1.5;
+    if (powerConcMil < 35 && iq > 60) coupRiskBase *= 0.3;
+
+    // (e2) Professional military norms: in states with mature institutions
+    // AND clean governance, military professionalism prevents coups
+    // (Huntington 1957, Powell & Thyne 2011). Low corruption signals
+    // merit-based promotion and institutional loyalty rather than
+    // patronage — a key distinction between Singapore's SAF and
+    // militaries in corrupt developmental states.
+    if (iq > 70 && corruption < 30) {
+      coupRiskBase *= Math.max(0.05, 1.0 - Math.pow((iq - 70) / 30, 1.5));
+    }
 
     // (f) Political instability: low stability = opportunity for plotters
     if (stability < 30) coupRiskBase *= 2.0;
@@ -6068,6 +8492,17 @@ class SimulationEngine {
 
     // (g) Low legitimacy: Nordlinger 1977 — mil sees itself as savior
     if (legitimacy < 25) coupRiskBase *= 1.6;
+
+    // (h) Resource rents: oil-rich states buy military loyalty through
+    // generous compensation, reducing coup incentive. The military
+    // benefits from the status quo. (Ross 2012, Bellin 2004).
+    // Scales with hierarchy — centralized rent allocation means the
+    // military's paymaster is clear and generous.
+    const resRentCoup = (civ.state.resourceRentDependence ?? 0) / 100;
+    if (resRentCoup > 0.1) {
+      const hierCoup = (civ.governance?.hierarchyLevel ?? 50) / 100;
+      coupRiskBase *= Math.max(0.05, 1.0 - resRentCoup * hierCoup * 1.5);
+    }
 
     // Cap at ~40% per decade (even worst cases)
     const coupProb = Math.min(coupRiskBase, 0.40);
@@ -6083,31 +8518,49 @@ class SimulationEngine {
       const successChance = 0.4 + (milCivGap > 20 ? 0.2 : 0) + (stability < 25 ? 0.15 : 0)
                            - (trust > 60 ? 0.15 : 0) - (cap > 60 ? 0.1 : 0);
       if (Utils.random() < successChance) {
+        // Determine palace coup BEFORE governance changes overwrite hierarchy.
+        // In traditional-legitimacy states with high hierarchy and resource wealth,
+        // regime change is a palace coup (succession dispute within the ruling
+        // family) — the institution survives the change of person.
+        const coupResRent = (civ.state.resourceRentDependence ?? 0) / 100;
+        const coupLegType = civ.state.legitimacyType ?? 'traditional';
+        const preCoupHier = (civ.governance?.hierarchyLevel ?? 50) / 100;
+        const isPalaceCoup = coupLegType === 'traditional' && coupResRent > 0.3 && preCoupHier >= 0.85;
+
         // Successful coup
         if (typeof GOVERNANCE_MODELS !== 'undefined' && GOVERNANCE_MODELS.autocratic) {
           civ.governance.modelId = 'autocratic';
           civ.governance.model = GOVERNANCE_MODELS.autocratic;
-          civ.governance.hierarchyLevel = 80;
+          civ.governance.hierarchyLevel = isPalaceCoup
+            ? Math.round(preCoupHier * 100)
+            : 80;
           civ.governance.powerConcentration = 85;
         }
+
         civ.governance.leader = {
-          name: (civ.governance.leader?.name?.split(' ')[0] ?? 'General') + ' the Usurper',
-          title: 'Military Commander',
+          name: (civ.governance.leader?.name?.split(' ')[0] ?? 'General') + (isPalaceCoup ? ' the Successor' : ' the Usurper'),
+          title: isPalaceCoup ? 'Ruler' : 'Military Commander',
           age: 40 + Math.floor(Utils.random() * 15),
           healthIndex: 80 + Math.floor(Utils.random() * 20),
           yearsInPower: 0,
         };
         civControl = 15;
-        civ.state.stabilityIndex = Utils.clamp(stability + 10, 0, 100); // martial order
-        civ.state.legitimacyLevel = Utils.clamp(legitimacy - 15, 0, 100);
-        civ.state.legitimacyType = 'charismatic';
-        civ.state.anomieLevel = Utils.clamp((civ.state.anomieLevel ?? 0) + 8, 0, 100);
-        civ.state.collectiveTrauma = Utils.clamp((civ.state.collectiveTrauma ?? 0) + 5, 0, 100);
-        civ.state._yearsSinceCoup = 0; // reset coup trap counter
+        civ.state.stabilityIndex = Utils.clamp(stability + 10, 0, 100);
+        civ.state.legitimacyLevel = Utils.clamp(legitimacy - (isPalaceCoup ? 5 : 15), 0, 100);
+        civ.state.legitimacyType = isPalaceCoup ? 'traditional' : 'charismatic';
+        civ.state.anomieLevel = Utils.clamp((civ.state.anomieLevel ?? 0) + (isPalaceCoup ? 3 : 8), 0, 100);
+        civ.state.collectiveTrauma = Utils.clamp((civ.state.collectiveTrauma ?? 0) + (isPalaceCoup ? 2 : 5), 0, 100);
+        civ.state._yearsSinceCoup = 0;
 
-        civ.addHistoryEntry(yr, 'Military Coup',
-          `The military has seized power in ${civ.name}, overthrowing the ${prevGovLabel} government. Civilian institutions suspended. Martial law declared.`, 'military_coup');
-        this.game.ui?.showNotification(`${civ.name}: Military coup! Government overthrown.`, 'danger');
+        if (isPalaceCoup) {
+          civ.addHistoryEntry(yr, 'Palace Coup',
+            `A succession dispute within the ruling family of ${civ.name} has led to a change in leadership. The new ruler claims traditional authority.`, 'palace_coup');
+          this.game.ui?.showNotification(`${civ.name}: Palace coup — new ruler claims traditional authority.`, 'warning');
+        } else {
+          civ.addHistoryEntry(yr, 'Military Coup',
+            `The military has seized power in ${civ.name}, overthrowing the ${prevGovLabel} government. Civilian institutions suspended. Martial law declared.`, 'military_coup');
+          this.game.ui?.showNotification(`${civ.name}: Military coup! Government overthrown.`, 'danger');
+        }
       } else {
         // Failed coup attempt — still destabilizing
         civ.state.stabilityIndex = Utils.clamp(stability - 8, 0, 100);
@@ -6129,12 +8582,51 @@ class SimulationEngine {
     if (milBurden > 1.0) {
       // Guns vs butter: excessive military drains economy
       civ.state.debtLoad = Utils.clamp((civ.state.debtLoad ?? 20) + 0.4 * milBurden * timeScale, 0, 100);
-      // Crowds out education and infrastructure spending
+      // Crowds out education investment (Barro 2001): high military
+      // burden diverts resources from education, constraining growth.
+      // Scales with burden EXCESS — moderate overspend has modest effect,
+      // extreme militarization has larger effect. Existing educational
+      // infrastructure persists; the drain represents foregone investment.
       if (milPower > 70) {
+        const milExcess = Math.min((milBurden - 1.0) / 1.0, 1.0);
         civ.state.educationQuality = Utils.clamp(
-          (civ.state.educationQuality ?? 50) - 0.2 * timeScale, 0, 100);
+          (civ.state.educationQuality ?? 50) - 0.08 * milExcess * timeScale, 0, 100);
       }
     }
+    // ── 4b. Military burden → wellbeing ceiling ──
+    // SIPRI/World Bank: military spending >4% of GDP correlates with lower
+    // HDI. Soviet Union spent 15-25% of GDP on military → chronic consumer
+    // goods shortages. North Korea's songun (military-first) policy →
+    // famine. Egypt under Nasser → stagnant living standards despite
+    // industrialization. The mechanism: every unit of state capacity devoted
+    // to military is a unit not spent on healthcare, housing, or infrastructure.
+    // Modeled as a ceiling rather than a drain to avoid crash-and-bounce from
+    // resilience dampening — military states have persistently LOWER wellbeing,
+    // not periodic collapses.
+    const freedom = civ.operatingPrinciples?.freedomLevel ?? 50;
+    if (milBurden > 0.8) {
+      const excess = milBurden - 0.8;
+      const freedomDamp = 1.0 - freedom / 200;
+      // Ceiling: how high wellbeing CAN go under military burden
+      const milCeiling = Math.max(25, 55 - excess * 35 * freedomDamp);
+      const wb = civ.state.averageWellbeing ?? 50;
+      if (wb > milCeiling) {
+        const convergeFactor = Math.min(0.25, excess * 0.3);
+        civ.state.averageWellbeing = Utils.clamp(
+          wb * (1 - convergeFactor) + milCeiling * convergeFactor, 0, 100);
+      }
+      // Crowds out food security investment (Nasser's Egypt, Soviet agriculture)
+      if (milBurden > 1.0) {
+        civ.state.foodSecurity = Utils.clamp(
+          (civ.state.foodSecurity ?? 60) - 0.2 * excess * timeScale, 0, 100);
+      }
+      // Infrastructure neglect from military spending priority
+      if (milPower > 60 && milBurden > 1.0) {
+        civ.state.infrastructureLevel = Utils.clamp(
+          (civ.state.infrastructureLevel ?? 50) - 0.15 * excess * timeScale, 0, 100);
+      }
+    }
+
     // High military + low oversight → freedom erosion
     if (milPower > 70 && civControl < 50) {
       const freedom = civ.operatingPrinciples?.freedomLevel ?? 60;
@@ -6143,7 +8635,7 @@ class SimulationEngine {
       }
     }
     // Strong civilian control builds institutional quality (virtuous cycle)
-    if (civControl > 70 && isDemocratic) {
+    if (civControl > 70 && powerConcMil < 40) {
       civ.state.institutionalQuality = Utils.clamp(iq + 0.3 * timeScale, 0, 100);
     }
 
@@ -6175,15 +8667,30 @@ class SimulationEngine {
     if (stability < 40) legLevel -= 0.5 * timeScale;
 
     // Alternative legitimacy sources (Fix R3-5)
-    // Theocratic legitimacy: religious authority + cultural cohesion
-    if (govId === 'theocratic') {
+    // Religious authority provides legitimacy through cultural cohesion —
+    // not specific to "theocratic" label; the Ottoman sultanate, medieval
+    // European monarchies and modern Iran all derived legitimacy from
+    // religious authority through different formal structures.
+    const relDomLeg = civ.religion?.dominance ?? 0;
+    if (relDomLeg > 60) {
       const cohesion = civ.state.culturalCohesion ?? 50;
-      if (cohesion > 40) legLevel += 0.8 * timeScale;
+      if (cohesion > 40) legLevel += 0.8 * ((relDomLeg - 60) / 40) * timeScale;
     }
-    // Performance legitimacy: economic wellbeing justifies non-democratic rule
+    // Performance legitimacy: economic wellbeing justifies concentrated
+    // power — Singapore's PAP, China's CPC, Gulf monarchies. The mechanism:
+    // "the bargain" — citizens accept limited participation in exchange for
+    // material gains. Only fires when power IS concentrated.
     const wb = civ.state.averageWellbeing ?? 50;
-    if (wb > 40 && (govId === 'autocratic' || govId === 'theocratic')) {
-      legLevel += 0.6 * timeScale;
+    const powerConcLeg = civ.governance?.powerConcentration ?? 50;
+    if (wb > 40 && powerConcLeg > 55) {
+      legLevel += 0.6 * ((powerConcLeg - 55) / 45) * timeScale;
+    }
+    // Rentier legitimacy: resource rents fund distribution that sustains
+    // the social contract. Gulf monarchies derive legitimacy from no-tax
+    // bargains and public largesse (Herb 1999).
+    const resRentLeg = (civ.state.resourceRentDependence ?? 0) / 100;
+    if (resRentLeg > 0.1 && powerConcLeg > 40) {
+      legLevel += 0.5 * resRentLeg * timeScale;
     }
     // Ideological legitimacy: effective propaganda (controlled information + education)
     const ehLeg = civ.state.epistemicHealth ?? 50;
@@ -6199,34 +8706,52 @@ class SimulationEngine {
     // Every surviving polity has SOME legitimacy source — tradition, religious
     // authority, military coercion, economic performance, or sheer inertia.
     // A state with truly zero legitimacy doesn't survive (it gets replaced).
-    // The Ottoman Sultans maintained legitimacy via Islam + ghazi tradition
-    // even when institutions decayed. Rome maintained SPQR civic religion
-    // + military prestige even under late-Republic corruption.
     // Floor based on cultural cohesion (tradition), military (coercion),
     // and food security (basic state function).
     const cohesionLeg = civ.state.culturalCohesion ?? 50;
     const milBurden = civ.state.militaryBurden ?? 0;
     const foodSecLeg = civ.state.foodSecurity ?? 50;
+    const hierLeg = (civ.governance?.hierarchyLevel ?? 50) / 100;
     const legFloor = Math.min(
-      cohesionLeg * 0.2 + milBurden * 0.4 + (foodSecLeg > 40 ? 5 : 0) + 5,
+      cohesionLeg * 0.2 + milBurden * 0.4 + (foodSecLeg > 40 ? 5 : 0) + 5
+        + (hierLeg > 0.5 ? (hierLeg - 0.5) * 20 : 0),
       35
     );
     if (legLevel < legFloor) {
-      legLevel += (legFloor - legLevel) * 0.2 * timeScale;
+      legLevel = Math.max(legLevel, legFloor);
     }
 
     legLevel = Utils.clamp(legLevel, 0, 100);
 
     // Type evolution (checked periodically, every ~10 turns via random)
     if (Utils.random() < 0.1 * timeScale) {
-      const isDemocratic = ['representative', 'direct_congress', 'flat_consensus', 'rotating'].includes(govId);
-      if (iq > 60 && isDemocratic && legType !== 'rational-legal') {
+      const pcLeg = civ.governance?.powerConcentration ?? 50;
+      // Rational-legal legitimacy emerges from strong institutions +
+      // distributed power: many veto points → authority proceduralized.
+      // Weber's insight: bureaucratic rationalization requires that no
+      // single actor can override the rules.
+      if (iq > 60 && pcLeg < 40 && legType !== 'rational-legal') {
         civ.state.legitimacyType = 'rational-legal';
         const yr = this.game?.currentYear ?? 0;
         civ.addHistoryEntry(yr, 'Legitimacy Transition',
           `${civ.name} has transitioned to rational-legal legitimacy. Authority now rests on constitutional law and bureaucratic procedures rather than tradition or personal charisma.`, 'legitimacy');
-      } else if (leader && (leader.yearsInPower ?? 0) > 15 && !isDemocratic && legType !== 'charismatic') {
-        if (Utils.random() < 0.3) {
+      } else if (leader && (leader.yearsInPower ?? 0) > 15 && pcLeg > 60 && legType !== 'charismatic') {
+        // Traditional-legitimacy states with resource wealth resist personal
+        // cults — authority resides in the position (monarch, guardian of holy
+        // sites) and in the revenue distribution apparatus, not the person.
+        // Gulf monarchies, Brunei, etc. maintain institutional succession
+        // across decades of concentrated personal rule without cult formation.
+        let cultChance = 0.3;
+        if (legType === 'traditional') {
+          const resRentCult = (civ.state.resourceRentDependence ?? 0) / 100;
+          const hierCult = (civ.governance?.hierarchyLevel ?? 50) / 100;
+          if (resRentCult > 0.3 && hierCult >= 0.85) {
+            const yearsBeyond = Math.max(0, leader.yearsInPower - 30);
+            const rampUp = Math.min(yearsBeyond / 20, 1);
+            cultChance *= Math.max(0.05, Math.pow(1.0 - resRentCult, 2)) * rampUp;
+          }
+        }
+        if (Utils.random() < cultChance) {
           civ.state.legitimacyType = 'charismatic';
           const yr = this.game?.currentYear ?? 0;
           civ.addHistoryEntry(yr, 'Cult of Personality',
@@ -6238,9 +8763,19 @@ class SimulationEngine {
     // Succession crisis detection (leader changed this turn)
     if (leader && leader.yearsInPower === 0 && (civ.state._prevLeaderName ?? '') !== '' && civ.state._prevLeaderName !== leader.name) {
       if (legType === 'charismatic') {
-        legLevel -= 20;
-        civ.state.stabilityIndex = Utils.clamp(stability - 10, 0, 100);
-        civ.state.anomieLevel = Utils.clamp((civ.state.anomieLevel ?? 0) + 5, 0, 100);
+        // Resource-rich hierarchical states cushion succession through wealth:
+        // incoming leader inherits the revenue distribution apparatus and
+        // immediately establishes legitimacy through continued welfare.
+        // Saudi Allegiance Council, GCC crown prince designations, Kazakh
+        // Elbasy model all institutionalize succession within personal rule.
+        const resRentSucc = (civ.state.resourceRentDependence ?? 0) / 100;
+        const hierSucc = (civ.governance?.hierarchyLevel ?? 50) / 100;
+        const succDamp = (resRentSucc > 0.5 && hierSucc > 0.8)
+          ? Math.max(0.4, 1.0 - 0.6 * resRentSucc * Math.min((hierSucc - 0.6) * 2.5, 1))
+          : 1.0;
+        legLevel -= 20 * succDamp;
+        civ.state.stabilityIndex = Utils.clamp(stability - 10 * succDamp, 0, 100);
+        civ.state.anomieLevel = Utils.clamp((civ.state.anomieLevel ?? 0) + 5 * succDamp, 0, 100);
         const yr = this.game?.currentYear ?? 0;
         civ.addHistoryEntry(yr, 'Succession Crisis',
           `The death or removal of ${civ.state._prevLeaderName} has triggered a legitimacy crisis. Authority was personal, not institutional — and now it is gone.`, 'succession_crisis');
@@ -6301,7 +8836,47 @@ class SimulationEngine {
     // Production capacity: soil + water + agricultural tech (Green Revolution effect)
     // Calibrated: pre-modern ~40-50, post-Green Revolution ~70-85
     const agTech = Math.min(techLevel * 8, 40); // tech 1→8, tech 5→40
-    const productionBase = soilHealth * 0.30 + waterAccess * 0.25 + agTech;
+    let productionBase = soilHealth * 0.30 + waterAccess * 0.25 + agTech;
+
+    // ── Pass 10: Land Equivalent Ratio (M/I) ──
+    // Diversified polyculture/agroforestry yields more per unit land.
+    // Interpolated between measured anchors, hard-capped at 2.0.
+    const agSys = civ.state.agricultureSystem;
+    if (agSys) {
+      const ler = agSys.landEquivalentRatio ?? 1.0;
+      let structuralGain = (ler - 1) * 0.55; // partial pass-through
+
+      // ── Ecosystem function: input substitution (M) ──
+      // Push-pull and comparable designed-interaction systems raise
+      // yield most where external inputs are scarce.
+      structuralGain += (agSys.inputSubstitution ?? 0) / 100 * ECOSYSTEM_FUNCTION.maxYieldGain;
+
+      // ── Coercion negates the gain (M) ──
+      // Applied to the STRUCTURAL GAIN, not the baseline: forcing
+      // people into a better-designed system destroys the advantage
+      // that design would otherwise deliver. A high-LER, high-function
+      // system under compulsion can end up worse than a plain one
+      // freely chosen.
+      structuralGain *= (agSys.coercionYieldFactor ?? 1.0);
+
+      productionBase *= (1 + structuralGain);
+
+      // ── Post-harvest loss chain (M) ──
+      // Handling, sorting, packaging and transit losses, plus produce
+      // rejected on appearance by graded markets. Local distribution
+      // avoids much of both: short chains handle produce less, and
+      // direct local sale rarely imposes cosmetic standards.
+      // Applied MULTIPLICATIVELY to production rather than subtracted
+      // from the index. Loss is a proportion of what was grown — a
+      // low-output society loses less in absolute terms because it has
+      // less to lose. Subtracting a flat penalty from the index
+      // double-penalized weak producers and pushed developed market
+      // economies to implausibly low food security despite the
+      // real-world pattern of ~13% loss coexisting with high security.
+      const chainLoss = agSys.chainLoss ?? DISTRIBUTION.baseChainLoss;
+      const cosmetic  = agSys.cosmeticRejection ?? 0;
+      productionBase *= (1 - Math.min(0.45, (chainLoss + cosmetic) / 100 * 0.55));
+    }
 
     // Trade access: import-dependent nations vulnerable to price shocks (Headey 2011)
     // High trade dep = access to global markets but vulnerability to disruption
@@ -6329,6 +8904,42 @@ class SimulationEngine {
     let foodSec = productionBase + tradeAccess + capBonus
                   - climateStress - urbanPenalty - warPenalty
                   - inequalityPenalty + tradeVulnerability;
+
+    // ── Pass 10: trade variance reallocation (M) ──
+    // Local self-reliance and import dependence are a VARIANCE SWAP,
+    // not a mean improvement. High local share reduces exposure to
+    // blockade/export-ban/global price shock and INCREASES exposure
+    // to local drought and weather. High trade dependency does the
+    // inverse. Neither is free.
+    // Anchors: ~50 economies depend on Russia/Ukraine for >=30% of
+    // wheat; network research finds modularity isolates shocks but
+    // "can result in access to food being cut off during local
+    // food scarcity"; supply-chain diversity boosts resilience.
+    if (agSys) {
+      const localFrac = (agSys.localShare ?? 0) / 100;
+      // Shield against externally-sourced shocks
+      if (tradeVulnerability < 0) foodSec -= tradeVulnerability * localFrac * 0.7;
+      // Exposure to locally-sourced shocks (climate, soil, water)
+      foodSec -= climateStress * localFrac * 0.35;
+      const localDrought = Math.max(0, 60 - Math.min(soilHealth, waterAccess));
+      foodSec -= localDrought * localFrac * 0.10;
+      // Diversification buffers local variance (Renard & Tilman 2019:
+      // national crop diversity → fewer sharp-loss years)
+      const divBuffer = (agSys.diversificationIntensity ?? 0) / 100;
+      foodSec += (climateStress * localFrac * 0.35 + localDrought * localFrac * 0.10) * divBuffer * 0.6;
+
+      // (Post-harvest loss is applied multiplicatively to production
+      // above, not subtracted from the index here — see note there.)
+
+      // ── Consumer-stage waste (M) ──
+      // Short chains relocate rather than remove waste. Developed
+      // economies lose most at consumption (22.5%) vs developing
+      // (6.8%); developing economies lose more upstream on-farm.
+      const stage = civ.state.demographicTransitionStage ?? 1;
+      const wasteShift = stage >= 4 ? +2.0 : -1.2;
+      foodSec += wasteShift * localFrac;
+    }
+
     foodSec = Utils.clamp(foodSec, 0, 100);
 
     // ── 2. Track consecutive low food security turns for famine ──
@@ -6508,9 +9119,13 @@ class SimulationEngine {
     if (['gift', 'commons', 'labor_credit'].includes(econId)) land -= 1.0 * timeScale;
     else if (econId === 'market') land += 0.5 * timeScale;
 
-    // Governance effects
-    if (govId === 'oligarchy' || govId === 'autocratic') land += 0.6 * timeScale;
-    else if (govId === 'flat_consensus' || govId === 'rotating') land -= 0.5 * timeScale;
+    // Power concentration → land concentration. Concentrated power enables
+    // elite land grabs (enclosure, latifundia, nomenklatura estates).
+    // Distributed power enables land reform (Taiwan 1950s, South Korea,
+    // Kerala's land redistribution — all required broad political franchise).
+    const powerConcLand = civ.governance?.powerConcentration ?? 50;
+    if (powerConcLand > 55) land += 0.6 * ((powerConcLand - 55) / 45) * timeScale;
+    else if (powerConcLand < 25) land -= 0.5 * ((25 - powerConcLand) / 25) * timeScale;
 
     // Education slowly erodes feudal land patterns (legal literacy, advocacy)
     if (educQ > 60) land -= 0.3 * timeScale;
@@ -6530,10 +9145,20 @@ class SimulationEngine {
       civ.state.foodSecurity = Utils.clamp(
         (civ.state.foodSecurity ?? 60) - 0.5 * ((land - 60) / 40) * timeScale, 0, 100);
     }
-    // High concentration → wealth concentration feedback (land IS wealth pre-industrial)
+    // Land IS wealth in agrarian economies — concentrated ownership directly
+    // maps to wealth concentration. In diversified modern economies,
+    // financial assets and industrial capital dominate: land is <10% of
+    // total capital in OECD countries (World Bank Capital Wealth Accounts).
+    // Effect scales with degree of concentration AND diminishes with
+    // economic diversification (IQ + cap as proxy: diversified economies
+    // have strong institutions AND state capacity for property markets).
     if (civ.economic && land > 50) {
+      const landScale = (land - 50) / 50;
+      const iqLand = civ.state.institutionalQuality ?? 50;
+      const diversification = Math.min(1, (iqLand + (civ.state.stateCapacity ?? 50)) / 120);
+      const devDamp = 1.0 - 0.8 * diversification;
       civ.economic.wealthConcentration = Utils.clamp(
-        (civ.economic.wealthConcentration ?? 30) + 0.15 * timeScale, 0, 100);
+        (civ.economic.wealthConcentration ?? 30) + 0.20 * landScale * devDamp * timeScale, 0, 100);
     }
     // Very high concentration → stability erosion (landless peasant anger)
     if (land > 70) {
@@ -6572,9 +9197,16 @@ class SimulationEngine {
     // Epistemic health (exposure to egalitarian ideas)
     if (eh > 60) caste -= 0.2 * timeScale;
 
-    // Governance reinforcement
-    if (govId === 'theocratic' || govId === 'autocratic') caste += 0.3 * timeScale;
-    else if (govId === 'flat_consensus' || govId === 'direct_congress') caste -= 0.4 * timeScale;
+    // Concentrated power reinforces caste — those at the top benefit from
+    // rigid hierarchy and resist reform. Religious authority sacralizes it
+    // (Hindu varnashrama, European divine right, Japanese imperial Shinto).
+    // Distributed power enables reform movements (India's reservation system
+    // required democratic franchise; US civil rights required courts + Congress).
+    const powerConcCaste = civ.governance?.powerConcentration ?? 50;
+    const relDomCaste = civ.religion?.dominance ?? 0;
+    if (powerConcCaste > 55) caste += 0.2 * ((powerConcCaste - 55) / 45) * timeScale;
+    if (relDomCaste > 55) caste += 0.15 * ((relDomCaste - 55) / 45) * timeScale;
+    if (powerConcCaste < 20) caste -= 0.4 * ((20 - powerConcCaste) / 20) * timeScale;
 
     // Strong path dependency: caste systems are self-reinforcing
     if (caste > 40) caste += 0.15 * timeScale;
@@ -6635,13 +9267,47 @@ class SimulationEngine {
     const hierarchy = civ.governance?.hierarchyLevel ?? 50;
     if (hierarchy > 60) lockin += 0.3 * timeScale;
 
-    // Countervailing forces
-    // Epistemic health (informed citizenry can challenge lock-in)
-    if (eh > 60) lockin -= 0.4 * timeScale;
-    else if (eh < 25) lockin += 0.3 * timeScale;
+    // ── Elite closure (Acemoglu & Robinson) ──
+    // Lock-in is driven by WHO BENEFITS from the status quo, not by
+    // ignorance. Venice is the canonical case and was failing badly
+    // here: among the most literate and commercially sophisticated
+    // societies in Europe, and simultaneously the most institutionally
+    // ossified. The Serrata of 1297 made Great Council membership
+    // hereditary; from 1314 long-distance trade was restricted to the
+    // nobility and the commenda contracts that had built Venetian
+    // wealth were banned.
+    // An educated elite with entrenched privilege locks in HARDER,
+    // because it defends that privilege more effectively.
+    const participation = civ.governance?.participationModel ?? 'universal';
+    const restrictedAccess = ['restricted', 'mandatory', 'none'].includes(participation);
+    const mobility = civ.state.socialMobility ?? 50;
+    // Magnitudes are small deliberately. A first pass used 0.45/0.40/0.35
+    // and saturated lock-in at 100 within a quarter of every run, which
+    // failed the "rising" expectations just as surely as the decline did —
+    // a pinned value has no slope. These are calibrated so a closed
+    // oligarchy climbs steadily across centuries without hitting the clamp.
+    let closure = 0;
+    if (restrictedAccess) closure += 0.050;
+    if (mobility < 40) closure += 0.040 * ((40 - mobility) / 40);
+    if (wc > 55) closure += 0.035 * ((wc - 55) / 45);
+    lockin += closure * timeScale;
 
-    // Education quality
-    if ((civ.state.educationQuality ?? 50) > 60) lockin -= 0.3 * timeScale;
+    // Countervailing forces.
+    // Information and education erode lock-in only where the system is
+    // ACCESSIBLE. In an extractive order literacy does not open a closed
+    // institution — the Venetian patriciate was highly educated and the
+    // closure held for five centuries. Previously these terms applied
+    // unconditionally, which drove Venice's lock-in from 65 down to 12
+    // across a run: the exact inverse of the historical record.
+    // Under restricted access these forces are damped rather than removed:
+    // information still erodes an entrenched order at the margin, it just
+    // cannot open it the way it can an accessible one. Zeroing them
+    // entirely was too blunt and contributed to the saturation above.
+    const inclusiveAccess = !restrictedAccess && mobility >= 40;
+    const openness = inclusiveAccess ? 1.0 : 0.4;
+    if (eh > 60) lockin -= 0.4 * openness * timeScale;
+    if ((civ.state.educationQuality ?? 50) > 60) lockin -= 0.3 * openness * timeScale;
+    if (eh < 25) lockin += 0.3 * timeScale;
 
     // Active paradigm shifts temporarily break lock-in
     // (Institutional inertia is deep — shifts chip at it, not demolish it)
@@ -6654,7 +9320,38 @@ class SimulationEngine {
     // Self-reinforcing above threshold
     if (lockin > 50) lockin += 0.2 * timeScale;
 
+    // Soft ceiling: even ossified institutions retain some internal flexibility.
+    // Prevents lock-in from pinning at exactly 100 and cascading into
+    // corruption/legitimacy cross-effects that destabilize other metrics.
+    if (lockin > 85) lockin -= (lockin - 85) * 0.15 * timeScale;
+
     lockin = Utils.clamp(lockin, 0, 100);
+
+    // ── System collapse / fragility mechanism ──
+    // Very high lock-in + low legitimacy creates brittle institutions
+    // that can shatter (Tainter 1988, Acemoglu & Robinson 2012).
+    // Soviet Union 1991: lock-in ~90, legitimacy ~30 → rapid collapse.
+    // The fragility scales continuously; at extreme values the capacity
+    // drain is severe enough to model institutional disintegration.
+    const leg = civ.state.legitimacyLevel ?? 50;
+    if (lockin > 70 && leg < 40) {
+      const fragIq = civ.state.institutionalQuality ?? 50;
+      const fragFreeInfo = !['state_controlled', 'state_guided',
+        'total_information_control'].includes(civ.state.informationEcosystem ?? 'free_market_media');
+      const fragBroadPart = civ.governance?.participationModel === 'voluntary';
+      const fragIqBonus = fragIq > 60 ? 0.3 : fragIq > 40 ? 0.1 : 0;
+      const fragAcct = Math.max(0.2,
+        (fragFreeInfo ? 0.4 : 0) + (fragBroadPart ? 0.3 : 0) + fragIqBonus);
+      const fragAcctDamp = Utils.clamp(1 - Math.max(0, fragAcct - 0.25) * 1.5, 0.3, 1.0);
+      const fragility = ((lockin - 70) / 30) * ((40 - leg) / 40) * fragAcctDamp;
+      const capDrain = fragility * 5.0 * timeScale;
+      civ.state.stateCapacity = Utils.clamp(
+        (civ.state.stateCapacity ?? 50) - capDrain, 0, 100);
+      civ.state.stabilityIndex = Utils.clamp(
+        (civ.state.stabilityIndex ?? 50) - fragility * 4.0 * timeScale, 0, 100);
+      civ.state.socialTrust = Utils.clamp(
+        (civ.state.socialTrust ?? 50) - fragility * 2.5 * timeScale, 0, 100);
+    }
 
     // Cross-effects
     // Lock-in feeds into inertia coefficient (amplifies passive resistance)
@@ -6666,14 +9363,35 @@ class SimulationEngine {
 
     // High lock-in → corruption harder to reduce
     if (lockin > 60) {
+      const corrNow = civ.state.corruptionLevel ?? civ.governance?.corruptionLevel ?? 0;
+      const iqLock = civ.state.institutionalQuality ?? 50;
+      const lc2FreeInfo = !['state_controlled', 'state_guided',
+        'total_information_control'].includes(civ.state.informationEcosystem ?? 'free_market_media');
+      const lc2BroadPart = civ.governance?.participationModel === 'voluntary';
+      const lc2IqBonus = iqLock > 60 ? 0.3 : iqLock > 40 ? 0.1 : 0;
+      const lc2Acct = Math.max(0.2,
+        (lc2FreeInfo ? 0.4 : 0) + (lc2BroadPart ? 0.3 : 0) + lc2IqBonus);
+      const lc2SatThresh = 80 - Math.max(0, lc2Acct - 0.25) * 40;
+      const lockCorrSat2 = Math.max(0, 1.0 - corrNow / lc2SatThresh);
+      const lockCorrRes2 = Math.min(corrNow / 35, 1.0);
       civ.state.corruptionLevel = Utils.clamp(
-        (civ.state.corruptionLevel ?? 0) + 0.2 * timeScale, 0, 100);
+        corrNow + 0.2 * lockCorrSat2 * lockCorrRes2 * timeScale, 0, 100);
     }
 
-    // Very high lock-in → legitimacy erosion (people see system as rigged)
+    // Very high lock-in → legitimacy erosion (people see system as rigged).
+    // Media-transparent societies (Easton 1965, Lipset 1959): citizens
+    // observe institutional performance directly, so legitimacy tracks
+    // delivery — high cap sustains it, low cap erodes it. In opaque
+    // systems (state-controlled media), citizens cannot independently
+    // assess performance, so lock-in erodes legitimacy unconditionally
+    // through lived experience of stagnation and rumor (late USSR).
     if (lockin > 70) {
+      const infoEcoLock = civ.state.informationEcosystem ?? 'free_market_media';
+      const mediaTransparent = !['state_controlled', 'state_guided',
+        'total_information_control'].includes(infoEcoLock);
+      const perfGap = mediaTransparent ? Math.max(0, 1.0 - cap / 60) : 1.0;
       civ.state.legitimacyLevel = Utils.clamp(
-        (civ.state.legitimacyLevel ?? 50) - 0.3 * timeScale, 0, 100);
+        (civ.state.legitimacyLevel ?? 50) - 0.3 * perfGap * timeScale, 0, 100);
     }
 
     civ.state.institutionalLockin = lockin;
@@ -6770,9 +9488,14 @@ class SimulationEngine {
         (civ.state.anomieLevel ?? 0) + 0.5 * (techUnemp / 100) * timeScale, 0, 100);
     }
     // Tech unemployment → inequality (A&R: automation benefits capital owners)
+    // Gated by IQ: tech-driven displacement requires a tech sector.
+    // At IQ<30, tech unemployment is subsistence unemployment, not
+    // automation-driven capital concentration.
     if (techUnemp > 15 && civ.economic) {
+      const iqTech = civ.state.institutionalQuality ?? 50;
+      const techGate = Utils.clamp((iqTech - 30) / 30, 0, 1);
       civ.economic.wealthConcentration = Utils.clamp(
-        (civ.economic.wealthConcentration ?? 30) + 0.5 * timeScale, 0, 100);
+        (civ.economic.wealthConcentration ?? 30) + 0.5 * techGate * timeScale, 0, 100);
     }
     // High tech unemployment → wellbeing loss (Case & Deaton 2015: deaths of despair)
     if (techUnemp > 20) {
@@ -7106,39 +9829,58 @@ class SimulationEngine {
     lifeExp = Utils.clamp(lifeExp, 25, 95);
 
     // ── 9. Age cohort drift ──────────────────────────────────────────────────
-    // Youth grows with high fertility, shrinks with aging out
-    const naturalAging = 1.0 * timeScale;
-    if (fert > 30) youth += 1.0 * timeScale;
-    if (fert > 40) youth += 0.5 * timeScale;
-    if (fert < 15) youth -= 1.0 * timeScale;
-    youth -= naturalAging;
-    if (infantMort > 50) youth -= 0.5 * timeScale;
+    // When companion module is active, use its precise 34-cohort model
+    // instead of crude threshold-based drift. Companion writes youthCohort
+    // and elderlyCohort after its turn, but cross-effects below run BEFORE
+    // companion — so read companion's PREVIOUS turn data directly.
+    const compDemo = civ.state.companion;
+    if (compDemo && compDemo.totalPopulation > 0) {
+      // Companion's cohort-derived percentages are authoritative
+      if (compDemo.youthBulgeIndex !== undefined) {
+        youth = Utils.clamp(compDemo.youthBulgeIndex, 5, 55);
+      }
+      const compElders = compDemo.cohorts
+        ? compDemo.cohorts.slice(13).reduce((s, c) => s + c, 0) /
+          compDemo.totalPopulation * 100
+        : elderly;
+      elderly = Utils.clamp(compElders, 2, 40);
+    } else {
+      // Legacy crude drift (no companion)
+      const naturalAging = 1.0 * timeScale;
+      if (fert > 30) youth += 1.0 * timeScale;
+      if (fert > 40) youth += 0.5 * timeScale;
+      if (fert < 15) youth -= 1.0 * timeScale;
+      youth -= naturalAging;
+      if (infantMort > 50) youth -= 0.5 * timeScale;
 
-    // Elderly grows with life expectancy
-    if (lifeExp > 60) elderly += 0.8 * timeScale;
-    if (lifeExp > 75) elderly += 0.5 * timeScale;
-    if (mort > 30) elderly -= 0.5 * timeScale;
-    elderly += naturalAging * 0.5;
+      if (lifeExp > 60) elderly += 0.8 * timeScale;
+      if (lifeExp > 75) elderly += 0.5 * timeScale;
+      if (mort > 30) elderly -= 0.5 * timeScale;
+      elderly += naturalAging * 0.5;
 
-    youth = Utils.clamp(youth, 5, 55);
-    elderly = Utils.clamp(elderly, 2, 40);
-
-    // Working age guaranteed >= 30%
-    const workingAge = 100 - youth - elderly;
-    if (workingAge < 30) {
-      const deficit = 30 - workingAge;
-      if (youth > elderly) youth -= deficit * 0.7;
-      else elderly -= deficit * 0.7;
       youth = Utils.clamp(youth, 5, 55);
       elderly = Utils.clamp(elderly, 2, 40);
+
+      const workingAge = 100 - youth - elderly;
+      if (workingAge < 30) {
+        const deficit = 30 - workingAge;
+        if (youth > elderly) youth -= deficit * 0.7;
+        else elderly -= deficit * 0.7;
+        youth = Utils.clamp(youth, 5, 55);
+        elderly = Utils.clamp(elderly, 2, 40);
+      }
     }
 
     // ── 10. Dependency ratio ─────────────────────────────────────────────────
     const finalWorkingAge = Math.max(100 - youth - elderly, 30);
-    const dependencyRatio = (youth + elderly) / finalWorkingAge;
+    const dependencyRatio = (compDemo && compDemo.dependencyRatio !== undefined)
+      ? compDemo.dependencyRatio
+      : (youth + elderly) / finalWorkingAge;
 
     // ── 11. Population growth rate ───────────────────────────────────────────
-    let growthRate = (fert - mort) / 1000;
+    let growthRate = (compDemo && compDemo.growthRate !== undefined)
+      ? compDemo.growthRate
+      : (fert - mort) / 1000;
 
     // ── R4-3: Broadened immigration ──
     // Multiple attraction channels beyond just institutional quality.
@@ -7170,10 +9912,15 @@ class SimulationEngine {
     }
     st._cohortProfilePressure = cohortPressure;
 
-    // Youth bulge + low opportunity → instability (Urdal/Goldstone)
+    // Youth bulge + low opportunity → instability (Urdal 2006, Goldstone 2010)
+    // Education creates channels for youth employment even when structural
+    // mobility is low — the key differentiator between demographic dividend
+    // and youth-bulge instability (Korea, Botswana vs MENA)
     if (youth > 38 && mobility < 30) {
+      const eduOpp = Math.max(0, educQ - 25) / 75;
+      const oppDamp = 1.0 - eduOpp * 0.5;
       st.stabilityIndex = Utils.clamp(
-        (st.stabilityIndex ?? 70) - 1.5 * timeScale, 0, 100);
+        (st.stabilityIndex ?? 70) - 1.5 * oppDamp * timeScale, 0, 100);
     }
 
     // Disease burden > 60 → collective trauma (10% chance per turn)
@@ -7195,7 +9942,8 @@ class SimulationEngine {
     st.infantMortality = infantMort;
     st.mortalityRate = mort;
     st.fertilityRate = fert;
-    st.demographicTransitionStage = newStage;
+    st.demographicTransitionStage = (compDemo && compDemo.detectedTransitionStage !== undefined)
+      ? compDemo.detectedTransitionStage : newStage;
     st.lifeExpectancy = lifeExp;
     st.youthCohort = youth;
     st.elderlyCohort = elderly;
@@ -7249,10 +9997,14 @@ class SimulationEngine {
     if (iq > 70) mobilityTarget += 5;
     else if (iq < 30) mobilityTarget -= 5;
 
-    // ── Governance gatekeeping ───────────────────────────────────
-    if (govId === 'oligarchy' || govId === 'shadow_government_complicit' ||
-        govId === 'shadow_government_covert') mobilityTarget -= 10;
-    else if (govId === 'flat_consensus' || govId === 'direct_congress') mobilityTarget += 5;
+    // ── Power concentration as mobility gate ─────────────────────
+    // Concentrated, unaccountable power restricts mobility — elites
+    // block competition through patronage, guild restrictions, licensing
+    // barriers. Distributed power opens mobility channels through
+    // meritocratic norms and anti-discrimination enforcement.
+    const powerConcMob = civ.governance?.powerConcentration ?? 50;
+    if (powerConcMob > 65) mobilityTarget -= 10 * ((powerConcMob - 65) / 35);
+    else if (powerConcMob < 20) mobilityTarget += 5 * ((20 - powerConcMob) / 20);
 
     // ── Inheritance system (wealth transmission across generations) ──
     if (inherit === 'primogeniture') mobilityTarget -= 6;   // Concentrates wealth in eldest
@@ -7290,84 +10042,183 @@ class SimulationEngine {
       civ.state.stabilityIndex = Utils.clamp(
         (civ.state.stabilityIndex ?? 70) - 1.0 * timeScale, 0, 100);
     }
-    // Large negative gap (perceived >> actual) → trust erosion
+    // Perceived mobility gap → trust erosion (Alesina et al. 2018, Chetty
+    // et al. 2014). When people believe the system is less fair/mobile than
+    // it actually is, OR when actual mobility is low and people know it,
+    // generalized trust erodes. This is distinct from raw inequality level
+    // — a high-WC society with genuine mobility (perceived as fair) erodes
+    // trust less than one perceived as rigged. Proportional scaling replaces
+    // the old flat -0.5 beyond a -20 threshold.
     const gap = mob - pmob;
-    if (gap < -20) {
+    if (gap < -10) {
+      const gapMag = Math.min(50, -gap - 10) / 50;
       civ.state.socialTrust = Utils.clamp(
-        (civ.state.socialTrust ?? 50) - 0.5 * timeScale, 0, 100);
+        (civ.state.socialTrust ?? 50) - 0.8 * gapMag * timeScale, 0, 100);
     }
   }
 
   _processTrade(civ) {
     // ══════════════════════════════════════════════════════════════════════
-    // GRAVITY MODEL + STOLPER-SAMUELSON (Tinbergen 1962, Samuelson 1941)
-    // Gravity: trade ∝ (GDP₁ × GDP₂) / distance² — larger, closer economies trade more
-    // Stolper-Samuelson: free trade benefits abundant factor, hurts scarce factor
-    //   → capital-rich economies: free trade increases inequality
-    //   → labor-rich economies: free trade can reduce inequality
-    // Tariff effects: protect domestic industry but reduce specialization gains
+    // BILATERAL TRADE MODEL (Tinbergen 1962, Samuelson 1941, Prebisch 1950)
+    //
+    // Trade intensity is computed per-pair in _processRelationship using a
+    // gravity model with geographic capacity and complementarity. This
+    // method aggregates bilateral intensities, computes the civ's production
+    // profile and terms of trade, and applies effects.
+    //
+    // Key mechanisms:
+    //   1. Trade dependency derived from bilateral intensities (not gravity)
+    //   2. Production profile: primary/secondary/tertiary mix
+    //   3. Geographic trade capacity: ocean access is a major multiplier
+    //   4. Terms of trade: primary exporters face declining ToT (Prebisch-Singer)
+    //   5. Tariff revenue → state capacity
+    //   6. Stolper-Samuelson distributional effects (existing)
+    //   7. Trade balance → wealth concentration effects
     // ══════════════════════════════════════════════════════════════════════
     if (!civ.state) return;
-    let tradeDep = civ.state.tradeDependency ?? 20;
     const tariff = civ.state.tariffLevel ?? 30;
     const timeScale = (this.game.yearsDelta || 10) / 10;
 
-    // ── Gravity model: trade potential ───────────────────────────
-    // Count active trade agreements (proxy for bilateral gravity)
+    // ── Aggregate bilateral trade intensities ────────────────────
+    let totalIntensity = 0;
     let tradePartners = 0;
-    let partnerEconSize = 0;
+    let partnerUrbanSum = 0;
+    let partnerScarcitySum = 0;
     for (const [civId, rel] of (civ.relations || new Map())) {
-      if (rel.trade) {
+      if (rel.trade && rel.tradeIntensity > 0) {
+        totalIntensity += rel.tradeIntensity;
         tradePartners++;
         const partner = this.game.civilizations.find(c => c.id === civId);
-        if (partner) partnerEconSize += (partner.state?.population ?? 1000) / 1000;
+        if (partner) {
+          partnerUrbanSum += (partner.state?.urbanizationRate ?? 15) / 100;
+          partnerScarcitySum += (partner.economic?.scarcityOrientation ?? 50) / 100;
+        }
       }
     }
 
-    // Gravity-based trade growth: larger partners + more partners = more trade
-    const gravityPull = tradePartners * 1.5 + partnerEconSize * 0.3;
-    // Tariff resistance: higher tariffs reduce trade growth
-    const tariffBrake = tariff / 100; // 0-1
-    // Net trade dependency change
-    const tradeGrowth = (gravityPull * (1 - tariffBrake * 0.8) - 1.0) * timeScale;
-    tradeDep = Utils.clamp(tradeDep + tradeGrowth, 0, 100);
+    // Trade dependency: derived from aggregate bilateral intensities
+    const targetDep = Utils.clamp(totalIntensity * 0.4, 0, 95);
+    let tradeDep = civ.state.tradeDependency ?? 20;
+    tradeDep += (targetDep - tradeDep) * 0.2 * timeScale;
+    tradeDep = Utils.clamp(tradeDep, 0, 100);
     civ.state.tradeDependency = tradeDep;
 
-    // ── Trade prosperity bonus (comparative advantage gains) ─────
-    // Gains from trade: ~0.5-2% GDP boost from openness (Frankel & Romer 1999)
-    const tradeGains = tradeDep * 0.008 * timeScale;
+    // ── Production profile ───────────────────────────────────────
+    // Primary: agriculture, raw materials (rural, low-tech)
+    // Secondary: manufacturing, industry (urban, competitive)
+    // Tertiary: services, finance (high education, high financial depth)
+    const urban = (civ.state.urbanizationRate ?? 15) / 100;
+    const scarcity = (civ.economic?.scarcityOrientation ?? 50) / 100;
+    const finDepth = (civ.state.financialDepth ?? 30) / 100;
+    const eduQ = (civ.state.educationQuality ?? 50) / 100;
+    const primary = Math.max(0.05, 1.0 - urban * 0.8 - finDepth * 0.3);
+    const secondary = urban * 0.7 * scarcity;
+    const tertiary = Math.min(0.6, finDepth * 0.4 + eduQ * 0.3);
+    const profileTotal = primary + secondary + tertiary;
+    const pShare = primary / profileTotal;
+    civ.state.primaryExportShare = +(pShare * 100).toFixed(1);
+
+    // ── Geographic trade capacity ────────────────────────────────
+    // Maritime trade was 5-10x cheaper than overland (Braudel 1979).
+    // Ocean access is the single largest determinant of trade volume.
+    const ocean = civ.geography?.oceanAccess;
+    const maritimeBonus = (ocean === true || ocean === 'island') ? 1.0 : 0.0;
+    const geoCapacity = 0.6 + 0.4 * maritimeBonus;
+
+    // ── Trade prosperity (comparative advantage gains) ───────────
+    // Frankel & Romer (1999): ~0.5-2% GDP boost from openness
+    const tradeGains = tradeDep * 0.008 * geoCapacity * timeScale;
     civ.state.averageWellbeing = Utils.clamp(
       (civ.state.averageWellbeing ?? 50) + tradeGains, 0, 100);
 
+    // ── Terms of trade (Prebisch-Singer hypothesis) ──────────────
+    // Primary commodity exporters face secular decline in terms of trade
+    // relative to manufactured goods exporters. This creates a structural
+    // disadvantage for resource-dependent economies.
+    // pShare > 0.6 = primary exporter; pShare < 0.3 = manufactured exporter
+    if (tradeDep > 20) {
+      if (pShare > 0.6) {
+        // Primary exporter: declining terms of trade extract wealth
+        const totPenalty = (pShare - 0.5) * 0.4 * (tradeDep / 100) * timeScale;
+        civ.state.averageWellbeing = Utils.clamp(
+          (civ.state.averageWellbeing ?? 50) - totPenalty, 0, 100);
+      } else if (pShare < 0.3 && tradeDep > 30) {
+        // Manufactured/services exporter: favorable terms of trade
+        const totBonus = (0.4 - pShare) * 0.3 * (tradeDep / 100) * timeScale;
+        civ.state.averageWellbeing = Utils.clamp(
+          (civ.state.averageWellbeing ?? 50) + totBonus, 0, 100);
+      }
+    }
+
+    // ── Tariff revenue → state capacity ──────────────────────────
+    // Historically, customs duties were the PRIMARY source of state revenue
+    // before income tax (US pre-1913, Ottoman Empire, Qing China).
+    // Revenue peaks at moderate tariffs (Laffer curve for trade).
+    if (tradeDep > 10 && tariff > 10) {
+      const revenueEfficiency = tariff < 50
+        ? tariff / 50
+        : 1.0 - (tariff - 50) / 100;
+      const tariffRevenue = 0.3 * revenueEfficiency * (tradeDep / 100) * timeScale;
+      civ.state.stateCapacity = Utils.clamp(
+        (civ.state.stateCapacity ?? 50) + tariffRevenue, 0, 100);
+    }
+
     // ── Stolper-Samuelson distributional effects ─────────────────
-    // Free trade: benefits the abundant factor, hurts the scarce factor
     const laborAbundant = (civ.economic?.laborShare ?? 60) > 55;
-    const ls = civ.economic?.laborShare ?? 60;
 
     if (tariff < 20 && tradeDep > 30) {
-      // Free trade + significant openness
       if (laborAbundant) {
-        // Labor-abundant: free trade benefits workers (Stolper-Samuelson)
         civ.state.equalityIndex = Utils.clamp(
           (civ.state.equalityIndex ?? 50) + 0.3 * timeScale, 0, 100);
       } else {
-        // Capital-abundant: free trade benefits capital owners → inequality rises
         civ.state.equalityIndex = Utils.clamp(
           (civ.state.equalityIndex ?? 50) - 0.5 * timeScale, 0, 100);
-        // But innovation gains from specialization
         civ.state.behaviorReinforcement.innovation = Utils.clamp(
           (civ.state.behaviorReinforcement.innovation || 50) + 0.4 * timeScale, 0, 100);
       }
     } else if (tariff > 60) {
-      // Protectionism: shelters domestic industry but suppresses specialization
       civ.state.equalityIndex = Utils.clamp(
         (civ.state.equalityIndex ?? 50) + 0.2 * timeScale, 0, 100);
       civ.state.behaviorReinforcement.innovation = Utils.clamp(
         (civ.state.behaviorReinforcement.innovation || 50) - 0.5 * timeScale, 0, 100);
     }
 
-    // ── Tariff retaliation risk (trade war dynamics) ─────────────
-    // High tariffs provoke retaliatory tariffs from partners
+    // ── Trade balance → wealth concentration ─────────────────────
+    // Trade surplus in capital-abundant economies: capital owners capture
+    // export gains → WC increases (South Korea chaebol effect).
+    // Trade surplus in labor-abundant economies: workers benefit from
+    // export demand → WC decreases (China pre-2010).
+    // Gift/commons economies: trade gains are communally distributed.
+    if (tradeDep > 20 && tradePartners > 0) {
+      const avgPartnerUrban = partnerUrbanSum / tradePartners;
+      const avgPartnerScarcity = partnerScarcitySum / tradePartners;
+      const relativeAdvantage = (urban - avgPartnerUrban) +
+                                (scarcity - avgPartnerScarcity) * 0.5;
+      const tradeWcEffect = relativeAdvantage * (tradeDep / 100) * 0.8 * timeScale;
+
+      const ecoModel = civ.economic?.modelId ?? '';
+      if (['gift', 'commons', 'labor_credit'].includes(ecoModel)) {
+        // Non-market economies distribute trade gains communally
+        // → no WC effect, but wellbeing bonus from exchange
+        civ.state.averageWellbeing = Utils.clamp(
+          (civ.state.averageWellbeing ?? 50) + Math.abs(tradeWcEffect) * 0.3, 0, 100);
+      } else if (laborAbundant && relativeAdvantage < 0) {
+        // Labor-abundant economy exporting to more advanced partners:
+        // workers benefit from export demand
+        if (civ.economic) {
+          civ.economic.wealthConcentration = Utils.clamp(
+            (civ.economic.wealthConcentration ?? 50) + tradeWcEffect * 0.5, 0, 93);
+        }
+      } else {
+        // Capital-abundant or balanced: standard effect
+        if (civ.economic) {
+          civ.economic.wealthConcentration = Utils.clamp(
+            (civ.economic.wealthConcentration ?? 50) + tradeWcEffect, 0, 93);
+        }
+      }
+    }
+
+    // ── Tariff retaliation risk ──────────────────────────────────
     if (tariff > 60 && tradePartners > 0 && Utils.random() < 0.1 * timeScale) {
       tradeDep = Utils.clamp(tradeDep - 5 * timeScale, 0, 100);
       civ.state.tradeDependency = tradeDep;
@@ -7375,10 +10226,9 @@ class SimulationEngine {
         (civ.state.averageWellbeing ?? 50) - 2 * timeScale, 0, 100);
     }
 
-    // ── War disruption (trade collapse during conflict) ──────────
+    // ── War disruption ───────────────────────────────────────────
     const atWar = this.activeWars.some(w => w.attacker === civ.id || w.defender === civ.id);
     if (atWar && tradeDep > 30) {
-      // War severs trade routes — proportional to dependency
       const tradeShock = tradeDep * 0.05 * timeScale;
       civ.state.averageWellbeing = Utils.clamp(
         (civ.state.averageWellbeing ?? 50) - tradeShock, 0, 100);
@@ -7480,6 +10330,218 @@ class SimulationEngine {
       result[s] = Utils.clamp(Math.round(wb), 0, 100);
     }
     return result;
+  }
+
+  // ── Trajectory Recorder ──────────────────────────────────────
+  // Captures comprehensive per-turn state for analysis, export, and narrative.
+  // Unlike economicHistory (capped at 50 for chart display), trajectory is
+  // uncapped within a session — it IS the simulation's memory of its own path.
+
+  _recordTrajectorySnapshot(civ, yearsDelta) {
+    if (!civ?.state) return;
+    const s = civ.state;
+    const g = civ.governance ?? {};
+    const e = civ.economic ?? {};
+    const turn = this.game?.turnCount ?? 0;
+    const year = this.game?.currentYear ?? 0;
+
+    if (!s._trajectory) s._trajectory = [];
+
+    const snap = {
+      turn, year,
+      // Core outcome metrics
+      socialTrust:          Math.round((s.socialTrust ?? 50) * 10) / 10,
+      wealthConcentration:  Math.round((e.wealthConcentration ?? 50) * 10) / 10,
+      corruption:           Math.round((g.corruptionLevel ?? 30) * 10) / 10,
+      // Governance & freedom
+      governanceModel:      g.model?.id ?? 'unknown',
+      hierarchyLevel:       Math.round(g.hierarchyLevel ?? 50),
+      freedomLevel:         Math.round(s.freedomLevel ?? 50),
+      civilianControl:      Math.round(s.civilianControl ?? 50),
+      stateCapacity:        Math.round(s.stateCapacity ?? 50),
+      legitimacyLevel:      Math.round(s.legitimacyLevel ?? 50),
+      // Economy
+      economicModel:        e.model?.id ?? 'unknown',
+      financialDepth:       Math.round(s.financialDepth ?? 30),
+      laborShare:           Math.round(e.laborShare ?? 60),
+      debtLoad:             Math.round(s.debtLoad ?? 20),
+      // Social fabric
+      polarization:         Math.round((s.politicalPolarization ?? 30) * 10) / 10,
+      epistemicHealth:      Math.round(s.epistemicHealth ?? 50),
+      institutionalQuality: Math.round(s.institutionalQuality ?? 50),
+      socialMobility:       Math.round(s.socialMobility ?? 50),
+      anomieLevel:          Math.round(s.anomieLevel ?? 0),
+      collectiveTrauma:     Math.round(s.collectiveTrauma ?? 0),
+      // Wellbeing & demographics
+      averageWellbeing:     Math.round(s.averageWellbeing ?? 50),
+      equalityIndex:        Math.round(s.equalityIndex ?? 50),
+      population:           s.population ?? 0,
+      urbanizationRate:     Math.round(s.urbanizationRate ?? 15),
+      lifeExpectancy:       Math.round(s.lifeExpectancy ?? 32),
+      // Environment
+      pollutionIndex:       Math.round(s.pollutionIndex ?? 0),
+      globalWarmingContribution: Math.round(s.globalWarmingContribution ?? 0),
+      // Participation & culture
+      participationModel:   s.participationModel ?? 'voluntary',
+      empathyLevel:         Math.round(s.empathyLevel ?? 50),
+      genderEquity:         Math.round(s.genderEquity ?? 50),
+      // Structural dynamics (computed indicators)
+      _trustCeiling:        Math.round((s._trustCeiling ?? 78) * 10) / 10,
+      _trustFloor:          Math.round((s._trustFloor ?? 5) * 10) / 10,
+    };
+
+    // Detect significant transitions from previous snapshot
+    const prev = s._trajectory.length > 0 ? s._trajectory[s._trajectory.length - 1] : null;
+    if (prev) {
+      const transitions = [];
+      const delta = (key, threshold) => {
+        const d = snap[key] - prev[key];
+        if (Math.abs(d) >= threshold) return d;
+        return null;
+      };
+
+      const trustD  = delta('socialTrust', 3);
+      const wcD     = delta('wealthConcentration', 3);
+      const corrD   = delta('corruption', 3);
+      const polD    = delta('polarization', 5);
+      const freeD   = delta('freedomLevel', 5);
+      const wbD     = delta('averageWellbeing', 5);
+      const iqD     = delta('institutionalQuality', 3);
+
+      if (trustD)  transitions.push({ var: 'socialTrust', delta: trustD, from: prev.socialTrust, to: snap.socialTrust });
+      if (wcD)     transitions.push({ var: 'wealthConcentration', delta: wcD, from: prev.wealthConcentration, to: snap.wealthConcentration });
+      if (corrD)   transitions.push({ var: 'corruption', delta: corrD, from: prev.corruption, to: snap.corruption });
+      if (polD)    transitions.push({ var: 'polarization', delta: polD, from: prev.polarization, to: snap.polarization });
+      if (freeD)   transitions.push({ var: 'freedomLevel', delta: freeD, from: prev.freedomLevel, to: snap.freedomLevel });
+      if (wbD)     transitions.push({ var: 'averageWellbeing', delta: wbD, from: prev.averageWellbeing, to: snap.averageWellbeing });
+      if (iqD)     transitions.push({ var: 'institutionalQuality', delta: iqD, from: prev.institutionalQuality, to: snap.institutionalQuality });
+
+      if (snap.governanceModel !== prev.governanceModel) {
+        transitions.push({ var: 'governanceModel', from: prev.governanceModel, to: snap.governanceModel, type: 'regime_change' });
+      }
+      if (snap.economicModel !== prev.economicModel) {
+        transitions.push({ var: 'economicModel', from: prev.economicModel, to: snap.economicModel, type: 'economic_transition' });
+      }
+
+      if (transitions.length > 0) snap._transitions = transitions;
+    }
+
+    s._trajectory.push(snap);
+  }
+
+  // Build structured trajectory summary for export/analysis.
+  // Returns { metadata, timeSeries, phases, transitions, sensitivityProfile }
+  getTrajectoryAnalysis(civ) {
+    if (!civ?.state?._trajectory || civ.state._trajectory.length === 0) return null;
+    const traj = civ.state._trajectory;
+
+    // Metadata
+    const first = traj[0], last = traj[traj.length - 1];
+    const metadata = {
+      civilization: civ.name,
+      governanceModel: civ.governance?.model?.label ?? 'Unknown',
+      economicModel: civ.economic?.model?.label ?? 'Unknown',
+      startYear: first.year,
+      endYear: last.year,
+      totalTurns: traj.length,
+      participationModel: civ.state.participationModel ?? 'voluntary',
+    };
+
+    // Time series: keyed by variable, array of {turn, year, value}
+    const coreVars = ['socialTrust', 'wealthConcentration', 'corruption', 'polarization',
+                      'freedomLevel', 'averageWellbeing', 'institutionalQuality',
+                      'epistemicHealth', 'stateCapacity', 'legitimacyLevel',
+                      'equalityIndex', 'socialMobility', 'population'];
+    const timeSeries = {};
+    for (const v of coreVars) {
+      timeSeries[v] = traj.map(s => ({ turn: s.turn, year: s.year, value: s[v] }));
+    }
+
+    // Collect all transitions
+    const transitions = [];
+    for (const snap of traj) {
+      if (snap._transitions) {
+        for (const t of snap._transitions) {
+          transitions.push({ year: snap.year, turn: snap.turn, ...t });
+        }
+      }
+    }
+
+    // Phase detection: identify distinct equilibrium phases by partitioning
+    // the trajectory where multiple core variables shift simultaneously
+    const phases = this._detectPhases(traj);
+
+    // Sensitivity profile: which variables show highest coefficient of variation
+    const sensitivityProfile = {};
+    for (const v of coreVars) {
+      const values = traj.map(s => s[v]).filter(x => x != null && !isNaN(x));
+      if (values.length < 2) continue;
+      const mean = values.reduce((a, b) => a + b, 0) / values.length;
+      if (mean === 0) continue;
+      const variance = values.reduce((a, b) => a + (b - mean) ** 2, 0) / values.length;
+      sensitivityProfile[v] = {
+        mean: Math.round(mean * 10) / 10,
+        stdev: Math.round(Math.sqrt(variance) * 10) / 10,
+        cv: Math.round(Math.sqrt(variance) / Math.abs(mean) * 1000) / 10,
+        min: Math.min(...values),
+        max: Math.max(...values),
+        trend: values.length > 1 ? Math.round((values[values.length - 1] - values[0]) * 10) / 10 : 0,
+      };
+    }
+
+    return { metadata, timeSeries, phases, transitions, sensitivityProfile };
+  }
+
+  _detectPhases(traj) {
+    if (traj.length < 3) return [{ startYear: traj[0].year, endYear: traj[traj.length - 1].year, label: 'Initial' }];
+
+    const phases = [];
+    let phaseStart = 0;
+
+    for (let i = 1; i < traj.length; i++) {
+      const snap = traj[i];
+      if (!snap._transitions || snap._transitions.length < 2) continue;
+      const hasRegime  = snap._transitions.some(t => t.type === 'regime_change' || t.type === 'economic_transition');
+      const multiShift = snap._transitions.length >= 3;
+
+      if (hasRegime || multiShift) {
+        phases.push({
+          startYear: traj[phaseStart].year,
+          endYear:   traj[i - 1].year,
+          startTurn: traj[phaseStart].turn,
+          endTurn:   traj[i - 1].turn,
+          label:     this._labelPhase(traj, phaseStart, i - 1),
+        });
+        phaseStart = i;
+      }
+    }
+    phases.push({
+      startYear: traj[phaseStart].year,
+      endYear:   traj[traj.length - 1].year,
+      startTurn: traj[phaseStart].turn,
+      endTurn:   traj[traj.length - 1].turn,
+      label:     this._labelPhase(traj, phaseStart, traj.length - 1),
+    });
+    return phases;
+  }
+
+  _labelPhase(traj, startIdx, endIdx) {
+    const start = traj[startIdx], end = traj[endIdx];
+    const trustTrend  = end.socialTrust - start.socialTrust;
+    const wcTrend     = end.wealthConcentration - start.wealthConcentration;
+    const corrTrend   = end.corruption - start.corruption;
+    const wbTrend     = end.averageWellbeing - start.averageWellbeing;
+
+    if (wbTrend > 10 && trustTrend > 5 && corrTrend < -3) return 'Flourishing';
+    if (wbTrend < -10 && trustTrend < -5) return 'Decline';
+    if (corrTrend > 10 && wcTrend > 5) return 'Oligarchic consolidation';
+    if (corrTrend < -10 && trustTrend > 3) return 'Institutional reform';
+    if (Math.abs(trustTrend) < 3 && Math.abs(wcTrend) < 3) return 'Equilibrium';
+    if (wcTrend < -10) return 'Redistribution';
+    if (wcTrend > 10) return 'Concentration';
+    if (trustTrend > 5) return 'Social cohesion building';
+    if (trustTrend < -5) return 'Social fragmentation';
+    return 'Transition';
   }
 
   // ── Society Event Methods ──────────────────────────────────────
@@ -7731,9 +10793,12 @@ class SimulationEngine {
     const suppFrac   = support  / 100;
     const freeFrac   = freedom  / 100;
 
-    // Innovation boost from scientific investment + free inquiry
+    // Innovation boost from scientific investment + free inquiry.
+    // Diminishing returns: mature education systems absorb new
+    // scientific investment less efficiently (Hanushek 2011).
+    const eduDiminish = Math.max(0.1, 1 - (civ.state.educationQuality ?? 50) / 100);
     civ.state.educationQuality = Utils.clamp(
-      (civ.state.educationQuality ?? 50) + suppFrac * 0.06 + freeFrac * 0.04, 0, 100);
+      (civ.state.educationQuality ?? 50) + (suppFrac * 0.06 + freeFrac * 0.04) * eduDiminish, 0, 100);
 
     // Epistemic health boost from free scientific inquiry
     civ.state.epistemicHealth = Utils.clamp(
@@ -7752,6 +10817,167 @@ class SimulationEngine {
       // Capital constraint suppresses basic/blue-sky research; applied research remains
       civ.state.educationQuality = Utils.clamp(
         (civ.state.educationQuality ?? 50) - (constraint === 'mixed' ? 0.005 : 0.01), 0, 100);
+    }
+  }
+
+  // ── Endogenous Innovation (Romer 1990, Jones 1995, Mokyr 2002) ─────
+  // Innovation is not just technology adoption — it is the capacity to
+  // generate new knowledge. Output depends on human capital, institutional
+  // quality, R&D investment, epistemic health, and population scale.
+  _processInnovation(civ) {
+    if (!civ.state) return;
+    const st = civ.state;
+    const timeScale = (this.game.yearsDelta || 10) / 10;
+
+    const eduQ = (st.educationQuality ?? 30) / 100;
+    const sciSupport = (st.scienceSupport ?? 50) / 100;
+    const sciFreedom = (st.scienceFreedom ?? 50) / 100;
+    const instQ = (st.institutionalQuality ?? 40) / 100;
+    const epistemic = (st.epistemicHealth ?? 50) / 100;
+    const pop = st.population ?? 1000;
+    const laborShare = (st.companion?.laborForceShare ?? 60) / 100;
+
+    // Knowledge stock: accumulated tech count as proxy
+    const techCount = (st.adoptedTechnologies ?? []).length;
+    const knowledgeStock = Math.min(1.0, techCount / 15);
+
+    // Researcher pool: educated working-age population (Jones 1995)
+    // Larger populations produce more ideas, but with diminishing returns
+    const researcherPool = Math.log10(Math.max(pop * laborShare * eduQ, 10)) / 6;
+
+    // Innovation production function:
+    // human capital × institutional environment × R&D effort × knowledge spillovers
+    const rawCapacity = (eduQ * 0.25 + sciSupport * 0.2 + sciFreedom * 0.15 +
+                         instQ * 0.15 + epistemic * 0.1 + researcherPool * 0.1 +
+                         knowledgeStock * 0.05);
+
+    // Cultural innovation tolerance (Mokyr 2002: culture of growth)
+    const innovBehavior = (st.behaviorReinforcement?.innovation ?? 50) / 100;
+    const culturalMult = 0.6 + innovBehavior * 0.4;
+
+    st.innovationCapacity = Utils.clamp(rawCapacity * culturalMult * 100, 0, 100);
+
+    // Feed back into tech adoption speed via innovation behavior
+    // High innovation capacity gradually raises the innovation behavior
+    const target = st.innovationCapacity;
+    const current = st.behaviorReinforcement?.innovation ?? 50;
+    if (st.behaviorReinforcement) {
+      const drift = (target - current) * 0.02 * timeScale;
+      st.behaviorReinforcement.innovation = Utils.clamp(current + drift, 0, 100);
+    }
+
+    // Breakthrough discoveries: high innovation capacity creates small
+    // probability of accelerating current-era tech adoption
+    if (st.innovationCapacity > 60 && st._techAdoptionPressure) {
+      const breakthroughChance = (st.innovationCapacity - 60) / 400;
+      for (const techName of Object.keys(st._techAdoptionPressure)) {
+        if (Math.random() < breakthroughChance * timeScale) {
+          st._techAdoptionPressure[techName] += 15;
+        }
+      }
+    }
+  }
+
+  // ── Resource Mediation ─────────────────────────────────────────
+  // How the collective mediates resource flows — manifests differently
+  // by economy type. Currency economies use taxation/spending;
+  // non-currency economies use communal allocation, reciprocity,
+  // or labor-credit budgeting.
+  _processResourceMediation(civ) {
+    if (!civ.state || !civ.economic) return;
+    const st = civ.state;
+    const econId = civ.economic.modelId;
+    const econ = ECONOMIC_MODELS[econId];
+    if (!econ) return;
+    const timeScale = (this.game.yearsDelta || 10) / 10;
+    const stateCap = (st.stateCapacity ?? 40) / 100;
+    const instQ = (st.institutionalQuality ?? 40) / 100;
+    const wellbeing = st.averageWellbeing ?? 50;
+    const wc = civ.economic.wealthConcentration ?? 30;
+    const corruption = (civ.governance?.corruptionLevel ?? 30) / 100;
+
+    if (econ.currencyType === 'none') {
+      // Gift / barter / commons / subsistence: communal resource pooling
+      // Redistribution is embedded in social norms, not state policy.
+      // High cooperation → better pooling → lower inequality
+      // (Sahlins 1972: original affluent society; Ostrom 1990: commons governance)
+      const coop = (st.behaviorReinforcement?.cooperation ?? 50) / 100;
+      const mutualAid = (st.behaviorReinforcement?.mutualAid ?? 50) / 100;
+      const poolingEfficiency = (coop * 0.5 + mutualAid * 0.3 + instQ * 0.2);
+
+      // In non-currency economies, pooling efficiency compresses wealth differences
+      if (poolingEfficiency > 0.5) {
+        const compress = (poolingEfficiency - 0.5) * 0.3 * timeScale;
+        civ.economic.wealthConcentration = Utils.clamp(wc - compress, 5, 93);
+      }
+
+      // Wellbeing boost from effective communal support
+      if (poolingEfficiency > 0.6) {
+        st.averageWellbeing = Utils.clamp(
+          wellbeing + (poolingEfficiency - 0.6) * 0.5 * timeScale, 0, 100);
+      }
+
+    } else if (econ.currencyType === 'labor_time') {
+      // Labor credit: hours-based taxation equivalent — community
+      // allocates portion of total labor hours to collective projects
+      const collectiveAlloc = stateCap * 0.3;
+      const infraBoost = collectiveAlloc * 0.04 * timeScale;
+      st.infrastructureLevel = Utils.clamp(
+        (st.infrastructureLevel ?? 20) + infraBoost, 0, 100);
+
+    } else {
+      // Currency economies (commodity, fiat, mixed, planned): fiscal policy
+      // Tax capacity: depends on state capacity, institutional quality,
+      // economic development (Besley & Persson 2009: pillars of prosperity)
+      const taxCapacity = Utils.clamp(stateCap * 0.6 + instQ * 0.4, 0, 1);
+
+      // Effective tax rate: governance type shapes collection
+      // Concentrated power → high extraction but poor allocation
+      // Distributed power → moderate extraction, better allocation
+      const hierLevel = (civ.governance?.hierarchyLevel ?? 50) / 100;
+      const powerConc = (civ.governance?.powerConcentration ?? 50) / 100;
+      const effectiveTaxRate = taxCapacity * (0.15 + hierLevel * 0.15);
+
+      // Revenue after corruption leakage
+      const leakage = corruption * 0.5;
+      const netRevenue = effectiveTaxRate * (1 - leakage);
+
+      // Spending efficiency: institutional quality determines
+      // how well revenue translates to public goods
+      const spendingEfficiency = instQ * (1 - corruption * 0.3);
+
+      // Public goods → wellbeing (education, health, infrastructure)
+      const publicGoodEffect = netRevenue * spendingEfficiency;
+      if (publicGoodEffect > 0.05) {
+        st.averageWellbeing = Utils.clamp(
+          wellbeing + publicGoodEffect * 0.8 * timeScale, 0, 100);
+        st.infrastructureLevel = Utils.clamp(
+          (st.infrastructureLevel ?? 20) + publicGoodEffect * 0.3 * timeScale, 0, 100);
+      }
+
+      // Redistribution effect: depends on governance type
+      // Distributed governance redistributes more effectively
+      // (Acemoglu & Robinson 2006: inclusive vs extractive institutions)
+      const redistributionStrength = (1 - powerConc) * netRevenue;
+      if (redistributionStrength > 0.03) {
+        const wcReduction = redistributionStrength * 0.5 * timeScale;
+        civ.economic.wealthConcentration = Utils.clamp(wc - wcReduction, 5, 93);
+      }
+
+      // Extractive institutions: high power concentration channels
+      // revenue to elites, INCREASING wealth concentration
+      if (powerConc > 0.7 && corruption > 0.4) {
+        const extraction = (powerConc - 0.7) * corruption * 0.3 * timeScale;
+        civ.economic.wealthConcentration = Utils.clamp(wc + extraction, 5, 93);
+      }
+
+      // Planned economies: central allocation replaces market,
+      // low inequality but innovation penalty already in config
+      if (econId === 'planned') {
+        const planEfficiency = instQ * (1 - corruption * 0.5);
+        civ.economic.wealthConcentration = Utils.clamp(
+          wc + (20 - wc) * 0.02 * planEfficiency * timeScale, 5, 93);
+      }
     }
   }
 
@@ -7905,6 +11131,44 @@ class SimulationEngine {
       foodSecurity:      Math.round(civ.state.foodSecurity ?? 60),
       diseaseBurden:     Math.round(civ.state.diseaseBurden ?? 60),
       sanitationLevel:   Math.round(civ.state.sanitationLevel ?? 18),
+      // ── Pass 10: production decentralization ──
+      energyDistributedShare: Math.round(civ.state.energySystem?.distributedShare ?? 0),
+      energyStructuralBaseline: Math.round(civ.state.energySystem?.structuralBaseline ?? 0),
+      energyPathwayOffset:    Math.round((civ.state.energySystem?.pathwayOffset ?? 0) * 10) / 10,
+      agStructuralBaseline:   Math.round(civ.state.agricultureSystem?.structuralBaseline ?? 0),
+      agPathwayOffset:        Math.round((civ.state.agricultureSystem?.pathwayOffset ?? 0) * 10) / 10,
+      energyPathway:          civ.state.energySystem?.pathway ?? 'none',
+      energyPerCapita:        civ.state.energyPerCapita ?? 0,
+      wellbeingEnergyCeiling: civ.state.wellbeingEnergyCeiling ?? 100,
+      agLocalShare:           Math.round(civ.state.agricultureSystem?.localShare ?? 0),
+      agDiversification:      Math.round(civ.state.agricultureSystem?.diversificationIntensity ?? 0),
+      agPathway:              civ.state.agricultureSystem?.pathway ?? 'none',
+      landEquivalentRatio:    civ.state.agricultureSystem?.landEquivalentRatio ?? 1.0,
+      agEcosystemFunction:    Math.round(civ.state.agricultureSystem?.ecosystemFunction ?? 0),
+      agInputSubstitution:    Math.round(civ.state.agricultureSystem?.inputSubstitution ?? 0),
+      agCoercionYieldFactor:  civ.state.agricultureSystem?.coercionYieldFactor ?? 1.0,
+      agEnablingSupport:      Math.round(civ.state.agricultureSystem?.enablingSupport ?? 0),
+      agSupportEffectiveness: Math.round(civ.state.agricultureSystem?.supportEffectiveness ?? 0),
+      energyEnablingSupport:  Math.round(civ.state.energySystem?.enablingSupport ?? 0),
+      distributionLocality:   Math.round(civ.state.agricultureSystem?.distributionLocality ?? 0),
+      agChainLoss:            Math.round((civ.state.agricultureSystem?.chainLoss ?? 0) * 10) / 10,
+      agCosmeticRejection:    Math.round((civ.state.agricultureSystem?.cosmeticRejection ?? 0) * 10) / 10,
+      agHarvestMaturity:      Math.round(civ.state.agricultureSystem?.harvestMaturity ?? 0),
+      agNutritionalQuality:   Math.round(civ.state.agricultureSystem?.nutritionalQuality ?? 0),
+      participationDepth:     Math.round(civ.state.participationDepth ?? 0),
+      atModeShare:            Math.round(civ.state.activeTravel?.modeShare ?? 0),
+      atModeShareMale:        Math.round(civ.state.activeTravel?.modeShareMale ?? 0),
+      atModeShareFemale:      Math.round(civ.state.activeTravel?.modeShareFemale ?? 0),
+      atNetworkCoverage:      Math.round(civ.state.activeTravel?.networkCoverage ?? 0),
+      atNetworkContinuity:    Math.round(civ.state.activeTravel?.networkContinuity ?? 0),
+      atTransitIntegration:   Math.round(civ.state.activeTravel?.transitIntegration ?? 0),
+      atEffectiveReach:       Math.round(civ.state.activeTravel?.effectiveReach ?? 0),
+      atPerceivedSafety:      Math.round(civ.state.activeTravel?.perceivedSafety ?? 0),
+      atJobsHousingBalance:   Math.round(civ.state.activeTravel?.jobsHousingBalance ?? 0),
+      atEnergySavedShare:     civ.state.activeTravel?.energySavedShare ?? 0,
+      atAnimalPowerShare:     Math.round(civ.state.activeTravel?.animalPowerShare ?? 0),
+      atStructuralBaseline:   Math.round(civ.state.activeTravel?.structuralBaseline ?? 0),
+      participationCoercion:  Math.round(civ.state.participationCoercion ?? 0),
     });
     if (civ.state.resourceHistory.length > 50) civ.state.resourceHistory.shift();
   }
@@ -8234,9 +11498,10 @@ class SimulationEngine {
       const econId = civ.economic?.modelId || 'market';
       const govId  = civ.governance?.modelId || 'representative';
       const isGift = econId === 'gift' || econId === 'commons';
-      const govNote = govId === 'autocratic'
+      const pwrConcPW = civ.governance?.powerConcentration ?? 50;
+      const govNote = pwrConcPW > 70
         ? ` The project was driven through by centralized authority; debate over its merits was limited.`
-        : govId === 'direct_congress'
+        : pwrConcPW < 15
           ? ` Citizens were directly involved in commissioning and overseeing the work from start to finish.`
           : ` The project passed through the normal institutional process and received broad support.`;
       const econNote = isGift
@@ -8298,7 +11563,7 @@ class SimulationEngine {
           : `Despite the cooperative character of this society, the civilization's stretched resources limited the mutual support that might otherwise have buffered the impact.`;
       } else if (coop < 35) {
         responseText = `The fragmented social response left individuals and households to face the crisis largely alone. Those at the margins suffered most.`;
-      } else if (govId === 'autocratic' || govId === 'oligarchy') {
+      } else if ((civ.governance?.powerConcentration ?? 50) > 65) {
         responseText = equality < 45
           ? `Centralized resources were marshaled, but distribution followed existing hierarchies — those at the top were protected first; hardship fell disproportionately on ordinary people.`
           : `Leadership deployed centralized resources to manage the crisis, achieving a reasonably organized response.`;
@@ -8404,11 +11669,12 @@ class SimulationEngine {
 
     // ── Alien Response Protocols ─────────────────────────────────
     if (event.type === 'alien_response') {
-      const govNote = govId === 'direct_congress'
-        ? ` The decision was reached through the people's congresses — an unprecedented application of direct democracy to a question of civilizational scale.`
-        : govId === 'autocratic'
+      const pwrConcAR = civ.governance?.powerConcentration ?? 50;
+      const govNote = pwrConcAR < 15
+        ? ` The decision was reached through broad popular deliberation — an unprecedented application of participatory governance to a question of civilizational scale.`
+        : pwrConcAR > 70
           ? ` The decision was made unilaterally by the governing authority, without public consultation.`
-          : govId === 'representative'
+          : pwrConcAR < 40
             ? ` The decision passed through legislative bodies, though the speed of the process left many questioning whether adequate deliberation occurred.`
             : '';
       const protocolNote = {
@@ -8431,11 +11697,12 @@ class SimulationEngine {
       return `${event.description}${econNote} Innovation has spiked as resources are redirected toward understanding the signal.`;
     }
     if (event.type === 'alien_contact') {
-      const govNote = govId === 'autocratic'
+      const pwrConcAC = civ.governance?.powerConcentration ?? 50;
+      const govNote = pwrConcAC > 70
         ? ` The governing authority has assumed direct control of all contact protocols, restricting independent scientific inquiry.`
-        : govId === 'direct_congress'
-          ? ` The question of how to respond has been brought directly to the people's congresses — an unprecedented use of direct democracy for a decision of this scale.`
-          : govId === 'representative'
+        : pwrConcAC < 15
+          ? ` The question of how to respond has been brought directly to the people — an unprecedented use of participatory governance for a decision of this scale.`
+          : pwrConcAC < 40
             ? ` Elected bodies are struggling to provide meaningful oversight of a situation that moves faster than legislative processes are designed to handle.`
             : '';
       return `${event.description}${govNote}`;
@@ -8505,11 +11772,12 @@ class SimulationEngine {
               : ` The civilization's near-total dependence on complex interlocking systems — global supply chains, digital infrastructure, industrial agriculture — has left most survivors without the knowledge or tools to sustain basic life. The coming generations face an extreme challenge: rediscovering how to live directly from the land, without the accumulated institutional knowledge that was lost.`;
       }
 
-      const govNote = govId === 'direct_congress'
-        ? ` The people's congresses have been suspended — survival takes priority over deliberation.`
-        : govId === 'autocratic'
+      const pwrConcExt = civ.governance?.powerConcentration ?? 50;
+      const govNote = pwrConcExt < 15
+        ? ` Popular assemblies have been suspended — survival takes priority over deliberation.`
+        : pwrConcExt > 70
           ? ` The governing authority has invoked emergency powers, concentrating control to manage the crisis.`
-          : govId === 'representative'
+          : pwrConcExt < 40
             ? ` Normal legislative function has been suspended. Emergency government is coordinating the response.`
             : '';
       const econNote = econId === 'market' || econId === 'commodity'
@@ -8530,12 +11798,13 @@ class SimulationEngine {
       };
       const workId = event.workId || event.historyType;
       const buildTurns = event.buildTurns || BUILD_TIMES[workId] || 4;
-      const govNote = govId === 'direct_congress'
-        ? ` The project was approved through direct popular vote; the citizenry will oversee construction.`
-        : govId === 'autocratic'
+      const pwrConcPW2 = civ.governance?.powerConcentration ?? 50;
+      const govNote = pwrConcPW2 < 15
+        ? ` The project was approved through direct popular decision; the citizenry will oversee construction.`
+        : pwrConcPW2 > 70
           ? ` The order was issued by the governing authority. Labor will be organized centrally.`
-          : govId === 'representative'
-            ? ` The project received legislative approval and broad institutional support.`
+          : pwrConcPW2 < 40
+            ? ` The project received broad institutional support through the normal process.`
             : '';
       const econNote = isGift
         ? ` Workers will be compensated through the communal resource system.`
@@ -9005,6 +12274,15 @@ class SimulationEngine {
         Math.floor(attacker.state.population * (1 - aCasualties)));
       defender.state.population = Math.max(100,
         Math.floor(defender.state.population * (1 - dCasualties)));
+
+      // Signal companion for age-selective casualty distribution:
+      // combat deaths fall disproportionately on males 15-44
+      if (this.game.companion?.isActive) {
+        attacker.state._pendingWarCasualties =
+          (attacker.state._pendingWarCasualties ?? 0) + aCasualties;
+        defender.state._pendingWarCasualties =
+          (defender.state._pendingWarCasualties ?? 0) + dCasualties;
+      }
 
       // Wellbeing: defender suffers more (invaded homeland), but power matters
       attacker.state.averageWellbeing = Utils.clamp(
@@ -9580,11 +12858,39 @@ class SimulationEngine {
     const econPot  = (typeof ECON_POWER_POTENTIAL !== 'undefined') ? (ECON_POWER_POTENTIAL[econ] ?? 0.30) : 0.30;
     const infoId   = s.informationEcosystem ?? 'free_market_media';
 
-    // Overall degree: wealth concentration × economic power potential × institutional weakness
+    // Two channels of capture, operating simultaneously:
+    //
+    // 1. Wealth→state (Gilens & Page 2014): private wealth buys political
+    //    influence — lobbying, campaign finance, regulatory capture.
+    //    Proportional to wealth concentration × market-to-state potential.
+    //
+    // 2. State→wealth (Médard 1982, Bratton & van de Walle 1997): control of
+    //    state institutions converts into personal wealth — resource rents,
+    //    procurement, SOEs, licensing. The neopatrimonial channel.
+    //    Weak institutions raise the effective power concentration — a
+    //    representative system with IQ 15 (post-colonial) acts like
+    //    concentrated power in practice, unlike one with IQ 80 (Scandinavia).
+    //
+    // Both weakened by institutional quality (accountability, rule of law).
     // Pass 8: apply consequence deficit acceleration multiplier to lerp rate
     const deficitMult = s.consequenceDeficit?.accelerationMultiplier ?? 1.0;
-    const rawDegree = wealthConc * econPot * (1 - iq / 100) * 1.2;
-    wc.degree = Math.round(Utils.clamp(Utils.lerp(wc.degree, rawDegree, Utils.clamp(0.06 * deficitMult, 0.01, 0.25)), 0, 100));
+    const powerConcWC = civ.governance?.powerConcentration ?? 50;
+    const wealthToState = wealthConc * econPot * (1 - iq / 100) * 1.2;
+    const statePot = (typeof STATE_CAPTURE_POTENTIAL !== 'undefined')
+      ? (STATE_CAPTURE_POTENTIAL[econ] ?? 0.35) : 0.35;
+    const iqDeficit = (100 - iq) / 100;
+    const effectivePowerConc = powerConcWC + iqDeficit * 20;
+    const captureOpportunity = Math.pow(Math.max(0, (effectivePowerConc - 25) / 75), 0.7);
+    const stateToWealth = captureOpportunity * iqDeficit * statePot * 130;
+    const rawDegree = Utils.clamp(wealthToState + stateToWealth, 0, 100);
+    // ROUNDING TRAP: this used Math.round() on an incrementally lerped
+    // value. At a lerp rate of 0.06 the per-turn step is well under 0.5
+    // whenever the value is near its target, so rounding snapped it
+    // straight back and the figure froze permanently — observed stuck at
+    // exactly 13 from turn 150 through turn 600. Keep full precision in
+    // state and round only where it is displayed or snapshotted.
+    wc.degree = Utils.clamp(
+      Utils.lerp(wc.degree, rawDegree, Utils.clamp(0.06 * deficitMult, 0.01, 0.25)), 0, 100);
 
     // Dimensions
     wc.institutionalCapture = Math.round(Utils.clamp(wc.degree * 0.80 * (1 - iq / 100), 0, 100));
@@ -9636,7 +12942,11 @@ class SimulationEngine {
       ? THEOCRATIC_EMPATHY_BIAS
       : { triggerReligionDominance: 70, inGroupMultiplier: 1.15, outGroupMultiplier: 0.75 };
 
-    const active = (gov === 'theocratic') || (religionDom > thr.triggerReligionDominance);
+    // In-group/out-group empathy split is driven by religion dominance,
+    // not governance label. The mechanism: high religious authority creates
+    // moral boundaries — charity for co-religionists, suspicion of outsiders.
+    // This operates regardless of formal governance structure.
+    const active = (religionDom > thr.triggerReligionDominance);
     const empathy = s.empathyLevel ?? 50;
     s.theocraticEmpathyBias = s.theocraticEmpathyBias || {};
     s.theocraticEmpathyBias.active = active;
@@ -10076,6 +13386,241 @@ class SimulationEngine {
     return true;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // Dual Attractor Dynamics — oligarchic vs egalitarian basins
+  //
+  // Two stable equilibria compete:
+  //
+  // OLIGARCHIC ATTRACTOR: high wealth capture → degraded institutions →
+  //   more capture → higher lock-in → suppressed empathy → extraction
+  //   normalized. Historical: late Roman Republic latifundia, Gilded
+  //   Age trusts, post-Soviet oligarchy. Self-reinforcing because
+  //   concentrated wealth purchases the rules that protect it.
+  //
+  // EGALITARIAN ATTRACTOR: broad education → epistemic health →
+  //   accountability → strong institutions → mobility → broad
+  //   franchise → prosocial norms → education investment. Historical:
+  //   Scandinavian social democracies, post-war Japan/Korea/Taiwan,
+  //   post-Reformation Netherlands. Self-reinforcing because informed
+  //   citizens with political power demand public goods.
+  //
+  // The bifurcation surface runs through institutional lock-in ≈ 50,
+  // elite empathy ≈ 40, and labor share ≈ 40. Above the surface,
+  // oligarchic feedback loops dominate; below it, egalitarian ones do.
+  //
+  // Implementation: a composite "basin score" from key indicators
+  // determines a gentle nudge that amplifies whichever basin the
+  // society occupies. The nudge is pow(|score|, 1.5) — weak near the
+  // boundary (allowing perturbations to tip the system) and stronger
+  // deeper in (creating hysteresis that resists escape).
+  //
+  // Sources: Acemoglu & Robinson (2012) "Why Nations Fail" dual
+  // equilibria; Piketty (2014) r>g as self-reinforcing concentration;
+  // Bowles (2012) "The New Economics of Inequality and Redistribution"
+  // institutional complementarities; Turchin (2023) elite
+  // overproduction cycles; Ostrom (1990) commons governance as
+  // egalitarian attractor.
+  // ═══════════════════════════════════════════════════════════════
+  _processAttractorDynamics(civ) {
+    const s = civ?.state;
+    if (!s) return;
+    const timeScale = this.timeScale ?? 1;
+
+    // ── Inputs ──
+    const wc = civ.economic?.wealthConcentration ?? 50;
+    const lockin = s.institutionalLockin ?? 30;
+    const wcDeg = s.consequenceDeficit?.wealthCapture?.degree ?? 0;
+    const eliteEmpathy = s.empathyByStratum?.[0] ?? 60;
+    const labShare = s.laborShareOfOutput ?? 60;
+    const polInclusion = s.politicalInclusion ?? 50;
+    const hierEntrenched = s.hierarchyEntrenched ?? 0;
+    const educQ = s.educationQuality ?? 50;
+    const eh = s.epistemicHealth ?? 50;
+    const socialTrust = s.socialTrust ?? 50;
+    const br = s.behaviorReinforcement || {};
+    const cooperation = br.cooperation ?? 50;
+    const brEmpathy = br.empathy ?? 50;
+    const mutualAid = br.mutualAid ?? 50;
+
+    // ── OLIGARCHIC PULL ──
+    // Driven by wealth capture, hierarchy, institutional capture,
+    // and suppressed empathy. These are the forces that concentrate
+    // power and make it self-reinforcing.
+    const oligarchicPull =
+      (wcDeg / 100)               * 0.20 +   // active wealth→state capture
+      (wc / 100)                  * 0.15 +   // raw wealth concentration
+      (lockin / 100)              * 0.15 +   // institutional rigidity
+      (1 - eliteEmpathy / 100)    * 0.15 +   // empathy suppressed by power
+      (hierEntrenched / 100)      * 0.15 +   // structural hierarchy depth
+      (1 - labShare / 100)        * 0.10 +   // capital capturing output
+      (1 - polInclusion / 100)    * 0.10;    // restricted participation
+
+    // ── EGALITARIAN PULL ──
+    // NOT just "absence of oligarchy." These are distinct forces
+    // that actively sustain equality: reciprocity norms, collective
+    // accountability, educated citizenry, cooperative behavior.
+    // Gift/commons economies generate pull through mutualAid and
+    // cooperation, not through currency-based redistribution.
+    const egalitarianPull =
+      (educQ / 100)               * 0.15 +   // informed citizenry resists capture
+      (eh / 100)                  * 0.15 +   // collective sense-making capacity
+      (polInclusion / 100)        * 0.15 +   // broad participation in decisions
+      (socialTrust / 100)         * 0.12 +   // reciprocity norms enable collective action
+      (cooperation / 100)         * 0.12 +   // reinforced cooperative behavior
+      (eliteEmpathy / 100)        * 0.10 +   // solidarity across power strata
+      (labShare / 100)            * 0.08 +   // workers retaining their output
+      (mutualAid / 100)           * 0.08 +   // reciprocal support networks
+      (brEmpathy / 100)           * 0.05;    // reinforced empathic behavior
+
+    // ── Diagnostics ──
+    s.oligarchicPull = +oligarchicPull.toFixed(4);
+    s.egalitarianPull = +egalitarianPull.toFixed(4);
+    const attractorScore = egalitarianPull - oligarchicPull;
+    s.attractorScore = +attractorScore.toFixed(4);
+    s.attractorBasin = attractorScore < -0.1 ? 'oligarchic'
+                     : attractorScore > 0.1 ? 'egalitarian' : 'contested';
+
+    // ── Independent nudges from each force ──
+    // Both forces operate simultaneously. Each nudges meta-variables
+    // in its direction. The net effect depends on relative strength.
+    // pow(pull, 1.5) creates steeper wells — weak forces barely
+    // nudge, strong forces lock in hard (hysteresis).
+    const oMag = Math.pow(oligarchicPull, 1.5) * 0.10 * timeScale;
+    const eMag = Math.pow(egalitarianPull, 1.5) * 0.10 * timeScale;
+
+    // Lock-in: oligarchic force entrenches rigidity,
+    // egalitarian force loosens it (reform becomes easier)
+    s.institutionalLockin = Utils.clamp(
+      (s.institutionalLockin ?? 30) + oMag * 0.3 - eMag * 0.3, 0, 100);
+
+    // Behavioral inertia: oligarchic force increases resistance
+    // to change, egalitarian force reduces it (adaptive capacity)
+    if (s.behaviorInertia) {
+      s.behaviorInertia.coefficient = Utils.clamp(
+        (s.behaviorInertia.coefficient ?? 50) + oMag * 0.25 - eMag * 0.25, 0, 100);
+    }
+
+    // Elite empathy: oligarchic power suppresses (the empathy
+    // ratchet), egalitarian norms actively recover it
+    if (s.empathyByStratum?.length) {
+      s.empathyByStratum[0] = Utils.clamp(
+        s.empathyByStratum[0] - oMag * 0.2 + eMag * 0.2, 0, 100);
+    }
+
+    // Hierarchy entrenchment: oligarchic pull deepens structural
+    // hierarchy, egalitarian pull erodes it
+    s.hierarchyEntrenched = Utils.clamp(
+      (s.hierarchyEntrenched ?? 0) + oMag * 0.15 - eMag * 0.15, 0, 100);
+  }
+
+  _enforceHierarchyCapFloor(civ) {
+    const hier = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    if (hier <= 0.5) return;
+
+    const timeScale = (this.game?.yearsDelta || 10) / 10;
+    let cap = civ.state.stateCapacity ?? 0;
+    const leg = civ.state.legitimacyLevel ?? 0;
+
+    // Tier 1 (hard clamp): coercive minimum. Scaled by excess hierarchy
+    // above 0.5 so weakly hierarchical states (Nigeria, hier=0.55) get
+    // minimal floor while strongly hierarchical ones (Russia 0.75,
+    // Saudi 0.90) retain substantial organizational capacity.
+    const coerciveFloor = 10 + (hier - 0.5) * 60;
+    if (cap < coerciveFloor) cap = coerciveFloor;
+
+    // Tier 2 (soft pull): legitimacy-enhanced capacity. Saturates at
+    // leg=75 (strong legitimacy), not 50, because full cap floor
+    // enhancement requires genuine security apparatus loyalty, not just
+    // acquiescence. Moderate legitimacy (50-60) reflects grudging
+    // acceptance — enough to prevent collapse but not for maximum capacity.
+    const legEnhancement = hier * 25 * Utils.clamp(leg / 75, 0, 1);
+    const fullFloor = coerciveFloor + legEnhancement;
+
+    if (cap < fullFloor) {
+      cap += (fullFloor - cap) * 0.3 * timeScale;
+    }
+
+    civ.state.stateCapacity = Utils.clamp(cap, 0, 100);
+  }
+
+  // Education-based capacity ceiling (Evans & Rauch 1999, Rauch &
+  // Evans 2000). Runs at end of pipeline to capture ALL cap growth
+  // channels (infrastructure, urbanization, trade, etc.). State
+  // capacity cannot sustainably exceed what the educated workforce
+  // can staff and operate — without educated personnel, formal
+  // structures become "isomorphic mimicry" (Pritchett et al. 2013).
+  _enforceEduCapCeiling(civ) {
+    if (!civ.state) return;
+    if (civ.isPlayerCiv === false) return;
+    const eduQ = civ.state.educationQuality ?? 50;
+    let cap = civ.state.stateCapacity ?? 0;
+
+    // Education capacity ceiling (Evans & Rauch 1999, Pritchett et al.
+    // 2013 "isomorphic mimicry"). State capacity cannot sustainably
+    // exceed what the domestic education system can staff.
+    // Uses current education quality — it already evolves slowly through
+    // _processEducation, and over 50-year hindcasts education systems
+    // transform substantially (South Korea 1960-2010, Rwanda 1994-2020).
+    const eduCapCeiling = 25 + eduQ * 0.82;
+    if (cap > eduCapCeiling) {
+      cap = eduCapCeiling;
+    }
+
+    civ.state.stateCapacity = Utils.clamp(cap, 0, 100);
+  }
+
+  // End-of-turn IQ floor enforcement. The IQ floor is first computed
+  // in _processInstitutions (step 66), but multiple subsequent channels
+  // erode IQ below it: trust erosion, cynicism, wealth capture, science
+  // constraints, institutional lock-in, ethnic friction. This enforcement
+  // recalculates the floor with end-of-turn values and pulls IQ back to
+  // its structural minimum. The floor represents institutional inertia —
+  // courts, laws, trained personnel, administrative routines persist even
+  // when attitudes and political dynamics are corrosive.
+  _enforceIqFloor(civ) {
+    if (!civ.state) return;
+    const iq = civ.state.institutionalQuality ?? 50;
+    const cap = civ.state.stateCapacity ?? 50;
+    const edu = civ.state.educationQuality ?? 50;
+    const leg = civ.state.legitimacyLevel ?? 0;
+    const rent = (civ.state.resourceRentDependence ?? 0) / 100;
+    const pop = civ.state.population ?? 100;
+
+    const popMin = Math.min(Math.log10(Math.max(pop, 100)) * 5, 15);
+    const hierFloor = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    const hierCentFloor = hierFloor > 0.5 ? Utils.clamp((hierFloor - 0.5) * 2.0, 0, 1) : 0;
+    const rentContrib = rent > 0.1 ? rent * cap * (0.15 + hierCentFloor * 0.08) : 0;
+    const iqFloor = Math.min(
+      Math.max(cap * 0.3 + leg * 0.1 + edu * 0.45 + rentContrib, popMin), 55);
+
+    if (iq < iqFloor) {
+      const timeScale = (this.game?.yearsDelta || 10) / 10;
+      civ.state.institutionalQuality = Utils.clamp(
+        iq + (iqFloor - iq) * 0.50 * timeScale, 0, 100);
+    }
+  }
+
+  // Trust bounds enforcement: structural ceiling/floor re-applied after
+  // ALL trust-modifying functions (participation, active travel, anomie
+  // cross-effects, fragility, exclusion risk, mobility gap) to prevent
+  // bypass of the structural limits calculated in _processSocialTrust.
+  _enforceTrustBounds(civ) {
+    if (!civ.state) return;
+    const trust = civ.state.socialTrust ?? 50;
+    const ceiling = civ.state._trustCeiling;
+    const floor = civ.state._trustFloor;
+    if (ceiling == null || floor == null) return;
+    const timeScale = (this.game?.yearsDelta || 10) / 10;
+    if (trust > ceiling) {
+      civ.state.socialTrust = Utils.clamp(
+        trust - (trust - ceiling) * 0.35 * timeScale, ceiling, 100);
+    }
+    if (trust < floor) {
+      civ.state.socialTrust = Utils.clamp(
+        trust + (floor - trust) * 0.4 * timeScale, 0, 100);
+    }
+  }
+
   // P8-3: Cooperative Outcomes — outcomes-feedback mechanism.
   // Does cooperative behavior under the current economic model produce material
   // gains for cooperators? If yes → reinforce; if no → weaken + raise cynicism.
@@ -10249,7 +13794,8 @@ class SimulationEngine {
       if (s.institutionalQuality !== undefined) s.institutionalQuality = Utils.clamp(s.institutionalQuality - 0.5, 0, 100);
     }
     if (cd.level > 50) {
-      if (s.epistemicHealth !== undefined) s.epistemicHealth = Utils.clamp(s.epistemicHealth - 0.3, 0, 100);
+      const ehDrain = 0.3 * ((s.epistemicHealth ?? 50) / 100);
+      if (s.epistemicHealth !== undefined) s.epistemicHealth = Utils.clamp(s.epistemicHealth - ehDrain, 0, 100);
     }
 
     // Ring buffer
@@ -10302,22 +13848,26 @@ class SimulationEngine {
     const ch = s?.culturalHomogeneity;
     if (!s || !ch) return;
 
-    const govId = civ.governance?.modelId ?? '';
+    const pcCH = civ.governance?.powerConcentration ?? 50;
+    const relDomCH = civ.religion?.dominance ?? 0;
     let drift = 0;
 
     // Toward heterogeneity (diverse subcultures)
+    // Distributed power allows cultural pluralism — multiple voices,
+    // minority expression, artistic dissent. Trade brings outside influence.
     const tradeDep = s.tradeDependency ?? 20;
     if (tradeDep > 50) drift -= 0.06 * ((tradeDep - 50) / 50);
     if (civ.migration?.lastEvent === 'influx') drift -= 0.12;
-    if (govId === 'direct_democracy')          drift -= 0.05;
-    if (['council_consensus','flat_consensus'].includes(govId)) drift -= 0.07;
+    if (pcCH < 20) drift -= 0.07 * ((20 - pcCH) / 20);
     if ((s.artsSupport ?? 0) > 70 && (s.artsFreedom ?? 0) > 70) drift -= 0.05;
     if ((s.scienceFreedom ?? 0) > 70) drift -= 0.03;
 
     // Toward homogeneity (dominant monoculture)
-    if (govId === 'theocratic')                                       drift += 0.10;
-    if (['shadow_government_covert','shadow_government_complicit'].includes(govId)) drift += 0.07;
-    if (['command','absolute_monarchy'].includes(govId))              drift += 0.08;
+    // Concentrated power + religious authority → cultural conformity
+    // enforcement. High powerConc enables censorship, curriculum control,
+    // suppression of minority expression.
+    if (relDomCH > 60) drift += 0.10 * ((relDomCH - 60) / 40);
+    if (pcCH > 70) drift += 0.08 * ((pcCH - 70) / 30);
     if ((s.wealthCapture?.degree ?? 0) > 60)                         drift += 0.04;
     if ((s.epistemicHealth ?? 50) < 30)                              drift += 0.06;
     if (s.informationEcosystem === 'state_controlled')               drift += 0.05;
@@ -10402,7 +13952,19 @@ class SimulationEngine {
     // ── Receiver receptivity from cultural homogeneity ─────────────────────
     // homo=0 → receptivity=1.00; homo=50 → 0.67; homo=100 → 0.33
     const homo        = Utils.clamp(t.culturalHomogeneity?.value ?? 50, 0, 100);
-    const receptivity = Utils.clamp(1.0 - homo / 150, 0.33, 1.0);
+    let receptivity = Utils.clamp(1.0 - homo / 150, 0.33, 1.0);
+
+    // Network topology effect (Watts & Strogatz 1998; Granovetter 1973):
+    // Dense bridged networks absorb foreign norms faster — bridge ties
+    // connect otherwise separate clusters, accelerating cross-boundary
+    // diffusion. Dense but isolated networks (echo chambers) resist.
+    const tDiff = t.companion?.diffusion;
+    if (tDiff) {
+      const netDensity = tDiff.networkDensity ?? 0.3;
+      const bridges = tDiff.bridgeFraction ?? 0.3;
+      const networkOpenness = netDensity * (0.4 + bridges * 0.6);
+      receptivity *= (0.7 + networkOpenness * 0.6);
+    }
 
     // ── Base rate ──────────────────────────────────────────────────────────
     const baseRate = (tradeDep / 100) * attitudeFactor * receptivity * baseRateScaling;
@@ -10581,6 +14143,28 @@ class SimulationEngine {
       row(e.turn??'', e.year??'', e.title??'', e.type??'');
     }
 
+    // ── COMPANION: DEMOGRAPHIC_HISTORY ────────────────────────────
+    const comp = s?.companion;
+    section('COMPANION_DEMOGRAPHIC_HISTORY');
+    row('turn','year','population','median_age','growth_rate','dependency_ratio','youth_bulge','labor_force_share','births','deaths','demographic_dividend');
+    for (const e of (comp?.demographicHistory ?? [])) {
+      row(e.turn??'', e.year??'', e.population??'', e.medianAge??'', e.growthRate??'', e.dependencyRatio??'', e.youthBulge??'', e.laborForceShare??'', e.births??'', e.deaths??'', e.demographicDividend??'');
+    }
+
+    // ── COMPANION: TEMPORAL_DAMPENING ──────────────────────────────
+    section('COMPANION_TEMPORAL_DAMPENING');
+    row('turn','year','variable','attempted_change','allowed_change','max_rate','is_crisis');
+    for (const e of (comp?.temporalDampenHistory ?? [])) {
+      row(e.turn??'', e.year??'', e.variable??'', e.attempted??'', e.allowed??'', e.maxRate??'', e.isCrisis??'');
+    }
+
+    // ── COMPANION: MICRO_FOUNDATIONS_HISTORY ───────────────────────
+    section('COMPANION_MICRO_FOUNDATIONS_HISTORY');
+    row('turn','year','regime_pressure','elite_cohesion','mass_grievance','collective_action','elite_sat','upper_mid_sat','lower_mid_sat','working_sat','disenfranchised_sat');
+    for (const e of (comp?.microFoundationsHistory ?? [])) {
+      row(e.turn??'', e.year??'', e.regimePressure??'', e.eliteCohesion??'', e.massGrievance??'', e.collectiveAction??'', e.eliteSatisfaction??'', e.upperMiddleSatisfaction??'', e.lowerMiddleSatisfaction??'', e.workingSatisfaction??'', e.disenfranchisedSatisfaction??'');
+    }
+
     // ── Download ──────────────────────────────────────────────────
     const csvText = lines.join('\n');
     const blob    = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
@@ -10610,7 +14194,7 @@ class SimulationEngine {
     if (!civ.state || !civ.economic) return;
     const timeScale = (this.game.yearsDelta || 10) / 10;
     let wc = civ.economic.wealthConcentration ?? 30;
-    let corr = civ.governance?.corruptionLevel ?? 0;
+    let corr = civ.state?.corruptionLevel ?? civ.governance?.corruptionLevel ?? 0;
     const iq = civ.state.institutionalQuality ?? 50;
     const cap = civ.state.stateCapacity ?? 50;
     const trust = civ.state.socialTrust ?? 50;
@@ -10627,8 +14211,6 @@ class SimulationEngine {
       // Extra corruption decay during reform period
       corr -= 0.5 * timeScale;
     }
-    const isDemocratic = ['representative', 'direct_congress', 'flat_consensus', 'rotating'].includes(govId);
-
     // ── Wealth dispersion forces ──
     // Piketty (2014): r > g concentrates wealth, but taxes/inheritance/shocks
     // disperse it. The 20th century saw massive wealth deconcentration
@@ -10640,85 +14222,740 @@ class SimulationEngine {
     // At extreme levels (>80), additional pressure from social upheaval, banditry,
     // warlord seizure — even without functioning institutions
     if (wc > 40) {
-      let dispersion = 0.5 * ((wc - 40) / 60) * timeScale; // Max ~0.5/decade (increased from 0.3)
+      let dispersion = 0.5 * ((wc - 40) / 60) * timeScale;
 
-      // Extreme concentration: accelerating dispersion (revolution, social collapse,
-      // warlord seizure — you can't hold wealth when institutions fail)
-      // Historical: French Revolution, Russian Revolution, Chinese land reform
-      // R4b: Strengthened — at WC>85, social fabric tears: banditry, elite fragmentation,
-      // peasant revolt, flight of productive population. No empire sustained WC>90 long.
-      // At WC>90: quadratic acceleration — wealth literally cannot be held (no workers,
-      // no merchants, no soldiers willing to serve). This is INDEPENDENT of institutions.
       if (wc > 75) dispersion += 1.0 * ((wc - 75) / 25) * timeScale;
       if (wc > 85) dispersion += 2.0 * ((wc - 85) / 15) * timeScale;
       if (wc > 90) dispersion += 3.0 * ((wc - 90) / 10) * timeScale;
 
-      // Institutional quality is the PRIMARY driver of wealth redistribution.
-      // Strong institutions enable: progressive taxation, antitrust regulation,
-      // social programs, rule of law, property rights enforcement.
-      // This is NOT governance-type-dependent:
-      // - China redistributed under Mao (authoritarian)
-      // - Singapore has strong redistribution (technocratic)
-      // - Scandinavian countries (democratic + high IQ)
-      // - US New Deal (democratic but also required strong state capacity)
-      // Piketty's insight: it's INSTITUTIONAL capacity for redistribution, not democracy per se
-      if (iq > 40) dispersion *= 1.0 + (iq - 40) / 60 * 1.2; // up to 2.2x at iq=100
+      // IQ and cap amplify dispersion ONLY when combined with collective
+      // solidarity — the political will to redistribute. Without solidarity,
+      // strong institutions serve the existing power structure rather than
+      // dispersing wealth. Scandinavia (high IQ + high solidarity → strong
+      // dispersion) vs USA (high IQ + low solidarity → institutions maintain
+      // inequality). Alesina & Glaeser 2004, Esping-Andersen 1990.
+      const collectivismR = (civ.operatingPrinciples?.collectivismLevel ?? 50) / 100;
+      const ethFracR = (civ.state.ethnicFractionalization ?? 0) / 100;
+      const solidarityR = collectivismR * (1 - ethFracR * 0.4);
+      const redistWill = 0.15 + 0.85 * solidarityR;
 
-      // State capacity: ability to IMPLEMENT redistribution policy
-      if (cap > 40) dispersion *= 1.0 + (cap - 40) / 60 * 0.5; // up to 1.5x at cap=100
+      if (iq > 40) {
+        const polDisDamp = 1 - ((civ.state.polarizationLevel ?? 0) / 100) * 0.6;
+        const iqDispFrac = Math.sqrt((iq - 40) / 60);
+        dispersion *= 1.0 + iqDispFrac * 1.0 * polDisDamp * redistWill;
+      }
 
-      // Commons/gift economies: structural limits on accumulation
-      // This IS a valid economic-model distinction — these models prevent
-      // accumulation by design, which is a structural feature not a bias
+      if (cap > 40) {
+        const capDispFrac = Math.sqrt((cap - 40) / 60);
+        dispersion *= 1.0 + capDispFrac * 0.4 * redistWill;
+      }
+
       const ecoId = civ.economic?.modelId ?? '';
       if (['gift', 'commons', 'labor_credit'].includes(ecoId)) dispersion *= 2.0;
 
       wc -= dispersion;
     }
+    // Egalitarian redistribution: labor share + flat hierarchy + broad
+    // participation create sustained pressure below WC=40 (progressive
+    // taxation, social programs, labor bargaining). Scandinavia maintains
+    // Gini ~28 via these mechanisms. Force scales with wc² so it weakens
+    // at low WC, creating a natural equilibrium. All three institutional
+    // factors must be present (multiplicative).
+    const labShareR = (civ.state.laborShareOfOutput ?? 60) / 100;
+    const hierLevelR = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    const partModelR = civ.governance?.participationModel;
+    const laborExcess = Math.max(0, labShareR - 0.5);
+    const flatness = Math.max(0, 0.5 - hierLevelR);
+    const broadPart = partModelR === 'voluntary' ? 1.0
+                    : partModelR === 'mandatory' ? 0.4 : 0.0;
+    const egalStr = laborExcess * flatness * broadPart;
+    if (egalStr > 0.001) {
+      const egalRedist = 6.0 * egalStr * Math.pow(wc / 50, 2) * timeScale;
+      wc -= egalRedist;
+    }
 
-    // ── Corruption natural decay ──
-    // Corruption is not self-sustaining in the long run. Even without
-    // active anti-corruption campaigns, corruption decays through:
-    // - Generational change (new officials with different norms)
-    // - Economic inefficiency (corrupt systems underperform, creating reform pressure)
-    // - International pressure and demonstration effects
-    // - Religious/moral movements
-    // Historical: Italy's Mani Pulite, Brazil's Lava Jato, South Korea's democratization
+    // Strata mobility modulation: companion's inter-strata mobility rates
+    // modulate wealth dispersion. Chetty et al. 2014: high absolute upward
+    // mobility reduces wealth persistence across generations. Autor 2019:
+    // job polarization (hollowing middle class) amplifies r>g by removing
+    // the strata that would otherwise share in productivity gains.
+    const compMicro = civ.state.companion;
+    if (compMicro && compMicro.interStrataMobility) {
+      const mob = compMicro.interStrataMobility;
+      const shares = compMicro.strataPopShares;
+      if (mob.upward > 0.03 && wc > 30) {
+        wc -= 0.6 * (mob.upward / 0.10) * ((wc - 30) / 70) * timeScale;
+      }
+      // Low upward + high downward → concentration (middle-class squeeze)
+      if (mob.upward < 0.02 && mob.downward > 0.03) {
+        wc += 0.3 * (mob.downward / 0.10) * timeScale;
+      }
+      // Middle-class hollowing amplifies r>g (Autor 2019)
+      if (shares) {
+        const middleShare = (shares.upperMiddle ?? 0) + (shares.lowerMiddle ?? 0);
+        if (middleShare < 0.35) {
+          wc += 0.4 * ((0.35 - middleShare) / 0.35) * timeScale;
+        }
+      }
+    }
 
-    // Base corruption decay: generational change, economic inefficiency
-    // Even without institutions, corruption decays because corrupt systems
-    // lose competitiveness and new leaders displace old ones
-    let corrDecay = 0.3 * timeScale; // -0.3/decade baseline (increased from 0.2)
+    if (iq > 55 && cap > 55) {
+      const instStr = ((iq - 55) / 45) * ((cap - 55) / 45);
+      const instRedist = 0.4 * instStr * (wc / 60) * timeScale;
+      wc -= instRedist;
+    }
 
-    // At extreme corruption (>60), accelerating decay — system is self-destructive
-    // Corrupt officials fight each other, resources shrink, fewer rents to extract
-    if (corr > 60) corrDecay += 0.3 * ((corr - 60) / 40) * timeScale;
+    // Rentier redistribution: resource rents fund direct redistribution
+    // (public payroll, subsidies, welfare, sovereign wealth) independent
+    // of institutional state capacity (Beblawi 1990, Ross 2012). Saudi
+    // public sector employs 72% of nationals; fuel/food/housing subsidies;
+    // Citizen's Account direct transfers. Operates through rent channels,
+    // not tax-and-transfer mechanisms that depend on bureaucratic capacity.
+    const resRentWC = (civ.state.resourceRentDependence ?? 0) / 100;
+    if (resRentWC > 0.2 && wc > 45) {
+      const hierWC = (civ.governance?.hierarchyLevel ?? 50) / 100;
+      const rentCentWC = hierWC > 0.5 ? Utils.clamp((hierWC - 0.5) * 2.0, 0, 1) : 0;
+      if (rentCentWC > 0) {
+        const wcExcessRent = (wc - 45) / 55;
+        wc -= 2.0 * resRentWC * rentCentWC * wcExcessRent * timeScale;
+      }
+    }
 
-    // Institutional quality accelerates corruption decay (Klitgaard: C = M + D - A)
-    if (iq > 40) corrDecay += 0.3 * ((iq - 40) / 60) * timeScale;
+    // State capacity-directed redistribution: high-capacity states
+    // moderate wealth concentration through direct action — public
+    // employment, subsidized services, sovereign wealth funds, price
+    // controls — independent of institutional quality (Beblawi 1990,
+    // Naughton 2017, Chua 2017). Saudi Arabia (Gini 46, 70% nationals
+    // in public sector), China (800M lifted from poverty), Singapore
+    // (90%+ in HDB housing), Gulf states (generous welfare). The
+    // mechanism: state capacity provides ABILITY to redistribute,
+    // collectivist values provide MOTIVATION. Scales superlinearly
+    // with WC — governments face more pressure and have more to
+    // redistribute as inequality grows. This channel is distinct from
+    // democratic redistribution (egalitarian flatness) and
+    // institutional redistribution (rule-of-law, IQ>55).
+    if (cap > 45 && wc > 50) {
+      const collectivism = (civ.operatingPrinciples?.collectivismLevel ?? 50) / 100;
+      const wcExcess = (wc - 50) / 50;
+      const capRedist = 4.0 * ((cap - 45) / 55) * collectivism
+                      * wcExcess * (1 + wcExcess) * timeScale;
+      wc -= capRedist;
+    }
 
-    // State capacity: ability to enforce anti-corruption measures
-    if (cap > 40) corrDecay += 0.2 * ((cap - 40) / 60) * timeScale;
 
-    // Epistemic health (free press, transparency) drives accountability
-    // Not governance-dependent: Singapore has low corruption without Western democracy;
-    // China's anti-corruption campaigns under Xi; Hong Kong ICAC under British rule
+    // Polarization gridlock: in democracies, high polarization blocks
+    // redistributive legislation (McCarty, Poole & Rosenthal 2006).
+    // Congress passes fewer bills, antitrust weakens, progressive tax
+    // reform stalls. r > g operates unchecked.
+    const polGrid = civ.state.polarizationLevel ?? 0;
+    const isDem = new Set(['representative','direct_congress','flat_consensus','rotating'])
+      .has(civ.governance?.modelId);
+    if (isDem && polGrid > 30) {
+      const gridlockFactor = (polGrid - 30) / 70;
+      wc += 0.8 * gridlockFactor * timeScale;
+    }
+
+    // ── Wealth CONCENTRATION force (r > g) ──
+    // The dispersion block above runs every turn and scales with
+    // institutional quality and state capacity. Until now the opposing
+    // concentrating force did not: it lived in
+    // Civilization._updateEconomicDrift, gated on political hierarchy
+    // > 40, and never fired at all for a low-hierarchy society.
+    //
+    // Write attribution on an Athens-shaped configuration (market
+    // economy, hierarchy 10) showed exactly two active sites over 250
+    // turns: _processFinance contributing +45 across 30 occasional
+    // writes, and this method's dispersion removing -43 across all 250.
+    // Net +2 — flat, which is what four scenarios were failing on.
+    //
+    // Piketty's r > g is a CONTINUOUS force proportional to existing
+    // capital; the model had implemented only the dispersing half of
+    // his argument. Applying concentration here, in the same place and
+    // on the same cadence as dispersion, is what makes the two
+    // commensurable. Driven by economic structure, with hierarchy as an
+    // amplifier rather than a precondition — Athens had severe
+    // inequality with democracy, and the Industrial Revolution is the
+    // defining case of concentration under a broadening franchise.
+    if (civ.economic?.accumulationAllowed && wc > 3) {
+      const ecoIdC = civ.economic?.modelId ?? '';
+      const marketPull = ['market', 'mixed'].includes(ecoIdC) ? 1.0
+                       : ['barter', 'labor_credit'].includes(ecoIdC) ? 0.45 : 0.2;
+      const scarcityC = (civ.economic.scarcityOrientation ?? 50) / 100;
+      const hierAmp = 0.75 + 0.5 * ((civ.governance?.hierarchyLevel ?? 50) / 100);
+      const inheritC = { communal: 0.7, partible: 0.85, meritocratic: 1.0, primogeniture: 1.3 }
+        [civ.governance?.inheritanceSystem] ?? 1.0;
+      // Financial depth amplifies r>g: sophisticated financial systems
+      // enable leverage, derivatives, and compound returns that accelerate
+      // wealth concentration (Greenwood & Jovanovic 1990, Rajan & Zingales
+      // 2003). USA's deep financial markets (finDepth~80) amplify r>g more
+      // than Nigeria's shallow ones (finDepth~20).
+      const finDepthC = (civ.state.financialDepth ?? 30) / 100;
+      const finAmp = 0.7 + 0.6 * finDepthC;
+      // Saturation: at very high WC, most wealth is already captured —
+      // diminishing marginal wealth available for further concentration.
+      // Also, extreme inequality generates instability that disrupts
+      // capital accumulation (revolutions, capital flight, brain drain).
+      const saturation = 1.0 - Math.pow(wc / 100, 3);
+      const concentration = WEALTH_CONCENTRATION_RATE * (wc / 60) * marketPull
+                          * (0.6 + 0.8 * scarcityC) * hierAmp * inheritC * finAmp * saturation * timeScale;
+      wc += concentration;
+    }
+
+
+    // ── Structural WC equilibrium (Piketty 2014, Milanovic 2016) ──
+    // Societies tend toward a wealth concentration level determined by
+    // structural institutional characteristics — economic model, political
+    // participation, social norms, information environment. This restoring
+    // force prevents positive feedback loops where WC rise → IQ/cap
+    // collapse → dispersion weakens → more WC rise, and also prevents
+    // revolution-event crashes from pushing WC permanently below the
+    // structural equilibrium (Alesina & Glaeser 2004).
+    {
+      const eqHier = (civ.governance?.hierarchyLevel ?? 50) / 100;
+      const eqCollect = (civ.operatingPrinciples?.collectivismLevel ?? 50) / 100;
+      const eqFreedom = (civ.operatingPrinciples?.freedomLevel ?? 50) / 100;
+      const eqPartModel = civ.governance?.participationModel;
+      const eqInfoEco = civ.state.informationEcosystem ?? 'free_market_media';
+      const eqRents = (civ.state.resourceRentDependence ?? 0) / 100;
+      const eqScarcity = (civ.economic?.scarcityOrientation ?? 50) / 100;
+      const eqEthFrac = (civ.state.ethnicFractionalization ?? 0) / 100;
+      const eqEducQ = (civ.state.educationQuality ?? 50) / 100;
+      const eqInnovTol = (civ.operatingPrinciples?.innovationTolerance ?? 50) / 100;
+
+      const eqPartScore = eqPartModel === 'voluntary' ? 1.0
+                        : eqPartModel === 'mandatory' ? 0.5 : 0.15;
+      const eqInfoScore = eqInfoEco === 'open_civic' ? 0.9
+                        : eqInfoEco === 'free_market_media' ? 0.6
+                        : eqInfoEco === 'captured_commercial' ? 0.35
+                        : eqInfoEco === 'state_guided' ? 0.2
+                        : 0.05;
+
+      let wcEquil = 40 + eqScarcity * 25;
+
+      // Democratic redistribution: participation × solidarity × information.
+      // Alesina & Glaeser (2004): effective redistribution requires political
+      // channel AND cultural willingness AND informed public. Nordic countries
+      // redistribute ~50% of market income (Esping-Andersen 1990); USA with
+      // similar institutional capacity redistributes ~25%. The spread is
+      // driven by solidarity, not just governance form.
+      // Hierarchy modulates collectivism's redistribution channel: in
+      // hierarchical societies, collectivism manifests as organizational
+      // loyalty (Japanese shūdan-shugi, Korean chaebol fealty, German
+      // Betriebstreue) rather than society-wide solidarity. This channels
+      // welfare through corporate structures, not state redistribution
+      // (Hall & Soskice 2001; Estévez-Abe et al. 2001).
+      const hierRedistMod = eqHier > 0.25
+        ? 1 - Math.pow((eqHier - 0.25) / 0.75, 0.7) * 0.5 : 1.0;
+      const eqSolidarity = eqCollect * hierRedistMod * (1 - eqEthFrac * 0.5);
+      const eqDemRedist = eqPartScore * eqSolidarity * (0.4 + 0.6 * eqInfoScore);
+      wcEquil -= eqDemRedist * 24;
+
+      // State-directed redistribution: hierarchy + collectivism + selectorate.
+      // Bueno de Mesquita (2003): regimes distribute based on winning
+      // coalition size. Broad selectorate → more redistribution needed.
+      const eqPartVol = (civ.operatingPrinciples?.participationVoluntary ?? 50) / 100;
+      const eqSelectorate = 0.1 + 0.9 * eqPartVol;
+      const eqStateRedist = eqHier * eqCollect * eqSelectorate;
+      wcEquil -= eqStateRedist * 14;
+
+      // Information transparency amplifies all redistribution
+      wcEquil -= eqInfoScore * 5;
+
+      // Institutional constraint on accumulation (Acemoglu et al. 2001,
+      // La Porta et al. 1999): institutional quality is a primary determinant
+      // of wealth distribution. Strong institutions constrain accumulation
+      // through progressive taxation, anti-trust enforcement, labor
+      // protections, rule of law. Weak institutions allow unconstrained
+      // concentration through regulatory capture, tax evasion, informal
+      // economy rent extraction, monopoly formation. Sigmoid response:
+      // sharp transition around IQ~45 reflects the empirical threshold
+      // where institutional enforcement becomes effective.
+      const eqInstStr = Math.min(iq, cap) / 100;
+      const instWeakAmp = 1 + 1.5 / (1 + Math.exp((eqInstStr - 0.45) * 10));
+
+      // Extractive dynamics: TWO channels raise WC equilibrium,
+      // both amplified by institutional weakness.
+      // Channel 1 — Coercive extraction: concentrated power + restricted
+      // participation + low freedom enables direct elite wealth capture.
+      // Developmental states (high education + innovation tolerance) use
+      // hierarchy for building, not extraction — Singapore, South Korea.
+      const eqDevFactor = Math.min(eqEducQ, eqInnovTol);
+      const eqExtractCoercive = eqHier * (1 - eqPartScore) * (1 - eqFreedom)
+                              * (1 - eqDevFactor);
+      wcEquil += eqExtractCoercive * 28 * instWeakAmp;
+
+      // Channel 2 — Democratic wealth capture (Gilens & Page 2014, Hacker
+      // & Pierson 2010, Bartels 2008): in participatory systems, concentrated
+      // wealth translates to political capture through LEGAL channels —
+      // lobbying, campaign finance, regulatory revolving door, tax code
+      // manipulation. Sigmoid centered at solidarity ~0.45: even coordinated
+      // market economies (Germany, Japan) experience significant capture
+      // through corporate lobbying and tax optimization (Culpepper 2011,
+      // Streeck 2009). Only truly high-solidarity societies (Nordic) are
+      // substantially protected.
+      const captureIntensity = 1 / (1 + Math.exp((eqSolidarity - 0.45) * 8));
+      const eqWealthCapture = eqPartScore * captureIntensity * eqScarcity;
+      wcEquil += eqWealthCapture * 40 * instWeakAmp;
+
+      // Resource rents: pull toward moderate WC (~42). Rentier states buy
+      // compliance through welfare distribution (Herb 1999, Ross 2012).
+      // Reduced from 0.25 to avoid double-counting with the pre-equilibrium
+      // rentier redistribution channel (line ~13884) — the equilibrium
+      // retains the long-run tendency for resource economies to develop
+      // different structural characteristics (Dutch disease, manufacturing
+      // decline, rentier social contract) while the pre-channel handles
+      // the active redistribution mechanics.
+      if (eqRents > 0.1) {
+        wcEquil = wcEquil * (1 - eqRents * 0.10) + 42 * eqRents * 0.10;
+      }
+
+      // Financial depth as structural concentrator (Greenwood & Jovanovic
+      // 1990, Philippon 2015, Piketty & Zucman 2014): deep financial
+      // markets concentrate wealth through asset price appreciation,
+      // leverage, compound returns, and financial intermediation profits.
+      // Coefficient 5 reflects dynamic growth of financial depth across
+      // the simulation (initial ~30-40, rising to 70-90 for modern
+      // market economies). Modest because other WC mechanisms already
+      // capture financialization effects through capital share, lobbying,
+      // corruption, and trade channels. Consistent with Philippon (2015)
+      // estimates of financialization's independent inequality contribution
+      // (~3-5 Gini points for developed economies). Solidarity dampening is concave (exponent
+      // 0.7): comprehensive welfare states (Nordic, solidarity >0.6)
+      // are disproportionately effective at counteracting financial
+      // concentration through progressive taxation, universal public
+      // goods, and social transfers (Esping-Andersen 1990: social-
+      // democratic systems reduce market Gini by 40-50%, vs 25-30%
+      // in liberal systems; Kenworthy 2004).
+      const eqFinDepth = (civ.state.financialDepth ?? 30) / 100;
+      if (eqFinDepth > 0.3) {
+        const finConcRaw = Math.pow((eqFinDepth - 0.3) / 0.7, 0.8) * 5;
+        const solidarityDamp = 1 - Math.pow(eqSolidarity, 0.7) * 0.7;
+        wcEquil += finConcRaw * solidarityDamp;
+      }
+
+      // Corruption erosion of redistribution in participatory systems:
+      // unlike autocracies (where the coercive extraction channel above
+      // already captures corruption's effect on WC), democratic corruption
+      // operates through legal channels — regulatory capture, lobbying,
+      // tax code manipulation, political donations — that weaken effective
+      // redistribution without coercive extraction (Gupta, Davoodi &
+      // Alonso-Terme 2002; Slemrod 2007: tax evasion rises with corruption).
+      // Threshold at 15: below this, corruption is too diffuse to
+      // measurably shift wealth distribution patterns.
+      if (eqPartModel === 'voluntary' && corr > 15) {
+        wcEquil += Math.pow((corr - 15) / 85, 0.8) * 10;
+      }
+
+      wcEquil = Utils.clamp(wcEquil, 15, 93);
+
+      const wcDeviation = wc - wcEquil;
+      const absDeviation = Math.abs(wcDeviation);
+      const restoringRate = 0.06 + 0.15 * Math.pow(Math.min(absDeviation / 25, 1.5), 2);
+      wc -= wcDeviation * restoringRate * timeScale;
+    }
+
+    // ── Corruption generation ──
+    // Corruption is continuously generated by structural conditions.
+    // The equilibrium level is where generation = decay, not zero.
+    // Klitgaard (1988): C = M + D - A (monopoly + discretion - accountability)
+    let corrGen = 0;
+
+    // Power asymmetry: hierarchy × restricted participation = rent-seeking
+    // opportunities. High hierarchy with broad participation (Singapore)
+    // generates less corruption than high hierarchy with narrow
+    // participation (Russia, Nigeria).
+    const hier = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    const partRestr = civ.governance?.participationModel === 'restricted' ? 0.8
+                    : civ.governance?.participationModel === 'mandatory' ? 0.5 : 0.2;
+    const capDeterrent = 1.0 - 0.5 * Math.pow(cap / 100, 1.5);
+    corrGen += 0.7 * hier * partRestr * capDeterrent * timeScale;
+
+    // Wealth concentration → regulatory capture → corruption.
+    // When wealth is concentrated, the wealthy can buy favorable rules.
+    if (wc > 40) corrGen += 0.10 * ((wc - 40) / 60) * timeScale;
+
+    // Extraction economies: resource rents create corruption opportunities
+    // ("resource curse" — Ross 2001, Sachs & Warner 1995)
+    const ecoId = civ.economic?.modelId ?? '';
+    const scarcity = (civ.economic?.scarcityOrientation ?? 50) / 100;
+    if (scarcity > 0.5) corrGen += 0.2 * (scarcity - 0.5) * 2 * timeScale;
+
+    // Ethnic patronage: in fractionalized societies, resources flow
+    // through ethnic networks rather than meritocratic channels
+    // (Easterly & Levine 1997). Cross-cutting cleavages reduce patronage
+    // by forcing coalitions across ethnic lines (Dunning & Harrison 2010).
+    const ethFracCorr = this._effectiveFractionalization(civ);
+    const ethFracRawCorr = civ.state.ethnicFractionalization ?? 0;
+    if (ethFracCorr > 20) corrGen += 0.3 * ((ethFracCorr - 20) / 80) * timeScale;
+
+    // Resource curse × fractionalization interaction: in petrostates with
+    // weak centralization and ethnic competition, rents fuel patronage
+    // competition between factions. Each group maximizes extraction when
+    // in power — the "voracity effect" (Lane & Tornell 1996). Rents that
+    // would fund development in organized states instead fund competitive
+    // clientelism in fragmented ones (Karl 1997, Ross 2012, Mehlum et al. 2006).
+    // Scales with: rent dependence, ethnic fractionalization, and inversely
+    // with centralized control (which can direct rents to public goods).
+    const ethFracCurse = ethFracCorr / 100;
+    const resRentCurse = (civ.state.resourceRentDependence ?? 0) / 100;
+    const decentr = 1.0 - (hier > 0.6 ? Utils.clamp((hier - 0.6) * 2.5, 0, 1) : 0);
+    if (resRentCurse > 0.1 && ethFracCurse > 0.2 && decentr > 0.3) {
+      corrGen += 0.4 * resRentCurse * ethFracCurse * decentr * timeScale;
+    }
+
+    // Base resource-rent corruption: extraction revenues create rent-seeking
+    // through contract allocation, licensing, and procurement regardless of
+    // ethnic composition (Mahdavy 1970, Karl 1997, Ross 2001).
+    if (resRentCurse > 0.3) {
+      corrGen += 0.15 * (resRentCurse - 0.3) * timeScale;
+    }
+
+    // Information control: state-controlled media prevents exposure of
+    // corruption, enabling entrenchment (Brunetti & Weder 2003)
+    const infoEcoCorr = civ.state.informationEcosystem ?? 'free_market_media';
+    if (['state_controlled', 'total_information_control'].includes(infoEcoCorr))
+      corrGen += 0.2 * timeScale;
+    else if (infoEcoCorr === 'state_guided')
+      corrGen += 0.15 * timeScale;
+
+    // Low trust: when people expect corruption, they participate in it —
+    // self-fulfilling equilibrium (Mauro 1995, Uslaner 2002)
+    if (trust < 40) corrGen += 0.25 * ((40 - trust) / 40) * timeScale;
+
+    // Rentier dampening: centralized resource-rich states (Saudi, UAE,
+    // Qatar) pay officials adequately and control distribution channels,
+    // limiting corruption to manageable levels (Herb 1999, Ross 2012).
+    // Requires hierarchical control — decentralized resource states
+    // (Nigeria) distribute through patronage networks that INCREASE
+    // corruption (Karl 1997, Watts 2004).
+    const resRent = (civ.state.resourceRentDependence ?? 0) / 100;
+    const rentControl = hier > 0.6 ? Utils.clamp((hier - 0.6) * 2.5, 0, 1) : 0;
+    const rentCorrDamp = 1.0 - 0.60 * resRent * rentControl;
+    corrGen *= rentCorrDamp;
+
+    // Accountability factor (early computation — also used for decay below).
+    // Genuine anti-corruption requires structural accountability — independent
+    // judiciary, free press, real opposition (Persson, Rothstein & Teorell 2013).
+    // State-guided media (Singapore) provides partial transparency vs total
+    // control (China): gov't reports on corruption investigations, media can
+    // cover enforcement actions. Restricted participation (Singapore) provides
+    // partial electoral accountability vs mandatory (China).
+    const infoEcoCE = civ.state.informationEcosystem ?? 'free_market_media';
+    const freeInfoCorrEarly = !['state_controlled', 'state_guided', 'total_information_control'].includes(infoEcoCE);
+    const stateGuidedCE = infoEcoCE === 'state_guided' ? 0.15 : 0;
+    const broadPartCorrEarly = civ.governance?.participationModel === 'voluntary';
+    const restrictedPartCE = civ.governance?.participationModel === 'restricted' ? 0.1 : 0;
+    const accountabilityCorrEarly = Math.max(0.05,
+      (freeInfoCorrEarly ? 0.4 : stateGuidedCE) + (broadPartCorrEarly ? 0.3 : restrictedPartCE) + (iq > 60 ? 0.3 : iq > 40 ? 0.1 : 0.0));
+
+    // Strong institutions suppress corruption generation (accountability
+    // channel in Klitgaard's framework). But IQ without accountability is
+    // less effective (Persson et al. 2003): China's efficient bureaucracy
+    // doesn't translate to full corruption suppression because controlled
+    // media prevents systemic exposure. The effective IQ for corruption
+    // suppression blends raw IQ with accountability-gated IQ.
+    const iqEffective = 20 + (iq - 20) * (0.4 + 0.6 * accountabilityCorrEarly);
+    const iqDamp = Utils.clamp(1.0 - Math.pow(Math.max(0, iqEffective - 20) / 80, 1.5), 0.05, 1.0);
+    // Corruption saturation: once a system is thoroughly captured,
+    // additional rent-seeking has diminishing returns (North et al. 2009).
+    const corrSat = Math.max(0.05, 1.0 - 0.9 * Math.pow(corr / 90, 2));
+
+    // Structural corruption from opacity (Brunetti & Weder 2003, Djankov
+    // et al. 2003): information control and restricted accountability
+    // create corruption that institutional quality alone cannot suppress.
+    // China's CCDI catches some corruption but controlled media prevents
+    // systemic exposure; Russia's state-guided media shields oligarchic
+    // networks. This is the irreducible corruption generation rate from
+    // opacity — institutions without transparency maintain corruption
+    // through undetected channels. Denmark's free press catches what
+    // China's censored media doesn't, regardless of bureaucratic quality.
+    let structMinCorr = 0;
+    if (infoEcoCorr === 'total_information_control')
+      structMinCorr += 0.42;
+    else if (infoEcoCorr === 'state_controlled')
+      structMinCorr += 0.18;
+    else if (infoEcoCorr === 'state_guided')
+      structMinCorr += 0.10;
+    else if (infoEcoCorr === 'captured_commercial')
+      structMinCorr += 0.04;
+    const freedomLevel = civ.operatingPrinciples?.freedomLevel ?? 50;
+    if (freedomLevel < 30) structMinCorr += 0.12 * (30 - freedomLevel) / 30;
+    structMinCorr *= rentCorrDamp * timeScale;
+
+    corr += Math.max(corrGen * iqDamp * corrSat, structMinCorr * corrSat);
+
+
+    // Democratic wealth capture: Gilens & Page (2014), Lessig (2011),
+    // Bartels (2008), Acemoglu & Robinson (2008).
+    // In participatory systems, concentrated wealth translates to governance
+    // capture through LEGAL channels — lobbying, campaign finance (Citizens
+    // United), regulatory capture (revolving door), tax code manipulation.
+    // These channels are NOT dampened by institutional quality (iqDamp)
+    // because they operate WITHIN the institutional/legal framework.
+    // The mechanism requires BOTH high IQ (strong institutions that create
+    // the legal framework for influence) AND high WC (concentrated wealth
+    // that exploits it). Countries with low IQ have traditional corruption
+    // (already captured by standard channels); countries with low WC lack
+    // the economic power to systematically capture governance.
+    // Democratic wealth capture: concentrated wealth generates corruption
+    // through legal channels in participatory systems. Sigmoid IQ response:
+    // even weak institutions enable clientelism and patronage (Brazil IQ≈43
+    // has extensive legal corruption); stronger institutions enable more
+    // sophisticated capture (lobbying, regulatory revolving door).
+    const isVolCorrGen = civ.governance?.participationModel === 'voluntary';
+    if (isVolCorrGen && wc > 40) {
+      const wcFracGen = Math.min(1, (wc - 40) / 40);
+      const iqCorrScale = 1 / (1 + Math.exp((55 - iq) / 10));
+      corr += 0.12 * wcFracGen * iqCorrScale * corrSat * timeScale;
+    }
+
+    // Hierarchical patronage in democracies: entrenched elite networks
+    // operating WITHIN institutional frameworks — amakudari (Japan),
+    // chaebol ties (SK), Seilschaften (Germany), revolving door (USA).
+    // NOT suppressed by IQ because they exploit legal structures.
+    // Collectivism amplifies via in-group loyalty (Triandis 1995).
+    // Threshold hier>0.25 excludes flat democracies (Denmark hier=0.20).
+    if (isVolCorrGen && hier > 0.25) {
+      const collHier = (civ.operatingPrinciples?.collectivismLevel ?? 50) / 100;
+      const hierFracPat = Math.pow((hier - 0.25) / 0.75, 0.7);
+      const collectivistAmp = 1 + collHier * 0.8;
+      corr += 0.6 * hierFracPat * collectivistAmp * corrSat * timeScale;
+    }
+
+    // ── Corruption decay ──
+    // Corruption decays through institutional accountability, state
+    // enforcement capacity, transparency, and social norms. Base decay
+    // is low — without institutional pressure, corruption entrenches
+    // rather than naturally decreasing (North 1990). The institutional
+    // terms (IQ, cap, EH, trust) are the primary decay drivers.
+    let corrDecay = 0.1 * timeScale;
+
+    // Accountability factor: genuine anti-corruption requires structural
+    // accountability — independent judiciary, free press, FOIA, real
+    // opposition (Persson, Rothstein & Teorell 2013). Autocracies can
+    // have high IQ (efficient rules) without accountability. This gates
+    // the IQ and active enforcement decay channels.
+    const freeInfoCorr = !['state_controlled', 'state_guided', 'total_information_control']
+      .includes(civ.state.informationEcosystem ?? 'free_market_media');
+    const broadPartCorr = civ.governance?.participationModel === 'voluntary';
+    // Floor lowered: regimes with no free press, restricted participation,
+    // and low IQ have near-zero accountability (Mungiu-Pippidi 2015)
+    const accountabilityCorr = Math.max(0.05,
+      (freeInfoCorr ? 0.4 : 0.0) + (broadPartCorr ? 0.3 : 0.0) + (iq > 60 ? 0.3 : iq > 40 ? 0.1 : 0.0));
+
+    // Excess corruption self-correction scales with accountability
+    // (Mungiu-Pippidi 2015, North et al. 2009): in "limited access
+    // orders" elites sustain high corruption as a stability mechanism —
+    // without free press, elections, or independent judiciary, no
+    // impartial force pushes corruption down. Highly corrupt
+    // authoritarian systems (Russia, Turkmenistan) persist indefinitely.
+    // Ethnic fractionalization further dampens reform: patronage networks
+    // along identity lines make corruption structurally embedded rather
+    // than anomalous (Bayart 1993, van de Walle 2001). Nigeria's
+    // "politics of the belly" — corruption IS the resource distribution
+    // mechanism, not a deviation from it.
+    const ethFracExcessDamp = 1.0 - 0.5 * Math.pow(ethFracCorr / 100, 1.5);
+    if (corr > 55) corrDecay += 0.5 * Math.pow((corr - 55) / 35, 1.5) * (0.3 + 0.7 * accountabilityCorr) * ethFracExcessDamp * timeScale;
+
+    // Institutional decay channels (IQ, cap, EH, trust) measure overlapping
+    // dimensions of the same institutional ecosystem (Kaufmann et al 2010:
+    // WGI dimensions correlate r>0.8). Raw sum overestimates total decay.
+    // Michaelis-Menten saturation models diminishing returns.
+    let instCorrDecay = 0;
+    if (iq > 40) instCorrDecay += 0.4 * ((iq - 40) / 60) * accountabilityCorr;
+
+    if (cap > 15) {
+      const capFrac = (cap - 15) / 85;
+      const enforcementAuth = 0.15 + 0.85 * accountabilityCorr;
+      instCorrDecay += 0.25 * capFrac * enforcementAuth;
+      if (corr > 30) {
+        const corrFrac = (corr - 30) / 60;
+        instCorrDecay += 0.3 * capFrac * corrFrac * (0.15 + 0.85 * accountabilityCorr);
+        instCorrDecay += 0.3 * capFrac * corrFrac * accountabilityCorr;
+      }
+    }
+
     const eh = civ.state.epistemicHealth ?? 50;
-    if (eh > 40) corrDecay += 0.3 * ((eh - 40) / 60) * timeScale;
+    if (eh > 40) instCorrDecay += 0.2 * ((eh - 40) / 60);
 
-    // High trust: social norms against corruption (Uslaner 2008)
-    if (trust > 50) corrDecay += 0.2 * ((trust - 50) / 50) * timeScale;
+    const partModelCorr = civ.governance?.participationModel;
+    const infoEcoTrustCorr = civ.state.informationEcosystem ?? 'free_market_media';
+    let civicOpenCorr = 0;
+    if (partModelCorr === 'voluntary') civicOpenCorr += 0.5;
+    else if (partModelCorr === 'mandatory') civicOpenCorr += 0.15;
+    if (['open_civic', 'free_market_media'].includes(infoEcoTrustCorr)) civicOpenCorr += 0.5;
+    else if (infoEcoTrustCorr === 'state_guided') civicOpenCorr += 0.15;
+    const trustNormShare = 0.3 + 0.7 * civicOpenCorr;
+    if (trust > 50) instCorrDecay += 0.15 * ((trust - 50) / 50) * trustNormShare;
+
+    // Press freedom: free press exposes corruption, creating electoral/legal
+    // risk for corrupt officials (Brunetti & Weder 2003). Inside saturation
+    // because WGI Press Freedom correlates r>0.7 with Control of Corruption
+    // (Kaufmann et al 2010) — same institutional ecosystem, not additive.
+    const pfCorr = civ.state.pressFreedom ?? 50;
+    if (pfCorr > 40) instCorrDecay += (pfCorr - 40) / 60 * 0.3;
+
+    // Elite capture of enforcement: concentrated wealth weakens
+    // anti-corruption agencies through campaign funding, regulatory
+    // capture, and defunding of oversight (Gilens & Page 2014, Bartels
+    // 2008, Winters 2011 "Oligarchy"). Strong institutions partially
+    // resist capture (Acemoglu & Robinson 2012). Participatory systems
+    // more vulnerable because wealth buys political access directly.
+    const wcCapture = civ.state.wealthConcentration ?? 50;
+    if (wcCapture > 50) {
+      const captureFrac = Math.min(1, (wcCapture - 50) / 40);
+      const iqResist = Utils.clamp((iq - 20) / 50, 0, 1);
+      const captureBase = broadPartCorr ? 0.45 : 0.15;
+      instCorrDecay *= 1 - captureBase * captureFrac * (1 - iqResist * 0.6);
+    }
+
+    corrDecay += instCorrDecay / (1 + instCorrDecay * 2.6) * timeScale;
+
+    // Coercive anti-corruption: hierarchical regimes fight corruption through
+    // internal discipline (separate mechanism from institutional decay).
+    if (hier > 0.5 && corr > 30) {
+      const corrExcess = (corr - 30) / 60;
+      const rentDamp = Math.max(0.3, 1.0 - resRent * 1.2);
+      const ethFracCoerce = ethFracCorr > 50
+        ? 1.0 - 0.8 * Math.pow((ethFracCorr - 50) / 50, 1.5) : 1.0;
+      const coerceCapEff = Utils.clamp(cap / 55, 0.4, 1.0);
+      corrDecay += 0.15 * (hier - 0.5) * 2 * corrExcess * rentDamp * ethFracCoerce * coerceCapEff * timeScale;
+    }
+
+    // Meritocratic governance premium: technocratic states with high
+    // capacity and institutional quality achieve corruption suppression
+    // through internal discipline rather than democratic accountability
+    // (Quah 2010, Mungiu-Pippidi 2015). Singapore's CPIB, Hong Kong's
+    // ICAC demonstrate that centralized, well-resourced anti-corruption
+    // agencies with meritocratic civil services can push corruption below
+    // levels predicted by accountability alone. This is an ALTERNATIVE
+    // pathway — only activates when democratic accountability is low.
+    if (cap > 65 && iq > 60 && accountabilityCorr < 0.6) {
+      const capMerit = Math.pow((cap - 65) / 35, 0.7);
+      const iqMerit = Math.pow((iq - 60) / 40, 0.7);
+      const hierMerit = 0.5 + 0.5 * Math.max(0, (hier - 0.3)) / 0.7;
+      const nonDemScale = Math.pow(1.0 - accountabilityCorr / 0.6, 1.5);
+      corrDecay += 0.4 * capMerit * iqMerit * hierMerit * nonDemScale * timeScale;
+    }
 
     corr -= corrDecay;
+
+    // Rentier corruption attractor (Diwan 2019, Gray 2019, Treisman 2000):
+    // centralized petrostates fund enforcement directly from rents, pulling
+    // corruption toward a structural equilibrium. Differentiates by resource
+    // dependence (resRent^3) since participation models don't reliably
+    // distinguish enforcement capacity across petrostates.
+    // Equilibrium shifts with ethnic fractionalization: in homogeneous
+    // centralized states (Saudi, Russia), rents fund genuine enforcement
+    // (eq~45-50). In fragmented states (Nigeria, Iraq), rents flow through
+    // patronage networks regardless of formal hierarchy, and the equilibrium
+    // corruption is HIGHER (Mehlum et al. 2006 conditional resource curse).
+    const resRentCorrAttr = (civ.state.resourceRentDependence ?? 0) / 100;
+    if (resRentCorrAttr > 0.1) {
+      const hierCorrAttr = (civ.governance?.hierarchyLevel ?? 50) / 100;
+      const rentCentCorrAttr = hierCorrAttr > 0.5 ? Utils.clamp((hierCorrAttr - 0.5) * 2.0, 0, 1) : 0;
+      if (rentCentCorrAttr > 0) {
+        const ethFracRent = Math.max(0, (civ.state.ethnicFractionalization ?? 0) / 100 - 0.3);
+        const capEqBoost = Math.max(0, (cap - 45) * 0.12);
+        const rentEqCorr = 55 - rentCentCorrAttr * 8 - capEqBoost
+          + Math.pow(ethFracRent, 1.5) * (1 - rentCentCorrAttr * 0.5) * 40;
+        const rentKCorr = Math.pow(resRentCorrAttr, 3) * Math.pow(rentCentCorrAttr, 2) * 0.15;
+        corr += rentKCorr * (rentEqCorr - corr) * timeScale;
+      }
+    }
+
+    // ── Structural corruption floor ──
+    // All complex societies sustain irreducible corruption from regulatory
+    // complexity, information asymmetry, and human rent-seeking (Rose-Ackerman
+    // 1999, Mungiu-Pippidi 2015). Denmark CPI=90 → corruption ~10;
+    // Singapore CPI=85 → ~15; US CPI=69 → ~31. No real society reaches 0.
+    // Floor scales with urbanization (complexity) and state capacity (more
+    // bureaucracy = more opportunities for petty corruption).
+    const urbanCorr = (civ.state.urbanizationRate ?? 15) / 100;
+    const capCorr = (civ.state.stateCapacity ?? 50) / 100;
+    // Ethnic diversity creates patronage networks that persist regardless
+    // of institutional quality (Mauro 1995, Alesina et al. 2003).
+    const ethCorr = (civ.state.ethnicFractionalization ?? 0) / 100;
+    // Resource rents create additional corruption opportunities: procurement
+    // contracts, licensing fees, "ghost" projects (Mahdavy 1970).
+    const resRentCorr = (civ.state.resourceRentDependence ?? 0) / 100;
+    // Strong institutions neutralize some corruption opportunity from
+    // bureaucratic complexity (Rothstein 2011). Stronger effect at very
+    // high IQ — crossing the IQ~60 threshold (independent judiciary,
+    // strong FOIA, active anti-corruption agencies) qualitatively
+    // changes the irreducible corruption level.
+    // Diminishing returns on IQ anti-corruption: going from IQ=40 to IQ=60
+    // (independent judiciary, anti-corruption agencies) has massive effect;
+    // going from IQ=80 to IQ=95 has diminishing marginal returns — the easy
+    // corruption is already eliminated, remaining corruption is structural.
+    // Collectivism moderates effectiveness: in group-oriented societies,
+    // patronage and loyalty-based corruption (amakudari, chaebol ties,
+    // patronage networks) persists independently of formal institutional
+    // quality (Husted 1999, Park 2003, Seleim & Bontis 2009).
+    const collectivismCorr = (civ.operatingPrinciples?.collectivismLevel ?? 50) / 100;
+    let iqFloorReduction = iq > 40 ? Math.pow((iq - 40) / 60, 0.65) * 14 : 0;
+    iqFloorReduction *= (1 - collectivismCorr * 0.35);
+    // WC-driven structural corruption in democracies: regulatory capture,
+    // lobbying, campaign finance create an irreducible corruption floor
+    // that doesn't depend on institutional quality (Lessig 2011).
+    // Only in democracies — autocracies suppress corruption through
+    // coercive mechanisms regardless of WC level (Singapore CPIB).
+    const isVoluntary = civ.governance?.participationModel === 'voluntary';
+    let wcFloor = isVoluntary ? Math.max(0, (wc - 35) * 0.12) : 0;
+
+    // Legal corruption floor: IQ × WC interaction in democracies.
+    // When institutions are strong enough to suppress bribery (high IQ) but
+    // wealth is concentrated enough to buy legal influence (high WC),
+    // corruption shifts from illegal to legal channels (Lessig 2011).
+    // Calibration: USA (WC~78, IQ~62) has CPI≈69 → corruption≈31.
+    // Denmark (WC~28, IQ~75) has CPI≈90 → corruption≈10. The legal
+    // corruption channel accounts for ~10-15 points of the difference;
+    // the rest comes from trust, ethnic fractionalization, and other factors.
+    // Note: the democratic wealth capture GENERATION channel (line 14136)
+    // already models the dynamic aspect; this floor is only the irreducible
+    // structural minimum from entrenched legal influence channels.
+    if (isVoluntary && wc > 40) {
+      const wcFracFloor = Math.min(1, (wc - 40) / 40);
+      const iqScaleFloor = 1 / (1 + Math.exp((55 - iq) / 10));
+      const legalInteraction = wcFracFloor * iqScaleFloor;
+      wcFloor += Math.min(15, 22 * Math.pow(legalInteraction, 0.9));
+      iqFloorReduction *= (1 - 0.4 * legalInteraction);
+    }
+
+    // Trust-freedom synergy: democratic accountability + generalized trust
+    // create a self-reinforcing anti-corruption equilibrium — the "social
+    // trap" (Rothstein & Uslaner 2005, Putnam 1993). Neither alone suffices:
+    // Singapore has institutions but low freedom/trust; USA has freedom but
+    // low trust. The Nordics combine both, achieving corruption levels below
+    // what institutional quality alone predicts.
+    const trustForFloor = civ.state.socialTrust ?? 50;
+    const trustFreedomReduction = (freedomLevel > 50 && trustForFloor > 50) ?
+      Math.pow((freedomLevel - 50) / 50, 1.5) * Math.pow((trustForFloor - 50) / 50, 1.5) * 25 : 0;
+    // Accountability opacity: restricted participation and controlled
+    // information create irreducible corruption that institutional quality
+    // alone cannot eliminate (Persson et al. 2003, Brunetti & Weder 2003,
+    // Treisman 2000). Without electoral accountability, officials face no
+    // personal risk; without free press, detection fails. Singapore's CPIB
+    // catches bribery but structural patronage within the PAP persists
+    // because the party polices itself and media can't investigate it.
+    let opacityFloor = 0;
+    if (['total_information_control'].includes(infoEcoCorr)) opacityFloor += 4;
+    else if (['state_controlled'].includes(infoEcoCorr)) opacityFloor += 3;
+    else if (['state_guided'].includes(infoEcoCorr)) opacityFloor += 2;
+    else if (['captured_commercial'].includes(infoEcoCorr)) opacityFloor += 1;
+    if (civ.governance?.participationModel !== 'voluntary') opacityFloor += 2;
+
+    const corrFloor = Math.max(12, 5 + urbanCorr * 10 + capCorr * 7 + ethCorr * 8 + resRentCorr * 10 + wcFloor + opacityFloor - iqFloorReduction - trustFreedomReduction);
+    if (corr < corrFloor) {
+      const floorRate = corrFloor < 15 ? 0.85 : 0.3;
+      corr += (corrFloor - corr) * floorRate * timeScale;
+    }
 
     if (civ.economic) civ.economic.wealthConcentration = Utils.clamp(wc, 0, 93);
     // Apply corruption decay to ALL corruption fields (governance, state, and index)
     // The simulation has multiple corruption tracking fields that must stay in sync
     if (civ.governance) civ.governance.corruptionLevel = Utils.clamp(corr, 0, 90); // Cap at 90 for all governance
-    if (civ.state.corruptionLevel !== undefined) {
-      civ.state.corruptionLevel = Utils.clamp(
-        (civ.state.corruptionLevel ?? 0) - corrDecay, 0, 90);
-    }
+    civ.state.corruptionLevel = Utils.clamp(corr, 0, 90);
     if (civ.state.corruptionIndex !== undefined) {
       civ.state.corruptionIndex = Utils.clamp(
         (civ.state.corruptionIndex ?? 0) - corrDecay * 0.5, 0, 100);
@@ -10888,6 +15125,81 @@ class SimulationEngine {
     }
   }
 
+  // ── Environment → Society Feedback Loops ─────────────────────
+  // Environmental degradation feeds back into social outcomes through
+  // multiple empirically documented channels. Homer-Dixon (1999):
+  // environmental scarcity is a significant contributor to violent conflict
+  // in developing countries. Landrigan et al. (2018): pollution causes ~9M
+  // premature deaths/year, more than war and violence combined. UNHCR:
+  // environmental displacement is now the fastest-growing migration driver.
+  // These feedbacks create potential vicious cycles: degradation → conflict →
+  // institutional erosion → more degradation.
+  _processEnvironmentalSocietyFeedbacks(civ) {
+    if (!civ.state) return;
+    const timeScale = (this.game.yearsDelta || 10) / 10;
+    const dep = civ.state.resourceDepletion ?? {};
+    const pollution = civ.state.pollutionIndex ?? 0;
+    const biodiversity = civ.state.biodiversityIndex ?? 80;
+    const oceanHealth = civ.state.oceanHealthIndex ?? 90;
+    const overshoot = civ.state.overshootRatio ?? 0.5;
+    const iq = civ.state.institutionalQuality ?? 50;
+
+    // 1. Air/environmental quality → disease burden and wellbeing
+    // Landrigan et al. (2018): pollution is the largest environmental cause
+    // of disease and premature death. The relationship is dose-response,
+    // not threshold — any pollution increase causes harm.
+    // Only fires above the existing food/water thresholds in the narrow channels.
+    if (pollution > 40) {
+      const healthImpact = ((pollution - 40) / 60) * 0.4;
+      civ.state.diseaseBurden = Utils.clamp(
+        (civ.state.diseaseBurden ?? 50) + healthImpact * timeScale, 0, 100);
+      civ.state.averageWellbeing = Utils.clamp(
+        (civ.state.averageWellbeing ?? 50) - healthImpact * 0.5 * timeScale, 0, 100);
+    }
+
+    // 2. Resource scarcity → conflict risk (Homer-Dixon 1999, Hsiang et al. 2013)
+    // Water scarcity, soil exhaustion, and ecological overshoot create
+    // competition for diminishing resources. The relationship is strongest
+    // in societies with weak institutions (high IQ societies manage scarcity
+    // through trade, rationing, or technology rather than conflict).
+    const water = dep.water ?? 100;
+    const soil = dep.soil ?? 100;
+    const scarcityIndex = (Math.max(0, 50 - water) + Math.max(0, 50 - soil)) / 100;
+    if (scarcityIndex > 0) {
+      // Institutional buffer: strong institutions mediate resource conflict
+      const iqBuffer = Math.max(0.2, 1 - (iq / 100) * 0.8);
+      const conflictPressure = scarcityIndex * iqBuffer;
+      civ.state.stabilityIndex = Utils.clamp(
+        (civ.state.stabilityIndex ?? 70) - conflictPressure * 0.6 * timeScale, 0, 100);
+      civ.state.socialTrust = Utils.clamp(
+        (civ.state.socialTrust ?? 50) - conflictPressure * 0.3 * timeScale, 0, 100);
+    }
+
+    // 3. Ecological overshoot → wellbeing erosion
+    // When a civilization is consuming resources faster than they regenerate,
+    // quality of life degrades as the environment deteriorates around them.
+    // Rockstrom et al. (2009): planetary boundaries define a safe operating
+    // space; transgression leads to nonlinear environmental responses.
+    if (overshoot > 1.2) {
+      const overshootStress = Math.min(1, (overshoot - 1.2) / 0.8);
+      civ.state.averageWellbeing = Utils.clamp(
+        (civ.state.averageWellbeing ?? 50) - overshootStress * 0.5 * timeScale, 0, 100);
+      civ.state.anomieLevel = Utils.clamp(
+        (civ.state.anomieLevel ?? 0) + overshootStress * 0.3 * timeScale, 0, 100);
+    }
+
+    // 4. Compound environmental degradation → legitimacy pressure
+    // When governments visibly fail to protect environmental quality,
+    // legitimacy erodes (Kahn & Kotchen 2011). Strongest in democracies
+    // where governments are held accountable for outcomes.
+    const envScore = ((dep.forests ?? 100) + water + soil + (100 - pollution)) / 4;
+    if (envScore < 35) {
+      const legitimacyImpact = ((35 - envScore) / 35) * 0.3;
+      civ.state.legitimacyLevel = Utils.clamp(
+        (civ.state.legitimacyLevel ?? 50) - legitimacyImpact * timeScale, 0, 100);
+    }
+  }
+
   // ══════════════════════════════════════════════════════════════
   // ADVANCED SYSTEMS: Immigration, Pandemics, Trade, Disinformation, AI
   // ══════════════════════════════════════════════════════════════
@@ -10948,6 +15260,25 @@ class SimulationEngine {
         source.state.population = Math.max(50, source.state.population - migrants);
         dest.state.population += migrants;
 
+        // When companion is active, queue cohort-level migration for
+        // age-selective distribution (brain drain skews 25-44,
+        // refugees span all ages, economic migrants cluster working-age)
+        if (this.game.companion?.isActive) {
+          const srcInnov = source.state.behaviorReinforcement?.innovation ?? 50;
+          const dstInnov = dest.state.behaviorReinforcement?.innovation ?? 50;
+          const selectivity = isRefugee ? 'refugee'
+            : (Math.max(0, dstInnov - srcInnov) > 20 ? 'brain_drain' : 'working_age');
+          const srcMig = source.state._pendingMigration ?? { emigrants: 0, immigrants: 0 };
+          srcMig.emigrants += migrants;
+          srcMig.selectivity = selectivity;
+          source.state._pendingMigration = srcMig;
+
+          const dstMig = dest.state._pendingMigration ?? { emigrants: 0, immigrants: 0 };
+          dstMig.immigrants += migrants;
+          dstMig.selectivity = selectivity;
+          dest.state._pendingMigration = dstMig;
+        }
+
         // Feature 8: Track diaspora communities for remittances/knowledge transfer
         const sourceDiaspora = source.state.diasporaCommunities ?? {};
         if (!sourceDiaspora[dest.id]) {
@@ -10964,8 +15295,11 @@ class SimulationEngine {
         const innovGap = Math.max(0, destInnov - sourceInnov); // only when dest is more innovative
         const brainDrainMult = 1.0 + (innovGap / 100) * 1.5; // up to 2.5× when gap is 100
         if (!isRefugee && migrants > 10) {
+          // Brain drain scales with remaining skilled pool: as education
+          // drops, fewer skilled workers remain to emigrate (natural limit).
+          const eduPool = (source.state.educationQuality ?? 50) / 100;
           source.state.educationQuality = Utils.clamp(
-            (source.state.educationQuality ?? 50) - 0.1 * brainDrainMult * timeScale, 0, 100);
+            (source.state.educationQuality ?? 50) - 0.1 * brainDrainMult * eduPool * timeScale, 0, 100);
           // Source loses innovation capacity as skilled workers leave
           source.state.behaviorReinforcement = source.state.behaviorReinforcement ?? {};
           source.state.behaviorReinforcement.innovation = Utils.clamp(
@@ -11462,16 +15796,9 @@ class SimulationEngine {
         0, 100);
     }
 
-    // Press freedom → corruption reduction (Brunetti & Weder 2003)
-    const pf = civ.state.pressFreedom ?? 50;
-    if (pf > 40) {
-      const anticorrEffect = (pf - 40) / 60 * 0.3 * timeScale;
-      civ.state.corruptionLevel = Utils.clamp(
-        (civ.state.corruptionLevel ?? 20) - anticorrEffect, 0, 100);
-      if (civ.state.corruptionIndex !== undefined) {
-        civ.state.corruptionIndex = Utils.clamp(civ.state.corruptionIndex - anticorrEffect, 0, 100);
-      }
-    }
+    // Press freedom → corruption reduction: now inside Michaelis-Menten
+    // saturation in the main corruption dynamics section (line ~14320).
+    // Removed standalone effect to avoid double-counting.
 
     // Oligarch capture → reduce press freedom and epistemic health
     const capture = civ.state.mediaOligarchCapture ?? 0;
@@ -11490,6 +15817,7 @@ class SimulationEngine {
     }
 
     // Investigative journalism: stochastic corruption exposure events
+    const pf = civ.state.pressFreedom ?? 50;
     if (pf > 40 && educQ > 40 && corr > 25) {
       const lastInvest = civ.state.lastInvestigationYear;
       if (!lastInvest || (yr - lastInvest) > 30) {
@@ -11512,6 +15840,75 @@ class SimulationEngine {
         }
       }
     }
+
+    // ── Political Polarization (Sunstein 2009, Haidt 2012) ──────────
+    // Commercial media fragments audiences for profit; state media
+    // suppresses fragmentation by controlling the narrative.
+    // Polarization emerges from the INTERACTION of media incentives,
+    // inequality, and diversity — not from any one factor alone.
+    // High-inequality diverse societies with commercial media polarize;
+    // homogeneous low-inequality ones with the same media do not.
+    let pol = civ.state.polarizationLevel ?? 0;
+    const infoType = civ.state.informationEcosystem ?? 'free_market_media';
+    const fragPressure = ({
+      open_civic: 0.1,
+      free_market_media: 0.6,
+      captured_commercial: 0.7,
+      state_guided: 0.15,
+      total_information_control: 0.05,
+    })[infoType] ?? 0.3;
+
+    const wcPol = civ.economic?.wealthConcentration ?? 30;
+    const ethFracPol = this._effectiveFractionalization(civ);
+    const ineqDivPressure = (Math.max(0, wcPol - 25) / 75) * (ethFracPol / 100);
+    const techAmp = tech >= 6 ? 1.5 : tech >= 5 ? 1.2 : tech >= 4 ? 1.1 : 1.0;
+
+    // Companion diffusion engine: information spread rate modulates how
+    // fast polarizing content propagates through social networks.
+    // Dense, high-bridge networks with fast information flow amplify
+    // fragmentation (Bail et al. 2018, Vosoughi et al. 2018).
+    const compDiff = civ.state.companion?.diffusion;
+    const diffusionAmp = compDiff?.informationSpreadRate
+      ? 0.7 + 0.6 * Utils.clamp(compDiff.informationSpreadRate, 0, 1)
+      : 1.0;
+
+    const polGen = (fragPressure + ineqDivPressure * 0.5) * techAmp * diffusionAmp;
+
+    const litDef = (civ.state.mediaLiteracy ?? 30) / 100 * 0.25;
+    const pbEff = ({
+      open_civic: 1.0, free_market_media: 0.3,
+      captured_commercial: 0.2, state_guided: 0.5,
+      total_information_control: 0.1,
+    })[infoType] ?? 0.3;
+    const pbDef = (civ.state.publicBroadcasting ?? 0) / 100 * 0.3 * pbEff;
+    const polDef = litDef + pbDef;
+
+    let polTarget = Utils.clamp((polGen - polDef) * 100, 0, 100);
+
+    // Democratic contestation floor: free societies with contested governance
+    // generate irreducible polarization through party competition (Downs 1957),
+    // interest group dynamics (Olson 1965), values pluralism (Berlin 1969),
+    // and ideological sorting (Bishop 2008). Even well-governed Nordics sustain
+    // 15-25 on most polarization measures. This is not pathological — it is
+    // a structural feature of democratic politics (Mouffe 2000). Suppressed
+    // in autocracies where dissent is controlled.
+    const polFreedom = civ.operatingPrinciples?.freedomLevel ?? 50;
+    const polPartModel = civ.governance?.participationModel;
+    if (polPartModel === 'voluntary' && polFreedom > 40) {
+      const demPolFloor = 12 + (polFreedom / 100) * 10 + (ethFracPol / 100) * 8
+        + Math.max(0, (wcPol - 30) / 70) * 10;
+      polTarget = Math.max(polTarget, demPolFloor);
+    }
+
+    // Norm change velocity (from companion diffusion engine) modulates
+    // how quickly polarization converges to its target — faster norm
+    // diffusion = faster opinion crystallization (Centola 2018).
+    const normVel = compDiff?.normChangeVelocity;
+    const convRate = normVel != null
+      ? 0.15 * (0.6 + 0.8 * Utils.clamp(normVel, 0, 1))
+      : 0.15;
+    pol += (polTarget - pol) * convRate * timeScale;
+    civ.state.polarizationLevel = Utils.clamp(pol, 0, 100);
   }
 
   // ══════════════════════════════════════════════════════════════
@@ -11861,20 +16258,27 @@ class SimulationEngine {
     const frac = civ.state.ethnicFractionalization ?? 30;
     const freedom = civ.operatingPrinciples?.freedomLevel ?? 50;
     const lastSchism = civ.state.lastSchismYear;
-    const religionDominance = civ.religion?.stateRelationship === 'state_religion' ? 80 :
-      civ.religion?.stateRelationship === 'established' ? 60 : 30;
+    const stRel = civ.religion?.stateRelationship ?? 'separate';
+    const religionDominance = stRel === 'theocratic' ? 90
+      : stRel === 'state_religion' ? 80 : stRel === 'established' ? 60 : 30;
 
-    // Spam limit: max 1 per 150 years
-    if (lastSchism && (yr - lastSchism) < 150) {
-      // Active schism resolution
-      if (civ.state.schismActive) {
-        this._resolveSchism(civ, timeScale, yr);
-      }
+    // An active schism must be advanced every turn. Resolution used to be
+    // reachable ONLY from inside the spam-limit block below, so once 150
+    // years elapsed an unresolved schism was orphaned and stayed active
+    // permanently.
+    if (civ.state.schismActive) {
+      this._resolveSchism(civ, timeScale, yr);
       return;
     }
 
+    // Spam limit: max 1 per 150 years
+    if (lastSchism && (yr - lastSchism) < 150) return;
+
     // Schism risk accumulation
     let riskPressure = 0;
+    const polInclusion = civ.state.politicalInclusion ?? 50;
+    const participation = civ.governance?.participationModel ?? 'universal';
+    const restrictedAccess = ['restricted', 'mandatory', 'none'].includes(participation);
 
     // High institutional lock-in + education = reform pressure
     if (lockin > 40 && educQ > 40) {
@@ -11897,6 +16301,28 @@ class SimulationEngine {
       riskPressure += (50 - freedom) * 0.005 * (educQ / 100);
     }
 
+    // ── Ethnic fractionalization + political exclusion ──
+    // Multi-ethnic empires with restricted participation generate centrifugal
+    // pressure. Ptolemaic Egypt: Greek rulers over Egyptian majority →
+    // native revolts (Theban revolt 205-186 BC). Mughal India: Hindu
+    // majority under Muslim Mughal court → Maratha Confederacy, Sikh
+    // Empire. Ottoman millet system held diversity together longer only
+    // because it granted communal autonomy (high political inclusion).
+    // The mechanism: excluded groups develop parallel identities and
+    // grievance narratives that crystallize into separatist movements.
+    if (frac > 40 && restrictedAccess) {
+      const exclusionPressure = ((frac - 40) / 60) * ((100 - polInclusion) / 100);
+      riskPressure += exclusionPressure * 0.7;
+    }
+    if (frac > 60) {
+      riskPressure += (frac - 60) * 0.005;
+    }
+
+    // ── Doctrinal rigidity under high religion dominance ──
+    if (religionDominance > 60 && educQ > 40) {
+      riskPressure += (religionDominance - 60) * 0.012 * (educQ / 100);
+    }
+
     // Dampeners
     // High cohesion suppresses schism
     if (cohesion > 60) riskPressure *= 0.5;
@@ -11906,8 +16332,13 @@ class SimulationEngine {
     civ.state.schismRisk = Utils.clamp(
       (civ.state.schismRisk ?? 0) + riskPressure * timeScale, 0, 100);
 
-    // Natural risk decay
-    civ.state.schismRisk = Utils.clamp(civ.state.schismRisk - 0.3 * timeScale, 0, 100);
+    // Natural risk decay.
+    // Was 0.3, which exceeded typical accumulation (~0.33 only under
+    // simultaneous high lock-in, low legitimacy, high trade and low
+    // freedom), so risk drained to zero in ordinary configurations.
+    // Lowered as part of a whole-lifecycle fix — on its own it merely
+    // exposed three further defects downstream.
+    civ.state.schismRisk = Utils.clamp(civ.state.schismRisk - 0.08 * timeScale, 0, 100);
 
     // Schism trigger
     if (civ.state.schismRisk > 60) {
@@ -11945,11 +16376,31 @@ class SimulationEngine {
   }
 
   _resolveSchism(civ, timeScale, yr) {
-    const resolution = civ.state.schismResolution;
+    let resolution = civ.state.schismResolution;
     const severity = civ.state.schismSeverity ?? 30;
     let progress = civ.state.schismResolutionProgress ?? 0;
 
-    if (!resolution) return; // no resolution path chosen yet — awaiting player action or auto-resolve
+    // Auto-resolution after a grace period.
+    // The branch at the end of this method claimed to do this, but was
+    // unreachable dead code — the early `return` here preceded it — and
+    // it also excluded the player civilization, which is the one every
+    // scenario and preset run measures. Both are fixed: the logic moved
+    // here where it can actually run, and applies to every civ.
+    // The grace period leaves room for a deliberate player choice before
+    // the society resolves along the lines its institutions favour.
+    if (!resolution) {
+      civ.state.schismUnresolvedTurns = (civ.state.schismUnresolvedTurns ?? 0) + timeScale;
+      if (civ.state.schismUnresolvedTurns < 5) return;
+      const capR = civ.state.stateCapacity ?? 50;
+      const govR = civ.governance?.modelId ?? '';
+      resolution = (capR > 60 && ['autocratic', 'theocratic', 'oligarchy', 'shadow_state'].includes(govR))
+          ? 'suppression'
+        : ((civ.state.institutionalQuality ?? 50) > 50) ? 'accommodation' : 'reformation';
+      civ.state.schismResolution = resolution;
+      civ.addHistoryEntry(yr, 'Schism Takes Its Course',
+        `No deliberate resolution was chosen. The division resolves along the lines this society's institutions favour: ${resolution}.`,
+        'schism_auto_resolution');
+    }
 
     switch (resolution) {
       case 'suppression':
@@ -11985,6 +16436,9 @@ class SimulationEngine {
 
     if (progress >= 100) {
       civ.state.schismActive = false;
+      civ.state.schismResolution = null;
+      civ.state.schismResolutionProgress = 0;
+      civ.state.schismUnresolvedTurns = 0;
       civ.state.schismRisk = 10; // reset risk
       civ.state.schismResolutionProgress = 0;
 
@@ -12001,19 +16455,6 @@ class SimulationEngine {
             'suppressed' : 'accommodated'}.`, 'schism_resolved');
       }
 
-      // Auto-resolve: if no player-chosen resolution, default after long enough
-    } else if (!resolution && civ.state.schismActive) {
-      // AI civs auto-choose based on governance
-      if (!civ.isPlayerCiv) {
-        const cap = civ.state.stateCapacity ?? 50;
-        if (cap > 60 && (civ.governance?.modelId === 'autocratic' || civ.governance?.modelId === 'theocratic')) {
-          civ.state.schismResolution = 'suppression';
-        } else if (civ.state.institutionalQuality > 50) {
-          civ.state.schismResolution = 'accommodation';
-        } else {
-          civ.state.schismResolution = 'reformation';
-        }
-      }
     }
   }
 
@@ -12086,11 +16527,20 @@ class SimulationEngine {
         }
       }
 
-      // Apply remittance benefits
-      civ.state.remittanceInflow = Utils.clamp(totalRemittances * 10, 0, 100);
-      if (totalRemittances > 0) {
+      // Apply remittance benefits — per-capita with diminishing returns.
+      // Real-world: remittances are 4% of GDP for Nigeria, up to 25-30% for
+      // extreme cases (Nepal, Tajikistan). Even at high levels, the per-capita
+      // wellbeing impact is modest (+0.5-2 on 100-scale per decade).
+      // Scale by receiving population so large countries aren't disproportionately
+      // boosted by the same absolute diaspora size.
+      const pop = civ.state.population ?? 500;
+      const remitPerCapita = pop > 0 ? totalRemittances / pop : 0;
+      const remitIntensity = Math.sqrt(remitPerCapita * 1000);
+      civ.state.remittanceInflow = Utils.clamp(remitIntensity * 10, 0, 100);
+      if (remitIntensity > 0) {
+        const wbDelta = Math.min(1.5, remitIntensity * 0.3) * timeScale;
         civ.state.averageWellbeing = Utils.clamp(
-          (civ.state.averageWellbeing ?? 50) + totalRemittances * 0.1 * timeScale, 0, 100);
+          (civ.state.averageWellbeing ?? 50) + wbDelta, 0, 100);
       }
 
       // Apply trade bonus
@@ -12281,6 +16731,7 @@ class SimulationEngine {
     const trust = civ.state.socialTrust ?? 50;
     const iq = civ.state.institutionalQuality ?? 50;
     const cap = civ.state.stateCapacity ?? 50;
+    const corruption = civ.state.corruptionLevel ?? 50;
     const govId = civ.governance?.modelId ?? '';
 
     // Baseline: +1.0/decade (doubled from 0.5) — must counteract stochastic
@@ -12298,6 +16749,37 @@ class SimulationEngine {
 
     // State capacity enables coordinated response
     if (cap > 30) recovery += 0.3 * ((cap - 30) / 70) * timeScale;
+
+    // Clean governance accelerates crisis recovery: low corruption means
+    // resources reach their target (Kaufmann et al. 2010), command chains
+    // function without patronage bottlenecks, and public trust stays high
+    // during crises (Rothstein 2011). Gated on corruption<20 and IQ>60.
+    if (corruption < 20 && iq > 60) {
+      const cleanGov = Math.min((20 - corruption) / 15, 1.0) * Math.min((iq - 60) / 30, 1.0);
+      recovery += 0.5 * cleanGov * timeScale;
+    }
+
+    // Companion collective action potential: organized populations
+    // can either stabilize or destabilize depending on satisfaction.
+    // Tilly (1978): contentious collective action requires organization +
+    // grievance. Putnam (1993): civic collective action rebuilds trust.
+    const compCAP = civ.state.companion?.collectiveActionPotential;
+    if (compCAP != null && compCAP > 0.2) {
+      const avgSat = civ.state.companion?.strataSatisfaction;
+      const popSat = avgSat
+        ? (avgSat.working ?? 50) * 0.3 + (avgSat.lowerMiddle ?? 50) * 0.25
+          + (avgSat.disenfranchised ?? 50) * 0.25 + (avgSat.upperMiddle ?? 50) * 0.2
+        : 50;
+      if (popSat < 35) {
+        // Low satisfaction + high organization = protest/revolt pressure
+        const unrest = (compCAP - 0.2) * ((35 - popSat) / 35);
+        recovery -= 0.8 * unrest * timeScale;
+      } else if (popSat > 55) {
+        // High satisfaction + high organization = civic resilience
+        const civic = (compCAP - 0.2) * ((popSat - 55) / 45);
+        recovery += 0.4 * civic * timeScale;
+      }
+    }
 
     // Failed states recover more slowly but DO still recover
     // (Somalia had local governance even at worst; warlords provide crude order)
@@ -12323,6 +16805,54 @@ class SimulationEngine {
       stability -= excess * excess * ceilingCoeff * timeScale;
     }
 
+    // Developmental state stability floor: developmental autocracies
+    // maintain stability through performance legitimacy — citizens accept
+    // authoritarianism in exchange for rising living standards. This only
+    // activates when state capacity is already above 25, so it doesn't
+    // prevent genocide/collapse periods (where cap drops below 25).
+    const hierStab = (civ.governance?.hierarchyLevel ?? 50) / 100;
+    const innovTolStab = (civ.state.innovationTolerance ?? 50) / 100;
+    const infoEcoStab = civ.state.informationEcosystem ?? 'free_market_media';
+    const ecoModelStab = civ.economic?.modelId ?? '';
+    const isExtractiveStab = (infoEcoStab === 'total_information_control' && ecoModelStab === 'planned')
+                          || (infoEcoStab === 'total_information_control' && innovTolStab < 0.25);
+    const educQStab = civ.state.educationQuality ?? 50;
+    const isDevStab = !isExtractiveStab && (
+      (hierStab > 0.55 && educQStab > 25) ||
+      (hierStab > 0.70 && educQStab > 10)
+    );
+    if (isDevStab && cap > 25) {
+      const devStabFloor = 20 + hierStab * 20;
+      if (stability < devStabFloor) {
+        stability += (devStabFloor - stability) * 0.25 * timeScale;
+      }
+    }
+
+    // Rentier stability attractor (Beblawi & Luciani 1987, Herb 2005):
+    // resource rents fund subsidies (fuel, food, housing), public-sector
+    // employment (72% of nationals in Saudi, 86-90% in Kuwait/Qatar),
+    // and coercive apparatus. This creates a stability EQUILIBRIUM, not
+    // just a floor — the social contract is more elastic than originally
+    // theorized (Gulf states removed subsidies with less backlash than
+    // predicted). Bidirectional: pulls stability toward equilibrium from
+    // either direction. Gated on centralization: Nigeria's oil hasn't
+    // prevented coups the way Saudi's has.
+    const resRentStab = (civ.state.resourceRentDependence ?? 0) / 100;
+    if (resRentStab > 0.1) {
+      const hierForRent = (civ.governance?.hierarchyLevel ?? 50) / 100;
+      const rentCentStab = hierForRent > 0.5 ? Utils.clamp((hierForRent - 0.5) * 2.0, 0, 1) : 0;
+      if (rentCentStab > 0) {
+        const rentEqStab = 35 + resRentStab * 30 * rentCentStab;
+        const rentKStab = resRentStab * rentCentStab * 0.25;
+        stability += rentKStab * (rentEqStab - stability) * timeScale;
+      }
+      // Non-centralized: weak hard floor only
+      const rentStabMin = 15 + resRentStab * 10;
+      if (stability < rentStabMin) {
+        stability = rentStabMin;
+      }
+    }
+
     civ.state.stabilityIndex = Utils.clamp(stability, 0, 100);
   }
 
@@ -12339,11 +16869,10 @@ class SimulationEngine {
     if (!civ.state) return;
     const timeScale = (this.game.yearsDelta || 10) / 10;
     let wb = civ.state.averageWellbeing ?? 50;
-    const foodSec = civ.state.foodSecurity ?? 60;
+    const target = civ.state._structuralWellbeing ?? 50;
     const govId = civ.governance?.modelId ?? '';
     const iq = civ.state.institutionalQuality ?? 50;
     const cap = civ.state.stateCapacity ?? 50;
-    const trust = civ.state.socialTrust ?? 50;
     const stability = civ.state.stabilityIndex ?? 50;
     const anomie = civ.state.anomieLevel ?? 0;
 
@@ -12354,68 +16883,54 @@ class SimulationEngine {
       wb = Math.max(wb, 10);
     }
 
-    // ── B) Economic prosperity → wellbeing growth ──
-    // When conditions are favorable, wellbeing naturally grows.
-    // This models: GDP growth → better healthcare, housing, food quality,
-    // entertainment, sanitation, education, life expectancy.
-    // WVS: average wellbeing correlates with institutional quality,
-    // food security, stability, and trust (Hellevik 2003).
-    let prosperity = 0;
+    // ── B) Structural attractor ──
+    // civilization.js computes _structuralWellbeing from conditions:
+    // economic development, corruption, freedom, equality, cooperation,
+    // pollution, depletion. This system pulls actual wellbeing toward
+    // that target. Transient shocks (events, wars, drains from other
+    // systems) push wellbeing away; the attractor restores it at a
+    // rate modulated by institutional capacity.
+    const gap = target - wb;
 
-    // The simulation has ~15 systems that each drain 0.05-0.2 wb/turn,
-    // totaling ~1.5/turn structural drain even in good conditions.
-    // Prosperity must exceed this to produce net wellbeing growth.
-    // Target: +2.5-3.0/turn in optimal conditions (matching real-world
-    // wellbeing improvement rate of 0.3-0.5 WVS points/decade = ~3-5/100/decade)
+    // Base convergence: 15%/turn (WVS: wellbeing responds within 5-10 years)
+    let pullRate = 0.15;
 
-    // Calibration target: a well-functioning society (trust=80, iq=80, food=70,
-    // stability=70, cap=70, democratic) should gain ~3-4/turn, enough to reach
-    // wb=70 within 200 turns from wb=50, despite ~1.5/turn structural drains.
-    // WVS: Nordic countries ~7.5/10, US ~6.9/10, UK ~6.7/10 → 67-75 on 0-100 scale
+    // Institutional quality accelerates convergence (North 1990)
+    pullRate += (iq / 100) * 0.10;
 
-    // Food security is the foundation (Maslow's hierarchy)
-    if (foodSec > 40) prosperity += 1.0 * ((foodSec - 40) / 60) * timeScale;
-    if (foodSec > 70) prosperity += 0.5 * timeScale; // abundance bonus
+    // Stability enables consistent delivery of public goods
+    pullRate += (stability / 100) * 0.05;
 
-    // Institutional quality enables economic development (North 1990, AJR 2012)
-    if (iq > 30) prosperity += 1.0 * ((iq - 30) / 70) * timeScale;
+    // Catch-up: large gaps converge faster (basic-needs improvements
+    // have outsized wellbeing impact — Maslow, Sen 1999)
+    if (Math.abs(gap) > 10) {
+      pullRate += Math.min(0.10, (Math.abs(gap) - 10) / 100);
+    }
 
-    // Stability enables long-term investment and planning
-    if (stability > 40) prosperity += 0.6 * ((stability - 40) / 60) * timeScale;
+    // Anomie weakens pull (social dysfunction prevents conditions
+    // from translating into lived experience)
+    if (anomie > 30) {
+      pullRate *= Math.max(0.3, 1.0 - (anomie - 30) / 100);
+    }
 
-    // Trust enables economic cooperation (Knack & Keefer 1997)
-    // Trust is the single strongest WVS predictor of national wellbeing
-    if (trust > 30) prosperity += 0.8 * ((trust - 30) / 70) * timeScale;
+    // Military burden dampens convergence (SIPRI: >6% GDP military → lower growth)
+    const milBurdenWB = (civ.state.militaryPower ?? 30) / Math.max(1, cap);
+    if (milBurdenWB > 0.8) {
+      pullRate *= Math.max(0.4, 1.0 - (milBurdenWB - 0.8) * 0.5);
+    }
 
-    // State capacity enables public goods provision
-    if (cap > 30) prosperity += 0.4 * ((cap - 30) / 70) * timeScale;
+    // Failed states: minimal convergence (only informal economy)
+    if (govId === 'failed_state') pullRate *= 0.3;
 
-    // Governance accountability: responsive policy, public investment, rule of law
-    // This is NOT governance-type dependent — it's about HOW governance functions.
-    // Singapore (PAP): not democratic but high accountability, capacity, and wellbeing
-    // China: massive prosperity growth under authoritarian rule (1980-2020)
-    // Nordic countries: democratic AND high-capacity
-    // The mechanism: accountability ≈ function of (IQ + capacity + legitimacy) / 3
-    // NOT hardcoded to governance type — emerges from institutional quality
-    const accountability = ((iq + cap + (civ.state.legitimacyLevel ?? 50)) / 3);
-    if (accountability > 40) prosperity += 0.6 * ((accountability - 40) / 60) * timeScale;
+    wb += gap * pullRate * timeScale;
 
-    // High anomie suppresses prosperity gains (social dysfunction
-    // prevents economic benefits from reaching people)
-    if (anomie > 30) prosperity *= Math.max(0.2, 1.0 - (anomie - 30) / 100);
-
-    // Failed states: minimal prosperity (only informal economy)
-    if (govId === 'failed_state') prosperity *= 0.2;
-
-    wb += prosperity;
-
-    // ── C) Soft floor at 35: subsistence baseline ──
-    if (wb >= hardFloor && wb < 35 && prosperity < 0.5) {
-      const deficit = 35 - wb;
-      let recovery = deficit * 0.06 * timeScale;
-      if (foodSec > 50) recovery *= 1.3;
-      if (govId === 'failed_state') recovery *= 0.5;
-      wb += recovery;
+    // ── C) Resource rent wellbeing floor ──
+    const resRentWB = (civ.state.resourceRentDependence ?? 0) / 100;
+    if (resRentWB > 0.1) {
+      const rentWBFloor = 20 + resRentWB * 20;
+      if (wb < rentWBFloor) {
+        wb += (rentWBFloor - wb) * 0.3 * timeScale;
+      }
     }
 
     civ.state.averageWellbeing = Utils.clamp(wb, 0, 100);
@@ -12455,6 +16970,642 @@ class SimulationEngine {
       if (wb < 25) civ.state.averageWellbeing = Utils.clamp(wb + nudge * 0.7, 0, 100);
       if (trust < 25) civ.state.socialTrust = Utils.clamp(trust + nudge * 0.5, 0, 100);
       if (anomie > 70) civ.state.anomieLevel = Utils.clamp(anomie - nudge, 0, 100);
+    }
+  }
+
+  // ── Economic Model → Governance Pressure ────────────────────
+  // Economic structures create systematic pressure on governance form.
+  // Market economies with extreme inequality produce oligarchic capture
+  // (Gilens & Page 2014, Acemoglu & Robinson 2012). Planned economies
+  // require centralized control (Hayek 1944, observed universally).
+  // Commons/cooperative economies embed egalitarian governance expectations
+  // (Ostrom 1990). Economic crises create strongman demand (Weimar, Argentina).
+  _processEconomicGovernancePressure(civ) {
+    if (!civ.state || !civ.governance || !civ.economic) return;
+    if (civ.governance.modelId === 'failed_state') return;
+    const timeScale = (this.game.yearsDelta || 10) / 10;
+    const econId = civ.economic.modelId;
+    const wc = civ.economic.wealthConcentration ?? 30;
+    const cap = civ.state.stateCapacity ?? 50;
+    const freedom = civ.operatingPrinciples?.freedomLevel ?? 50;
+    const powerConc = civ.governance.powerConcentration ?? 50;
+    const hier = civ.governance.hierarchyLevel ?? 50;
+    const stability = civ.state.stabilityIndex ?? 70;
+    const wb = civ.state.averageWellbeing ?? 50;
+
+    // 1) Market economy + extreme inequality → oligarchic/plutocratic drift
+    // Mechanism: wealth buys political influence through lobbying, media ownership,
+    // campaign finance, regulatory capture. Effect is gradual, not sudden.
+    if (econId === 'market' || econId === 'mixed') {
+      if (wc > 55) {
+        const wcPressure = (wc - 55) / 45; // 0 at wc=55, 1 at wc=100
+        civ.governance.powerConcentration = Utils.clamp(
+          powerConc + 0.3 * wcPressure * timeScale, 0, 100);
+        // Freedom erosion with diminishing returns: lower freedom is harder
+        // to erode further — populations resist loss of accustomed rights,
+        // and there are fewer rights left to capture (ratchet effect).
+        if (civ.operatingPrinciples) {
+          const freedomResist = Math.max(0.15, freedom / 100);
+          civ.operatingPrinciples.freedomLevel = Utils.clamp(
+            freedom - 0.15 * wcPressure * freedomResist * timeScale, 0, 100);
+        }
+      }
+    }
+
+    // 2) Planned economy → centralization imperative
+    // Central planning requires information flow to a center and command flow out.
+    // This structurally demands hierarchy regardless of stated ideology.
+    // Every historical planned economy concentrated political power.
+    if (econId === 'planned') {
+      const controlGap = Math.max(0, 70 - powerConc); // planned economies pull toward 70+
+      if (controlGap > 0) {
+        civ.governance.powerConcentration = Utils.clamp(
+          powerConc + controlGap * 0.03 * timeScale, 0, 100);
+      }
+      // Freedom constrained by planning requirements — dissent disrupts plan execution
+      if (civ.operatingPrinciples && freedom > 35) {
+        civ.operatingPrinciples.freedomLevel = Utils.clamp(
+          freedom - 0.2 * timeScale, 0, 100);
+      }
+      // Hierarchy increases to support command structure
+      if (hier < 65) {
+        civ.governance.hierarchyLevel = Utils.clamp(
+          hier + 0.3 * timeScale, 0, 100);
+      }
+    }
+
+    // 3) Gift/commons/barter → egalitarian pressure
+    // Resource sharing embedded in social relations creates expectation
+    // of shared decision-making. Hard to maintain hierarchy when resources
+    // flow through reciprocity networks rather than command chains.
+    if (econId === 'gift' || econId === 'commons' || econId === 'barter') {
+      // Gentle pull toward lower hierarchy
+      if (hier > 35) {
+        civ.governance.hierarchyLevel = Utils.clamp(
+          hier - 0.15 * timeScale, 0, 100);
+      }
+      // Power deconcentrates when economic power is distributed
+      if (powerConc > 35) {
+        civ.governance.powerConcentration = Utils.clamp(
+          powerConc - 0.1 * timeScale, 0, 100);
+      }
+      // Freedom increases with economic autonomy
+      if (civ.operatingPrinciples && freedom < 70) {
+        civ.operatingPrinciples.freedomLevel = Utils.clamp(
+          freedom + 0.1 * timeScale, 0, 100);
+      }
+    }
+
+    // 4) Economic crisis → strongman demand
+    // When markets fail badly, populations seek order. Weimar → Nazi,
+    // Argentina → Peron, post-2008 → global populist authoritarian wave.
+    // Mechanism: fear + uncertainty + loss of livelihood → preference for
+    // decisive authority over deliberative process.
+    const inCrisis = civ.state.fiscalCrisisActive ||
+      (civ.state.sovereignDebtRatio ?? 0) > 100 ||
+      (wb < 30 && stability < 40);
+    if (inCrisis) {
+      // Crisis amplifies authoritarian preference
+      const crisisSeverity = Math.min(1.0,
+        ((civ.state.sovereignDebtRatio ?? 0) > 100 ? 0.3 : 0) +
+        (wb < 30 ? 0.3 : 0) + (stability < 40 ? 0.4 : 0));
+      civ.governance.powerConcentration = Utils.clamp(
+        powerConc + 0.4 * crisisSeverity * timeScale, 0, 100);
+      if (civ.operatingPrinciples) {
+        const crisisFreedomResist = Math.max(0.15, freedom / 100);
+        civ.operatingPrinciples.freedomLevel = Utils.clamp(
+          freedom - 0.25 * crisisSeverity * crisisFreedomResist * timeScale, 0, 100);
+      }
+    }
+  }
+
+  // ── Economic Crisis → Economic Model Transition ──────────────
+  // Market economies that fail catastrophically can produce transitions
+  // to alternative economic models without requiring a political revolution.
+  // Argentina 2001: market collapse → barter networks, worker cooperatives.
+  // Post-Soviet periphery: planned collapse → subsistence/barter.
+  // Greece 2010s: austerity → solidarity economy networks.
+  // Weimar: hyperinflation → undermined market legitimacy entirely.
+  // Direction depends on cultural/behavioral disposition.
+  _processEconomicCrisisTransition(civ) {
+    if (!civ.state || !civ.economic) return;
+    if (civ.governance?.modelId === 'failed_state') return;
+    const timeScale = (this.game.yearsDelta || 10) / 10;
+    const econId = civ.economic.modelId;
+    const yr = this.game?.currentYear ?? 0;
+
+    // Only market, mixed, and planned economies can transition this way
+    if (!['market', 'mixed', 'planned'].includes(econId)) return;
+
+    const debt = civ.state.sovereignDebtRatio ?? 0;
+    const wb = civ.state.averageWellbeing ?? 50;
+    const stability = civ.state.stabilityIndex ?? 70;
+    const trust = civ.state.socialTrust ?? 50;
+    const cap = civ.state.stateCapacity ?? 50;
+    const lockin = civ.state.institutionalLockin ?? 50;
+
+    // Crisis severity score — how badly has the economy failed?
+    let crisisSeverity = 0;
+    if (civ.state.fiscalCrisisActive) crisisSeverity += 0.3;
+    if (debt > 100) crisisSeverity += Math.min(0.3, (debt - 100) / 100);
+    if (wb < 25) crisisSeverity += (25 - wb) / 50;
+    if (stability < 30) crisisSeverity += (30 - stability) / 60;
+    if ((civ.state.capitalFlight ?? 0) > 40) crisisSeverity += 0.15;
+
+    // Need severe, sustained crisis — not a temporary dip
+    if (crisisSeverity < 0.6) return;
+
+    // Transition probability increases with crisis severity,
+    // decreases with institutional lockin (entrenched systems resist change)
+    const lockinResist = Math.max(0.2, 1.0 - lockin / 100);
+    const transitionProb = 0.03 * (crisisSeverity - 0.6) * lockinResist * timeScale;
+    if (Utils.random() > transitionProb) return;
+
+    // Determine direction from behavioral/cultural disposition
+    const b = civ.state.behaviorReinforcement ?? {};
+    const collectivism = civ.operatingPrinciples?.collectivismLevel ?? 50;
+    const coop = b.cooperation ?? 50;
+    const mutualAid = b.mutualAid ?? 50;
+    const acquis = b.acquisitiveness ?? 50;
+    const communalScore = collectivism * 0.4 + coop * 0.3 + mutualAid * 0.3;
+    const marketScore = acquis * 0.5 + (100 - collectivism) * 0.3 + (b.competition ?? 50) * 0.2;
+
+    let targetEcon = null;
+    let narrative = '';
+
+    if (econId === 'planned') {
+      // Planned economy collapse → direction depends on context
+      if (cap < 40) {
+        // State too weak to maintain ANY complex system → barter/subsistence
+        targetEcon = 'barter';
+        narrative = `The planned economy's distribution networks have broken down. With state capacity too degraded to maintain centralized allocation, communities are reverting to direct exchange and local barter networks. What the textbooks call a market transition is, on the ground, closer to survival.`;
+      } else {
+        // Controlled transition → market or mixed
+        targetEcon = communalScore > 55 ? 'mixed' : 'market';
+        narrative = targetEcon === 'mixed'
+          ? `The planned economy is being reformed into a mixed system — retaining state oversight of strategic sectors while allowing market mechanisms where central planning has failed. The transition is managed, not chaotic.`
+          : `The planned economy is giving way to market structures. State enterprises are being privatized, price controls lifted. The speed and equity of this transition will determine whether it produces broad prosperity or concentrated oligarchy.`;
+        if (targetEcon === 'market') {
+          civ.economic.wealthConcentration = Utils.clamp(
+            (civ.economic.wealthConcentration ?? 30) + 12, 0, 100);
+        }
+      }
+    } else {
+      // Market or mixed economy collapse
+      if (communalScore > 60 && cap > 30) {
+        // Strong communal disposition + some state capacity → commons or planned
+        if (collectivism > 65 && cap > 50) {
+          targetEcon = 'planned';
+          narrative = `The market economy's failure has been taken as proof of its fundamental inadequacy. A new regime of central planning is being imposed, with the state assuming control of production and distribution. Whether this represents liberation or merely a different form of domination remains to be seen.`;
+          civ.economic.wealthConcentration = Utils.clamp(
+            (civ.economic.wealthConcentration ?? 50) * 0.5, 0, 100);
+        } else {
+          targetEcon = 'commons';
+          narrative = `As market institutions have failed, communities in ${civ.name} are self-organizing cooperative alternatives — shared resource pools, mutual aid networks, community land trusts. This is not ideological choice but practical survival: when the market doesn't feed you, you feed each other.`;
+        }
+      } else if (communalScore > 45) {
+        // Moderate communal disposition → barter/informal exchange
+        targetEcon = 'barter';
+        narrative = `With formal market institutions in collapse, ${civ.name}'s economy has reverted to direct exchange. Barter networks, informal markets, and local currencies have emerged organically. Trust is the new currency — and it's in short supply.`;
+      } else {
+        // Low communal disposition → market reforms (deregulate harder)
+        // or mixed if current is market
+        if (econId === 'market') {
+          targetEcon = 'mixed';
+          narrative = `The market economy's crisis has produced calls for greater state intervention. A mixed economy is emerging — markets for consumer goods, state control of strategic sectors, and new regulatory frameworks. The debate is over where to draw the line.`;
+        }
+        // If already mixed, no transition in this direction
+      }
+    }
+
+    if (!targetEcon || targetEcon === econId) return;
+    if (typeof ECONOMIC_MODELS === 'undefined' || !ECONOMIC_MODELS[targetEcon]) return;
+
+    const newModel = ECONOMIC_MODELS[targetEcon];
+    const oldLabel = civ.economic.model?.label ?? econId;
+    civ.economic.modelId = targetEcon;
+    civ.economic.model = newModel;
+    civ.economic.accumulationAllowed = newModel.accumulationAllowed;
+    civ.economic.currencyType = newModel.currencyType;
+    civ.economic.scarcityOrientation = newModel.scarcityOrientation ?? civ.economic.scarcityOrientation;
+
+    // Institutional lockin resets — new system hasn't entrenched yet
+    civ.state.institutionalLockin = Utils.clamp(
+      (civ.state.institutionalLockin ?? 50) * 0.5, 0, 100);
+
+    civ.addHistoryEntry(yr, `Economic Crisis Transition: ${oldLabel} → ${newModel.label ?? targetEcon}`,
+      narrative, 'economic_transition');
+    this.game.ui?.showNotification(
+      `${civ.name}: Economic crisis forces transition to ${newModel.label ?? targetEcon}`, 'warning');
+  }
+
+  // ── Governance Evolution Without Revolution ──────────────────
+  // Most governance changes in history are gradual, not revolutionary.
+  // Democratization: South Korea 1987, Taiwan 1990s, Spain 1975-82.
+  // Backsliding: Hungary 2010s, Turkey 2010s, Venezuela 2000s.
+  // Negotiated transitions: South Africa 1994, Poland Round Table 1989.
+  // Lipset modernization thesis (confirmed with caveats by Acemoglu et al.):
+  // economic development + education create democratic pressure.
+  // Huntington 1991: waves of democratization driven by demonstration effects.
+  _processGovernanceEvolution(civ) {
+    if (!civ.state || !civ.governance) return;
+    if (civ.governance.modelId === 'failed_state') return;
+    const timeScale = (this.game.yearsDelta || 10) / 10;
+    const yr = this.game?.currentYear ?? 0;
+
+    const freedom = civ.operatingPrinciples?.freedomLevel ?? 50;
+    const powerConc = civ.governance.powerConcentration ?? 50;
+    const hier = civ.governance.hierarchyLevel ?? 50;
+    const edu = civ.state.educationQuality ?? 30;
+    const cap = civ.state.stateCapacity ?? 50;
+    const wb = civ.state.averageWellbeing ?? 50;
+    const trust = civ.state.socialTrust ?? 50;
+    const stability = civ.state.stabilityIndex ?? 70;
+    const wc = civ.economic?.wealthConcentration ?? 30;
+    const iq = civ.state.institutionalQuality ?? 40;
+    const urbanRate = civ.state.urbanizationRate ?? 0;
+    const epistemic = civ.state.epistemicHealth ?? 50;
+    const govId = civ.governance.modelId;
+    const isAuthoritarian = ['autocratic', 'theocratic', 'shadow_government_covert',
+      'shadow_government_complicit'].includes(govId);
+    const isDemocratic = ['representative', 'direct_congress', 'flat_consensus',
+      'rotating'].includes(govId);
+
+    // ── Democratization pressure ──
+    // Lipset (1959), Przeworski & Limongi (1997), Acemoglu & Robinson (2006):
+    // educated, urbanized, middle-class populations demand political participation.
+    // Not deterministic — but creates sustained pressure that autocracies must
+    // either accommodate or repress at increasing cost.
+    let demPressure = 0;
+    if (edu > 50) demPressure += (edu - 50) / 100;       // educated populations demand voice
+    if (wb > 55) demPressure += (wb - 55) / 150;          // prosperity enables political engagement
+    if (urbanRate > 40) demPressure += (urbanRate - 40) / 200; // cities enable coordination
+    if (epistemic > 60) demPressure += (epistemic - 60) / 200; // information access
+    // Social mobility creates middle class that demands institutional guarantees
+    const mobility = civ.state.socialMobility ?? 50;
+    if (mobility > 50) demPressure += (mobility - 50) / 200;
+
+    // Counter-pressure: repressive capacity can suppress democratization
+    // (but at increasing cost to legitimacy and human capital).
+    // Information control amplifies repression — state media shapes
+    // preferences, monitors dissent (Guriev & Treisman 2019 "informational
+    // autocracy"). Singapore's PAP, China's GFW, Saudi MBS modernization
+    // all manage freedom through information architecture, not just force.
+    const infoControlGov = ['state_controlled', 'total_information_control']
+      .includes(civ.state.informationEcosystem ?? 'free_market_media') ? 0.3
+      : civ.state.informationEcosystem === 'state_guided' ? 0.15 : 0;
+    const repressionCap = isAuthoritarian ? (powerConc / 100) * (cap / 100) + infoControlGov : 0;
+    const netDemPressure = Math.max(0, demPressure - repressionCap * 0.5);
+
+    // Apply democratization drift
+    if (netDemPressure > 0.1 && !isDemocratic) {
+      // Freedom gradually increases
+      if (civ.operatingPrinciples) {
+        civ.operatingPrinciples.freedomLevel = Utils.clamp(
+          freedom + netDemPressure * 0.8 * timeScale, 0, 100);
+      }
+      // Power slowly deconcentrates
+      civ.governance.powerConcentration = Utils.clamp(
+        powerConc - netDemPressure * 0.5 * timeScale, 0, 100);
+    }
+
+    // ── Authoritarian backsliding ──
+    // Levitsky & Ziblatt (2018): democracies die gradually through erosion,
+    // not suddenly through coups. Drivers: inequality, polarization, low trust,
+    // security threats, populist leaders exploiting crisis.
+    let authPressure = 0;
+    if (wc > 60) authPressure += (wc - 60) / 100;       // inequality → populist authoritarianism
+    if (trust < 30) authPressure += (30 - trust) / 100;  // low trust → desire for strong hand
+    if (stability < 40) authPressure += (40 - stability) / 100; // instability → security demand
+    if (wb < 35) authPressure += (35 - wb) / 100;        // deprivation → desperation
+    // Epistemic crisis amplifies: when people can't agree on facts,
+    // they seek someone to impose order (Arendt, Origins of Totalitarianism)
+    if (epistemic < 35) authPressure += (35 - epistemic) / 150;
+
+    if (authPressure > 0.15 && isDemocratic) {
+      if (civ.operatingPrinciples) {
+        const authFreedomResist = Math.max(0.15, freedom / 100);
+        civ.operatingPrinciples.freedomLevel = Utils.clamp(
+          freedom - authPressure * 0.6 * authFreedomResist * timeScale, 0, 100);
+      }
+      civ.governance.powerConcentration = Utils.clamp(
+        powerConc + authPressure * 0.4 * timeScale, 0, 100);
+    }
+
+    // ── Democratic institutional preservation ──
+    // Consolidated democracies with strong institutions actively maintain
+    // civil liberties through judicial independence, free press, and civil
+    // society (North 1990, Acemoglu & Robinson 2012, Diamond 2008).
+    // This counterbalances oligarchic drift and military erosion — not by
+    // adding freedom, but by resisting its loss.
+    // Democratic institutional preservation: even developing democracies
+    // have institutional mechanisms that resist freedom erosion — judiciary,
+    // civil society, constitutional protections. Stronger at higher IQ
+    // but present at all levels (Brazil's courts resisted Bolsonaro;
+    // India's SC asserted independence under Modi). Continuous scaling
+    // replaces the former IQ>45 threshold that excluded developing democracies.
+    if (isDemocratic && civ.operatingPrinciples) {
+      const isVolFP = civ.governance?.participationModel === 'voluntary';
+      const freeInfoFP = !['state_controlled', 'state_guided', 'total_information_control']
+        .includes(civ.state.informationEcosystem ?? 'free_market_media');
+      const iqContrib = Math.min(0.3, (iq / 100) * 0.3);
+      const instAcctFP = (isVolFP ? 0.4 : 0.0) + (freeInfoFP ? 0.3 : 0.0) + iqContrib;
+      if (instAcctFP > 0.2) {
+        const freedomSupport = 0.2 * instAcctFP * (iq / 100);
+        civ.operatingPrinciples.freedomLevel = Utils.clamp(
+          freedom + freedomSupport * timeScale, 0, 100);
+      }
+    }
+
+    // ── Governance model transitions from accumulated drift ──
+    // When parameters drift far enough from the current model's range,
+    // the governance model itself shifts.
+    const newFreedom = civ.operatingPrinciples?.freedomLevel ?? freedom;
+    const newPowerConc = civ.governance.powerConcentration;
+
+    // Autocratic → representative: when freedom rises and power deconcentrates
+    if (isAuthoritarian && newFreedom > 60 && newPowerConc < 45 && stability > 45) {
+      // Negotiated transition probability — higher when stable (managed transition)
+      const transitionProb = 0.04 * timeScale * (stability / 100);
+      if (Utils.random() < transitionProb) {
+        const prevGov = civ.governance.modelId;
+        civ.governance.modelId = 'representative';
+        if (typeof GOVERNANCE_MODELS !== 'undefined' && GOVERNANCE_MODELS.representative) {
+          civ.governance.model = GOVERNANCE_MODELS.representative;
+        }
+        civ.governance.hierarchyLevel = 45;
+        civ.governance.participationModel = 'voluntary';
+        civ.addHistoryEntry(yr, 'Democratic Transition',
+          `${civ.name} has undergone a negotiated transition from ${prevGov} governance to representative democracy. Rising education, economic development, and popular pressure have made the old system untenable. The transition is managed — not through revolution but through the regime's recognition that repression has become more costly than accommodation.`,
+          'governance');
+        this.game.ui?.showNotification(
+          `${civ.name}: Democratic transition from ${prevGov} to representative democracy`, 'success');
+      }
+    }
+
+    // Representative → autocratic: when freedom drops and power concentrates
+    if (isDemocratic && newFreedom < 30 && newPowerConc > 65 && iq < 50) {
+      const backslideProb = 0.03 * timeScale;
+      if (Utils.random() < backslideProb) {
+        const prevGov = civ.governance.modelId;
+        civ.governance.modelId = 'autocratic';
+        if (typeof GOVERNANCE_MODELS !== 'undefined' && GOVERNANCE_MODELS.autocratic) {
+          civ.governance.model = GOVERNANCE_MODELS.autocratic;
+        }
+        civ.governance.hierarchyLevel = 80;
+        civ.governance.participationModel = 'mandatory';
+        civ.addHistoryEntry(yr, 'Authoritarian Consolidation',
+          `${civ.name}'s democratic institutions have been hollowed out. Power has concentrated to the point where the formal structures of democracy — elections, legislature, judiciary — have become performative. The transition was gradual: each step seemed small, each norm violation precedented by the last. But the cumulative effect is a different regime.`,
+          'governance');
+        this.game.ui?.showNotification(
+          `${civ.name}: Democratic backsliding — ${prevGov} collapsed into autocratic rule`, 'warning');
+      }
+    }
+  }
+
+  // ── Planned Economy Stagnation ──────────────────────────────
+  // Central planning faces inherent information and incentive problems
+  // that worsen as economies grow more complex.
+  // Kornai (1992): soft budget constraint removes discipline.
+  // Hayek (1945): knowledge problem — center cannot aggregate dispersed knowledge.
+  // Berliner (1976): innovation suppression — planning rewards plan fulfillment,
+  // not experimentation. These effects accumulate over decades.
+  _processPlannedEconomyDynamics(civ) {
+    if (!civ.state || !civ.economic) return;
+    if (civ.economic.modelId !== 'planned') return;
+    const timeScale = (this.game.yearsDelta || 10) / 10;
+    const cap = civ.state.stateCapacity ?? 50;
+    const lockin = civ.state.institutionalLockin ?? 50;
+
+    // Track how long the economy has been planned
+    civ.state._plannedEconTurns = (civ.state._plannedEconTurns ?? 0) + 1;
+    const maturity = Math.min(civ.state._plannedEconTurns, 30); // caps at 30 turns (~300 years)
+
+    // 1) Innovation suppression
+    // Planned economies initially can mobilize resources effectively (Soviet
+    // industrialization, Chinese Great Leap's steel output). But innovation
+    // requires decentralized experimentation that planning discourages.
+    // Early turns: minimal effect. After ~5 turns (50 years): significant.
+    if (maturity > 3) {
+      const innovDrag = Math.min(0.6, (maturity - 3) * 0.02);
+      const innov = civ.state.behaviorReinforcement?.innovation ?? 50;
+      if (civ.state.behaviorReinforcement) {
+        civ.state.behaviorReinforcement.innovation = Utils.clamp(
+          innov - innovDrag * timeScale, 0, 100);
+      }
+    }
+
+    // 2) Allocation inefficiency
+    // As the economy grows more complex (more goods, more supply chains),
+    // central planning's information problems compound. Early industrial
+    // planning (steel, cement, power) works; consumer economy planning
+    // (millions of SKUs, preference diversity) doesn't.
+    const techCount = (civ.state.adoptedTechnologies ?? []).length;
+    const complexity = Math.min(1.0, techCount / 20);
+    if (complexity > 0.3 && maturity > 5) {
+      // Infrastructure investment becomes less efficient
+      const inefficiency = (complexity - 0.3) * 0.3 * (maturity / 30);
+      civ.state.infrastructureLevel = Utils.clamp(
+        (civ.state.infrastructureLevel ?? 50) - inefficiency * 0.5 * timeScale, 0, 100);
+      // Wellbeing drags as consumer needs go unmet
+      // (queues, shortages, mismatch between production and demand)
+      civ.state._structuralWellbeing = Utils.clamp(
+        (civ.state._structuralWellbeing ?? 50) - inefficiency * 0.3 * timeScale, 0, 100);
+    }
+
+    // 3) Soft budget constraint (Kornai 1992)
+    // State enterprises face no market discipline. Failing enterprises
+    // are bailed out, not closed. This produces waste accumulation
+    // that drags on overall economic performance.
+    if (maturity > 4) {
+      const wasteAccum = Math.min(0.5, (maturity - 4) * 0.015);
+      // State capacity gradually eroded by managing failing enterprises
+      civ.state.stateCapacity = Utils.clamp(
+        cap - wasteAccum * 0.3 * timeScale, 0, 100);
+    }
+
+    // 4) Ideological rigidity
+    // Planning systems develop ideological justification that becomes
+    // self-reinforcing. Lockin increases, making reform harder.
+    // Epistemic health declines as orthodoxy suppresses dissent.
+    if (maturity > 2) {
+      civ.state.institutionalLockin = Utils.clamp(
+        lockin + 0.3 * timeScale, 0, 100);
+      civ.state.epistemicHealth = Utils.clamp(
+        (civ.state.epistemicHealth ?? 50) - 0.15 * timeScale, 0, 100);
+    }
+
+    // 5) Social trust — complex dynamics
+    // Early planned economy: can boost trust through shared purpose, equality.
+    // Late planned economy: erodes trust through pervasive dishonesty
+    // (everyone pretends the plan works; Yurchak 2005: "everything was forever
+    // until it was no more").
+    if (maturity > 8) {
+      const trustErosion = Math.min(0.4, (maturity - 8) * 0.015);
+      civ.state.socialTrust = Utils.clamp(
+        (civ.state.socialTrust ?? 50) - trustErosion * timeScale, 0, 100);
+    }
+  }
+
+  // ── Developmental State Dynamics ─────────────────────────────
+  // Johnson (1982) "MITI and the Japanese Miracle": pilot agency model
+  // Amsden (1989) "Asia's Next Giant": deliberate distortion of relative prices
+  // Wade (1990) "Governing the Market": selective industrial policy
+  // Evans (1995) "Embedded Autonomy": bureaucratic insulation + state-society ties
+  // Leftwich (2000): determined developmental elite with relative autonomy
+  //
+  // Developmental authoritarianism builds state capacity, institutions,
+  // and human capital through directed investment. Distinguished from
+  // extractive authoritarianism by: low resource rent dependence (forces
+  // productive development), corruption organized rather than predatory
+  // (Shleifer & Vishny 1993), and visible investment in education.
+  //
+  // Anti-corruption pathway distinct from _processAuthoritarianAntiCorruption:
+  // that function requires pre-existing IQ >= 45 (Singapore-style).
+  // This function captures how developmental states BUILD IQ through
+  // anti-corruption enforcement (Rwanda, early S. Korea) — the mechanism
+  // works at lower IQ but slower rate, creating a positive feedback loop
+  // where anti-corruption → higher IQ → more effective enforcement.
+  _processDevelopmentalStateDynamics(civ) {
+    const s = civ.state;
+    const gov = civ.governance;
+    if (!s || !gov) return;
+
+    const timeScale = (this.game.yearsDelta || 10) / 10;
+    const powerConc = gov.powerConcentration ?? 50;
+    const corr = s.corruptionLevel ?? 0;
+    const cap = s.stateCapacity ?? 50;
+    const edu = s.educationQuality ?? 50;
+    const iq = s.institutionalQuality ?? 50;
+    const resRent = (s.resourceRentDependence ?? 0) / 100;
+    const lockin = s.institutionalLockin ?? 30;
+
+    // Hard prerequisites: concentrated authority, hierarchical organization,
+    // and some minimal capacity. PowerConc alone is insufficient — oligarchic
+    // capture in democracies (Brazil, India) raises powerConc through wealth
+    // concentration, not developmental coordination. Genuine developmental
+    // states have BOTH concentrated power AND hierarchical organization
+    // (Johnson 1982, Evans 1995). The hierarchy check (>= 0.55) matches
+    // the isDevelopmental gate in _processStateCapacity.
+    const hier = (gov.hierarchyLevel ?? 50) / 100;
+    if (powerConc < 60) return;
+    if (hier < 0.55) return;
+    if (cap < 10) return;
+
+    // Core discriminator: extractive vs developmental (Evans 1995 spectrum)
+    // Corruption amplified by resource rents = extraction (Ross 2012)
+    // Corruption without resource rents = organized graft compatible
+    // with capacity building (Shleifer & Vishny 1993 QJE)
+    const extractiveCorr = corr * (0.3 + 0.7 * resRent);
+
+    // Developmental intensity: soft threshold at extractiveCorr=40
+    // Russia (extractiveCorr~41) → 0, blocked
+    // S. Korea (extractiveCorr~19.5) → ~0.43
+    // Rwanda (extractiveCorr~21) → ~0.48
+    const devIntensity = Math.max(0, 1 - extractiveCorr / 40) *
+                         Math.min(1, (powerConc - 55) / 25);
+    if (devIntensity < 0.1) return;
+
+    // 1. State capacity building: meritocratic recruitment, training,
+    // bureaucratic discipline. Diminishing returns at higher levels.
+    // Calibration: S.Korea WGI +3.7/decade (1960-1990), scaled to 0-100
+    // ≈ +15/decade at peak. Singapore similar. Rwanda +12/decade post-1994.
+    // Moderate rate: works with the corruption ceiling boost and corrGate
+    // relaxation in _processStateCapacity to achieve the target trajectory.
+    // Calibrated to WGI trajectories: S.Korea +3.7/decade (1960-1990),
+    // Rwanda +1.5/decade post-1994. Combined with the corrGate relaxation
+    // and ceiling boost in _processStateCapacity, this produces realistic
+    // capacity building trajectories for developmental states.
+    const capGrowth = devIntensity * 2.0 * timeScale * (1 - cap / 100);
+    s.stateCapacity = Utils.clamp(cap + capGrowth, 0, 100);
+
+    // 2. Institutional quality: rule enforcement, contract enforcement.
+    const iqGrowth = devIntensity * 0.8 * timeScale * (1 - iq / 100);
+    s.institutionalQuality = Utils.clamp(iq + iqGrowth, 0, 100);
+
+    // 3. Anti-corruption: the binding constraint on developmental state
+    // capacity building. Corruption sets the capacity ceiling, so
+    // anti-corruption is the unlock for the positive feedback loop.
+    // S.Korea CPI: ~30→55 over 30 years (1970-2000) = -8 pts/decade
+    // on 100-CPI scale. Rwanda: ~25→54 over 20 years = -14.5 pts/decade.
+    if (devIntensity > 0.2 && corr > 15) {
+      const freedom = civ.operatingPrinciples?.freedomLevel ?? 50;
+      const devCorrFloor = Math.max(15, 40 - freedom * 0.3);
+      if (corr > devCorrFloor) {
+        const lockinDamp = 1 - lockin / 150;
+        const antiCorrRate = devIntensity * 7.0 * (corr / 100) * lockinDamp * timeScale;
+        const newCorr = Utils.clamp(corr - antiCorrRate, devCorrFloor, 100);
+        s.corruptionLevel = newCorr;
+        if (gov) gov.corruptionLevel = newCorr;
+      }
+    }
+
+    // 4. Education: mass education investment — empirically robust pattern
+    // across all developmental states (UNESCO, World Bank EdStats).
+    const eduGrowth = devIntensity * 0.4 * timeScale * (1 - edu / 100);
+    s.educationQuality = Utils.clamp(edu + eduGrowth, 0, 100);
+
+    // 5. Trade-off: institutional lockin increases — the developmental
+    // state creates constituencies that resist later reform (chaebol,
+    // state enterprises, party apparatus). Path dependency is the
+    // structural cost of directed development.
+    s.institutionalLockin = Utils.clamp(lockin + devIntensity * 0.15 * timeScale, 0, 100);
+  }
+
+  // ── Authoritarian Anti-Corruption Pathway ───────────────────
+  // Not all anti-corruption requires democratic accountability.
+  // Singapore (Lee Kuan Yew's CPIB), Rwanda (RPF's imihigo system),
+  // China (CCDI campaigns), Botswana (DCEC): authoritarian or
+  // semi-authoritarian regimes that achieved significant corruption
+  // reduction through top-down enforcement.
+  // Mechanism: concentrated power + high state capacity + regime
+  // survival interest in clean governance (developmental authoritarianism).
+  // Distinct from accountability-based anti-corruption: enforcement is
+  // selective (can be used for purges) and depends on leader commitment
+  // rather than institutional structure.
+  // Added to the existing corruption processing via this flag.
+  _processAuthoritarianAntiCorruption(civ) {
+    if (!civ.state || !civ.governance) return;
+    const timeScale = (this.game.yearsDelta || 10) / 10;
+    const powerConc = civ.governance.powerConcentration ?? 50;
+    const cap = civ.state.stateCapacity ?? 50;
+    const corr = civ.governance.corruptionLevel ?? 30;
+    const hier = civ.governance.hierarchyLevel ?? 50;
+    const iq = civ.state.institutionalQuality ?? 40;
+    const freedom = civ.operatingPrinciples?.freedomLevel ?? 50;
+
+    // Only applies to authoritarian/high-power-concentration regimes
+    // with sufficient state capacity to enforce
+    if (powerConc < 60 || cap < 40) return;
+    // Already low corruption — no need
+    if (corr < 20) return;
+    // Democracies use accountability-based channels (already modeled)
+    if (freedom > 55) return;
+
+    // Developmental authoritarianism requires BOTH concentrated power AND
+    // genuine institutional investment. The distinguishing feature is IQ:
+    // Singapore (IQ~85), Rwanda (IQ~55+), Botswana (IQ~60) — these regimes
+    // built meritocratic bureaucracies. Russia (IQ~35), Turkmenistan (IQ~15),
+    // Equatorial Guinea (IQ~10) — these extract through patronage.
+    // The ratio IQ/freedom helps but an absolute IQ threshold is needed:
+    // no regime with IQ<45 has achieved systematic anti-corruption without
+    // accountability structures.
+    if (iq < 45) return;
+    const devScore = iq / Math.max(20, freedom);
+    if (devScore < 0.8) return;
+
+    // Anti-corruption enforcement rate
+    // Scales with state capacity (enforcement ability) and dev score (commitment)
+    const enforcementRate = (cap / 100) * Math.min(devScore, 2.0) * 0.15;
+
+    // Apply: corruption decays faster under developmental authoritarianism
+    // But with a floor — even Singapore has some corruption (~4/100 on TI)
+    // Authoritarian anti-corruption is effective but not unlimited
+    const authCorrFloor = 15; // can't get below this without accountability structures
+    if (corr > authCorrFloor) {
+      const decay = Math.min(corr - authCorrFloor,
+        enforcementRate * (corr - authCorrFloor) / 50 * timeScale);
+      civ.governance.corruptionLevel = Utils.clamp(corr - decay, authCorrFloor, 100);
     }
   }
 

@@ -65,13 +65,13 @@ class NPC {
     // Marriage: more likely in older NPCs, formal marriage more common in hierarchical civs
     const marriageChance = age < 22 ? 0.10 : age < 30 ? 0.40 : age < 50 ? 0.70 : 0.60;
     const formalMarriage = govId === 'theocratic' || govId === 'autocratic' || govId === 'oligarchy' || govId === 'representative';
-    const isMarried  = Math.random() < (formalMarriage ? marriageChance : marriageChance * 0.7);
-    const hasPartner = !isMarried && Math.random() < (isMarried ? 0 : (age > 22 ? 0.35 : 0.15));
+    const isMarried  = Utils.random() < (formalMarriage ? marriageChance : marriageChance * 0.7);
+    const hasPartner = !isMarried && Utils.random() < (isMarried ? 0 : (age > 22 ? 0.35 : 0.15));
 
     // Children: must be at least 18 years older than youngest child; more in cooperative / high-collectivism civs
     const baseFertility = econId === 'gift' || econId === 'commons' ? 0.55 : 0.45;
     const canHaveKids   = age >= 22 && (isMarried || hasPartner || age > 30);
-    const hasKids       = canHaveKids && Math.random() < (baseFertility + (collectivism - 50) / 200);
+    const hasKids       = canHaveKids && Utils.random() < (baseFertility + (collectivism - 50) / 200);
     const numChildren   = hasKids ? Utils.rand(1, age > 45 ? 5 : 3) : 0;
 
     // Health: correlated with happiness and wellbeing; worse in marginalized
@@ -144,11 +144,25 @@ class NPC {
 
   _computeHappiness(civ) {
     let happiness = civ.state ? civ.state.averageWellbeing : 50;
-    // Richer NPCs tend to be happier in acquisitive societies
-    if (civ.economic.scarcityOrientation > 60) {
+
+    // Bridge companion strata satisfaction to individual happiness.
+    // When the companion module has computed strata-level satisfaction,
+    // the NPC's happiness reflects their stratum's conditions rather
+    // than the civ average — connecting the micro-foundation analysis
+    // to the individual agent experience.
+    const strata = civ.state?.companion?.strataSatisfaction;
+    if (strata) {
+      const strataMap = {
+        leader: strata.elite, elite: strata.elite,
+        professional: strata.upperMiddle,
+        laborer: strata.working,
+        marginalized: strata.disenfranchised,
+      };
+      const strataSat = strataMap[this.socialPosition] ?? strata.lowerMiddle;
+      happiness = (happiness * 0.4 + strataSat * 0.6);
+    } else if (civ.economic.scarcityOrientation > 60) {
       happiness += (this.economicStatus - 50) * 0.3;
     } else {
-      // In egalitarian societies, happiness is more evenly distributed
       happiness += Utils.randFloat(-10, 10);
     }
     return Utils.clamp(happiness + Utils.randFloat(-8, 8), 5, 95);
@@ -161,7 +175,7 @@ class NPC {
       return Utils.randChoice(rel.religions).name || 'The Faith';
     }
     if (rel.presence === 'animist') return 'Animist Tradition';
-    if (rel.presence === 'dominant') return Math.random() < 0.8 ? 'The Dominant Faith' : 'Minority Faith';
+    if (rel.presence === 'dominant') return Utils.random() < 0.8 ? 'The Dominant Faith' : 'Minority Faith';
     if (rel.presence === 'theocratic') return 'The State Religion';
     if (rel.presence === 'plurality') return `Faith ${Utils.rand(1, 4)}`;
     return null;
@@ -650,6 +664,8 @@ CIVILIZATION CONTEXT:
 - Dominant behaviors reinforced by society: ${civ.state.dominantBehaviors.join(', ')}
 - Average wellbeing index: ${Math.round(civ.state.averageWellbeing)}/100
 - Equality index: ${Math.round(civ.state.equalityIndex)}/100
+- Social trust: ${Math.round(civ.state.socialTrust ?? 50)}/100
+- Corruption level: ${Math.round(civ.state.corruptionLevel ?? 0)}/100${civ.state.companion?.massGrievance > 30 ? `\n- Population grievance level: ${Math.round(civ.state.companion.massGrievance)}/100` : ''}
 
 YOUR CHARACTER:
 - Social position: ${npc.socialPosition}
@@ -800,10 +816,10 @@ ${npc.name}:`;
       (/\b(crop|harvest|food|winter|drought|famine|starv|freeze|enough to eat)\b/.test(q) && techLevel <= 7);
 
     // Priority: distress > gratitude > pride > anxiety
-    if (distress  && Math.random() < 0.55) return 'distress';
-    if (gratitude && Math.random() < 0.48) return 'gratitude';
-    if (pride     && Math.random() < 0.48) return 'pride';
-    if (anxiety   && Math.random() < 0.48) return 'anxiety';
+    if (distress  && Utils.random() < 0.55) return 'distress';
+    if (gratitude && Utils.random() < 0.48) return 'gratitude';
+    if (pride     && Utils.random() < 0.48) return 'pride';
+    if (anxiety   && Utils.random() < 0.48) return 'anxiety';
     return null;
   },
 
@@ -905,7 +921,7 @@ ${npc.name}:`;
     // Era speech flavor — prepended occasionally for early eras to give period texture
     const eraFlavorPrefix = () => {
       if (techLevel > 6) return '';   // modern+ speech needs no prefix
-      const roll = Math.random();
+      const roll = Utils.random();
       if (roll > 0.30) return '';     // only apply 30% of the time
       if (techLevel <= 2) return Utils.randChoice([
         'In the way our ancestors have always known — ',
@@ -954,7 +970,7 @@ ${npc.name}:`;
     const religTerm = npc.religiousAffiliation ? this._getReligiousTerm(npc, civ) : null;
     const religiousIntents = new Set(['how_are_you', 'happiness', 'daily_life', 'mortality', 'health', 'future', 'conditions', 'challenges', 'family', 'desires']);
     const maybeAddReligion = (response) => {
-      if (!religTerm || !religiousIntents.has(intent) || Math.random() > 0.22) return response;
+      if (!religTerm || !religiousIntents.has(intent) || Utils.random() > 0.22) return response;
       const refs = [
         ` — thanks be to ${religTerm}.`,
         ` I draw a great deal of strength from ${religTerm}.`,
@@ -1144,7 +1160,7 @@ ${npc.name}:`;
         const hasPersonalLoss = npc.lifeEvents.some(e => /died|death|lost|widow|passed|gone/i.test(e));
         // Distress — personal grief, variable intensity
         if (hasPersonalLoss && emotionalTone === 'distress') {
-          const intensity = Math.random();
+          const intensity = Utils.random();
           if (intensity < 0.35) return pick([
             // Soft: reluctance
             `That's... not easy for me to talk about. I've lost people. I'd rather leave it there, if you don't mind.`,
@@ -1303,7 +1319,7 @@ ${npc.name}:`;
 
         // ── Emotional overlay ──
         if (emotionalTone === 'distress' && hs === 'poor') {
-          const intensity = Math.random();
+          const intensity = Utils.random();
           if (intensity < 0.30) return pick([
             // Soft — reluctance
             `It's not something I like to talk about. I'm not well. Leave it at that.`,
@@ -1591,7 +1607,7 @@ ${npc.name}:`;
           `The way things are run here — I actually approve of it. I know not everyone agrees, and I've heard the criticisms. But I think the people in charge are trying, and largely succeeding.`,
         ]);
         if (emotionalTone === 'distress') {
-          const intensity = Math.random();
+          const intensity = Utils.random();
           if (intensity < 0.30 && pos === 'marginalized') return pick([
             `I'd rather not say what I actually think about the governance here. Not in a way that gets back to anyone.`,
             `Governance is... not a subject I'm comfortable discussing. Let's leave it at that.`,
@@ -1896,7 +1912,7 @@ ${npc.name}:`;
           `What I'd defend before anything else about this place is the community itself. The people. The way we've learned to live together. I'm proud that we've managed it.`,
         ]);
         if (emotionalTone === 'distress' && pos === 'marginalized') {
-          const intensity = Math.random();
+          const intensity = Utils.random();
           if (intensity < 0.35) return pick([
             `I'd rather not say too much. It's complicated when you're in my position.`,
             `Community is a word that means different things depending on where you stand in it.`,
@@ -1954,7 +1970,7 @@ ${npc.name}:`;
         ]));
         // ── Emotional overlay ──
         if (emotionalTone === 'anxiety') {
-          const intensity = Math.random();
+          const intensity = Utils.random();
           if (intensity < 0.30) return pick([
             `I try not to think about it too much. When I do, I get anxious. Better to focus on what's in front of me.`,
             `The future keeps me up at night sometimes. I'd rather not say more than that.`,
@@ -2051,7 +2067,7 @@ ${npc.name}:`;
         ]);
         // ── Emotional overlay ──
         if (emotionalTone === 'distress') {
-          const intensity = Math.random();
+          const intensity = Utils.random();
           if (intensity < 0.30) return pick([
             `Things aren't good right now. I'd rather not get into it, but since you asked — they're not good.`,
             `Difficult. I don't have the energy to give you the full picture right now.`,
@@ -3814,7 +3830,7 @@ ${npc.name}:`;
             ];
 
         // 40% chance of position-specific deflection when available
-        const usePositionSpecific = posDeflections && Math.random() < 0.40;
+        const usePositionSpecific = posDeflections && Utils.random() < 0.40;
         const pool = usePositionSpecific ? posDeflections : genericDeflections;
         return Utils.randChoice(pool);
       }

@@ -1,0 +1,503 @@
+{
+  "seeds": [
+    1001,
+    2002,
+    3003,
+    4004,
+    5005
+  ],
+  "results": {
+    "denmark": {
+      "full": {
+        "socialTrust": {
+          "mean": 73.2,
+          "stddev": 0.4,
+          "errorFromTarget": -0.8
+        },
+        "wealthConcentration": {
+          "mean": 31.6,
+          "stddev": 1.2,
+          "errorFromTarget": 3.6
+        },
+        "corruption": {
+          "mean": 11.6,
+          "stddev": 0.5,
+          "errorFromTarget": -0.4
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 69.2,
+          "stddev": 0.4,
+          "errorFromTarget": -4.8
+        },
+        "wealthConcentration": {
+          "mean": 33.4,
+          "stddev": 1.2,
+          "errorFromTarget": 5.4
+        },
+        "corruption": {
+          "mean": 12.4,
+          "stddev": 0.5,
+          "errorFromTarget": 0.4
+        }
+      },
+      "targets": {
+        "socialTrust": 74,
+        "wealthConcentration": 28,
+        "corruption": 12
+      }
+    },
+    "usa": {
+      "full": {
+        "socialTrust": {
+          "mean": 28.6,
+          "stddev": 3.3,
+          "errorFromTarget": -8.4
+        },
+        "wealthConcentration": {
+          "mean": 69.4,
+          "stddev": 1.2,
+          "errorFromTarget": -8.6
+        },
+        "corruption": {
+          "mean": 31.8,
+          "stddev": 0.4,
+          "errorFromTarget": 4.8
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 28.2,
+          "stddev": 3.1,
+          "errorFromTarget": -8.8
+        },
+        "wealthConcentration": {
+          "mean": 69.6,
+          "stddev": 2,
+          "errorFromTarget": -8.4
+        },
+        "corruption": {
+          "mean": 32.2,
+          "stddev": 0.7,
+          "errorFromTarget": 5.2
+        }
+      },
+      "targets": {
+        "socialTrust": 37,
+        "wealthConcentration": 78,
+        "corruption": 27
+      }
+    },
+    "china": {
+      "full": {
+        "socialTrust": {
+          "mean": 62,
+          "stddev": 0,
+          "errorFromTarget": -2
+        },
+        "wealthConcentration": {
+          "mean": 51.8,
+          "stddev": 0.4,
+          "errorFromTarget": -3.2
+        },
+        "corruption": {
+          "mean": 39,
+          "stddev": 0,
+          "errorFromTarget": 0
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 58.4,
+          "stddev": 0.5,
+          "errorFromTarget": -5.6
+        },
+        "wealthConcentration": {
+          "mean": 51.2,
+          "stddev": 1,
+          "errorFromTarget": -3.8
+        },
+        "corruption": {
+          "mean": 40,
+          "stddev": 0,
+          "errorFromTarget": 1
+        }
+      },
+      "targets": {
+        "socialTrust": 64,
+        "wealthConcentration": 55,
+        "corruption": 39
+      }
+    },
+    "nigeria": {
+      "full": {
+        "socialTrust": {
+          "mean": 6.6,
+          "stddev": 2,
+          "errorFromTarget": -8.4
+        },
+        "wealthConcentration": {
+          "mean": 74.2,
+          "stddev": 8.8,
+          "errorFromTarget": 7.2
+        },
+        "corruption": {
+          "mean": 67.6,
+          "stddev": 4.8,
+          "errorFromTarget": -6.4
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 29.2,
+          "stddev": 2.7,
+          "errorFromTarget": 14.2
+        },
+        "wealthConcentration": {
+          "mean": 51.6,
+          "stddev": 1.4,
+          "errorFromTarget": -15.4
+        },
+        "corruption": {
+          "mean": 20.2,
+          "stddev": 1.6,
+          "errorFromTarget": -53.8
+        }
+      },
+      "targets": {
+        "socialTrust": 15,
+        "wealthConcentration": 67,
+        "corruption": 74
+      }
+    },
+    "saudi": {
+      "full": {
+        "socialTrust": {
+          "mean": 39.6,
+          "stddev": 3.1,
+          "errorFromTarget": -13.4
+        },
+        "wealthConcentration": {
+          "mean": 61,
+          "stddev": 2.3,
+          "errorFromTarget": -4
+        },
+        "corruption": {
+          "mean": 54,
+          "stddev": 0,
+          "errorFromTarget": 1
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 57.4,
+          "stddev": 4.7,
+          "errorFromTarget": 4.4
+        },
+        "wealthConcentration": {
+          "mean": 59.8,
+          "stddev": 0.7,
+          "errorFromTarget": -5.2
+        },
+        "corruption": {
+          "mean": 36.4,
+          "stddev": 1.7,
+          "errorFromTarget": -16.6
+        }
+      },
+      "targets": {
+        "socialTrust": 53,
+        "wealthConcentration": 65,
+        "corruption": 53
+      }
+    },
+    "singapore": {
+      "full": {
+        "socialTrust": {
+          "mean": 59.2,
+          "stddev": 0.4,
+          "errorFromTarget": 21.2
+        },
+        "wealthConcentration": {
+          "mean": 52.8,
+          "stddev": 0.4,
+          "errorFromTarget": 7.8
+        },
+        "corruption": {
+          "mean": 26.2,
+          "stddev": 0.4,
+          "errorFromTarget": 22.2
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 57,
+          "stddev": 0,
+          "errorFromTarget": 19
+        },
+        "wealthConcentration": {
+          "mean": 52.6,
+          "stddev": 0.8,
+          "errorFromTarget": 7.6
+        },
+        "corruption": {
+          "mean": 27,
+          "stddev": 0,
+          "errorFromTarget": 23
+        }
+      },
+      "targets": {
+        "socialTrust": 38,
+        "wealthConcentration": 45,
+        "corruption": 4
+      }
+    },
+    "brazil": {
+      "full": {
+        "socialTrust": {
+          "mean": 11.6,
+          "stddev": 2.2,
+          "errorFromTarget": 4.6
+        },
+        "wealthConcentration": {
+          "mean": 74.8,
+          "stddev": 5.9,
+          "errorFromTarget": -14.2
+        },
+        "corruption": {
+          "mean": 37,
+          "stddev": 2.2,
+          "errorFromTarget": -25
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 25,
+          "stddev": 1.8,
+          "errorFromTarget": 18
+        },
+        "wealthConcentration": {
+          "mean": 64.6,
+          "stddev": 1.7,
+          "errorFromTarget": -24.4
+        },
+        "corruption": {
+          "mean": 31.6,
+          "stddev": 1.6,
+          "errorFromTarget": -30.4
+        }
+      },
+      "targets": {
+        "socialTrust": 7,
+        "wealthConcentration": 89,
+        "corruption": 62
+      }
+    },
+    "russia": {
+      "full": {
+        "socialTrust": {
+          "mean": 13,
+          "stddev": 3,
+          "errorFromTarget": -15
+        },
+        "wealthConcentration": {
+          "mean": 75.6,
+          "stddev": 3.1,
+          "errorFromTarget": -2.4
+        },
+        "corruption": {
+          "mean": 72.6,
+          "stddev": 1.5,
+          "errorFromTarget": -0.4
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 54,
+          "stddev": 0.6,
+          "errorFromTarget": 26
+        },
+        "wealthConcentration": {
+          "mean": 58.4,
+          "stddev": 0.8,
+          "errorFromTarget": -19.6
+        },
+        "corruption": {
+          "mean": 39.6,
+          "stddev": 0.8,
+          "errorFromTarget": -33.4
+        }
+      },
+      "targets": {
+        "socialTrust": 28,
+        "wealthConcentration": 78,
+        "corruption": 73
+      }
+    },
+    "japan": {
+      "full": {
+        "socialTrust": {
+          "mean": 43.8,
+          "stddev": 1.6,
+          "errorFromTarget": 7.8
+        },
+        "wealthConcentration": {
+          "mean": 32.8,
+          "stddev": 0.4,
+          "errorFromTarget": -15.2
+        },
+        "corruption": {
+          "mean": 15,
+          "stddev": 0,
+          "errorFromTarget": -12
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 29.8,
+          "stddev": 0.7,
+          "errorFromTarget": -6.2
+        },
+        "wealthConcentration": {
+          "mean": 38.8,
+          "stddev": 1.2,
+          "errorFromTarget": -9.2
+        },
+        "corruption": {
+          "mean": 20,
+          "stddev": 0,
+          "errorFromTarget": -7
+        }
+      },
+      "targets": {
+        "socialTrust": 36,
+        "wealthConcentration": 48,
+        "corruption": 27
+      }
+    },
+    "germany": {
+      "full": {
+        "socialTrust": {
+          "mean": 74,
+          "stddev": 0,
+          "errorFromTarget": 30
+        },
+        "wealthConcentration": {
+          "mean": 33.6,
+          "stddev": 0.5,
+          "errorFromTarget": -21.4
+        },
+        "corruption": {
+          "mean": 8,
+          "stddev": 0,
+          "errorFromTarget": -14
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 65.6,
+          "stddev": 0.5,
+          "errorFromTarget": 21.6
+        },
+        "wealthConcentration": {
+          "mean": 38.6,
+          "stddev": 1.4,
+          "errorFromTarget": -16.4
+        },
+        "corruption": {
+          "mean": 13,
+          "stddev": 0,
+          "errorFromTarget": -9
+        }
+      },
+      "targets": {
+        "socialTrust": 44,
+        "wealthConcentration": 55,
+        "corruption": 22
+      }
+    },
+    "india": {
+      "full": {
+        "socialTrust": {
+          "mean": 11.8,
+          "stddev": 0.7,
+          "errorFromTarget": -9.2
+        },
+        "wealthConcentration": {
+          "mean": 59.8,
+          "stddev": 1.8,
+          "errorFromTarget": -15.2
+        },
+        "corruption": {
+          "mean": 35.8,
+          "stddev": 0.4,
+          "errorFromTarget": -25.2
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 16,
+          "stddev": 3.6,
+          "errorFromTarget": -5
+        },
+        "wealthConcentration": {
+          "mean": 53.2,
+          "stddev": 1.5,
+          "errorFromTarget": -21.8
+        },
+        "corruption": {
+          "mean": 30.8,
+          "stddev": 1.2,
+          "errorFromTarget": -30.2
+        }
+      },
+      "targets": {
+        "socialTrust": 21,
+        "wealthConcentration": 75,
+        "corruption": 61
+      }
+    },
+    "south_korea": {
+      "full": {
+        "socialTrust": {
+          "mean": 48.2,
+          "stddev": 0.4,
+          "errorFromTarget": 18.2
+        },
+        "wealthConcentration": {
+          "mean": 37.2,
+          "stddev": 1.6,
+          "errorFromTarget": -17.8
+        },
+        "corruption": {
+          "mean": 13.2,
+          "stddev": 0.4,
+          "errorFromTarget": -23.8
+        }
+      },
+      "stripped": {
+        "socialTrust": {
+          "mean": 29.8,
+          "stddev": 6.9,
+          "errorFromTarget": -0.2
+        },
+        "wealthConcentration": {
+          "mean": 44.2,
+          "stddev": 1.2,
+          "errorFromTarget": -10.8
+        },
+        "corruption": {
+          "mean": 22.6,
+          "stddev": 1,
+          "errorFromTarget": -14.4
+        }
+      },
+      "targets": {
+        "socialTrust": 30,
+        "wealthConcentration": 55,
+        "corruption": 37
+      }
+    }
+  }
+}

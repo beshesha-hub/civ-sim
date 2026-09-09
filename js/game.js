@@ -229,6 +229,15 @@ class Game {
     this.sustainabilityPanel = new SustainabilityPanel(this);
     this.paradigmShiftsPanel = new ParadigmShiftsPanel(this);
 
+    // ── Companion Module ─────────────────────────────────────
+    if (typeof CompanionModule !== 'undefined') {
+      this.companion = new CompanionModule(this);
+      for (const civ of this.civilizations) {
+        this.companion.initializeCiv(civ, setupData);
+      }
+      this.companionPanel = new CompanionPanel(this);
+    }
+
     // ── Callbacks ─────────────────────────────────────────────
     this.onEraTransition = (era) => {
       this.ui.showNotification(`🌅 New Era: ${era.label}`);
@@ -388,6 +397,15 @@ class Game {
       };
     }
 
+    // ── Companion Module Panel ─────────────────────────────────
+    const companionBtn = Utils.el('btn-companion');
+    if (companionBtn && this.companionPanel) {
+      companionBtn.onclick = () => {
+        this.companionPanel.toggle();
+        companionBtn.classList.toggle('btn-map-active', this.companionPanel.visible);
+      };
+    }
+
     // Map view toggle (⬡ Hex ↔ 🗺️ Map)
     const mapViewBtn = Utils.el('btn-map-view');
     if (mapViewBtn) {
@@ -440,6 +458,10 @@ class Game {
         const btn = Utils.el('btn-paradigm');
         if (btn) btn.click();
       }
+      if (e.key === 'C') { // Shift+C — Companion Module panel
+        const btn = Utils.el('btn-companion');
+        if (btn) btn.click();
+      }
     });
 
     // Resize handler
@@ -489,6 +511,7 @@ class Game {
     if (this.turnCount % 10 === 0) this.saveGame();
 
     this.ui.renderHUD();
+    if (this.companionPanel?.visible) this.companionPanel.render();
   }
 
   toggleAutoPlay() {
@@ -838,6 +861,63 @@ class Game {
     const a    = document.createElement('a');
     a.href     = url;
     a.download = `scenario-${sc.name.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Trajectory Export ────────────────────────────────────────
+  exportTrajectoryJSON(civId) {
+    const civ = civId ? this.civilizations.find(c => c.id === civId) : this.civilizations[0];
+    if (!civ) return;
+    const analysis = this.simulation.getTrajectoryAnalysis(civ);
+    if (!analysis) return;
+    analysis.exportedAt = new Date().toISOString();
+    analysis.simulatorVersion = 'civ-sim-1.0';
+
+    const json = JSON.stringify(analysis, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `trajectory-${civ.name.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  exportTrajectoryCSV(civId) {
+    const civ = civId ? this.civilizations.find(c => c.id === civId) : this.civilizations[0];
+    if (!civ?.state?._trajectory) return;
+    const traj = civ.state._trajectory;
+    if (traj.length === 0) return;
+
+    const keys = Object.keys(traj[0]).filter(k => !k.startsWith('_'));
+    const header = keys.join(',');
+    const rows = traj.map(snap => keys.map(k => {
+      const v = snap[k];
+      return typeof v === 'string' ? `"${v}"` : (v ?? '');
+    }).join(','));
+
+    const csv = [header, ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `trajectory-${civ.name.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  exportNarrative(civId, mode = 'narrative') {
+    const civ = civId ? this.civilizations.find(c => c.id === civId) : this.civilizations[0];
+    if (!civ) return;
+    const text = this.ui?._generateDeepNarrative(civ, mode);
+    if (!text) return;
+
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `${mode}-${civ.name.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   }

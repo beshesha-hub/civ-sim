@@ -1,5 +1,7 @@
 # Missing Simulation Factors — Consolidated Recommendations
-## Researched March 14, 2026
+## Researched March 14, 2026 | Implementation status updated September 2026
+
+> **Status key**: IMPLEMENTED = fully built and validated, PARTIAL = mechanism exists but not all aspects modeled, OPEN = not yet implemented.
 
 Full research details in companion files:
 - `governance-dynamics-research.md`
@@ -10,37 +12,37 @@ Full research details in companion files:
 
 ## TIER 1 — Highest Impact, Should Implement
 
-### 1. State Capacity (distinct from Institutional Quality)
+### 1. State Capacity (distinct from Institutional Quality) — IMPLEMENTED (Pass 7)
 **Gap**: We conflate institutional design quality with implementation capability. A state can have good institutions on paper but no ability to enforce them.
 **Evidence**: Hanson & Sigman (2021) identify three dimensions: fiscal (tax collection), administrative (policy implementation), coercive (territorial control). 1-SD increase predicts 6-7% higher income per person (Vu 2025). Critical interaction: democracy + low state capacity = growth, autocracy + high state capacity = growth, but autocracy + low state capacity = stagnation (Knutsen 2013).
 **Parameters**: `stateCapacity` (0-100) with sub-dimensions (fiscal, administrative, coercive). Develops slowly through bureaucratic professionalization; decays through corruption feedback loops matching Ibn Khaldun's ~120-year dynastic cycle.
 **Why it matters**: Without this, the simulation cannot explain why some autocracies outperform some democracies, or why some democracies fail to deliver basic services.
 
-### 2. Social Trust
+### 2. Social Trust — IMPLEMENTED (Pass 7)
 **Gap**: We model cooperation but not generalized trust — the willingness to trust strangers and institutions.
 **Evidence**: Knack & Keefer (1997): 10-point rise in interpersonal trust = 0.8pp higher growth. Trust is self-reinforcing in both directions. Corruption is the strongest trust destroyer. Trust interacts with nearly every other system. World Values Survey provides cross-national data across decades.
 **Parameters**: `socialTrust` (0-100), split into interpersonal trust and institutional trust. Erodes through corruption, inequality, broken promises; builds through consistent institutional performance, civil society activity.
 **Why it matters**: Trust is the hidden variable that determines whether institutions actually function. Low trust + good institutions = institutions ignored. High trust + mediocre institutions = society self-corrects.
 
-### 3. Energy Systems / EROI
+### 3. Energy Systems / EROI — IMPLEMENTED (Pass 10)
 **Gap**: No energy source tracking. Technology advances without energy constraints.
 **Evidence**: Hall's research: minimum EROI of ~10-15:1 needed for industrial societies. Below ~5:1, the "energy cliff" creates nonlinear collapse in surplus energy. Historical EROIs: ~1.1 (medieval agriculture) to ~100:1 (peak oil). Current fossil fuels at finished-fuel stage ~6:1 and declining (Brockway et al., 2019, Nature Energy).
 **Parameters**: `energySource` (wood/animal/coal/oil/nuclear/renewable), `eroi` (computed from source + tech level), `energySurplus` (determines complexity ceiling). Energy transitions cause social disruption.
 **Why it matters**: Energy is the fundamental ceiling on civilizational complexity. Without it, societies can advance indefinitely with no resource constraint — unrealistic.
 
-### 4. Carrying Capacity and Ecological Overshoot
+### 4. Carrying Capacity and Ecological Overshoot — IMPLEMENTED (Pass 6, enhanced Pass 10)
 **Gap**: We track sustainability metrics but don't model the overshoot-and-collapse dynamic.
 **Evidence**: HANDY model (Motesharrei et al., 2014): collapse depends on ecological strain AND economic stratification. Tainter (1988): societies add complexity with declining marginal returns until maintenance costs exceed benefits. Historical collapses: Easter Island, Maya, Mesopotamia.
 **Parameters**: `ecologicalCapacity` (can be temporarily exceeded), `complexityCost` (rising with civilization size/tech), `overshootRatio` (current demand / sustainable capacity). When overshootRatio > 1 for extended period, cascading failures begin.
 **Why it matters**: Creates the most important macro-dynamic missing from the simulation — the possibility of civilizational decline and collapse through internal overextension, not just external shock.
 
-### 5. Social Mobility (perceived vs actual)
+### 5. Social Mobility (perceived vs actual) — IMPLEMENTED (Pass 11, via companion strata)
 **Gap**: We track equality but not mobility — whether individuals can move between strata.
 **Evidence**: Great Gatsby Curve (Corak 2006, Krueger 2012): tight link between inequality and intergenerational persistence. Chetty's research identifies key drivers: segregation, schools, social capital, family stability. Americans consistently overestimate mobility — the perception gap delays unrest but builds cynicism when exposed.
 **Parameters**: `actualMobility` (0-100, computed from education, equality, institutional quality), `perceivedMobility` (can diverge from actual). High perceived + low actual = cynicism buildup. Low perceived = revolutionary pressure even if actual mobility is moderate.
 **Why it matters**: Mobility is what makes inequality tolerable or intolerable. Two societies with identical Gini coefficients can have completely different stability profiles depending on mobility.
 
-### 6. Infrastructure
+### 6. Infrastructure — IMPLEMENTED (Pass 6)
 **Gap**: No infrastructure tracking despite massive empirical effects.
 **Evidence**: Output elasticity of public capital 0.07-0.20 (meta-analyses). The maintenance trap (deferred maintenance accumulating as infrastructure debt) creates fiscal feedback loops documented from Roman Empire to modern America. Roman road effects measurable 2000+ years later (De Benedictis et al., 2023).
 **Parameters**: `infrastructureLevel` (0-100), `maintenanceDebt` (accumulates when investment < depreciation). Infrastructure boosts trade, tax collection (state capacity), urbanization, and innovation. Decay accelerates nonlinearly.
@@ -50,27 +52,27 @@ Full research details in companion files:
 
 ## TIER 2 — Significant Impact, Strong Candidates
 
-### 7. Urbanization Rate
+### 7. Urbanization Rate — IMPLEMENTED
 **Evidence**: Urban populations are easier to tax (boosts fiscal capacity), easier to mobilize for protest (affects stability), generate agglomeration effects for innovation. Urban-rural political cleavage is one of the deepest documented divisions.
 **Parameters**: `urbanizationRate` (0-100). Driven by economic development, infrastructure, agricultural productivity. High urbanization + low services = slum formation and instability.
 
-### 8. Military-Civilian Power Balance
+### 8. Military-Civilian Power Balance — IMPLEMENTED
 **Evidence**: 61% of democracies that died 1789-2008 fell to military coups. Dictator spending >30% on military → 4x more likely to experience coups. Military rule produces ~3pp lower annual GDP growth.
 **Parameters**: `militaryPower` (0-100), `civilianControl` (0-100). Military intervention triggered by: economic crisis + weak institutions + high military power + low civilian control.
 
-### 9. Legitimacy Type
+### 9. Legitimacy Type — IMPLEMENTED
 **Evidence**: Weber's tripartite framework (traditional / charismatic / rational-legal) has held for 100+ years. Legitimacy type determines succession dynamics: charismatic + leader death = existential crisis; rational-legal + leader death = smooth transition.
 **Parameters**: `legitimacyType` (traditional/charismatic/rational-legal/hybrid), `legitimacyLevel` (0-100). Interacts with existing leader succession mechanics.
 
-### 10. Anomie / Deaths of Despair
+### 10. Anomie / Deaths of Despair — IMPLEMENTED
 **Evidence**: Case & Deaton: economic decline → family breakdown → loss of meaning → addiction → death. WHO: 1 in 6 people affected by loneliness, linked to ~871,000 deaths annually. Rapid social change is primary driver.
 **Parameters**: `anomieLevel` (0-100). Rises with rapid change (paradigm shifts, automation), inequality, low social trust. Falls with community institutions, stable employment, social cohesion. Creates the "cost of modernization" mechanic — without it, rapid change has no downside.
 
-### 11. Collective Memory / Historical Trauma
+### 11. Collective Memory / Historical Trauma — IMPLEMENTED
 **Evidence**: Holodomor effects persist 3+ generations. Dutch Hunger Winter shows epigenetic evidence. Decay rate very slow (0.5-2% per generation without active healing).
 **Parameters**: `collectiveTrauma` (0-100, decays very slowly). Major events (genocide, famine, conquest) set high values that persist for centuries. Affects trust, cooperation, risk-taking, institutional design preferences.
 
-### 12. Food Security / Agricultural Capacity
+### 12. Food Security / Agricultural Capacity — IMPLEMENTED (enhanced Pass 10)
 **Evidence**: Food price spikes correlated with political instability (Arab Spring). Childhood stunting: 1% loss in height = 1.4% loss in economic productivity. Agricultural surplus enables civilizational complexity (Diamond, Scott).
 **Parameters**: `foodSecurity` (0-100, derived from agricultural tech, land quality, climate, trade). Low food security → instability, migration, conflict.
 

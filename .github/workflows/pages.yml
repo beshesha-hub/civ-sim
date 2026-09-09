@@ -23,13 +23,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Prepare web deployment
+        run: |
+          mkdir -p _site/js _site/css _site/data
+          cp index.html _site/
+          cp css/main.css _site/css/
+          cp data/seshat_thresholds.json _site/data/
+          # Copy only browser-side JS (exclude test/validation scripts)
+          for f in js/*.js; do
+            base=$(basename "$f")
+            case "$base" in
+              hindcast_runner.js|hindcast_scenarios.js|validation_suite.js|scenario_test_harness.js|model_diagnostics.js)
+                ;;
+              *)
+                cp "$f" "_site/js/$base"
+                ;;
+            esac
+          done
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment

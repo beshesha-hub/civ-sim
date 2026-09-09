@@ -173,6 +173,134 @@ Interview NPCs from different social strata. Ask a marginalized citizen about in
 
 ---
 
+## Building Things Locally (Energy & Food)
+
+Open **🌿 Sustainability** and you'll find two tabs: **⚡ Energy** and
+**🌾 Agriculture**. Each lets you push production toward big centralized
+operations or lots of small local ones.
+
+There's no right answer, and the game won't reward you for picking a side.
+Small-scale costs more per unit but wastes less in transmission, survives
+disasters better, and takes up more land. Local food protects you from
+blockades and trade shocks but exposes you to your own bad harvests.
+
+**The interesting bit is *how* you make the change.** You pick a pathway:
+
+- 🌱 **Grassroots** — people do it themselves. Slow when things are fine.
+  Explosively fast when the power keeps failing *and* people can afford to
+  act. This is how South Africans responded to blackouts.
+- 💰 **Subsidies** — reliable and steady, but you need a working treasury.
+- ⚖️ **Mandated Ownership** — you require that locals be *offered* a share.
+- 🚷 **Compulsory Reorganization** — you force people into the new system.
+- 🤝 **Hybrid** — state money, community ownership.
+
+### The one thing to remember
+
+**Forcing a good idea on people destroys the good idea.**
+
+Compulsory Reorganization looks like the fastest option. It is, on paper. It
+also wipes out up to 55% of the benefit — and having a strong, capable,
+well-run government does *not* protect you. You can adopt a genuinely better
+farming system and end up with less food than a neighbour who left people
+alone.
+
+Check **Structural Gain Retained** on the Agriculture tab. If it's red, you're
+burning the advantage you just built.
+
+If you want the change to stick, mandate the *offer* of ownership instead. That
+one works.
+
+### Growing food that feeds itself
+
+On the Agriculture tab, **Promote Diversification** shifts you toward mixed
+planting — crops that help each other. Push it far enough and you build
+**Ecosystem Function**: nitrogen-fixing plants that feed their neighbours,
+species whose smell drives insects away, animals that eat the weeds. You need
+fewer purchased chemicals.
+
+Two catches. It needs more hands, so fewer people move to cities. And it needs
+know-how — if your education, state capacity or social trust falls, the
+knowledge is lost and the bar drops.
+
+### Helping instead of ordering
+
+Both tabs have a **Fund Support Programme** button — seeds, tools, training,
+experts you can call on, tax breaks, money back on what families spend
+themselves.
+
+This is the good version of government involvement. No coercion penalty, faster
+adoption, and for farming it's what keeps the clever ecosystem stuff working.
+
+Three catches. It leaks — check **Support Reaching Intended**; where land is
+concentrated, much of it ends up with people who didn't need it. It costs money
+every turn it runs. And it fades if you stop renewing it, because training
+nobody follows up on is training nobody remembers.
+
+It helps most when your people are poor. If they're already rich enough to act
+alone, you're mostly paying for things that would have happened anyway.
+
+### Where the food actually goes
+
+**Local Distribution** on the Agriculture tab is about getting food to people
+without trucks, trains, ships or planes — a different question from where you
+grew it.
+
+Short chains save food three ways:
+
+- **Less handling.** About 13% of food is lost after harvest, 25% for fruit and
+  veg.
+- **Less thrown away for looking wrong.** Graded markets reject produce on
+  appearance — sometimes a third of a farm's output. Local buyers mostly don't
+  care.
+- **Picked ripe instead of picked green.** Food that travels far has to be
+  harvested unripe to survive the trip. Ripe food has more vitamin C, more
+  vitamin A, more of nearly everything. Watch **Nutritional Quality** — it
+  affects how sick people get, not how much they eat.
+
+The catch: **you can't feed a big city from nearby.** That's the whole reason
+refrigerated shipping exists. The more urban you get, the lower your ceiling.
+
+## Paths, Not Just Roads
+
+The **🚶 Mobility** tab builds walking and cycling networks. Four buttons, and
+the order matters more than you'd think.
+
+**Build Path Network** — this alone does almost nothing in a big city. People
+don't cycle more than about 5 km, so a network spanning a metro doesn't get
+used. Don't be discouraged; you're not finished.
+
+**Integrate Transit** — this is the one that works. Connect the local networks
+to trains and buses with secure parking, and suddenly each network only has to
+cover its own neighbourhood. In the Netherlands, that's how nearly half of all
+train passengers get to the station. In the game, this roughly doubles your
+mode share.
+
+**Path Safety Programme** — lighting, patrols, rest areas. Look at the two
+mode-share bars: women's and men's. If women's is much lower, that's not about
+traffic — men and women worry about cars equally. It's about personal safety,
+and paths alone don't fix it. Skip this and you get about half the benefit
+you paid for.
+
+**Rebalance Jobs & Housing** — if people live in the new local centres but
+still work downtown, you've made commuting worse. This gates everything else.
+
+Also watch **Continuity**, not just Coverage. A network with gaps loses around
+40% of its value. Finish what you start.
+
+### About animal power
+
+It's on the same tab. In towns it's genuinely useful, especially for hauling
+things. In a dense city it's a catastrophe — manure everywhere, disease, land
+eaten up by stables, and hay fields competing with food for people. That's not
+the game being unfair to you; it's why real cities got rid of horses.
+
+### Why your wellbeing stopped rising
+
+There's now an energy ceiling on wellbeing. Not enough energy per person and
+your people can't be comfortable no matter what else you do. But past a point,
+more energy stops helping entirely. Check **Energy & Wellbeing** on the Energy
+tab to see where you sit.
+
 ## When Things Go Wrong
 
 | Problem | Likely Cause | Fix |
@@ -199,7 +327,8 @@ Interview NPCs from different social strata. Ask a marginalized citizen about in
 
 - `USER_MANUAL.md` — Full documentation of every panel, metric, and system
 - `MODELING_ASSUMPTIONS.md` — What the simulation models, what it doesn't, and why
-- `TEST_VERIFICATION.md` — Technical test cases (useful for understanding exact mechanics)
+- `QUICK_START_RESEARCH.md` — If you want to use this as a research tool
+- `HISTORICAL_SCENARIOS.md` — Pre-built historical scenarios to explore
 
 ---
 

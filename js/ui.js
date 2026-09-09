@@ -1456,6 +1456,15 @@ class UIManager {
           <div class="stat-bar-wrap"><div class="stat-bar" style="width:${sum.wealthConcentration}%; background:#f0a020"></div></div>
           <strong>${sum.wealthConcentration}</strong></div>
       </div>
+      ${civ.state.companion?.medianAge != null ? `
+      <div class="section-label" style="margin-top:10px">Companion</div>
+      <div class="civ-stats">
+        <div class="stat-row"><span>Median Age</span><strong>${civ.state.companion.medianAge.toFixed(1)}</strong></div>
+        <div class="stat-row"><span>Growth</span><strong>${((civ.state.companion.growthRate ?? 0) * 100).toFixed(1)}%</strong></div>
+        <div class="stat-row"><span>Regime Pressure</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="width:${Math.min(100, civ.state.companion.regimeTransitionPressure ?? 0)}%; background:${(civ.state.companion.regimeTransitionPressure ?? 0) < 25 ? '#4ade80' : (civ.state.companion.regimeTransitionPressure ?? 0) < 50 ? '#fbbf24' : '#ef4444'}"></div></div>
+          <strong>${(civ.state.companion.regimeTransitionPressure ?? 0).toFixed(0)}</strong></div>
+      </div>` : ''}
       ${(sum.pollutionIndex > 0 || sum.forestHealth < 95 || sum.soilHealth < 95 || sum.waterQuality < 95) ? `
       <div class="section-label" style="margin-top:10px">${this._t('stat_env_health')}</div>
       <div class="civ-stats">
@@ -1579,17 +1588,23 @@ class UIManager {
     const tabs = Utils.createEl('div', 'history-tabs');
     const logTab = Utils.createEl('button', 'history-tab active', this._t('panel_event_log'));
     const chronicleTab = Utils.createEl('button', 'history-tab', this._t('panel_chronicle'));
+    const trajectoryTab = Utils.createEl('button', 'history-tab', 'Trajectory');
+    const narrativeTab = Utils.createEl('button', 'history-tab', 'Narrative');
     tabs.appendChild(logTab);
     tabs.appendChild(chronicleTab);
+    tabs.appendChild(trajectoryTab);
+    tabs.appendChild(narrativeTab);
     panel.appendChild(tabs);
 
     const content = Utils.createEl('div', 'panel-content history-list');
     panel.appendChild(content);
 
+    const allTabs = [logTab, chronicleTab, trajectoryTab, narrativeTab];
+    const setActive = (active) => allTabs.forEach(t => t.classList.toggle('active', t === active));
+
     const renderLog = () => {
       content.className = 'panel-content history-list';
-      logTab.classList.add('active');
-      chronicleTab.classList.remove('active');
+      setActive(logTab);
       content.innerHTML = '';
       const sorted = [...civ.history].sort((a, b) => a.year - b.year);
       for (const entry of sorted) {
@@ -1610,13 +1625,26 @@ class UIManager {
 
     const renderChronicle = () => {
       content.className = 'panel-content chronicle-content';
-      chronicleTab.classList.add('active');
-      logTab.classList.remove('active');
+      setActive(chronicleTab);
       content.innerHTML = this._generateChronicle(civ);
+    };
+
+    const renderTrajectory = () => {
+      content.className = 'panel-content trajectory-content';
+      setActive(trajectoryTab);
+      content.innerHTML = this._renderTrajectoryAnalysis(civ);
+    };
+
+    const renderNarrative = () => {
+      content.className = 'panel-content chronicle-content';
+      setActive(narrativeTab);
+      content.innerHTML = this._renderDeepNarrative(civ);
     };
 
     logTab.onclick = renderLog;
     chronicleTab.onclick = renderChronicle;
+    trajectoryTab.onclick = renderTrajectory;
+    narrativeTab.onclick = renderNarrative;
     renderLog();
   }
 
@@ -1803,6 +1831,239 @@ class UIManager {
     return paras.map(p => `<p class="chronicle-para">${p}</p>`).join('');
   }
 
+  // ── Trajectory Analysis Panel ─────────────────────────────────
+  _renderTrajectoryAnalysis(civ) {
+    const analysis = this.game.simulation?.getTrajectoryAnalysis(civ);
+    if (!analysis) return '<p class="empty-state">Advance more turns to build a trajectory analysis.</p>';
+
+    const { metadata, phases, transitions, sensitivityProfile } = analysis;
+    let html = '';
+
+    // Header
+    html += `<div class="trajectory-header">
+      <h3>${metadata.civilization} — Trajectory Analysis</h3>
+      <p class="trajectory-meta">${Utils.formatYear(metadata.startYear)} to ${Utils.formatYear(metadata.endYear)} | ${metadata.totalTurns} turns | ${metadata.governanceModel} / ${metadata.economicModel}</p>
+    </div>`;
+
+    // Phases
+    if (phases.length > 0) {
+      html += '<div class="trajectory-section"><h4>Phases</h4>';
+      for (const p of phases) {
+        html += `<div class="trajectory-phase">
+          <span class="phase-years">${Utils.formatYear(p.startYear)} – ${Utils.formatYear(p.endYear)}</span>
+          <span class="phase-label">${p.label}</span>
+        </div>`;
+      }
+      html += '</div>';
+    }
+
+    // Key transitions
+    if (transitions.length > 0) {
+      html += '<div class="trajectory-section"><h4>Significant Transitions</h4>';
+      const shown = transitions.slice(-30);
+      for (const t of shown) {
+        const dir = (t.delta != null && t.delta > 0) ? '+' : '';
+        const detail = t.type
+          ? `${t.var}: ${t.from} → ${t.to}`
+          : `${t.var}: ${t.from} → ${t.to} (${dir}${Math.round(t.delta * 10) / 10})`;
+        html += `<div class="trajectory-transition">
+          <span class="trans-year">${Utils.formatYear(t.year)}</span>
+          <span class="trans-detail">${detail}</span>
+        </div>`;
+      }
+      html += '</div>';
+    }
+
+    // Sensitivity profile
+    const vars = Object.entries(sensitivityProfile).sort((a, b) => b[1].cv - a[1].cv);
+    if (vars.length > 0) {
+      html += '<div class="trajectory-section"><h4>Variable Sensitivity</h4>';
+      html += '<table class="trajectory-table"><tr><th>Variable</th><th>Mean</th><th>Range</th><th>CV%</th><th>Trend</th></tr>';
+      for (const [name, stats] of vars) {
+        const trendIcon = stats.trend > 2 ? '&#x25B2;' : stats.trend < -2 ? '&#x25BC;' : '&#x25CF;';
+        const trendColor = stats.trend > 2 ? '#27ae60' : stats.trend < -2 ? '#c0392b' : '#888';
+        html += `<tr>
+          <td>${name.replace(/([A-Z])/g, ' $1').trim()}</td>
+          <td>${stats.mean}</td>
+          <td>${stats.min}–${stats.max}</td>
+          <td>${stats.cv}%</td>
+          <td style="color:${trendColor}">${trendIcon} ${stats.trend > 0 ? '+' : ''}${stats.trend}</td>
+        </tr>`;
+      }
+      html += '</table></div>';
+    }
+
+    // Export buttons
+    html += `<div class="trajectory-export">
+      <button onclick="game.exportTrajectoryJSON('${civ.id}')">Export JSON</button>
+      <button onclick="game.exportTrajectoryCSV('${civ.id}')">Export CSV</button>
+      <button onclick="game.exportNarrative('${civ.id}', 'analytical')">Export Analytical Report</button>
+      <button onclick="game.exportNarrative('${civ.id}', 'narrative')">Export Narrative</button>
+    </div>`;
+
+    return html;
+  }
+
+  // ── Deep Narrative Generator ─────────────────────────────────
+  _renderDeepNarrative(civ) {
+    return this._generateDeepNarrative(civ, 'narrative', true);
+  }
+
+  _generateDeepNarrative(civ, mode = 'narrative', asHtml = false) {
+    const analysis = this.game.simulation?.getTrajectoryAnalysis(civ);
+    if (!analysis) return asHtml ? '<p class="empty-state">Advance more turns to generate a narrative.</p>' : '';
+
+    const { metadata, phases, transitions, sensitivityProfile } = analysis;
+    const traj = civ.state._trajectory || [];
+    const sortedHistory = [...civ.history].sort((a, b) => a.year - b.year);
+    const wrap = asHtml ? (t, cls) => `<p class="${cls || 'chronicle-para'}">${t}</p>` : t => t + '\n\n';
+    const heading = asHtml ? (t, level) => `<h${level} class="chronicle-era-heading">${t}</h${level}>` : (t) => t.toUpperCase() + '\n' + '='.repeat(t.length) + '\n\n';
+    const bold = asHtml ? (t) => `<strong>${t}</strong>` : t => t;
+    const em = asHtml ? (t) => `<em>${t}</em>` : t => t;
+
+    let out = '';
+
+    if (mode === 'analytical') {
+      // Analytical mode: structured, data-rich, for researchers
+      out += heading(`Trajectory Analysis: ${metadata.civilization}`, 2);
+      out += wrap(`${bold('Period:')} ${Utils.formatYear(metadata.startYear)} to ${Utils.formatYear(metadata.endYear)} (${metadata.totalTurns} turns)`);
+      out += wrap(`${bold('Configuration:')} ${metadata.governanceModel} governance, ${metadata.economicModel} economy, ${metadata.participationModel} participation`);
+
+      // Phase analysis
+      out += heading('Phase Analysis', 3);
+      for (const phase of phases) {
+        const phaseSnaps = traj.filter(s => s.year >= phase.startYear && s.year <= phase.endYear);
+        if (phaseSnaps.length === 0) continue;
+        const first = phaseSnaps[0], last = phaseSnaps[phaseSnaps.length - 1];
+        out += wrap(`${bold(phase.label)} (${Utils.formatYear(phase.startYear)}–${Utils.formatYear(phase.endYear)}): ` +
+          `Trust ${first.socialTrust}→${last.socialTrust}, ` +
+          `WC ${first.wealthConcentration}→${last.wealthConcentration}, ` +
+          `Corruption ${first.corruption}→${last.corruption}, ` +
+          `Wellbeing ${first.averageWellbeing}→${last.averageWellbeing}`);
+      }
+
+      // Transition log
+      if (transitions.length > 0) {
+        out += heading('Transition Log', 3);
+        for (const t of transitions) {
+          const dir = t.delta != null ? ` (${t.delta > 0 ? '+' : ''}${Math.round(t.delta * 10) / 10})` : '';
+          out += wrap(`${Utils.formatYear(t.year)}: ${t.var} ${t.from}→${t.to}${dir}${t.type ? ' [' + t.type + ']' : ''}`);
+        }
+      }
+
+      // Sensitivity
+      out += heading('Sensitivity Profile', 3);
+      const vars = Object.entries(sensitivityProfile).sort((a, b) => b[1].cv - a[1].cv);
+      for (const [name, stats] of vars) {
+        const label = name.replace(/([A-Z])/g, ' $1').trim().toLowerCase();
+        out += wrap(`${bold(label)}: mean ${stats.mean}, range [${stats.min}, ${stats.max}], CV ${stats.cv}%, trend ${stats.trend > 0 ? '+' : ''}${stats.trend}`);
+      }
+
+    } else {
+      // Narrative mode: prose for non-specialist serious readers
+      const last = traj[traj.length - 1] || {};
+      const first = traj[0] || {};
+
+      out += heading(`The Story of ${metadata.civilization}`, 2);
+
+      // Opening
+      const govLabel = metadata.governanceModel;
+      const econLabel = metadata.economicModel;
+      const foundEra = Utils.getEra(civ.foundingYear);
+      out += wrap(`${metadata.civilization} emerged in the ${foundEra?.label || 'early'} period, organized around ${em(govLabel)} governance and a ${em(econLabel)} economic system. Over the course of ${metadata.totalTurns} turns spanning from ${Utils.formatYear(metadata.startYear)} to ${Utils.formatYear(metadata.endYear)}, its trajectory would be shaped by the interplay of institutional choices, social dynamics, and forces no civilization fully controls.`);
+
+      // Narrative for each phase
+      for (const phase of phases) {
+        out += heading(`${phase.label} (${Utils.formatYear(phase.startYear)}–${Utils.formatYear(phase.endYear)})`, 3);
+
+        const phaseSnaps = traj.filter(s => s.year >= phase.startYear && s.year <= phase.endYear);
+        const phaseEvents = sortedHistory.filter(e => e.year >= phase.startYear && e.year <= phase.endYear);
+        if (phaseSnaps.length === 0) continue;
+        const pFirst = phaseSnaps[0], pLast = phaseSnaps[phaseSnaps.length - 1];
+
+        // Social conditions
+        const trustChange = pLast.socialTrust - pFirst.socialTrust;
+        if (Math.abs(trustChange) > 3) {
+          const dir = trustChange > 0 ? 'grew' : 'eroded';
+          out += wrap(`Social trust ${dir} during this period, moving from ${pFirst.socialTrust} to ${pLast.socialTrust}. ${trustChange > 0
+            ? 'Institutions gained credibility and interpersonal bonds strengthened, creating a foundation for collective action.'
+            : 'The fabric of social cohesion weakened. People retreated into smaller circles of trust, and the gap between institutional promises and lived experience widened.'}`);
+        }
+
+        // Inequality
+        const wcChange = pLast.wealthConcentration - pFirst.wealthConcentration;
+        if (Math.abs(wcChange) > 3) {
+          out += wrap(`Wealth concentration ${wcChange > 0 ? 'increased' : 'decreased'} from ${pFirst.wealthConcentration} to ${pLast.wealthConcentration}. ${wcChange > 0
+            ? 'Economic power accumulated at the top, with cascading effects on political influence, institutional capture, and the lived experience of social mobility.'
+            : 'The distribution of economic resources became more equitable, though whether this reflected genuine structural change or a temporary redistribution remained to be seen.'}`);
+        }
+
+        // Corruption
+        const corrChange = pLast.corruption - pFirst.corruption;
+        if (Math.abs(corrChange) > 3) {
+          out += wrap(`Corruption ${corrChange > 0 ? 'deepened' : 'retreated'}, ${corrChange > 0
+            ? `rising from ${pFirst.corruption} to ${pLast.corruption} as power asymmetries opened channels for rent extraction and institutional erosion.`
+            : `falling from ${pFirst.corruption} to ${pLast.corruption} as institutional constraints, transparency mechanisms, or anti-corruption enforcement tightened the space available for illicit extraction.`}`);
+        }
+
+        // Key events during this phase
+        const disasters = phaseEvents.filter(e => e.type === 'disaster' || e.type === 'crisis');
+        const govChanges = phaseEvents.filter(e => e.type === 'governance');
+        const econEvents = phaseEvents.filter(e => e.type === 'economic');
+        const techEvents = phaseEvents.filter(e => e.type === 'technology');
+
+        if (disasters.length > 0) {
+          const names = disasters.map(d => d.title || d.description?.slice(0, 50)).join('; ');
+          out += wrap(`This period was marked by disruption: ${names}. The effects rippled through institutions and social trust, leaving marks that outlasted the immediate crisis.`);
+        }
+        if (govChanges.length > 0) {
+          for (const g of govChanges.slice(0, 2)) {
+            out += wrap(g.description || `A shift in governance reshaped the political landscape.`);
+          }
+        }
+        if (techEvents.length > 0) {
+          const names = techEvents.map(e => e.title?.replace('Technology: ', '') || 'new knowledge').join(', ');
+          out += wrap(`Technological development brought ${names}, altering what was possible and reshaping the relationship between labor, production, and daily life.`);
+        }
+
+        // Wellbeing narrative
+        if (pLast.averageWellbeing - pFirst.averageWellbeing > 5) {
+          out += wrap(`Material conditions improved overall, with average wellbeing rising from ${pFirst.averageWellbeing} to ${pLast.averageWellbeing}. But averages obscure as much as they reveal — the experience of this improvement varied enormously depending on where a person stood in the social hierarchy.`);
+        } else if (pFirst.averageWellbeing - pLast.averageWellbeing > 5) {
+          out += wrap(`Living conditions deteriorated, with wellbeing declining from ${pFirst.averageWellbeing} to ${pLast.averageWellbeing}. The weight of this decline fell unevenly, with those already at the margins bearing the sharpest costs.`);
+        }
+      }
+
+      // Closing
+      out += heading('Present State', 3);
+      const trustLevel = last.socialTrust ?? 50;
+      const wcLevel = last.wealthConcentration ?? 50;
+      const corrLevel = last.corruption ?? 30;
+
+      let closing = `As of ${Utils.formatYear(metadata.endYear)}, ${metadata.civilization} `;
+      if (trustLevel > 60) closing += 'maintains relatively strong social cohesion';
+      else if (trustLevel > 35) closing += 'has moderate social cohesion, neither deeply trusting nor profoundly fragmented';
+      else closing += 'is marked by low social trust, with implications for collective action, institutional legitimacy, and everyday social life';
+
+      closing += `. Wealth concentration sits at ${wcLevel}`;
+      if (wcLevel > 70) closing += ', reflecting deep structural inequality';
+      else if (wcLevel > 40) closing += ', at a moderate level';
+      else closing += ', relatively equitable by historical standards';
+
+      closing += `. Corruption is at ${corrLevel}`;
+      if (corrLevel > 50) closing += ', a persistent structural challenge that diverts resources and erodes institutional trust.';
+      else if (corrLevel > 25) closing += ', present but partially constrained by institutional checks.';
+      else closing += ', relatively well-controlled through institutional and cultural mechanisms.';
+
+      out += wrap(closing);
+
+      // Uncertainty note
+      out += wrap(`${em('Note: This narrative is generated from a stochastic simulation. The specific trajectory described is one of many possible paths this civilization could have taken from its initial conditions. Different random seeds would produce different sequences of events while preserving the underlying structural dynamics. The directional tendencies — which variables reinforce which others, which equilibria are stable — are more reliable than the exact magnitudes.')}`);
+    }
+
+    return out;
+  }
+
   // ── World State Panel ─────────────────────────────────────────
   _renderWorldState(panel) {
     panel.innerHTML = '';
@@ -1834,6 +2095,7 @@ class UIManager {
     content.appendChild(compTitle);
     for (const civ of this.game.civilizations) {
       const sum = civ.getSummary();
+      const comp = civ.state.companion;
       const row = Utils.createEl('div', 'civ-compare-row');
       row.innerHTML = `
         <div class="compare-name" style="color:${civ.color}">${civ.name}</div>
@@ -1844,6 +2106,13 @@ class UIManager {
           <span>Empathy: ${sum.empathy}</span>
           <span>🌡️: ${sum.warmingContrib}</span>
         </div>
+        ${comp ? `<div class="compare-stats" style="font-size:0.85em;opacity:0.8;margin-top:2px;">
+          <span>Med. Age: ${(comp.medianAge ?? 0).toFixed(1)}</span>
+          <span>Growth: ${((comp.growthRate ?? 0) * 100).toFixed(1)}%</span>
+          <span>Dep: ${(comp.dependencyRatio ?? 0).toFixed(2)}</span>
+          <span>Regime P: ${(comp.regimeTransitionPressure ?? 0).toFixed(0)}</span>
+          ${(comp.demographicDividend ?? 0) > 0 ? '<span style="color:#4ade80">Dividend</span>' : ''}
+        </div>` : ''}
         <div class="compare-behavior">
           ${sum.dominantBehaviors.slice(0,2).map(b => `<span class="behavior-tag sm" style="background:${BEHAVIORS[b]?.color||'#666'}">${b}</span>`).join('')}
         </div>

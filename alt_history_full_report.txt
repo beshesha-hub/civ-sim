@@ -1,0 +1,1337 @@
+════════════════════════════════════════════════════════════════════════════════
+ALTERNATIVE HISTORY COUNTERFACTUAL SIMULATION
+What If Conquest Had Been Prevented? (1490–2026)
+Civ-Sim Model Output
+════════════════════════════════════════════════════════════════════════════════
+
+SIMULATION PARAMETERS
+─────────────────────
+- 20 random seeds per scenario, averaged
+- 54 turns x 10 years = 540 years (1490–2030)
+- Companion module active (demographic, empathy, behavioral reinforcement)
+- Three timeline variants per civilization:
+  HIST = Historical trajectory (with conquest/colonization shocks where applicable)
+  CONST = Constrained (anti-conquest rules enforced, self-directed development)
+  EXCH = Cultural Exchange (anti-conquest + pre-established mutual language/cultural learning)
+- Metrics (all scored 0–100):
+  Cap  = State Capacity       Corr = Corruption
+  IQ   = Institutional Quality  Stab = Stability
+  Trust = Social Trust         WC   = Wealth Concentration
+  Well = Average Wellbeing     Emp  = Empathy Level
+  Free = Freedom Level         Mil  = Military Power
+
+
+════════════════════════════════════════════════════════════════════════════════
+PART 1: EUROPEAN POWERS & INTERVENING ENTITY
+════════════════════════════════════════════════════════════════════════════════
+
+
+BRITAIN: HISTORICAL BASELINE
+─────────────────────────────
+Starting conditions (~1490): Autocratic monarchy, mercantile economy, dominant
+state-endorsed religion with hostile tolerance, restricted political
+participation, primogeniture inheritance, active religious propagation,
+"conquering" outsider relationship. Hierarchy level 65, freedom 20, wealth
+concentration 70, social trust 35, institutional quality 35.
+
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 40.3 | 20.0 | 34.6 | 50.6 | 35.1 | 47.0 | 29.4 | 55.9 | 20.0 | 59.6
+~1540 Spanish conquests peak     | 41.5 | 55.9 | 33.3 | 51.2 | 35.9 | 52.1 | 34.4 | 56.7 | 20.0 | 58.4
+~1590 Colonial empires           | 42.8 | 57.2 | 31.7 | 50.3 | 37.2 | 55.9 | 31.9 | 57.5 | 20.0 | 57.0
+~1650 Slave trade peak           | 44.2 | 58.8 | 30.7 | 44.3 | 37.8 | 59.4 | 28.0 | 58.5 | 20.0 | 55.6
+~1700 Enlightenment              | 44.0 | 60.1 | 29.8 | 37.5 | 36.6 | 62.5 | 27.1 | 59.2 | 20.0 | 54.7
+~1750 Industrial Revolution      | 41.0 | 62.7 | 28.4 | 28.6 | 34.2 | 65.9 | 25.5 | 59.8 | 20.0 | 53.8
+~1800 American/French revolutions| 35.9 | 63.0 | 26.5 | 28.0 | 30.5 | 69.5 | 23.9 | 60.5 | 20.0 | 53.0
+~1850 Peak colonialism           | 32.4 | 65.7 | 24.9 | 26.4 | 26.5 | 72.7 | 21.3 | 61.0 | 20.0 | 52.4
+~1900 Eve of World Wars          | 31.1 | 66.4 | 23.9 | 22.4 | 23.2 | 74.5 | 19.2 | 61.5 | 20.0 | 51.9
+~1950 Post-WWII / Decolonization | 30.0 | 67.9 | 23.0 | 15.9 | 20.1 | 75.3 | 16.0 | 62.0 | 20.0 | 51.5
+~2000 Modern era                 | 29.6 | 70.8 | 22.7 | 11.6 | 17.6 | 74.7 | 13.7 | 62.4 | 20.0 | 51.3
+~2026 Present day                | 27.9 | 75.0 | 22.4 |  8.7 | 16.4 | 73.4 | 13.8 | 62.7 | 20.0 | 51.2
+
+
+BRITAIN: CONSTRAINED (anti-conquest, trade only)
+────────────────────────────────────────────────
+Modified from baseline: outsider relationship -> "trading," religion tolerance
+-> "indifferent," propagation -> "communal," institutional quality +3.
+
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 40.3 | 20.0 | 37.4 | 50.6 | 35.1 | 46.9 | 29.5 | 55.9 | 20.0 | 59.6
+~1540 Spanish conquests peak     | 41.5 | 55.9 | 35.4 | 51.2 | 35.9 | 51.9 | 34.7 | 56.7 | 20.0 | 58.4
+~1590 Colonial empires           | 42.8 | 57.1 | 33.2 | 51.5 | 37.3 | 55.5 | 32.3 | 57.5 | 20.0 | 57.0
+~1650 Slave trade peak           | 44.3 | 58.7 | 31.1 | 46.0 | 38.5 | 59.0 | 28.8 | 58.5 | 20.0 | 55.6
+~1700 Enlightenment              | 44.0 | 60.0 | 30.0 | 37.9 | 37.5 | 62.1 | 27.1 | 59.2 | 20.0 | 54.7
+~1750 Industrial Revolution      | 40.9 | 61.3 | 28.4 | 32.5 | 34.9 | 65.4 | 25.7 | 59.8 | 20.0 | 53.9
+~1800 American/French revolutions| 35.7 | 62.9 | 26.4 | 26.9 | 30.6 | 68.9 | 23.6 | 60.4 | 20.0 | 53.2
+~1850 Peak colonialism           | 32.4 | 65.8 | 24.8 | 24.7 | 26.4 | 72.1 | 21.0 | 61.0 | 20.0 | 52.6
+~1900 Eve of World Wars          | 30.5 | 65.5 | 23.9 | 21.7 | 23.6 | 73.1 | 19.7 | 61.5 | 20.0 | 52.0
+~1950 Post-WWII                  | 30.0 | 68.7 | 23.3 | 18.0 | 20.5 | 73.8 | 16.2 | 62.0 | 20.0 | 51.6
+~2000 Modern era                 | 28.9 | 69.0 | 23.0 | 13.6 | 17.9 | 73.7 | 14.1 | 62.4 | 20.0 | 51.1
+~2026 Present day                | 28.0 | 68.6 | 22.5 | 12.7 | 17.4 | 72.0 | 15.6 | 62.7 | 20.0 | 50.7
+
+
+BRITAIN: CULTURAL EXCHANGE (trade + mutual learning)
+────────────────────────────────────────────────────
+Additionally: trust +7, epistemic health +7, innovation tolerance +10,
+religion tolerance -> "accepting," cultural cohesion -10.
+
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 40.3 | 20.0 | 39.7 | 50.5 | 42.1 | 46.8 | 30.1 | 55.9 | 20.0 | 59.6
+~1540 Spanish conquests peak     | 41.5 | 55.7 | 38.7 | 50.2 | 42.9 | 51.5 | 35.2 | 56.7 | 20.0 | 58.4
+~1590 Colonial empires           | 42.8 | 56.6 | 37.5 | 49.7 | 44.2 | 55.1 | 32.0 | 57.5 | 20.0 | 57.0
+~1650 Slave trade peak           | 44.3 | 58.0 | 35.8 | 43.3 | 45.5 | 58.5 | 29.2 | 58.5 | 20.0 | 55.7
+~1700 Enlightenment              | 44.7 | 59.2 | 34.3 | 34.7 | 46.1 | 61.4 | 27.0 | 59.2 | 20.0 | 54.7
+~1750 Industrial Revolution      | 42.8 | 60.4 | 32.8 | 29.4 | 46.0 | 64.7 | 27.0 | 59.9 | 20.0 | 53.9
+~1800 American/French revolutions| 38.3 | 61.7 | 31.0 | 27.0 | 44.8 | 67.9 | 25.9 | 60.5 | 20.0 | 53.1
+~1850 Peak colonialism           | 33.7 | 63.3 | 29.0 | 23.3 | 40.6 | 70.9 | 23.6 | 61.0 | 20.0 | 52.4
+~1900 Eve of World Wars          | 31.1 | 65.6 | 27.2 | 21.1 | 34.6 | 73.0 | 19.3 | 61.5 | 20.0 | 51.9
+~1950 Post-WWII                  | 30.1 | 68.1 | 25.5 | 12.2 | 27.8 | 73.5 | 15.2 | 62.0 | 20.0 | 51.3
+~2000 Modern era                 | 29.1 | 68.9 | 24.4 |  8.6 | 23.8 | 71.5 | 13.8 | 62.5 | 20.0 | 50.8
+~2026 Present day                | 28.7 | 69.6 | 23.8 |  8.2 | 21.9 | 70.7 | 14.2 | 62.7 | 20.0 | 50.6
+
+
+THE COVENANT (Intervening Entity)
+─────────────────────────────────
+Starting conditions: Representative governance, hierarchy 30, meritocratic
+institutions, high state capacity (70), high trust (65), freedom (65),
+military (75). Values: justice, stewardship. Outsider relationship: trading.
+
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 66.0 | 19.9 | 66.2 | 76.0 | 63.2 | 45.3 | 52.4 | 62.3 | 65.0 | 72.2
+~1540 Spanish conquests peak     | 66.0 | 20.3 | 69.8 | 83.1 | 61.4 | 46.5 | 54.1 | 62.8 | 65.0 | 62.8
+~1590 Colonial empires           | 66.0 | 21.3 | 72.5 | 88.1 | 61.2 | 47.5 | 52.0 | 63.4 | 65.0 | 53.7
+~1650 Slave trade peak           | 66.0 | 22.3 | 74.0 | 89.5 | 61.4 | 48.2 | 51.3 | 64.0 | 65.0 | 45.6
+~1700 Enlightenment              | 66.0 | 22.8 | 74.2 | 87.2 | 61.6 | 48.6 | 49.9 | 64.4 | 65.0 | 40.6
+~1750 Industrial Revolution      | 66.0 | 23.2 | 74.2 | 87.4 | 62.0 | 48.9 | 49.6 | 64.9 | 65.0 | 36.8
+~1800 American/French revolutions| 66.0 | 23.5 | 74.2 | 87.9 | 62.0 | 49.1 | 49.3 | 65.2 | 65.0 | 34.0
+~1850 Peak colonialism           | 66.0 | 23.6 | 74.5 | 85.9 | 62.1 | 49.2 | 47.7 | 65.6 | 65.0 | 31.8
+~1900 Eve of World Wars          | 66.0 | 23.6 | 74.4 | 78.6 | 62.2 | 49.4 | 43.6 | 65.9 | 65.0 | 30.2
+~1950 Post-WWII                  | 66.0 | 23.6 | 74.1 | 65.4 | 62.2 | 49.5 | 34.1 | 66.2 | 65.0 | 29.0
+~2000 Modern era                 | 66.0 | 23.5 | 73.8 | 50.3 | 62.0 | 49.6 | 31.4 | 66.4 | 65.0 | 28.0
+~2026 Present day                | 66.0 | 23.5 | 73.6 | 39.7 | 62.1 | 49.7 | 26.9 | 66.6 | 65.0 | 27.5
+
+
+NARRATIVE: THE VIEW FROM EUROPE
+───────────────────────────────
+
+The historical-track Britain follows a recognizable arc. It begins as a
+modestly capable state (capacity 40, institutional quality 35) with high
+corruption and extreme wealth concentration. Across 540 years, its
+institutions erode steadily. By the peak colonial era (~1850), state capacity
+has declined to 32, corruption sits at 66, and wealth concentration has
+climbed to 73. The model captures what historians have documented:
+colonialism enriched a narrow elite while hollowing out domestic governance.
+Trust collapses from 35 to 16 by 2026. Stability falls to single digits.
+Wellbeing drops from 29 to 14. This is a civilization that conquered the
+world but corroded itself doing it.
+
+What is striking about the trajectory is how early the decay sets in.
+Corruption jumps from 20 to 56 within the first 50 years — before the
+colonial system has fully matured. This is the model saying that the
+DECISION to pursue conquest, and the institutional deformation required to
+organize it, corrupts faster than the colonial revenues can compensate. The
+monarchy, the chartered companies, the mercantilist monopolies — all of
+these represent institutional capture by a narrow elite. By 1700, with
+corruption at 60 and rising, the trajectory is already locked in.
+
+When conquest is forbidden (Scenario A), corruption runs 6.4 points lower
+by 2026 (68.6 vs 75.0) and stability is 4 points higher (12.7 vs 8.7).
+Wellbeing improves modestly (15.6 vs 13.8). But the differences are smaller
+than one might expect, and the reason is one of the simulation's most
+important findings: Britain's internal structure — a hierarchical monarchy
+with extreme land concentration (75), restricted participation (15),
+primogeniture inheritance concentrating wealth, and religious constraints
+on science — drives most of the institutional decay with or without an
+overseas empire. The aristocracy still concentrates wealth. The church
+still constrains epistemic freedom. The monarchy still limits participation.
+The rot is endogenous. Colonialism was a symptom of these structural
+features as much as it was a cause of further decay.
+
+When cultural exchange is added (Scenario B), social trust is the clearest
+beneficiary — 21.9 versus 16.4 in the historical track, a 33% improvement.
+Institutional quality holds at 23.8 vs 22.4. Wealth concentration is the
+lowest of the three at 70.7. Cross-cultural knowledge broadens the epistemic
+base (starting epistemic health 32 vs 25) and sustains slightly better
+institutions across the full 540-year span.
+
+But the model surfaces a paradox: stability is actually LOWER in the
+cultural exchange scenario (8.2 vs 8.7). Greater cross-cultural awareness
+introduces internal tension — cultural cohesion starts lower (55 vs 65)
+because the society is grappling with pluralism. More trust, more
+institutional quality, but more internal contestation. This aligns with
+political science findings that diverse, open societies often exhibit more
+friction even as they build deeper resilience. The tension is productive in
+the long run (higher trust and IQ) but destabilizing in the short term.
+
+
+NARRATIVE: THE COVENANT — DOES THE GUARDIAN BECOME THE TYRANT?
+──────────────────────────────────────────────────────────────
+
+This is the most structurally revealing result from Part 1. The Covenant —
+the powerful entity enforcing anti-conquest constraints — does NOT become
+tyrannical. Its institutional trajectory is remarkably stable:
+
+Corruption stays low (20 to 23.5, a mere 3.5-point rise over 540 years).
+The combination of representative governance, low hierarchy (30),
+meritocratic institutions, and high initial social trust (65) creates a
+self-reinforcing virtuous cycle. Low corruption sustains institutional
+quality; high institutional quality constrains corruption; high trust
+maintains legitimacy; legitimacy sustains compliance without coercion.
+
+Institutional quality climbs to 74 and plateaus. The low hierarchy means
+elite coordination isn't the primary institutional maintenance mechanism —
+broad participation is. This makes institutions resilient to elite defection
+because no small group can capture the governance apparatus.
+
+Trust barely moves (63 to 62). In 540 years of enforcing constraints on
+other civilizations, the Covenant's internal social fabric holds.
+
+Freedom stays constant at 65 — the Covenant maintains its own values.
+
+But three vulnerabilities emerge:
+
+Military decay (75 to 27.5): The Covenant's military power declines by
+two-thirds. A peace-keeping entity that doesn't conquer faces the classic
+hegemon's dilemma — maintaining military readiness without military use
+atrophies the capability. By 2026, it may lack the hard power to enforce
+anything. This is analogous to the real-world challenge facing liberal
+international institutions: the willingness to use force erodes in
+proportion to the length of peace.
+
+Stability erosion (76 to 40): While institutions hold, stability declines
+steadily, especially after ~1900. The model attributes this to the growing
+tension between the Covenant's external mission and its internal legitimacy.
+Why does one entity get to set the rules for others? By the modern era, its
+stability at 40 suggests significant internal contestation about its role —
+analogous to real-world debates about unilateral intervention.
+
+Wellbeing decline (52 to 27): The cost of guardianship. Resources diverted
+to maintaining international order come at the expense of domestic
+flourishing. The Covenant's people grow dissatisfied. This maps onto the
+real-world dynamic where hegemonic powers (Britain in the 19th century,
+the United States in the 20th) see domestic living standards stagnate while
+maintaining global commitments.
+
+The model's verdict: The Covenant does not become tyrannical, but it does
+become fragile. Its institutions remain sound, but its power to act erodes,
+and its population grows dissatisfied. The entity doesn't corrupt — it
+exhausts itself. This resembles real-world dynamics of liberal hegemonic
+projects more closely than the common fear that guardians inevitably
+become despots.
+
+
+════════════════════════════════════════════════════════════════════════════════
+PART 2: INDIGENOUS & COLONIZED CIVILIZATIONS
+════════════════════════════════════════════════════════════════════════════════
+
+
+HAUDENOSAUNEE (Iroquois Confederacy)
+════════════════════════════════════
+
+Starting conditions (~1490): One of the world's earliest democratic
+confederations, governed by the Great Law of Peace (Gayanashagowa). Consensus-
+based decision making with built-in checks and balances. Clan mothers
+nominated and could depose chiefs — one of the earliest known systems of
+women's political authority. Agricultural economy based on the Three Sisters
+(corn, beans, squash), supplemented by hunting and fishing. Sophisticated
+wampum-based diplomacy and trade networks. Oral tradition rather than written
+records. Relatively egalitarian economics with communal land tenure.
+
+Model parameters: Representative governance, hierarchy 25, meritocratic
+succession, voluntary participation (70), freedom 55, collectivism 65,
+gender equity 55, education communal, sustainable resource strategy.
+Starting state: capacity 30, IQ 40, trust 70, corruption 15, stability 70,
+wealth concentration 20, wellbeing 45.
+
+Historical timeline: The Haudenosaunee maintained sovereignty longer than most
+North American nations, but were progressively devastated by the Beaver Wars
+(~1640s-1660s), used as proxies in European conflicts, caught between
+British and French imperial ambitions, and then dispossessed following the
+American Revolution. Many were driven onto reservations; the Confederacy's
+political institutions were suppressed. Conquest shock modeled at ~1650.
+
+
+HAUDENOSAUNEE: HISTORICAL (conquest shock ~1650)
+────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 30.9 | 14.9 | 41.8 | 70.7 | 68.9 | 24.6 | 49.1 | 62.3 | 55.0 | 34.1
+~1540 Conquests peak             | 34.6 | 14.2 | 48.4 | 75.8 | 65.9 | 31.5 | 53.6 | 62.8 | 55.0 | 31.0
+~1590 Colonial empires           | 40.4 | 13.0 | 56.5 | 83.3 | 63.4 | 34.5 | 52.9 | 63.5 | 55.0 | 27.8
+~1650 CONQUEST SHOCK             |  8.9 | 63.0 | 15.0 | 15.6 | 19.7 | 36.1 | 21.2 | 64.2 |  5.0 |  9.7
+~1700 Enlightenment              | 13.8 | 60.0 | 19.0 | 19.8 | 22.8 | 36.7 | 33.9 | 64.7 |  5.0 |  9.0
+~1750 Industrial Revolution      | 16.7 | 59.9 | 22.6 | 24.9 | 23.9 | 37.0 | 39.4 | 65.1 |  5.0 |  9.0
+~1800 Revolutions era            | 18.6 | 59.8 | 25.9 | 29.3 | 24.8 | 36.8 | 42.1 | 65.6 |  5.0 |  9.3
+~1850 Peak colonialism           | 22.6 | 59.6 | 28.6 | 30.5 | 24.8 | 37.0 | 41.1 | 65.9 |  5.0 | 10.2
+~1900 Eve of World Wars          | 24.5 | 59.3 | 30.4 | 28.6 | 25.2 | 37.1 | 38.3 | 66.3 |  5.0 | 11.3
+~1950 Post-WWII                  | 25.7 | 60.3 | 31.8 | 21.8 | 26.7 | 37.1 | 34.3 | 66.6 |  5.0 | 12.3
+~2000 Modern era                 | 25.9 | 59.9 | 33.1 | 13.1 | 28.5 | 37.1 | 30.5 | 66.9 |  5.0 | 13.1
+~2026 Present day                | 25.8 | 62.0 | 33.9 |  7.5 | 29.8 | 37.0 | 29.5 | 67.0 |  5.0 | 13.6
+
+
+HAUDENOSAUNEE: CONSTRAINED (no conquest, self-directed)
+───────────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 30.9 | 14.9 | 41.8 | 70.7 | 68.9 | 24.6 | 49.1 | 62.3 | 55.0 | 34.1
+~1540 Conquests peak             | 34.6 | 14.2 | 48.4 | 75.8 | 65.9 | 31.5 | 53.6 | 62.8 | 55.0 | 31.0
+~1590 Colonial empires           | 40.4 | 13.0 | 56.5 | 83.3 | 63.4 | 34.5 | 52.9 | 63.5 | 55.0 | 27.8
+~1650 Slave trade peak           | 41.4 | 10.8 | 66.1 | 89.3 | 62.1 | 36.1 | 53.3 | 64.2 | 55.0 | 24.8
+~1700 Enlightenment              | 41.4 |  8.6 | 74.0 | 91.4 | 61.6 | 36.8 | 53.3 | 64.7 | 55.0 | 22.9
+~1750 Industrial Revolution      | 41.4 |  5.9 | 81.4 | 89.7 | 61.5 | 37.1 | 52.8 | 65.2 | 55.0 | 21.3
+~1800 Revolutions era            | 41.4 |  2.9 | 87.3 | 90.8 | 61.7 | 37.3 | 53.2 | 65.6 | 55.0 | 20.1
+~1850 Peak colonialism           | 41.4 |  1.7 | 90.0 | 91.6 | 61.8 | 37.5 | 53.2 | 66.1 | 55.0 | 19.1
+~1900 Eve of World Wars          | 41.4 |  1.5 | 90.6 | 90.7 | 61.7 | 37.5 | 51.6 | 66.5 | 55.0 | 18.3
+~1950 Post-WWII                  | 41.4 |  1.4 | 90.8 | 87.0 | 61.7 | 37.6 | 50.5 | 66.8 | 55.0 | 17.7
+~2000 Modern era                 | 41.4 |  1.4 | 90.8 | 81.4 | 61.7 | 37.6 | 47.5 | 67.1 | 55.0 | 17.1
+~2026 Present day                | 41.4 |  1.4 | 90.8 | 77.1 | 61.6 | 37.5 | 48.4 | 67.3 | 55.0 | 16.9
+
+
+HAUDENOSAUNEE: CULTURAL EXCHANGE (mutual learning with Europeans)
+─────────────────────────────────────────────────────────────────
+Additionally: innovation tolerance 50 (vs 35), education quality 30 (vs 20),
+epistemic health 45 (vs 35), education quality 28.
+
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 31.3 | 14.8 | 41.8 | 70.7 | 68.9 | 24.6 | 49.3 | 62.3 | 55.0 | 34.1
+~1540 Conquests peak             | 35.2 | 14.1 | 48.5 | 75.8 | 65.7 | 31.5 | 53.9 | 62.8 | 55.0 | 31.0
+~1590 Colonial empires           | 41.0 | 12.8 | 56.7 | 83.4 | 63.3 | 34.5 | 53.2 | 63.5 | 55.0 | 27.8
+~1650 Slave trade peak           | 47.9 | 10.5 | 66.3 | 89.4 | 62.0 | 36.1 | 53.8 | 64.2 | 55.0 | 24.9
+~1700 Enlightenment              | 48.0 |  8.0 | 74.3 | 91.5 | 61.7 | 36.8 | 54.0 | 64.7 | 55.0 | 23.2
+~1750 Industrial Revolution      | 48.0 |  5.1 | 81.8 | 89.8 | 61.7 | 37.1 | 53.5 | 65.2 | 55.0 | 21.8
+~1800 Revolutions era            | 48.0 |  2.3 | 87.6 | 91.0 | 61.9 | 37.3 | 53.9 | 65.6 | 55.0 | 20.8
+~1850 Peak colonialism           | 48.0 |  1.5 | 90.1 | 91.7 | 62.0 | 37.5 | 53.8 | 66.1 | 55.0 | 19.9
+~1900 Eve of World Wars          | 48.0 |  1.3 | 90.7 | 91.6 | 62.0 | 37.5 | 52.9 | 66.5 | 55.0 | 19.2
+~1950 Post-WWII                  | 48.0 |  1.3 | 90.8 | 88.7 | 62.0 | 37.6 | 51.0 | 66.8 | 55.0 | 18.7
+~2000 Modern era                 | 48.0 |  1.3 | 91.1 | 84.1 | 62.0 | 37.5 | 49.1 | 67.2 | 55.0 | 18.3
+~2026 Present day                | 48.0 |  1.3 | 91.2 | 80.9 | 62.0 | 37.5 | 51.0 | 67.4 | 55.0 | 18.0
+
+
+NARRATIVE: THE HAUDENOSAUNEE
+────────────────────────────
+
+The Haudenosaunee results are among the most devastating in the entire
+simulation, because of how clearly they show what was destroyed.
+
+Before the conquest shock hits at ~1650, the Haudenosaunee Confederacy is
+on one of the most successful institutional trajectories the model
+produces. In the first 160 years of the simulation (1490-1650), operating
+with no external disruption, institutional quality climbs from 42 to 66,
+corruption drops from 15 to 11, stability rises from 71 to 89. These are
+not fantastical numbers — they reflect the compounding returns of the
+Confederacy's structural features. Low hierarchy (25) means power is
+distributed and accountability is built in. Meritocratic succession means
+incompetent leaders can be replaced. Women's political authority (the clan
+mothers) provides a check on male leaders that most contemporary
+civilizations lack. Communal land tenure prevents the wealth concentration
+trap. High initial social trust (70) makes collective action cheap and
+corruption expensive.
+
+The Great Law of Peace, in the model's terms, IS the institutional
+architecture that political scientists would later identify as "inclusive
+institutions." The Haudenosaunee didn't need European Enlightenment ideas
+about checks and balances, separation of powers, or consent of the governed
+— they had already built them, and had been operating them for centuries
+before European contact.
+
+In the constrained scenario, where colonization never disrupts them, the
+trajectory continues its upward arc. Institutional quality reaches 74 by
+1700, 87 by 1800, and plateaus at 91 by 1850. Corruption falls to 1.4 by
+2026. Stability holds above 77. Trust remains above 61 for five centuries.
+These are extraordinary institutional outcomes — superior to every European
+civilization in the simulation and comparable only to the Taino.
+
+Then look at the historical line. At ~1650, everything breaks. State
+capacity drops from 40.4 to 8.9. Institutional quality crashes from 56.5
+to 15.0. Freedom collapses from 55 to 5. Trust craters from 63.4 to 19.7.
+Stability falls from 83 to 16. This isn't gradual decline — it's
+institutional annihilation.
+
+And then the long aftermath. For 375 years (1650-2026), the Haudenosaunee
+slowly, painfully rebuild under the weight of imposed colonial structures
+(corruption 60, freedom locked at 5). By 2026, institutional quality has
+clawed back to 34 — still far below where it was BEFORE CONTACT in 1500
+(42), let alone where it would have been without conquest (91). Trust has
+recovered to 30, less than half its pre-contact level of 69.
+
+The model's recovery pattern reveals something important about institutional
+resilience: even after catastrophic destruction, the underlying cultural
+features of the Haudenosaunee (high empathy, communal orientation, deep
+traditions of mutual accountability) slowly reassert themselves. Trust
+recovers faster than any other metric, rising from 20 to 30 over the post-
+shock centuries. This is the model capturing what anthropologists have
+documented — the persistence of Haudenosaunee cultural identity and
+governance traditions even under colonial suppression.
+
+The gap between timelines at 2026:
+  Institutional Quality:  91 (constrained) vs 34 (historical) — 57 points
+  Corruption:             1.4 vs 62 — forty-four-fold
+  Stability:              77 vs 7.5 — ten-fold
+  Freedom:                55 vs 5 — eleven-fold
+  Trust:                  62 vs 30 — doubled
+  State Capacity:         41 vs 26 — 60% higher
+  Wellbeing:              48 vs 30 — 63% higher
+
+The cultural exchange variant shows what mutual learning could add. State
+capacity reaches 48 (vs 41 in constrained) — a 16% gain, reflecting
+knowledge transfer (European agricultural techniques, metallurgy, written
+record-keeping) absorbed into the Confederacy's existing framework.
+Stability is slightly higher (81 vs 77). Wellbeing is better (51 vs 48).
+But the fundamental trajectory doesn't change much because the
+Haudenosaunee didn't need European governance ideas — they needed European
+technology and knowledge adopted on their own terms, which is exactly what
+the cultural exchange scenario provides.
+
+
+TAINO
+═════
+
+Starting conditions (~1490): Chiefdom-based society of the Caribbean, centered
+on Hispaniola and the Greater Antilles. First peoples to encounter Columbus
+in 1492. Agricultural economy based on cassava, maize, and sweet potato,
+supplemented by fishing. Cacique-led governance with hereditary succession
+but council oversight. Relatively peaceful culture with ball game traditions,
+sophisticated pottery, and a welcoming orientation toward outsiders.
+Population estimates for Hispaniola alone range from 250,000 to over
+1,000,000.
+
+Model parameters: Traditional governance, hierarchy 40, hereditary succession,
+communal economy with no accumulation, welcoming outsider relationship,
+values: hospitality and harmony. Freedom 40, collectivism 70, gender equity
+35. Starting state: capacity 20, IQ 25, trust 75, corruption 15, stability
+75, wealth concentration 15, wellbeing 50, military 15.
+
+Historical timeline: The Taino experienced one of the most complete
+demographic catastrophes in recorded history. Within 50 years of Columbus's
+arrival, the Taino population of Hispaniola had been reduced by over 95%
+through a combination of European diseases (smallpox, measles, influenza),
+forced labor (the encomienda system), massacre, and starvation. Conquest
+shock modeled at ~1500 (turn 1), the earliest of any civilization.
+
+
+TAINO: HISTORICAL (conquest shock ~1500, near-annihilation)
+───────────────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 CONQUEST SHOCK             |  5.5 | 52.0 | 12.6 |  6.9 | 16.4 | 21.5 | 19.5 | 66.2 |  2.0 |  1.2
+~1540 Conquests peak             | 12.4 | 79.1 | 17.5 | 11.7 | 19.5 | 34.4 | 39.9 | 66.4 |  2.0 |  0.5
+~1590 Colonial empires           | 15.3 | 77.7 | 21.5 | 16.1 | 23.8 | 37.7 | 44.1 | 66.7 |  2.0 |  1.0
+~1650 Slave trade peak           | 17.3 | 76.9 | 25.8 | 19.3 | 26.6 | 39.6 | 43.3 | 67.1 |  2.0 |  1.7
+~1700 Enlightenment              | 19.8 | 77.1 | 28.2 | 21.0 | 27.5 | 40.9 | 42.7 | 67.3 |  2.0 |  2.3
+~1750 Industrial Revolution      | 21.2 | 74.9 | 29.8 | 23.7 | 28.6 | 41.2 | 43.0 | 67.5 |  2.0 |  2.9
+~1800 Revolutions era            | 21.7 | 72.8 | 31.1 | 26.0 | 31.0 | 41.0 | 43.6 | 67.7 |  2.0 |  3.8
+~1850 Peak colonialism           | 22.6 | 73.0 | 32.5 | 27.0 | 32.8 | 41.8 | 43.2 | 67.8 |  2.0 |  4.6
+~1900 Eve of World Wars          | 23.1 | 73.4 | 33.6 | 24.3 | 35.0 | 41.8 | 39.3 | 68.0 |  2.0 |  5.4
+~1950 Post-WWII                  | 23.7 | 74.9 | 34.4 | 14.2 | 36.7 | 42.2 | 32.7 | 68.1 |  2.0 |  6.1
+~2000 Modern era                 | 23.7 | 72.0 | 34.4 |  9.9 | 38.2 | 42.5 | 34.5 | 68.1 |  2.0 |  7.1
+~2026 Present day                | 24.0 | 72.4 | 34.2 |  6.9 | 39.4 | 42.2 | 35.4 | 68.2 |  2.0 |  7.8
+
+
+TAINO: CONSTRAINED (no conquest, self-directed development)
+───────────────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 23.2 | 15.0 | 26.9 | 74.9 | 73.7 | 21.2 | 52.5 | 66.2 | 40.0 | 13.9
+~1540 Conquests peak             | 29.5 | 15.0 | 35.1 | 79.9 | 70.3 | 33.2 | 55.6 | 66.5 | 40.0 |  9.8
+~1590 Colonial empires           | 33.4 | 14.9 | 44.4 | 84.5 | 67.1 | 37.1 | 54.1 | 66.8 | 40.0 |  5.9
+~1650 Slave trade peak           | 37.3 | 14.3 | 54.9 | 88.6 | 65.2 | 39.1 | 54.1 | 67.1 | 40.0 |  2.1
+~1700 Enlightenment              | 37.3 | 13.4 | 63.4 | 90.4 | 64.4 | 39.9 | 54.2 | 67.4 | 40.0 |  0.8
+~1750 Industrial Revolution      | 37.3 | 12.1 | 71.7 | 91.5 | 64.1 | 40.4 | 54.7 | 67.6 | 40.0 |  0.9
+~1800 Revolutions era            | 37.3 | 10.3 | 79.8 | 92.2 | 64.0 | 40.7 | 54.6 | 67.9 | 40.0 |  1.2
+~1850 Peak colonialism           | 37.3 |  8.2 | 87.0 | 92.7 | 64.0 | 40.8 | 54.4 | 68.0 | 40.0 |  1.4
+~1900 Eve of World Wars          | 37.3 |  5.9 | 90.9 | 91.5 | 64.1 | 40.9 | 52.8 | 68.2 | 40.0 |  1.6
+~1950 Post-WWII                  | 37.3 |  3.5 | 92.6 | 87.9 | 64.3 | 40.9 | 51.7 | 68.4 | 40.0 |  1.7
+~2000 Modern era                 | 37.3 |  2.7 | 93.3 | 81.3 | 64.4 | 40.9 | 49.8 | 68.5 | 40.0 |  1.9
+~2026 Present day                | 37.3 |  2.5 | 93.6 | 77.0 | 64.4 | 40.9 | 49.9 | 68.6 | 40.0 |  1.9
+
+
+TAINO: CULTURAL EXCHANGE (mutual learning with Europeans)
+─────────────────────────────────────────────────────────
+Additionally: innovation tolerance 40 (vs 25), education quality 25 (vs 15),
+epistemic health 35 (vs 25), trust slightly reduced (65 vs 75) reflecting
+effort of managing new relationships.
+
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 23.5 | 15.0 | 26.7 | 74.9 | 66.0 | 21.0 | 52.6 | 66.2 | 40.0 | 13.9
+~1540 Conquests peak             | 30.4 | 15.1 | 34.3 | 79.1 | 68.5 | 32.8 | 55.5 | 66.5 | 40.0 |  9.8
+~1590 Colonial empires           | 35.1 | 15.0 | 43.2 | 82.5 | 66.7 | 36.8 | 54.4 | 66.8 | 40.0 |  6.2
+~1650 Slave trade peak           | 40.4 | 14.5 | 53.6 | 88.0 | 65.0 | 38.8 | 54.5 | 67.1 | 40.0 |  2.7
+~1700 Enlightenment              | 43.9 | 13.7 | 62.1 | 90.1 | 64.4 | 39.6 | 54.8 | 67.4 | 40.0 |  1.6
+~1750 Industrial Revolution      | 43.9 | 12.4 | 70.3 | 91.4 | 64.2 | 40.1 | 54.9 | 67.6 | 40.0 |  1.8
+~1800 Revolutions era            | 43.9 | 10.6 | 78.6 | 92.2 | 64.2 | 40.3 | 55.2 | 67.8 | 40.0 |  1.9
+~1850 Peak colonialism           | 43.9 |  8.5 | 86.3 | 92.7 | 64.3 | 40.5 | 55.0 | 68.0 | 40.0 |  2.0
+~1900 Eve of World Wars          | 43.9 |  6.0 | 90.6 | 91.6 | 64.4 | 40.6 | 54.2 | 68.2 | 40.0 |  2.1
+~1950 Post-WWII                  | 43.9 |  3.7 | 92.6 | 88.6 | 64.5 | 40.7 | 53.8 | 68.4 | 40.0 |  2.0
+~2000 Modern era                 | 43.9 |  2.9 | 93.5 | 82.5 | 64.7 | 40.7 | 52.7 | 68.5 | 40.0 |  1.9
+~2026 Present day                | 43.9 |  2.7 | 93.7 | 79.4 | 64.7 | 40.7 | 54.5 | 68.6 | 40.0 |  1.8
+
+
+NARRATIVE: THE TAINO — A PEOPLE WHO SHOULD STILL EXIST
+──────────────────────────────────────────────────────
+
+The Taino results are perhaps the most morally clarifying output of the
+entire simulation, because they illuminate with mathematical precision what
+was lost.
+
+In the historical timeline, the conquest shock hits at the very first turn
+(~1500). The numbers tell the story of annihilation: state capacity drops
+from 20 to 5.5. Institutional quality falls from 25 to 12.6. Stability
+crashes to 6.9. Freedom drops to 2 — and stays there for 526 years.
+Military power hits 1.2 — effectively zero. This is not a civilization
+being conquered; it is a civilization being erased.
+
+What happens after is a centuries-long crawl through imposed colonial
+structures. Corruption rockets to 79 by 1540 — the encomienda system, the
+plantation economy, the extraction apparatus. It never drops below 72 for
+the next five hundred years. Institutional quality slowly rebuilds to 34 by
+2026, but under a corruption regime that makes those institutions serve
+extractive purposes. Trust recovers the most of any metric — rising from 16
+to 39 — but this represents surviving communities rebuilding social bonds
+within, not trust toward the colonial system.
+
+One detail in the historical trajectory deserves attention: the Taino post-
+conquest have the HIGHEST empathy of any civilization in the simulation
+(68.2 by 2026). The model captures something real here — communities that
+have suffered collective trauma often develop deeper mutual empathy as a
+survival mechanism. The Taino's extraordinarily high empathy (higher even
+than the constrained Taino) represents solidarity forged in shared
+suffering.
+
+Now compare the constrained scenario. Without conquest, the Taino develop
+along a gentle but relentless upward curve. Their communal governance, high
+social trust (75), egalitarian economics, and welcoming cultural orientation
+produce steady institutional growth. By 1700, institutional quality has
+reached 63.4. By 1850, it hits 87. By 2026, it stands at 93.6 — the
+HIGHEST INSTITUTIONAL QUALITY of any civilization in the entire simulation.
+
+This finding deserves emphasis because it challenges deeply held assumptions.
+A relatively small-scale, communal agricultural chiefdom — with no writing
+system, no metallurgy, no wheel, no standing army — outperforms every
+hierarchical empire in the simulation in institutional quality and
+corruption control when left to develop on its own terms. How?
+
+The answer lies in their structural features. Low hierarchy (40) prevents
+elite capture. Communal economics prevents wealth concentration (it does
+rise from 15 to 41, but stays modest). High social trust (75 declining only
+to 64) makes collective action cheap. The welcoming outsider orientation
+reflects a society that solves problems through inclusion rather than
+domination. These are not weaknesses dressed up as strengths — they are
+genuinely superior institutional foundations that compound over centuries.
+
+The cruel paradox: their military power drops to near zero in all
+scenarios (1.9 by 2026 in the constrained timeline). The features that
+make them institutionally exceptional — trust, cooperation, low hierarchy,
+communal resource management — are inversely correlated with military
+capability. The civilization best suited for long-term human flourishing
+was the one most vulnerable to conquest by civilizations optimized for
+short-term military expansion.
+
+The cultural exchange variant adds 6.6 points of state capacity by 2026
+(43.9 vs 37.3) and nearly 5 points of wellbeing (54.5 vs 49.9).
+Knowledge transfer — agricultural techniques, tools, navigation, possibly
+written record-keeping — enhances capacity without disrupting the
+institutional foundations that make the Taino trajectory exceptional.
+
+
+MAYA (Post-Classic Period)
+══════════════════════════
+
+Starting conditions (~1490): Fragmented city-states in the Yucatan peninsula
+and Guatemalan highlands, successors to the Classic Maya civilization
+(250-900 CE). The Post-Classic Maya retained hieroglyphic writing, advanced
+mathematics (including zero), sophisticated astronomical observations, and
+complex calendar systems. However, the Classic collapse had left them
+politically fragmented, with competing kingdoms (K'iche', Kaqchikel, Itza,
+and others) engaged in chronic inter-city warfare. Agricultural surplus from
+raised fields and terracing supported urban populations, but the political
+system was hierarchical with hereditary rulers, elite-controlled literacy,
+and significant wealth inequality.
+
+Model parameters: Autocratic governance, hierarchy 55, hereditary succession,
+market economy with accumulation, trading outsider relationship. Values:
+knowledge and tradition. Religion dominant with active propagation.
+Freedom 25, science support 40, education elite-only but quality 35.
+Starting state: capacity 30, IQ 35, trust 35, corruption 40, stability 40,
+wealth concentration 55, wellbeing 30, military 40.
+
+Historical timeline: The Spanish conquest of the Maya began in the 1520s,
+though resistance was fierce and prolonged — the last independent Maya
+polity (Nojpeten) did not fall until 1697. Population collapsed approximately
+90% from disease, warfare, and forced labor. Spanish colonial structures
+replaced indigenous governance, and the encomienda system extracted wealth
+while suppressing Maya language, writing, and religion. Conquest shock
+modeled at ~1540.
+
+
+MAYA: HISTORICAL (conquest shock ~1540)
+───────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 30.2 | 20.0 | 34.8 | 41.7 | 35.3 | 45.8 | 34.2 | 55.9 | 25.0 | 40.3
+~1540 CONQUEST SHOCK             | 15.4 | 79.3 | 13.3 |  7.8 | 10.6 | 48.6 | 14.1 | 56.7 |  3.0 |  6.0
+~1590 Colonial empires           | 21.4 | 76.0 | 16.6 | 11.3 | 14.7 | 52.0 | 22.2 | 57.6 |  3.0 | 11.9
+~1650 Slave trade peak           | 22.5 | 73.6 | 18.4 | 13.7 | 18.7 | 54.5 | 22.1 | 58.6 |  3.0 | 18.1
+~1700 Enlightenment              | 25.6 | 75.6 | 19.9 | 12.0 | 21.2 | 56.6 | 21.1 | 59.3 |  3.0 | 22.5
+~1750 Industrial Revolution      | 26.8 | 74.8 | 21.2 |  8.3 | 22.8 | 59.7 | 19.8 | 59.9 |  3.0 | 26.3
+~1800 Revolutions era            | 29.3 | 73.6 | 21.6 |  8.0 | 23.8 | 62.9 | 19.5 | 60.5 |  3.0 | 29.6
+~1850 Peak colonialism           | 29.1 | 70.6 | 21.7 |  7.1 | 24.9 | 63.7 | 20.0 | 61.1 |  3.0 | 32.5
+~1900 Eve of World Wars          | 26.3 | 68.4 | 21.8 |  4.7 | 25.3 | 62.6 | 19.5 | 61.6 |  3.0 | 34.7
+~1950 Post-WWII                  | 26.0 | 74.7 | 22.2 |  5.0 | 23.6 | 63.1 | 16.8 | 62.1 |  3.0 | 36.6
+~2000 Modern era                 | 28.1 | 72.2 | 22.0 |  5.0 | 21.8 | 64.4 | 14.8 | 62.5 |  3.0 | 38.3
+~2026 Present day                | 26.4 | 73.8 | 21.4 |  4.5 | 21.1 | 64.1 | 14.8 | 62.8 |  3.0 | 39.1
+
+
+MAYA: CONSTRAINED (no conquest, self-directed development)
+──────────────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 30.2 | 20.0 | 34.8 | 41.7 | 35.3 | 45.8 | 34.2 | 55.9 | 25.0 | 40.3
+~1540 Conquests peak             | 31.4 | 41.0 | 34.2 | 45.1 | 36.4 | 48.4 | 39.3 | 56.7 | 25.0 | 41.2
+~1590 Colonial empires           | 32.7 | 41.9 | 33.6 | 45.1 | 38.0 | 50.6 | 34.8 | 57.6 | 25.0 | 42.3
+~1650 Slave trade peak           | 34.9 | 43.1 | 33.4 | 49.2 | 39.7 | 52.7 | 31.3 | 58.6 | 25.0 | 43.3
+~1700 Enlightenment              | 36.8 | 44.0 | 34.0 | 54.0 | 40.9 | 54.7 | 30.0 | 59.3 | 25.0 | 44.0
+~1750 Industrial Revolution      | 37.4 | 45.1 | 34.2 | 55.7 | 41.9 | 56.8 | 28.4 | 60.0 | 25.0 | 44.5
+~1800 Revolutions era            | 37.8 | 46.2 | 34.0 | 60.3 | 42.6 | 59.2 | 27.9 | 60.6 | 25.0 | 45.0
+~1850 Peak colonialism           | 38.1 | 47.7 | 33.8 | 63.1 | 42.9 | 61.7 | 26.7 | 61.2 | 25.0 | 45.4
+~1900 Eve of World Wars          | 38.4 | 49.1 | 33.5 | 63.6 | 42.7 | 64.0 | 25.9 | 61.7 | 25.0 | 45.7
+~1950 Post-WWII                  | 38.1 | 50.6 | 32.9 | 63.8 | 41.6 | 65.8 | 26.3 | 62.2 | 25.0 | 45.9
+~2000 Modern era                 | 37.3 | 52.2 | 32.1 | 45.8 | 39.9 | 67.0 | 20.4 | 62.6 | 25.0 | 46.1
+~2026 Present day                | 36.1 | 53.4 | 31.4 | 29.0 | 38.2 | 67.4 | 15.9 | 62.9 | 25.0 | 46.0
+
+
+MAYA: CULTURAL EXCHANGE (mutual learning with Europeans)
+────────────────────────────────────────────────────────
+Additionally: innovation tolerance 45 (vs 30), education quality 40 (vs 35),
+epistemic health 48 (vs 40).
+
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 30.2 | 20.0 | 34.9 | 41.7 | 35.3 | 45.8 | 34.2 | 55.9 | 25.0 | 40.3
+~1540 Conquests peak             | 31.4 | 40.8 | 34.3 | 45.1 | 36.4 | 48.2 | 39.5 | 56.7 | 25.0 | 41.2
+~1590 Colonial empires           | 32.7 | 41.7 | 33.8 | 45.1 | 37.9 | 50.2 | 35.1 | 57.6 | 25.0 | 42.3
+~1650 Slave trade peak           | 34.6 | 42.7 | 33.9 | 48.1 | 39.6 | 52.2 | 31.8 | 58.6 | 25.0 | 43.2
+~1700 Enlightenment              | 36.1 | 43.6 | 34.3 | 51.0 | 40.9 | 54.0 | 30.2 | 59.3 | 25.0 | 43.7
+~1750 Industrial Revolution      | 36.6 | 44.5 | 34.5 | 53.2 | 41.9 | 56.1 | 28.9 | 60.0 | 25.0 | 44.1
+~1800 Revolutions era            | 36.7 | 45.6 | 34.3 | 56.2 | 42.6 | 58.3 | 28.5 | 60.6 | 25.0 | 44.4
+~1850 Peak colonialism           | 36.9 | 47.0 | 34.4 | 55.9 | 42.9 | 60.7 | 26.6 | 61.2 | 25.0 | 44.6
+~1900 Eve of World Wars          | 37.4 | 48.5 | 34.3 | 60.3 | 42.9 | 63.0 | 26.9 | 61.7 | 25.0 | 44.8
+~1950 Post-WWII                  | 37.8 | 50.1 | 34.2 | 60.3 | 42.4 | 64.9 | 26.9 | 62.2 | 25.0 | 45.0
+~2000 Modern era                 | 37.8 | 51.4 | 33.6 | 46.2 | 41.5 | 66.1 | 20.1 | 62.7 | 25.0 | 45.1
+~2026 Present day                | 37.1 | 53.3 | 32.8 | 33.7 | 40.2 | 66.7 | 17.0 | 62.9 | 25.0 | 44.9
+
+
+NARRATIVE: THE MAYA — AN HONEST ASSESSMENT
+──────────────────────────────────────────
+
+The Maya present a fundamentally different pattern from the Haudenosaunee
+and Taino, and the simulation refuses to romanticize them.
+
+In the historical track, the Spanish conquest shock (~1540) is devastating:
+institutional quality crashes from 35 to 13, trust from 35 to 11, stability
+from 42 to 8. Corruption rockets to 79. Freedom drops from 25 to 3.
+Recovery never reaches pre-contact levels. By 2026, institutional quality
+sits at 21, corruption at 74, wellbeing at 15.
+
+But even in the constrained timeline — no conquest, five centuries of self-
+directed development — the Maya don't achieve anything close to the
+institutional trajectories of the Haudenosaunee or Taino. Why not?
+
+Their starting conditions tell the story. The Post-Classic Maya began with
+significant structural challenges: moderate hierarchy (55), inter-city
+warfare, elite-controlled literacy, hereditary rule, and wealth concentration
+already at 55. These are extractive institutional features that, while far
+less extreme than European colonialism, constrain institutional growth through
+the same mechanisms. Corruption rises steadily from 20 to 53 over 540 years.
+Wealth concentration climbs from 46 to 67. Institutional quality barely
+moves from 35 to 31 — it actually DECLINES slightly.
+
+This is one of the simulation's most intellectually honest outputs. The
+model treats every civilization on its own structural terms, without
+romanticizing indigenous societies or assigning guilt only to Europeans.
+The Maya's pre-contact challenges were real — chronic warfare between
+city-states, elite knowledge hoarding, hierarchical resource extraction.
+These dynamics produce institutional erosion regardless of who is doing
+them.
+
+The constrained Maya trajectory roughly parallels modern Guatemala — a
+society with significant inequality, moderate corruption, institutional
+stagnation, and chronic instability that eventually returns in the late
+period (stability drops from 64 to 29 in the final century). The model
+projects that without colonial disruption, the Maya region would have
+developed into something like a collection of competing city-states with
+moderate capacity and persistent inequality — better than the post-
+colonial reality, but not dramatically transformed.
+
+The conquest shock DOES make things much worse: corruption is 74 vs 53,
+institutional quality is 21 vs 31, trust is 21 vs 38, freedom is 3 vs 25.
+The post-conquest trajectory represents a real and significant loss. But
+the pre-existing internal dynamics mean that "what might have been" for the
+Maya is a more modest counterfactual than for the Haudenosaunee or Taino.
+
+Cultural exchange adds modest gains: IQ at 33 vs 31, stability at 34 vs
+29, trust at 40 vs 38. European knowledge (iron tools, the wheel, glass-
+making, new crops) could have been useful, but the structural constraints
+on institutional growth — hierarchy, inequality, chronic inter-polity
+competition — limit how much benefit can be absorbed.
+
+
+INCA EMPIRE (Tawantinsuyu)
+══════════════════════════
+
+Starting conditions (~1490): At peak expansion under Huayna Capac, the Inca
+Empire stretched 4,000 km along the Andes. A highly centralized bureaucratic
+empire with divine-right ruler (the Sapa Inca), no alphabetic writing system
+(but quipu knot-based record-keeping), no currency (but the mit'a labor tax
+system for state labor), and extraordinary engineering achievements
+including the 40,000-km Qhapaq Nan road network, agricultural terracing,
+freeze-drying food preservation, suspension bridges, and earthquake-
+resistant masonry. The state-managed economy achieved effective
+redistribution — famines were rare under Inca administration despite the
+challenging Andean geography. Population approximately 10-12 million.
+
+Model parameters: Autocratic governance, hierarchy 80 (divine-right emperor),
+command economy with no accumulation, conquering outsider relationship.
+Values: order and reciprocity. Religion dominant/theocratic. Freedom 15,
+collectivism 85. State-provided healthcare, pronatalist family policy.
+Starting state: capacity 60, IQ 55, trust 50, corruption 25, stability 55,
+wealth concentration 40, wellbeing 40, military 65.
+
+Historical timeline: Pizarro's conquest (1532-1572) was one of history's
+most consequential events. A force of fewer than 200 Spaniards toppled an
+empire of 10 million, exploiting a civil war between Atahualpa and Huascar,
+superior weapons technology, and the epidemiological catastrophe already
+underway. The Inca administrative apparatus was systematically dismantled.
+The mit'a labor system, designed for reciprocal community service, was
+co-opted for brutal silver mining at Potosi. Population collapsed
+approximately 90%. Conquest shock modeled at ~1540.
+
+
+INCA: HISTORICAL (Pizarro conquest shock ~1540)
+───────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 49.6 | 20.0 | 55.7 | 56.1 | 51.0 | 23.9 | 46.7 | 55.9 | 15.0 | 64.1
+~1540 CONQUEST SHOCK             | 29.5 | 76.5 | 13.4 |  7.1 | 10.2 | 40.4 | 15.4 | 56.7 |  2.0 |  4.0
+~1590 Colonial empires           | 31.6 | 82.7 | 17.0 | 12.5 | 14.0 | 45.7 | 30.9 | 57.5 |  2.0 | 11.0
+~1650 Slave trade peak           | 30.5 | 81.2 | 18.6 | 14.0 | 16.2 | 46.9 | 33.1 | 58.5 |  2.0 | 17.9
+~1700 Enlightenment              | 29.6 | 81.1 | 19.3 | 16.5 | 15.4 | 47.7 | 31.7 | 59.2 |  2.0 | 22.3
+~1750 Industrial Revolution      | 28.5 | 80.2 | 19.4 | 12.8 | 14.4 | 47.5 | 31.2 | 59.9 |  2.0 | 25.9
+~1800 Revolutions era            | 27.0 | 78.2 | 19.3 |  7.1 | 13.3 | 47.5 | 29.0 | 60.5 |  2.0 | 28.9
+~1850 Peak colonialism           | 26.6 | 77.4 | 19.3 |  7.1 | 12.2 | 47.5 | 29.6 | 61.0 |  2.0 | 31.4
+~1900 Eve of World Wars          | 28.1 | 76.7 | 18.9 |  5.7 | 11.3 | 48.0 | 29.2 | 61.5 |  2.0 | 33.6
+~1950 Post-WWII                  | 27.6 | 76.2 | 18.4 |  4.2 | 11.1 | 47.9 | 29.7 | 62.0 |  2.0 | 35.3
+~2000 Modern era                 | 26.9 | 78.2 | 18.0 |  3.5 | 10.4 | 48.2 | 27.4 | 62.5 |  2.0 | 36.6
+~2026 Present day                | 26.5 | 75.6 | 17.7 |  3.9 | 10.3 | 48.4 | 26.0 | 62.7 |  2.0 | 37.2
+
+
+INCA: CONSTRAINED (no conquest, self-directed development)
+──────────────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 49.6 | 20.0 | 55.7 | 56.1 | 51.0 | 23.9 | 46.7 | 55.9 | 15.0 | 64.1
+~1540 Conquests peak             | 49.6 | 25.6 | 57.3 | 59.8 | 55.1 | 39.8 | 50.1 | 56.7 | 15.0 | 61.0
+~1590 Colonial empires           | 49.6 | 26.4 | 59.3 | 66.8 | 60.3 | 43.7 | 48.5 | 57.5 | 15.0 | 57.8
+~1650 Slave trade peak           | 49.6 | 27.2 | 61.7 | 73.2 | 62.8 | 45.3 | 49.0 | 58.5 | 15.0 | 54.4
+~1700 Enlightenment              | 49.6 | 27.8 | 63.4 | 75.6 | 63.0 | 45.8 | 48.2 | 59.2 | 15.0 | 52.1
+~1750 Industrial Revolution      | 49.6 | 28.5 | 64.8 | 78.0 | 63.0 | 46.1 | 49.3 | 59.9 | 15.0 | 50.1
+~1800 Revolutions era            | 49.6 | 29.3 | 66.0 | 80.1 | 63.1 | 46.2 | 49.9 | 60.5 | 15.0 | 48.4
+~1850 Peak colonialism           | 49.6 | 30.1 | 67.1 | 79.4 | 63.1 | 46.2 | 49.2 | 61.1 | 15.0 | 46.8
+~1900 Eve of World Wars          | 49.6 | 31.2 | 68.0 | 80.1 | 63.2 | 46.2 | 49.2 | 61.6 | 15.0 | 45.1
+~1950 Post-WWII                  | 49.6 | 31.7 | 69.1 | 80.7 | 63.2 | 46.2 | 50.1 | 62.1 | 15.0 | 43.1
+~2000 Modern era                 | 49.6 | 32.5 | 70.2 | 74.8 | 63.2 | 46.3 | 46.5 | 62.6 | 15.0 | 41.2
+~2026 Present day                | 49.6 | 32.9 | 70.9 | 69.6 | 63.1 | 46.3 | 43.4 | 62.8 | 15.0 | 40.0
+
+
+INCA: CULTURAL EXCHANGE (mutual learning with Europeans)
+────────────────────────────────────────────────────────
+Additionally: innovation tolerance 35 (vs 20), education quality 38 (vs 30),
+epistemic health 40 (vs 30).
+
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 53.7 | 20.0 | 55.7 | 56.1 | 51.0 | 23.2 | 46.8 | 55.9 | 15.0 | 64.1
+~1540 Conquests peak             | 53.7 | 25.6 | 57.8 | 61.1 | 55.3 | 38.0 | 51.6 | 56.7 | 15.0 | 60.9
+~1590 Colonial empires           | 53.7 | 26.2 | 60.5 | 68.4 | 60.7 | 42.0 | 49.9 | 57.5 | 15.0 | 57.5
+~1650 Slave trade peak           | 53.7 | 26.8 | 63.7 | 71.5 | 63.0 | 43.7 | 49.5 | 58.5 | 15.0 | 54.1
+~1700 Enlightenment              | 53.7 | 27.2 | 66.4 | 74.7 | 63.3 | 44.3 | 49.2 | 59.2 | 15.0 | 51.6
+~1750 Industrial Revolution      | 53.7 | 27.7 | 68.9 | 79.5 | 63.4 | 44.5 | 50.0 | 59.9 | 15.0 | 49.7
+~1800 Revolutions era            | 53.7 | 28.2 | 71.4 | 82.7 | 63.4 | 44.6 | 50.5 | 60.5 | 15.0 | 48.2
+~1850 Peak colonialism           | 53.7 | 28.6 | 73.7 | 83.7 | 63.4 | 44.7 | 49.9 | 61.1 | 15.0 | 47.1
+~1900 Eve of World Wars          | 53.7 | 29.1 | 76.0 | 83.5 | 63.5 | 44.8 | 50.4 | 61.6 | 15.0 | 46.1
+~1950 Post-WWII                  | 53.7 | 30.0 | 77.9 | 80.6 | 63.6 | 44.8 | 50.5 | 62.1 | 15.0 | 44.8
+~2000 Modern era                 | 53.7 | 30.0 | 79.7 | 73.3 | 63.6 | 44.9 | 48.2 | 62.6 | 15.0 | 43.6
+~2026 Present day                | 53.7 | 30.2 | 80.7 | 68.4 | 63.7 | 44.9 | 44.7 | 62.8 | 15.0 | 42.9
+
+
+NARRATIVE: THE INCA — WHAT BUREAUCRATIC CIVILIZATION COULD ACHIEVE
+─────────────────────────────────────────────────────────────────
+
+The Inca results show the single largest gap between historical and
+counterfactual trajectories of any civilization in the simulation. At ~1490,
+the Inca start with the highest state capacity (50) and institutional
+quality (56) of any non-European civilization modeled. Their centralized
+bureaucracy, engineering achievements, and redistribution systems represent
+genuine governance sophistication that the model captures in high initial
+scores.
+
+In the historical track, Pizarro's conquest (~1540) is catastrophic.
+Institutional quality plunges from 56 to 13 — a 76% collapse in a single
+generation. Corruption rockets from 20 to 77. Trust collapses from 51 to
+10. The mit'a labor system, designed for reciprocal community service under
+Inca administration, is warped into a tool of mining exploitation under
+Spanish rule. At the silver mines of Potosi, an estimated 8 million
+indigenous laborers died over three centuries.
+
+What is most striking about the post-conquest Inca trajectory is how
+COMPLETELY recovery stalls. Over 480 years (1540-2026), institutional quality
+climbs from 13 to just 18 — gaining barely 5 points. Corruption never drops
+below 76. Trust reaches only 10. This isn't slow recovery; it's permanent
+institutional damage. The extractive colonial structures (encomienda, mita
+mining, latifundia land concentration) create self-reinforcing traps that
+persist long after independence. This maps directly onto the real-world
+trajectories of Peru and Bolivia, where colonial-era institutional patterns
+remain visible in modern governance.
+
+One telling detail: the Inca's post-conquest corruption (75.6 at 2026) is
+the highest of ANY civilization in the simulation. Higher than post-colonial
+India (74). Higher than post-conquest Maya (73.8). Higher than colonial
+Britain (75.0). The model is saying that the Inca suffered the most complete
+institutional inversion — from one of the best-administered empires in the
+pre-modern world to one of the most deeply corrupted post-colonial
+territories. The greater the institutional height, the greater the fall.
+
+In the constrained timeline, the Inca maintain their institutional strengths.
+State capacity holds at 50, institutional quality climbs steadily to 71, and
+trust reaches 63. Corruption rises modestly from 20 to 33 — an echo of the
+historical tendency for centralized empires to develop patron-client networks
+over time. This is an honest finding: even without colonial disruption, the
+highly centralized Inca state would face the classic challenges of
+bureaucratic empires (gradual corruption, administrative bloat).
+
+But the constrained Inca reveal one critical structural limitation: freedom
+stays at 15 throughout. The highly hierarchical, divine-right governance
+(hierarchy level 80) doesn't generate political liberalization on its own.
+This is a genuine structural feature, not a bias — the Inca system was
+institutionally capable and administratively sophisticated but was not
+oriented toward individual political freedom. The mit'a system provided for
+people's material needs but did not empower their political agency. A highly
+effective paternalistic state can achieve high wellbeing (49) and high
+stability (70) while keeping freedom low.
+
+The cultural exchange variant is the most revealing for the Inca. With
+European ideas of representation, written records, and broader epistemic
+exposure, institutional quality reaches 81 — 10 points higher than the
+constrained scenario. State capacity hits 54. The Inca bureaucratic
+infrastructure was sophisticated enough to absorb and integrate new
+administrative technologies. European alphabetic writing, in particular,
+would have been a transformative addition to a civilization already
+skilled at record-keeping (quipu) but lacking a tool for transmitting
+complex legal and administrative texts across generations and geography.
+
+The gap at 2026 between historical and constrained:
+  Institutional Quality:  71 vs 18 — 53 points (fourfold)
+  Corruption:             33 vs 76 — inverted
+  Trust:                  63 vs 10 — sixfold
+  Stability:              70 vs 4 — eighteenfold
+  State Capacity:         50 vs 27 — nearly doubled
+  Wellbeing:              43 vs 26 — 65% higher
+
+
+NORTH AMERICA: USA vs. WHAT MIGHT HAVE BEEN
+═══════════════════════════════════════════
+
+This comparison models two fundamentally different answers to the question:
+"What develops in North America across 540 years?"
+
+In the historical timeline, North America is colonized by Britain. European
+settlers establish colonies, declare independence in 1776, expand westward
+through conquest of indigenous nations, build an economy partly on enslaved
+labor, and develop into the United States of America. The model starts the
+"proto-USA" with low initial capacity (15) reflecting the early colonial
+settlements, but with representative governance, high innovation tolerance
+(70), free press, and a conquering outsider relationship.
+
+In the constrained timeline, without European colonization, North America
+develops from indigenous governance traditions. The model uses the
+Haudenosaunee Confederacy's structure as the template: representative
+governance, low hierarchy (25), meritocratic succession, high trust (70),
+communal economics, sustainable resource strategy.
+
+
+USA: HISTORICAL (colonies -> independence -> expansion)
+───────────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 15.4 | 20.0 | 16.0 | 40.4 | 30.3 | 45.8 | 34.0 | 62.3 | 30.0 | 19.7
+~1540 Conquests peak             | 16.7 | 30.9 | 20.6 | 44.6 | 31.4 | 48.4 | 41.4 | 62.7 | 30.0 | 18.6
+~1590 Colonial empires           | 19.3 | 31.8 | 26.2 | 48.4 | 32.3 | 50.5 | 39.3 | 63.3 | 30.0 | 17.7
+~1650 Slave trade peak           | 22.9 | 32.9 | 32.0 | 51.7 | 33.9 | 52.3 | 37.3 | 63.8 | 30.0 | 17.2
+~1700 Enlightenment              | 25.4 | 33.6 | 36.6 | 54.6 | 36.6 | 53.5 | 35.1 | 64.3 | 30.0 | 17.0
+~1750 Industrial Revolution      | 27.2 | 34.1 | 40.8 | 58.2 | 39.2 | 54.6 | 33.8 | 64.7 | 30.0 | 17.0
+~1800 Revolutions era            | 28.8 | 34.5 | 43.6 | 62.3 | 42.2 | 55.9 | 33.0 | 65.0 | 30.0 | 17.1
+~1850 Peak colonialism           | 30.8 | 34.8 | 44.6 | 60.8 | 44.8 | 57.3 | 29.9 | 65.3 | 30.0 | 17.5
+~1900 Eve of World Wars          | 32.1 | 35.1 | 45.1 | 49.5 | 47.2 | 58.8 | 23.5 | 65.6 | 30.0 | 18.0
+~1950 Post-WWII                  | 32.7 | 35.4 | 45.3 | 34.8 | 48.1 | 60.2 | 20.0 | 65.9 | 30.0 | 18.5
+~2000 Modern era                 | 32.1 | 37.0 | 45.1 | 18.7 | 47.8 | 61.6 | 18.7 | 66.2 | 30.0 | 19.2
+~2026 Present day                | 31.1 | 36.0 | 44.9 | 12.5 | 47.1 | 62.4 | 17.8 | 66.3 | 30.0 | 19.5
+
+
+NORTH AMERICA: INDIGENOUS CONFEDERATION (no European colonization)
+──────────────────────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 27.5 | 10.3 | 36.9 | 71.2 | 69.7 | 24.0 | 51.1 | 62.3 | 55.0 | 29.3
+~1540 Conquests peak             | 32.9 | 10.6 | 43.9 | 76.5 | 67.3 | 30.5 | 54.2 | 62.8 | 55.0 | 26.8
+~1590 Colonial empires           | 38.3 |  9.7 | 52.1 | 83.2 | 64.6 | 33.4 | 53.0 | 63.5 | 55.0 | 24.6
+~1650 Slave trade peak           | 41.4 |  7.9 | 61.8 | 88.9 | 62.9 | 34.9 | 53.2 | 64.2 | 55.0 | 22.7
+~1700 Enlightenment              | 41.4 |  5.8 | 69.8 | 91.0 | 62.3 | 35.6 | 53.1 | 64.7 | 55.0 | 21.5
+~1750 Industrial Revolution      | 41.4 |  3.4 | 77.6 | 92.1 | 62.1 | 36.0 | 53.6 | 65.2 | 55.0 | 20.5
+~1800 Revolutions era            | 41.4 |  2.1 | 84.8 | 92.8 | 62.2 | 36.2 | 54.0 | 65.6 | 55.0 | 19.7
+~1850 Peak colonialism           | 41.4 |  1.7 | 88.8 | 93.3 | 62.2 | 36.3 | 53.6 | 66.0 | 55.0 | 19.1
+~1900 Eve of World Wars          | 41.4 |  1.5 | 90.2 | 92.1 | 62.2 | 36.4 | 52.4 | 66.4 | 55.0 | 18.6
+~1950 Post-WWII                  | 41.4 |  1.4 | 90.6 | 88.6 | 62.0 | 36.4 | 50.0 | 66.8 | 55.0 | 18.2
+~2000 Modern era                 | 41.4 |  1.4 | 90.8 | 83.3 | 62.0 | 36.4 | 47.5 | 67.1 | 55.0 | 17.9
+~2026 Present day                | 41.4 |  1.4 | 90.8 | 79.3 | 62.0 | 36.4 | 46.8 | 67.3 | 55.0 | 17.6
+
+
+NORTH AMERICA: INDIGENOUS + CULTURAL EXCHANGE WITH EUROPE
+─────────────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 27.9 | 10.3 | 36.7 | 71.2 | 61.2 | 24.0 | 51.2 | 62.3 | 55.0 | 29.3
+~1540 Conquests peak             | 33.8 | 10.8 | 43.5 | 76.4 | 65.1 | 30.5 | 54.4 | 62.8 | 55.0 | 26.8
+~1590 Colonial empires           | 39.5 |  9.7 | 51.8 | 83.1 | 64.2 | 33.4 | 53.3 | 63.5 | 55.0 | 24.6
+~1650 Slave trade peak           | 47.2 |  7.8 | 61.6 | 88.8 | 62.9 | 34.9 | 53.6 | 64.2 | 55.0 | 22.8
+~1700 Enlightenment              | 48.0 |  5.7 | 69.7 | 91.1 | 62.4 | 35.6 | 53.8 | 64.7 | 55.0 | 21.8
+~1750 Industrial Revolution      | 48.0 |  3.5 | 77.7 | 92.2 | 62.3 | 36.0 | 54.3 | 65.2 | 55.0 | 21.0
+~1800 Revolutions era            | 48.0 |  2.0 | 85.0 | 92.9 | 62.4 | 36.2 | 54.6 | 65.6 | 55.0 | 20.4
+~1850 Peak colonialism           | 48.0 |  1.5 | 89.1 | 93.4 | 62.5 | 36.3 | 54.3 | 66.0 | 55.0 | 19.9
+~1900 Eve of World Wars          | 48.0 |  1.4 | 90.4 | 92.2 | 62.4 | 36.4 | 53.0 | 66.4 | 55.0 | 19.5
+~1950 Post-WWII                  | 48.0 |  1.3 | 90.8 | 88.8 | 62.3 | 36.4 | 50.6 | 66.8 | 55.0 | 19.2
+~2000 Modern era                 | 48.0 |  1.3 | 90.9 | 83.3 | 62.2 | 36.4 | 47.6 | 67.1 | 55.0 | 19.0
+~2026 Present day                | 48.0 |  1.3 | 90.9 | 79.4 | 62.3 | 36.4 | 47.9 | 67.3 | 55.0 | 18.8
+
+
+NARRATIVE: NORTH AMERICA — THE USA vs. WHAT MIGHT HAVE BEEN
+───────────────────────────────────────────────────────────
+
+This may be the most politically provocative comparison in the simulation.
+
+The historical USA trajectory shows a young civilization building capacity
+from very low beginnings. Starting with capacity 15 and IQ 16 (reflecting
+early colonial settlements with rudimentary institutions), it climbs
+steadily: IQ reaches 37 by the Enlightenment era, 44 by 1850, and peaks
+at 45 around 1950. Trust rises from 30 to 47. The USA builds real
+institutional quality over its history — this is not a story of pure
+decline.
+
+But several structural features constrain the USA's trajectory. The
+"conquering" outsider relationship channels resources toward military
+expansion rather than institutional deepening. High wealth concentration
+(starting at 46, climbing to 62) concentrates political influence. The
+founding contradictions — a republic built on enslaved labor, a democracy
+that excludes most of its population from participation — produce rising
+inequality that eventually erodes stability. By 2026, stability has
+collapsed to 12.5 and wellbeing sits at 18. The model projects a USA that
+has built moderate institutional quality but whose internal contradictions
+are catching up to it.
+
+Now compare the indigenous North American confederation. Starting with
+Haudenosaunee-style governance — low hierarchy (25), high trust (70),
+communal economics, meritocratic succession — this entity develops along
+a fundamentally different path. By 2026 it reaches:
+
+  State capacity:          41 vs 31 (USA) — 33% higher
+  Corruption:              1.4 vs 36 — twenty-six-fold difference
+  Institutional quality:   91 vs 45  — more than double
+  Stability:               79 vs 12.5 — six-fold
+  Trust:                   62 vs 47 — 32% higher
+  Wealth concentration:    36 vs 62  — dramatically more equal
+  Wellbeing:               47 vs 18  — nearly triple
+  Freedom:                 55 vs 30  — 83% more
+  Empathy:                 67 vs 66 — comparable
+
+The only dimension where the USA is comparable is military power (19.5 vs
+17.6), and even there the gap is small.
+
+This is not the model romanticizing indigenous life or punishing the USA.
+It is the model doing what it does for every civilization: propagating
+structural features through institutional dynamics over time. The
+indigenous confederation starts with profoundly different structural DNA:
+where the USA concentrates wealth and power, the confederation distributes
+them; where the USA builds institutions on a foundation of slavery and
+conquest, the confederation builds on trust and reciprocity; where the
+USA maximizes individual accumulation, the confederation optimizes
+collective resilience.
+
+Over 540 years, these structural differences compound. Low corruption and
+high trust create virtuous cycles that accelerate institutional growth.
+High inequality and internal contradictions create vicious cycles that
+eventually undermine even genuine institutional achievements. By 2026,
+the indigenous confederation has arrived at a place the USA's trajectory
+could never reach from its structural starting point.
+
+The cultural exchange variant adds 6.6 points of state capacity (48 vs
+41) to the indigenous confederation without altering its fundamental
+trajectory. European knowledge — metallurgy, agricultural techniques,
+written records, mathematics, navigation — enhances capability without
+corrupting the institutional foundations that make the trajectory
+exceptional. The indigenous confederation absorbs useful technology while
+maintaining its governance integrity, much as Japan would later do in the
+Meiji Restoration — but from a more egalitarian starting point.
+
+Two important caveats: First, the model does not capture the challenges of
+scaling confederal governance to continent-spanning territory. Real-world
+confederal systems struggle with coordination across large distances and
+diverse populations. The model's IQ of 91 may overstate what a continent-
+wide indigenous confederation could achieve without written records and
+long-distance communication technology. Second, the model does not simulate
+the specific technological innovations (steam power, electricity,
+industrialization) that drove the historical USA's economic growth. The
+indigenous confederation's wellbeing of 47 represents a different KIND of
+wellbeing — more equitable, more stable, more sustainable — but may not
+capture the material abundance that industrialization produced (alongside
+the inequality and environmental damage it also produced).
+
+
+INDIA
+═════
+
+Starting conditions (~1490): The subcontinent during the late Delhi Sultanate
+period, with the Vijayanagara Empire dominant in the south and multiple
+competing kingdoms across the region. India was one of the world's largest
+economies — a major producer of textiles (cotton, silk), spices, and
+manufactured goods, with extensive maritime trade networks connecting it to
+Southeast Asia, East Africa, and the Middle East. Intellectual traditions in
+mathematics, astronomy, medicine, and philosophy were highly developed.
+However, the caste system created deep structural hierarchy (modeled at 70),
+and political fragmentation meant that no single governance structure unified
+the subcontinent. About to enter the Mughal period (1526). Population
+approximately 110 million.
+
+Model parameters: Autocratic governance, hierarchy 70, hereditary succession,
+market economy with accumulation, trading outsider relationship. Values:
+dharma and commerce. Religious plurality with state endorsement. Freedom 20,
+gender equity 10, caste rigidity 65, education elite-only, science support
+35. Starting state: capacity 45, IQ 40, trust 40, corruption 45, stability
+45, wealth concentration 60, wellbeing 28, military 55.
+
+Historical timeline: India's colonization by Britain was gradual. The East
+India Company established trading posts in the 1600s, won the Battle of
+Plassey in 1757, and by the mid-1800s controlled most of the subcontinent.
+The British Raj (1858-1947) systematically deindustrialized India's textile
+economy, extracted wealth (estimated at $45 trillion in modern terms by
+economist Utsa Patnaik), imposed famines that killed tens of millions, and
+restructured governance to serve metropolitan interests. Independence came
+in 1947, followed by partition. Colonial shock modeled at ~1750.
+
+
+INDIA: HISTORICAL (East India Company shock ~1750, British Raj)
+──────────────────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 45.4 | 20.0 | 39.6 | 46.8 | 40.2 | 46.3 | 32.4 | 55.9 | 20.0 | 54.7
+~1540 Conquests peak             | 47.1 | 45.6 | 38.2 | 50.9 | 41.3 | 49.8 | 39.1 | 56.6 | 20.0 | 53.7
+~1590 Colonial empires           | 49.2 | 46.7 | 36.6 | 52.8 | 43.0 | 52.5 | 35.6 | 57.5 | 20.0 | 52.6
+~1650 Slave trade peak           | 49.6 | 48.0 | 35.5 | 58.5 | 44.7 | 54.9 | 31.5 | 58.5 | 20.0 | 51.5
+~1700 Enlightenment              | 49.6 | 49.1 | 35.3 | 59.5 | 45.7 | 57.0 | 28.8 | 59.2 | 20.0 | 50.8
+~1750 COLONIAL SHOCK             | 26.0 | 71.2 | 14.2 | 17.9 | 14.1 | 59.5 | 13.0 | 59.8 |  5.0 | 11.0
+~1800 Revolutions era            | 28.6 | 73.0 | 16.7 |  6.1 | 14.7 | 62.9 | 17.9 | 60.5 |  5.0 | 16.8
+~1850 Peak colonialism           | 29.9 | 73.7 | 17.9 |  2.7 | 14.7 | 66.8 | 18.6 | 61.0 |  5.0 | 22.0
+~1900 Eve of World Wars          | 30.9 | 70.8 | 18.5 |  1.8 | 14.0 | 70.1 | 16.7 | 61.5 |  5.0 | 26.3
+~1950 Post-WWII                  | 31.1 | 69.7 | 18.9 |  5.0 | 14.5 | 68.2 | 16.7 | 62.0 |  5.0 | 30.1
+~2000 Modern era                 | 28.4 | 75.6 | 19.7 |  2.3 | 14.1 | 67.7 | 13.3 | 62.4 |  5.0 | 33.0
+~2026 Present day                | 28.8 | 74.0 | 20.1 |  3.2 | 14.7 | 66.0 | 14.5 | 62.7 |  5.0 | 34.3
+
+
+INDIA: CONSTRAINED (no colonization, self-directed development)
+───────────────────────────────────────────────────────────────
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 45.4 | 20.0 | 39.6 | 46.8 | 40.2 | 46.3 | 32.4 | 55.9 | 20.0 | 54.7
+~1540 Conquests peak             | 47.1 | 45.6 | 38.2 | 50.9 | 41.3 | 49.8 | 39.1 | 56.6 | 20.0 | 53.7
+~1590 Colonial empires           | 49.2 | 46.7 | 36.6 | 52.8 | 43.0 | 52.5 | 35.6 | 57.5 | 20.0 | 52.6
+~1650 Slave trade peak           | 49.6 | 48.0 | 35.5 | 58.5 | 44.7 | 54.9 | 31.5 | 58.5 | 20.0 | 51.5
+~1700 Enlightenment              | 49.6 | 49.1 | 35.3 | 59.5 | 45.7 | 57.0 | 28.8 | 59.2 | 20.0 | 50.8
+~1750 Industrial Revolution      | 49.4 | 50.2 | 34.9 | 58.5 | 46.2 | 59.3 | 28.4 | 59.8 | 20.0 | 50.3
+~1800 Revolutions era            | 48.0 | 51.5 | 34.0 | 54.1 | 45.9 | 61.8 | 27.2 | 60.5 | 20.0 | 49.8
+~1850 Peak colonialism           | 45.8 | 53.7 | 33.0 | 40.1 | 44.4 | 64.1 | 25.3 | 61.0 | 20.0 | 49.4
+~1900 Eve of World Wars          | 42.4 | 54.1 | 31.4 | 34.8 | 41.6 | 66.1 | 23.6 | 61.5 | 20.0 | 49.2
+~1950 Post-WWII                  | 38.0 | 55.6 | 29.6 | 24.3 | 37.7 | 67.9 | 19.9 | 62.0 | 20.0 | 48.8
+~2000 Modern era                 | 33.8 | 58.0 | 27.6 | 15.8 | 32.7 | 68.4 | 15.1 | 62.5 | 20.0 | 48.2
+~2026 Present day                | 32.6 | 56.6 | 26.7 | 11.0 | 30.1 | 68.5 | 13.2 | 62.7 | 20.0 | 47.8
+
+
+INDIA: CULTURAL EXCHANGE (mutual learning with Europeans)
+─────────────────────────────────────────────────────────
+Additionally: innovation tolerance 45 (vs 35), education quality 38 (vs 30),
+epistemic health 42 (vs 35), trust slightly lower (38 vs 40) from effort of
+managing new relationships.
+
+Period                           | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 Age of Exploration         | 45.4 | 20.0 | 39.6 | 46.8 | 38.2 | 46.2 | 32.5 | 55.9 | 20.0 | 54.7
+~1540 Conquests peak             | 47.2 | 45.6 | 38.2 | 50.8 | 39.3 | 49.5 | 39.4 | 56.6 | 20.0 | 53.7
+~1590 Colonial empires           | 49.4 | 46.7 | 37.5 | 52.7 | 40.9 | 52.2 | 36.2 | 57.5 | 20.0 | 52.6
+~1650 Slave trade peak           | 52.1 | 47.9 | 38.5 | 60.3 | 42.7 | 54.4 | 33.2 | 58.5 | 20.0 | 51.5
+~1700 Enlightenment              | 53.6 | 48.9 | 39.1 | 63.8 | 44.0 | 56.3 | 31.8 | 59.2 | 20.0 | 50.8
+~1750 Industrial Revolution      | 53.6 | 49.9 | 38.9 | 65.3 | 45.0 | 58.4 | 30.9 | 59.8 | 20.0 | 50.2
+~1800 Revolutions era            | 53.2 | 50.9 | 38.4 | 60.0 | 45.4 | 60.6 | 29.1 | 60.4 | 20.0 | 49.7
+~1850 Peak colonialism           | 52.2 | 51.9 | 37.7 | 57.5 | 45.5 | 62.6 | 28.6 | 61.0 | 20.0 | 49.4
+~1900 Eve of World Wars          | 50.6 | 52.9 | 36.8 | 46.5 | 44.9 | 64.1 | 25.0 | 61.5 | 20.0 | 49.0
+~1950 Post-WWII                  | 47.3 | 54.9 | 35.2 | 32.7 | 43.2 | 65.3 | 21.6 | 62.0 | 20.0 | 48.7
+~2000 Modern era                 | 42.1 | 56.3 | 32.9 | 19.0 | 39.8 | 66.2 | 15.2 | 62.5 | 20.0 | 48.3
+~2026 Present day                | 38.8 | 55.7 | 31.2 | 11.6 | 37.3 | 66.1 | 14.4 | 62.7 | 20.0 | 48.1
+
+
+NARRATIVE: INDIA — COLONIALISM AS RUPTURE, HIERARCHY AS UNDERTOW
+────────────────────────────────────────────────────────────────
+
+India's results reveal the most nuanced story in the simulation — a story
+about two forces, one external and one internal, both operating to
+constrain development.
+
+In the pre-colonial period (1490-1750), India develops along a trajectory
+familiar to large hierarchical agrarian empires. State capacity climbs
+steadily from 45 to 50. Trust rises from 40 to 46. Stability improves from
+47 to 60. But corruption also rises (20 to 49), institutional quality
+erodes slightly (40 to 35), and wealth concentration increases (46 to 57).
+This is not a golden age being interrupted — it is a complex, sophisticated
+civilization with real strengths (trade, manufacturing, intellectual life)
+and real structural weaknesses (caste rigidity, hierarchical governance,
+concentrating wealth).
+
+The colonial shock at ~1750 is devastating. State capacity halves from 49
+to 26. Institutional quality crashes from 35 to 14. Trust collapses from
+46 to 14 — and barely recovers for 276 years, reaching only 15 by 2026.
+Freedom drops from 20 to 5. The model captures what economic historians
+have documented in detail: the systematic destruction of India's textile
+industry (deliberately, to create a captive market for Lancashire cotton),
+the dismantling of indigenous revenue systems, the extraction of wealth to
+fund British industrialization, and the famines caused by revenue policies
+that prioritized colonial extraction over food security.
+
+One metric tells the story with particular clarity: wellbeing. Before the
+colonial shock, wellbeing had reached 29 and was declining gradually due to
+rising inequality. After the shock, it plunges to 13 and never meaningfully
+recovers — reaching only 14.5 by 2026. This is the model's representation
+of the catastrophic human cost: the Great Bengal Famine (1770, 10 million
+dead), the Late Victorian Holocausts (1876-1902, estimated 12-29 million
+dead), the Bengal Famine of 1943 (3 million dead). These were not natural
+disasters — they were structural consequences of colonial extraction
+policies.
+
+But here is where India's results become more complex than a simple
+colonialism-is-bad narrative. In the constrained timeline — India
+developing without British colonization — the trajectory is BETTER, but
+not dramatically so. By 2026: state capacity 33 (vs 29), corruption 57
+(vs 74), IQ 27 (vs 20), trust 30 (vs 15), wellbeing 13 (vs 15 — actually
+slightly LOWER). Freedom stays at 20 (vs 5), a significant improvement
+from the colonial track but still constrained.
+
+Why doesn't non-colonized India flourish the way the Haudenosaunee or
+Taino do? Because India's internal structural features — hierarchy level
+70, caste rigidity 65, wealth concentration climbing from 46 to 69 —
+create their own long-term institutional erosion. The caste system limits
+social mobility. High hierarchy concentrates power. Elite-controlled
+education restricts epistemic breadth. These features operate over
+centuries to produce gradual institutional decline, with or without
+colonial disruption.
+
+Notice the constrained India's trajectory from 1750 onward (after the
+point where the colonial shock would have hit). Even without British
+intervention, state capacity starts declining from 49 to 33. Corruption
+rises from 50 to 57. Institutional quality falls from 35 to 27. Stability
+drops from 59 to 11. Wealth concentration climbs from 59 to 69. The model
+is projecting that an unconquered India, while significantly better off
+than the colonized India, would face mounting internal challenges from its
+own structural features — challenges not unlike those faced by the Ottoman
+Empire, Qing Dynasty, or other large hierarchical polities in the same
+period.
+
+The cultural exchange variant shows the most promise for India. With
+epistemic cross-pollination and higher innovation tolerance, state capacity
+reaches 39 (vs 33 constrained, vs 29 historical), and IQ reaches 31 (vs 27
+vs 20). Trust is notably higher at 37 (vs 30 vs 15). The model suggests
+that what India most needed was not protection from colonialism alone, but
+exposure to ideas about governance, education access, and social mobility
+that could challenge the caste system's rigidity from within — adopted
+voluntarily through trade relationships rather than imposed violently
+through colonization.
+
+The gap at 2026 between historical and constrained:
+  Corruption:             57 vs 74 — 17 points better
+  Trust:                  30 vs 15 — doubled
+  Institutional Quality:  27 vs 20 — 35% higher
+  State Capacity:         33 vs 29 — 14% higher
+  Freedom:                20 vs 5 — quadrupled
+  Wellbeing:              13 vs 15 — comparable (a subtle but important
+    finding — India's internal inequality constrains wellbeing even without
+    colonial extraction)
+
+The gap between cultural exchange and historical:
+  State Capacity:         39 vs 29 — 34% higher
+  Trust:                  37 vs 15 — 2.5 times
+  Institutional Quality:  31 vs 20 — 55% higher
+  Freedom:                20 vs 5 — quadrupled
+
+
+════════════════════════════════════════════════════════════════════════════════
+MASTER COMPARISON — ALL CIVILIZATIONS AT ~2026
+════════════════════════════════════════════════════════════════════════════════
+
+Scenario                     |  Cap | Corr |   IQ | Stab | Trust|   WC | Well |  Emp | Free |  Mil
+─────────────────────────────+──────+──────+──────+──────+──────+──────+──────+──────+──────+──────
+Haudenosaunee HIST           | 25.8 | 62.0 | 33.9 |  7.5 | 29.8 | 37.0 | 29.5 | 67.0 |  5.0 | 13.6
+Haudenosaunee CONST          | 41.4 |  1.4 | 90.8 | 77.1 | 61.6 | 37.5 | 48.4 | 67.3 | 55.0 | 16.9
+Haudenosaunee EXCH           | 48.0 |  1.3 | 91.2 | 80.9 | 62.0 | 37.5 | 51.0 | 67.4 | 55.0 | 18.0
+                             |      |      |      |      |      |      |      |      |      |
+Taino HIST                   | 24.0 | 72.4 | 34.2 |  6.9 | 39.4 | 42.2 | 35.4 | 68.2 |  2.0 |  7.8
+Taino CONST                  | 37.3 |  2.5 | 93.6 | 77.0 | 64.4 | 40.9 | 49.9 | 68.6 | 40.0 |  1.9
+Taino EXCH                   | 43.9 |  2.7 | 93.7 | 79.4 | 64.7 | 40.7 | 54.5 | 68.6 | 40.0 |  1.8
+                             |      |      |      |      |      |      |      |      |      |
+Maya HIST                    | 26.4 | 73.8 | 21.4 |  4.5 | 21.1 | 64.1 | 14.8 | 62.8 |  3.0 | 39.1
+Maya CONST                   | 36.1 | 53.4 | 31.4 | 29.0 | 38.2 | 67.4 | 15.9 | 62.9 | 25.0 | 46.0
+Maya EXCH                    | 37.1 | 53.3 | 32.8 | 33.7 | 40.2 | 66.7 | 17.0 | 62.9 | 25.0 | 44.9
+                             |      |      |      |      |      |      |      |      |      |
+Inca HIST                    | 26.5 | 75.6 | 17.7 |  3.9 | 10.3 | 48.4 | 26.0 | 62.7 |  2.0 | 37.2
+Inca CONST                   | 49.6 | 32.9 | 70.9 | 69.6 | 63.1 | 46.3 | 43.4 | 62.8 | 15.0 | 40.0
+Inca EXCH                    | 53.7 | 30.2 | 80.7 | 68.4 | 63.7 | 44.9 | 44.7 | 62.8 | 15.0 | 42.9
+                             |      |      |      |      |      |      |      |      |      |
+USA HIST                     | 31.1 | 36.0 | 44.9 | 12.5 | 47.1 | 62.4 | 17.8 | 66.3 | 30.0 | 19.5
+N. America CONST             | 41.4 |  1.4 | 90.8 | 79.3 | 62.0 | 36.4 | 46.8 | 67.3 | 55.0 | 17.6
+N. America EXCH              | 48.0 |  1.3 | 90.9 | 79.4 | 62.3 | 36.4 | 47.9 | 67.3 | 55.0 | 18.8
+                             |      |      |      |      |      |      |      |      |      |
+India HIST                   | 28.8 | 74.0 | 20.1 |  3.2 | 14.7 | 66.0 | 14.5 | 62.7 |  5.0 | 34.3
+India CONST                  | 32.6 | 56.6 | 26.7 | 11.0 | 30.1 | 68.5 | 13.2 | 62.7 | 20.0 | 47.8
+India EXCH                   | 38.8 | 55.7 | 31.2 | 11.6 | 37.3 | 66.1 | 14.4 | 62.7 | 20.0 | 48.1
+                             |      |      |      |      |      |      |      |      |      |
+Britain HIST                 | 27.9 | 75.0 | 22.4 |  8.7 | 16.4 | 73.4 | 13.8 | 62.7 | 20.0 | 51.2
+Britain CONST                | 28.0 | 68.6 | 22.5 | 12.7 | 17.4 | 72.0 | 15.6 | 62.7 | 20.0 | 50.7
+Britain EXCH                 | 28.7 | 69.6 | 23.8 |  8.2 | 21.9 | 70.7 | 14.2 | 62.7 | 20.0 | 50.6
+Covenant Entity              | 66.0 | 23.5 | 73.6 | 39.7 | 62.1 | 49.7 | 26.9 | 66.6 | 65.0 | 27.5
+
+
+════════════════════════════════════════════════════════════════════════════════
+STRUCTURAL FINDINGS
+════════════════════════════════════════════════════════════════════════════════
+
+1. STARTING HIERARCHY IS THE STRONGEST PREDICTOR OF LONG-TERM OUTCOMES.
+Civilizations with low hierarchy (Haudenosaunee: 25, Taino: 40, N. America
+Confed.: 25) produce dramatically different trajectories from those with
+high hierarchy (Inca: 80, India: 70, Britain: 65, Maya: 55). Low hierarchy
+enables institutional quality to compound; high hierarchy allows corruption
+to accumulate. This effect operates over centuries and is very difficult to
+reverse from within.
+
+2. CONQUEST DESTROYS INSTITUTIONS, NOT JUST PEOPLE. The conquest shocks
+don't just reduce state capacity — they introduce corruption, destroy trust,
+and eliminate freedom. These institutional effects persist for centuries. The
+Inca in 2026 (480 years post-conquest) have not recovered their pre-contact
+institutional quality. The Haudenosaunee (375 years post-shock) are at
+roughly two-thirds of their pre-contact IQ level — still far below where
+they would have been.
+
+3. TRUST IS THE SLOWEST VARIABLE TO RECOVER. After conquest, state capacity
+and institutional quality show gradual recovery, but social trust recovers
+most slowly. The Inca reach only 10 trust by 2026 (from 51 pre-contact).
+India reaches 15 (from 46 pre-shock). Trust, once shattered by colonial
+violence, is the hardest thing to rebuild — and without trust, other
+institutional recovery is stunted.
+
+4. THE PARADOX OF MILITARY VULNERABILITY. The civilizations that perform
+BEST institutionally (Haudenosaunee, Taino, N. America Confed.) have the
+LOWEST military power. Their institutional strengths (high trust, communal
+governance, low hierarchy) are inversely correlated with military capability.
+This means the civilizations best suited for long-term human flourishing are
+precisely the ones most vulnerable to conquest by civilizations optimized for
+military expansion. This is a structural feature of human social organization
+that rewards extractive, aggressive systems in the short term while punishing
+them in the long term.
+
+5. INTERNAL DYNAMICS DOMINATE EXTERNAL ONES — WITH EXCEPTIONS. For Britain
+and India, removing colonial relationships changes outcomes less than
+expected because internal structural features (hierarchy, inequality,
+restricted participation) drive most of the institutional trajectory. But
+for the Inca, Haudenosaunee, and Taino, removing conquest changes outcomes
+DRAMATICALLY because their internal dynamics were positive — it was the
+external shock that destroyed them. The principle is: when internal dynamics
+are already extractive, external extraction adds insult to injury but isn't
+the primary driver; when internal dynamics are healthy, external destruction
+is the decisive factor.
+
+6. THE MODEL DOES NOT ROMANTICIZE. The Maya's constrained trajectory —
+rising corruption, rising inequality, stagnant institutional quality — shows
+that the model treats pre-contact indigenous civilizations on their own
+structural terms. Where internal dynamics were extractive (Maya city-state
+warfare, elite knowledge hoarding), the model projects institutional
+challenges regardless of European contact. The simulation distinguishes
+between civilizations with genuinely inclusive institutions and civilizations
+that were merely non-European.
+
+7. CULTURAL EXCHANGE HELPS EVERYONE, BUT HELPS THE ALREADY-STRONG MORE.
+The exchange variant produces improvements across all civilizations, but the
+largest gains go to civilizations with strong institutional foundations
+(Haudenosaunee, Taino, Inca constrained). Civilizations with weak internal
+structures (Britain, Maya) benefit from cross-cultural knowledge but cannot
+fully capitalize because their internal dynamics constrain institutional
+growth.
+
+
+════════════════════════════════════════════════════════════════════════════════
+MODEL LIMITATIONS AND CAVEATS
+════════════════════════════════════════════════════════════════════════════════
+
+1. NO INTER-CIVILIZATION EPIDEMIOLOGY. The single largest effect of European
+contact — the epidemiological catastrophe killing an estimated 90% of
+indigenous populations — is not modeled as a dynamic process. Conquest shocks
+are applied as state parameter changes, not epidemiological models. The
+constrained scenarios are optimistic unless the posited public health
+measures actually worked.
+
+2. NO EXPLICIT COLONIAL WEALTH FLOWS. Britain's historical trajectory may
+understate domestic distortion from colonial wealth extraction. India's
+historical trajectory may understate the magnitude of wealth drained out.
+
+3. CIVILIZATIONS AS ISOLATED ENTITIES. Each civilization is modeled
+independently. Inter-civilization trade, competition, alliance, and cultural
+diffusion would shape development in ways the model cannot capture.
+
+4. TECHNOLOGY DIFFUSION. Indigenous civilizations develop on their own
+trajectories without specific European technologies (metallurgy, printing,
+gunpowder). Whether and how these would have been adopted through trade is
+not explicitly modeled.
+
+5. INSTITUTIONAL QUALITY CEILING. The model's tendency to push low-hierarchy,
+high-trust civilizations toward IQ scores of 90+ may be overly optimistic.
+Real governance faces challenges (environmental shocks, resource scarcity,
+population pressure) that the model may underweight.
+
+6. FREEDOM AS A STATIC PARAMETER. Freedom doesn't evolve dynamically in
+these runs — it stays where it's set. This understates the potential for
+political liberalization (or repression) over 540 years.
+
+7. SCALE AND COMPLEXITY. The model does not capture challenges of scaling
+confederal governance to continent-spanning territory, or the specific
+economic dynamics of industrialization that drove material abundance in the
+19th and 20th centuries.
+
+
+════════════════════════════════════════════════════════════════════════════════
+CONCLUSION
+════════════════════════════════════════════════════════════════════════════════
+
+The central finding is that the age of conquest was not merely a geopolitical
+event — it was an institutional catastrophe whose effects persist half a
+millennium later. The civilizations most devastated by colonialism (Taino,
+Haudenosaunee, Inca) were, by the model's assessment, the ones best
+positioned for long-term institutional success. Their destruction was a
+function of short-term military vulnerability colliding with expansionist
+civilizations that had higher military capacity but worse institutional
+foundations.
+
+Preventing conquest alone is insufficient to produce optimal outcomes.
+Internal structural features — hierarchy, participation, wealth
+concentration, trust — determine more of the long-term trajectory than
+external relationships. A civilization's institutional future is written
+primarily in its own governance structure.
+
+The intervening entity (The Covenant) does not become tyrannical but does
+become fragile — exhausting itself through military atrophy and stability
+erosion, suggesting sustainable international order requires something more
+distributed than a single hegemon.
+
+And the model refuses to be simple. The Maya's modest constrained trajectory
+and India's persistent internal challenges show that "not colonized" is not
+the same as "thriving." Internal hierarchy and inequality create their own
+institutional erosion, operating over centuries with or without foreign
+domination. The lesson is not that colonialism was the sole cause of the
+modern world's problems — it is that colonialism destroyed the civilizations
+best positioned to model alternatives.
+
+
+Generated by Civ-Sim counterfactual simulation engine
+September 2026

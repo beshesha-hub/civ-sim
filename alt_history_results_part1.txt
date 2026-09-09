@@ -1,0 +1,169 @@
+ALTERNATIVE HISTORY COUNTERFACTUAL SIMULATION
+What If Conquest Had Been Prevented? (1490-2026)
+Civ-Sim Model Output — Part 1: European Powers & Intervening Entity
+═══════════════════════════════════════════════════════════════════
+
+SIMULATION PARAMETERS
+─────────────────────
+- 20 random seeds per scenario, averaged
+- 54 turns × 10 years = 540 years (1490–2030)
+- Companion module active (demographic, empathy, behavioral reinforcement feedback)
+- 4 scenarios: Historical Baseline, Anti-Conquest Constraint (A), Anti-Conquest + Cultural Exchange (B), Intervening Entity ("The Covenant")
+
+SCENARIO DESCRIPTIONS
+─────────────────────
+
+HISTORICAL BASELINE — Britain modeled as a late-medieval European power with conquest enabled.
+~1490 starting conditions: autocratic monarchy, mercantile economy, dominant state-endorsed religion with hostile tolerance, restricted political participation, primogeniture inheritance, active religious propagation, "conquering" outsider relationship.
+
+SCENARIO A (CONSTRAINED) — Same civilization, but outsider relationship changed to "trading." No forced conversions (religion tolerance → indifferent, propagation → communal). Institutional quality slightly higher (+3) to reflect the rule-of-law framework needed to enforce trade-only policies.
+
+SCENARIO B (CULTURAL EXCHANGE) — Same as A, but the intervening entity has pre-established mutual language learning and cultural understanding between European and New World peoples. Social trust +7, epistemicHealth +7, innovationTolerance +10, religion tolerance → "accepting." Cultural cohesion slightly lower (-10) reflecting the internal tension of pluralism.
+
+THE COVENANT (INTERVENING ENTITY) — A powerful, idealistic entity enforcing the anti-conquest constraints. Representative governance, low hierarchy (30), meritocratic institutions, high initial state capacity (70), high trust (65), high freedom (65), military power sufficient to enforce (75).
+
+
+FULL TRAJECTORY DATA
+════════════════════
+
+Metrics: Cap = State Capacity, Corr = Corruption, IQ = Institutional Quality,
+         Stab = Stability, Trust = Social Trust, WC = Wealth Concentration,
+         Well = Wellbeing, Emp = Empathy, Free = Freedom, Mil = Military Power
+
+HISTORICAL BASELINE — Britain with conquest/colonization
+────────────────────────────────────────────────────────
+Period                                  | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 — Age of Exploration begins       | 40.3 | 20.0 | 34.6 | 50.6 | 35.1 | 47.0 | 29.4 | 55.9 | 20.0 | 59.6
+~1540 — Spanish conquests peak          | 41.5 | 55.9 | 33.3 | 51.2 | 35.9 | 52.1 | 34.4 | 56.7 | 20.0 | 58.4
+~1590 — Colonial empires established    | 42.8 | 57.2 | 31.7 | 50.3 | 37.2 | 55.9 | 31.9 | 57.5 | 20.0 | 57.0
+~1650 — Slave trade peak era            | 44.2 | 58.8 | 30.7 | 44.3 | 37.8 | 59.4 | 28.0 | 58.5 | 20.0 | 55.6
+~1700 — Enlightenment beginning         | 44.0 | 60.1 | 29.8 | 37.5 | 36.6 | 62.5 | 27.1 | 59.2 | 20.0 | 54.7
+~1750 — Industrial Revolution begins    | 41.0 | 62.7 | 28.4 | 28.6 | 34.2 | 65.9 | 25.5 | 59.8 | 20.0 | 53.8
+~1800 — American/French revolutions     | 35.9 | 63.0 | 26.5 | 28.0 | 30.5 | 69.5 | 23.9 | 60.5 | 20.0 | 53.0
+~1850 — Peak colonialism                | 32.4 | 65.7 | 24.9 | 26.4 | 26.5 | 72.7 | 21.3 | 61.0 | 20.0 | 52.4
+~1900 — Eve of World Wars               | 31.1 | 66.4 | 23.9 | 22.4 | 23.2 | 74.5 | 19.2 | 61.5 | 20.0 | 51.9
+~1950 — Post-WWII / Decolonization      | 30.0 | 67.9 | 23.0 | 15.9 | 20.1 | 75.3 | 16.0 | 62.0 | 20.0 | 51.5
+~2000 — Modern era                      | 29.6 | 70.8 | 22.7 | 11.6 | 17.6 | 74.7 | 13.7 | 62.4 | 20.0 | 51.3
+~2026 — Present day                     | 27.9 | 75.0 | 22.4 |  8.7 | 16.4 | 73.4 | 13.8 | 62.7 | 20.0 | 51.2
+
+SCENARIO A — Anti-conquest constraint, no pre-contact exchange
+──────────────────────────────────────────────────────────────
+Period                                  | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 — Age of Exploration begins       | 40.3 | 20.0 | 37.4 | 50.6 | 35.1 | 46.9 | 29.5 | 55.9 | 20.0 | 59.6
+~1540 — Spanish conquests peak          | 41.5 | 55.9 | 35.4 | 51.2 | 35.9 | 51.9 | 34.7 | 56.7 | 20.0 | 58.4
+~1590 — Colonial empires established    | 42.8 | 57.1 | 33.2 | 51.5 | 37.3 | 55.5 | 32.3 | 57.5 | 20.0 | 57.0
+~1650 — Slave trade peak era            | 44.3 | 58.7 | 31.1 | 46.0 | 38.5 | 59.0 | 28.8 | 58.5 | 20.0 | 55.6
+~1700 — Enlightenment beginning         | 44.0 | 60.0 | 30.0 | 37.9 | 37.5 | 62.1 | 27.1 | 59.2 | 20.0 | 54.7
+~1750 — Industrial Revolution begins    | 40.9 | 61.3 | 28.4 | 32.5 | 34.9 | 65.4 | 25.7 | 59.8 | 20.0 | 53.9
+~1800 — American/French revolutions     | 35.7 | 62.9 | 26.4 | 26.9 | 30.6 | 68.9 | 23.6 | 60.4 | 20.0 | 53.2
+~1850 — Peak colonialism                | 32.4 | 65.8 | 24.8 | 24.7 | 26.4 | 72.1 | 21.0 | 61.0 | 20.0 | 52.6
+~1900 — Eve of World Wars               | 30.5 | 65.5 | 23.9 | 21.7 | 23.6 | 73.1 | 19.7 | 61.5 | 20.0 | 52.0
+~1950 — Post-WWII / Decolonization      | 30.0 | 68.7 | 23.3 | 18.0 | 20.5 | 73.8 | 16.2 | 62.0 | 20.0 | 51.6
+~2000 — Modern era                      | 28.9 | 69.0 | 23.0 | 13.6 | 17.9 | 73.7 | 14.1 | 62.4 | 20.0 | 51.1
+~2026 — Present day                     | 28.0 | 68.6 | 22.5 | 12.7 | 17.4 | 72.0 | 15.6 | 62.7 | 20.0 | 50.7
+
+SCENARIO B — Anti-conquest + pre-established cultural exchange
+─────────────────────────────────────────────────────────────
+Period                                  | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 — Age of Exploration begins       | 40.3 | 20.0 | 39.7 | 50.5 | 42.1 | 46.8 | 30.1 | 55.9 | 20.0 | 59.6
+~1540 — Spanish conquests peak          | 41.5 | 55.7 | 38.7 | 50.2 | 42.9 | 51.5 | 35.2 | 56.7 | 20.0 | 58.4
+~1590 — Colonial empires established    | 42.8 | 56.6 | 37.5 | 49.7 | 44.2 | 55.1 | 32.0 | 57.5 | 20.0 | 57.0
+~1650 — Slave trade peak era            | 44.3 | 58.0 | 35.8 | 43.3 | 45.5 | 58.5 | 29.2 | 58.5 | 20.0 | 55.7
+~1700 — Enlightenment beginning         | 44.7 | 59.2 | 34.3 | 34.7 | 46.1 | 61.4 | 27.0 | 59.2 | 20.0 | 54.7
+~1750 — Industrial Revolution begins    | 42.8 | 60.4 | 32.8 | 29.4 | 46.0 | 64.7 | 27.0 | 59.9 | 20.0 | 53.9
+~1800 — American/French revolutions     | 38.3 | 61.7 | 31.0 | 27.0 | 44.8 | 67.9 | 25.9 | 60.5 | 20.0 | 53.1
+~1850 — Peak colonialism                | 33.7 | 63.3 | 29.0 | 23.3 | 40.6 | 70.9 | 23.6 | 61.0 | 20.0 | 52.4
+~1900 — Eve of World Wars               | 31.1 | 65.6 | 27.2 | 21.1 | 34.6 | 73.0 | 19.3 | 61.5 | 20.0 | 51.9
+~1950 — Post-WWII / Decolonization      | 30.1 | 68.1 | 25.5 | 12.2 | 27.8 | 73.5 | 15.2 | 62.0 | 20.0 | 51.3
+~2000 — Modern era                      | 29.1 | 68.9 | 24.4 |  8.6 | 23.8 | 71.5 | 13.8 | 62.5 | 20.0 | 50.8
+~2026 — Present day                     | 28.7 | 69.6 | 23.8 |  8.2 | 21.9 | 70.7 | 14.2 | 62.7 | 20.0 | 50.6
+
+THE COVENANT (Intervening Entity) — Does it become tyrannical?
+─────────────────────────────────────────────────────────────
+Period                                  | Cap  | Corr | IQ   | Stab | Trust| WC   | Well | Emp  | Free | Mil
+~1500 — Age of Exploration begins       | 66.0 | 19.9 | 66.2 | 76.0 | 63.2 | 45.3 | 52.4 | 62.3 | 65.0 | 72.2
+~1540 — Spanish conquests peak          | 66.0 | 20.3 | 69.8 | 83.1 | 61.4 | 46.5 | 54.1 | 62.8 | 65.0 | 62.8
+~1590 — Colonial empires established    | 66.0 | 21.3 | 72.5 | 88.1 | 61.2 | 47.5 | 52.0 | 63.4 | 65.0 | 53.7
+~1650 — Slave trade peak era            | 66.0 | 22.3 | 74.0 | 89.5 | 61.4 | 48.2 | 51.3 | 64.0 | 65.0 | 45.6
+~1700 — Enlightenment beginning         | 66.0 | 22.8 | 74.2 | 87.2 | 61.6 | 48.6 | 49.9 | 64.4 | 65.0 | 40.6
+~1750 — Industrial Revolution begins    | 66.0 | 23.2 | 74.2 | 87.4 | 62.0 | 48.9 | 49.6 | 64.9 | 65.0 | 36.8
+~1800 — American/French revolutions     | 66.0 | 23.5 | 74.2 | 87.9 | 62.0 | 49.1 | 49.3 | 65.2 | 65.0 | 34.0
+~1850 — Peak colonialism                | 66.0 | 23.6 | 74.5 | 85.9 | 62.1 | 49.2 | 47.7 | 65.6 | 65.0 | 31.8
+~1900 — Eve of World Wars               | 66.0 | 23.6 | 74.4 | 78.6 | 62.2 | 49.4 | 43.6 | 65.9 | 65.0 | 30.2
+~1950 — Post-WWII / Decolonization      | 66.0 | 23.6 | 74.1 | 65.4 | 62.2 | 49.5 | 34.1 | 66.2 | 65.0 | 29.0
+~2000 — Modern era                      | 66.0 | 23.5 | 73.8 | 50.3 | 62.0 | 49.6 | 31.4 | 66.4 | 65.0 | 28.0
+~2026 — Present day                     | 66.0 | 23.5 | 73.6 | 39.7 | 62.1 | 49.7 | 26.9 | 66.6 | 65.0 | 27.5
+
+
+FINAL COMPARISON AT ~2026
+═════════════════════════
+Scenario                  |   Cap |  Corr |    IQ |  Stab | Trust |    WC |  Well |   Emp |  Free |   Mil
+Historical                |  27.9 |  75.0 |  22.4 |   8.7 |  16.4 |  73.4 |  13.8 |  62.7 |  20.0 |  51.2
+A: Constrained            |  28.0 |  68.6 |  22.5 |  12.7 |  17.4 |  72.0 |  15.6 |  62.7 |  20.0 |  50.7
+B: Cultural Exchange      |  28.7 |  69.6 |  23.8 |   8.2 |  21.9 |  70.7 |  14.2 |  62.7 |  20.0 |  50.6
+Covenant Entity           |  66.0 |  23.5 |  73.6 |  39.7 |  62.1 |  49.7 |  26.9 |  66.6 |  65.0 |  27.5
+
+
+═══════════════════════════════════════════════════════════════════
+NARRATIVE INTERPRETATION
+═══════════════════════════════════════════════════════════════════
+
+THE HISTORICAL BASELINE: BRITAIN AS CONQUEROR
+
+The historical-track Britain follows a recognizable arc. It begins as a modestly capable state (capacity 40, institutional quality 35) with high corruption and extreme wealth concentration. Across 540 years, its institutions erode steadily. By the peak colonial era (~1850), state capacity has already declined to 32, corruption sits at 66, and wealth concentration has climbed to 73. The model captures what historians have documented: colonialism enriched a narrow elite while hollowing out domestic governance. Trust collapses from 35 to 16 by 2026. Stability falls to single digits. Wellbeing — already low at 25 — drops to 14. This is a civilization that conquered the world but corroded itself doing it.
+
+
+SCENARIO A: THE CONSTRAINED EXPLORER
+
+When military conquest, forced conversion, and exploitation are forbidden — leaving only mutually-agreed trade and sovereignty-respecting diplomacy — the trajectory diverges, but less dramatically than one might hope.
+
+The clearest divergence is in corruption: by 2026, the constrained Britain sits at 68.6 rather than 75.0. The rule-of-law framework required to enforce trade-only policies exerts modest but real discipline on the state. Stability is somewhat higher (12.7 vs 8.7), and wellbeing is marginally better (15.6 vs 13.8). Wealth concentration is slightly lower (72 vs 73.4).
+
+But the differences are smaller than expected. Why? Because the model is revealing something important: the INTERNAL dynamics of a hierarchical monarchy with extreme inequality, weak institutions, and entrenched elites drive most of the trajectory. Removing the external avenue of colonial extraction doesn't cure the domestic disease. The aristocracy still concentrates wealth. The church still constrains epistemic freedom. The monarchy still limits participation. The rot is endogenous — colonialism was a symptom of these structural features as much as it was a cause of further decay.
+
+
+SCENARIO B: CROSS-CULTURAL UNDERSTANDING
+
+The most interesting variant — where the intervening entity has pre-established mutual language learning and cultural understanding between European and New World peoples — shows the strongest effect, but in a specific dimension: TRUST.
+
+By 2026, social trust in the cultural-exchange scenario is 21.9 — a full 33% higher than the historical baseline (16.4). Institutional quality holds at 23.8 vs 22.4. Wealth concentration is the lowest of the three at 70.7. The epistemically richer starting conditions (broader knowledge from cross-cultural exchange) sustain slightly better institutions.
+
+But here's the paradox the model surfaces: stability is actually LOWER (8.2 vs 8.7). Greater cross-cultural awareness introduces internal tension — cultural cohesion started lower (55 vs 65) because the society is now grappling with pluralism. More trust, more institutional quality, but more internal contestation. This tracks with political science findings: diverse, open societies often exhibit more friction even as they build deeper resilience.
+
+
+THE COVENANT: DOES THE GUARDIAN BECOME THE TYRANT?
+
+This is the most striking result. The Covenant — the powerful entity enforcing the anti-conquest constraints — does NOT become tyrannical. Over 540 years:
+
+Corruption stays low: 20 to 23.5. Barely moves. The combination of representative governance, low hierarchy (30), meritocratic institutions, and high initial social trust (65) creates a self-reinforcing virtuous cycle.
+
+Institutional quality climbs and plateaus: 65 to 74, then holds steady for centuries. The low hierarchy means elite coordination isn't the primary institutional maintenance mechanism — broad participation is. This makes institutions resilient to elite defection.
+
+Trust is remarkably stable: 63 to 62. In 540 years of enforcing constraints on other civilizations, the Covenant's internal trust barely erodes.
+
+Freedom stays constant at 65.
+
+But the model reveals two genuine vulnerabilities:
+
+1. MILITARY DECAY (75 to 27.5): The Covenant's military power declines by two-thirds. A peace-keeping entity that doesn't conquer faces the classic hegemon's dilemma — maintaining military readiness without military use. By 2026, it may lack the hard power to enforce anything.
+
+2. STABILITY EROSION (75 to 40): While institutions hold, stability declines steadily, especially after ~1900. The Covenant faces a slow-burning legitimacy challenge — why does it get to set the rules? By the modern era, its stability is at 40, suggesting significant internal contestation about its role.
+
+3. WELLBEING DECLINE (52 to 27): This is the cost of guardianship. Resources diverted to maintaining the international order come at the expense of domestic flourishing. The Covenant's people may begin asking whether the mission is worth the sacrifice.
+
+The model's verdict: The Covenant does not become tyrannical, but it does become fragile. Its institutions remain sound, but its power to act erodes, and its population grows dissatisfied. This resembles real-world dynamics of liberal hegemonic projects — they don't typically corrupt into tyranny; they exhaust themselves.
+
+
+WHAT THE MODEL REVEALS — AND WHAT IT CAN'T YET CAPTURE
+
+The simulation surfaces a provocative structural finding: removing colonial exploitation changes outcomes far less than one might assume, because the internal dynamics of hierarchical, unequal societies are the primary driver of decay. The monarchy, the aristocracy, the religious constraints on knowledge, the concentration of land and wealth — these forces operate with or without an overseas empire.
+
+This aligns with recent historiography (Acemoglu and Robinson's distinction between extractive vs inclusive institutions, or Kenneth Pomeranz's work on the "Great Divergence"): the colonies amplified existing tendencies but did not create them.
+
+However, the model has limited resolution for several dynamics that would differentiate these scenarios more sharply in practice:
+- Colonial wealth flows are not explicitly modeled as a revenue channel that inflates metropolitan elites
+- Slave trade labor economics and their specific distortions aren't separate from general wealth concentration
+- Indigenous civilizations aren't modeled as interactive agents here — they're AI civs with generic parameters, not civilizations with their own demographic, epidemiological, and institutional dynamics
+- Epidemiological catastrophe prevention (the public health constraint) would be the single largest divergence point in reality — preventing 90%+ population collapse in the Americas — but the model doesn't have inter-civilization epidemiology
+
+These are real limitations. The finding that internal dynamics dominate is genuine, but the magnitude of external-interaction effects is almost certainly understated.

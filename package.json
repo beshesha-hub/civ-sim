@@ -20,7 +20,12 @@
       "server.js",
       "js/**/*",
       "css/**/*",
-      "!js/scenario_test_harness.js"
+      "data/**/*",
+      "!js/scenario_test_harness.js",
+      "!js/hindcast_runner.js",
+      "!js/hindcast_scenarios.js",
+      "!js/validation_suite.js",
+      "!js/model_diagnostics.js"
     ],
     "mac": {
       "target": "dmg",
@@ -28,7 +33,12 @@
       "minimumSystemVersion": "10.13"
     },
     "win": {
-      "target": "nsis"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
     },
     "nsis": {
       "oneClick": false,

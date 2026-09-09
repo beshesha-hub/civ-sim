@@ -278,6 +278,516 @@ const STRUCTURAL_TARGETS = {
   },
 };
 
+// ═══════════════════════════════════════════════════════════════
+// Pass 10 — Production Decentralization (Energy & Agriculture)
+// Two independent parameters. Every coefficient carries a
+// confidence tier: M = measured anchor, I = interpolated between
+// ≥2 measured anchors, T = theoretical mechanism.
+// See pass10-spec.md for the full derivation.
+// ═══════════════════════════════════════════════════════════════
+
+// ── Decentralization Pathways ─────────────────────────────────
+// How a shift toward distributed production is initiated.
+// Anchors: Germany EEG (incentive), Denmark 2008 Act (decree),
+// South Africa load-shedding rooftop boom (grassroots),
+// Bangladesh IDCOL + Cuba 2024-25 (hybrid).
+const DECENTRALIZATION_PATHWAYS = {
+  none: {
+    id: 'none', label: 'None', icon: '—',
+    description: 'No deliberate shift. Production structure follows technology and terrain alone.',
+    baseRate: 0, crisisMultiplier: 0, ownershipBreadth: 0,
+    coercion: 0, capitalSensitivity: 0, tier: 'M',
+  },
+  grassroots: {
+    id: 'grassroots', label: 'Grassroots / Self-Organized', icon: '🌱',
+    description: 'Households and small producers build their own capacity without state direction. Slow without pressure, fastest under crisis when capital is available.',
+    baseRate: 0.6,          // I — slow absent crisis
+    crisisMultiplier: 4.0,  // I — South Africa: +349% in 15 months, no feed-in tariff
+    ownershipBreadth: 0.85, // I — ownership stays with the builder
+    coercion: 0,            // M — fully voluntary
+    capitalSensitivity: 1.0,// M — most capital-gated of all pathways
+    stateDependent: false,  // M — needs capital, not a functioning state
+    tier: 'I',
+    anchor: 'South Africa 2022-23: rooftop solar 983MW→4,412MW in 15 months with no FIT; private installs >2x Eskom procurement.',
+  },
+  incentive: {
+    id: 'incentive', label: 'Subsidies & Incentives', icon: '💰',
+    description: 'Feed-in tariffs, grants, and tax credits make distributed production economic. Steady and effective without requiring a crisis.',
+    baseRate: 1.0,          // M — Germany EEG sustained deployment
+    crisisMultiplier: 1.5,
+    ownershipBreadth: 0.70, // M — Germany: individuals+farmers >40% of capacity, big utilities 5%
+    coercion: 10,
+    capitalSensitivity: 0.5,// subsidy substitutes for private capital
+    stateDependent: true,   // M — a feed-in tariff requires a state able to fund it
+    tier: 'M',
+    anchor: 'Germany EEG: citizens+farmers >40% of renewable capacity vs 5% for the four large utilities.',
+    // M — Germany citizen share fell >50% (2014) → ~1/3 (2021) after the 2017 auction switch
+    degradesAtScale: true, degradedBreadth: 0.35, degradeThreshold: 45,
+  },
+  // ── The decisive distinction in the whole evidence base ──
+  // Mandating an OFFER OF OWNERSHIP and mandating PARTICIPATION
+  // ITSELF are both "legislation", and they produce opposite results.
+  // Denmark did the former and succeeded. Tanzanian villagization,
+  // Soviet collectivization, the Great Leap Forward and Romanian
+  // systematization did the latter and produced catastrophe.
+  // Modelling them as one pathway would erase the finding.
+  decree_ownership: {
+    id: 'decree_ownership', label: 'Mandated Ownership Rights', icon: '⚖️',
+    description: 'Law requires that local residents be OFFERED a share of ownership. Participation stays voluntary; only the offer is compulsory.',
+    baseRate: 1.3,          // M — mandates move fastest absent crisis
+    crisisMultiplier: 1.2,
+    ownershipBreadth: 0.55, // M — Denmark 20% floor achieved >50% citizen ownership
+    coercion: 25,           // M — compels the offer, not the person
+    capitalSensitivity: 0.3,
+    stateDependent: true,   // M — a mandate requires a state able to enforce it
+    tier: 'M',
+    anchor: 'Denmark Promotion of Renewable Energy Act 2008: >=20% local ownership offer required; >50% of wind citizen-owned by 2016.',
+    legibilityFailureRisk: false,
+  },
+  decree_participation: {
+    id: 'decree_participation', label: 'Compulsory Reorganization', icon: '🚷',
+    description: 'Law compels people into the new structure directly — resettlement, consolidation, abolition of private holdings. Fastest on paper; destroys the productivity of the thing being reorganized.',
+    baseRate: 1.5,          // M — nominally the fastest route
+    crisisMultiplier: 1.0,
+    ownershipBreadth: 0.30, // M — nominally collective, actual control elsewhere
+    coercion: 85,           // M — this is the mechanism that negates the benefit
+    capitalSensitivity: 0.2,
+    stateDependent: true,
+    tier: 'M',
+    anchor: 'Soviet collectivization (private plots on 1-3% of land produced 25-27% of output); Great Leap Forward (26,000 communes, 61% of output decline attributable to policy); Romanian systematization; Tanzanian ujamaa villagization.',
+    legibilityFailureRisk: true,
+  },
+  hybrid: {
+    id: 'hybrid', label: 'Hybrid (State + Community)', icon: '🤝',
+    description: 'State finance or brokerage combined with household and community ownership. Among the fastest observed, at the cost of coordination friction.',
+    baseRate: 1.2,          // I — max(components) x 0.9 coordination penalty
+    crisisMultiplier: 2.0,  // I — Cuba 2024-25, Bangladesh IDCOL
+    ownershipBreadth: 0.60,
+    coercion: 30,
+    capitalSensitivity: 0.4,
+    stateDependent: true,   // M — the state half of the hybrid still needs capacity
+    tier: 'I',
+    anchor: 'Bangladesh IDCOL (50% grant / 30% concessional / 20% sponsor equity → 4.1M units); Cuba 2024-25 renewables 3.6%→10% in one year.',
+  },
+};
+
+// ── Grübler Diffusion Speed Limits (M) ────────────────────────
+// Characteristic time constants for large energy systems: 5-10
+// decades. Invention → 80% share averages ~95 years ⇒ 8.4 pts/decade.
+const DIFFUSION_LIMITS = {
+  baseline:    8,   // M — Grübler ~95yr to 80% share
+  crisis:      25,  // M — Puerto Rico: 20% of mix in 9yrs, 81% of all new capacity
+  burst:       40,  // M — South Africa +349%/15mo; Cuba 3.6→10%/1yr
+  burstCrisisThreshold: 80,
+  burstCapitalThreshold: 60,
+};
+
+// ── Energy → Wellbeing Saturation (M) ─────────────────────────
+// HDI>0.7 attainable at 50 GJ/cap; 8 of 9 social metrics rise
+// steeply then plateau between 10-75 GJ/cap; saturation above
+// 100-150 GJ/cap. Soft ceiling only — never an additive bonus.
+const ENERGY_WELLBEING = {
+  // Goldemberg 1985, Smil 2017: below ~20 GJ/cap basic needs barely met
+  // (wb ~40-50); 50-100 GJ/cap enables wb 60-80; >100 diminishing returns.
+  // Pre-industrial agrarian societies (15-20 GJ) sustained wb ~45-55.
+  floor: 40, span: 50, scale: 35,
+  ceiling(gjPerCapita) {
+    return this.floor + this.span * (1 - Math.exp(-Math.max(0, gjPerCapita) / this.scale));
+  },
+  tier: 'M',
+};
+
+// ── Smil Power Density (M) — W/m² ─────────────────────────────
+// Land burden of distributed renewables vs centralized extraction.
+// This is the mechanism through which energy and agriculture couple
+// emergently, via shared land pressure. Not coded as a direct link.
+const POWER_DENSITY = {
+  biomass: 0.6, wind: 1.5, distributedSolar: 12,
+  hydroNuclear: 200, fossilExtraction: 2000,
+  tier: 'M',
+};
+
+// ── Land Equivalent Ratio anchors (M/I) ───────────────────────
+// Diversification intensity → yield per unit land. Interpolated
+// strictly between measured anchors; hard cap at the measured
+// silvoarable ceiling of 2.0. "Permaculture" enters here as the
+// top of a bounded measured range, not as a named system.
+const LER_ANCHORS = [
+  { intensity: 0,   ler: 1.00, tier: 'M' }, // monoculture, definitional
+  { intensity: 50,  ler: 1.27, tier: 'M' }, // intercropping meta-analyses 1.22-1.32
+  { intensity: 100, ler: 1.70, tier: 'I' }, // below measured silvoarable ceiling 2.0
+];
+const LER_HARD_CAP = 2.0;
+
+function lerFromIntensity(intensity) {
+  const x = Math.max(0, Math.min(100, intensity));
+  for (let i = 1; i < LER_ANCHORS.length; i++) {
+    const a = LER_ANCHORS[i - 1], b = LER_ANCHORS[i];
+    if (x <= b.intensity) {
+      const t = (x - a.intensity) / (b.intensity - a.intensity);
+      return Math.min(LER_HARD_CAP, a.ler + t * (b.ler - a.ler));
+    }
+  }
+  return Math.min(LER_HARD_CAP, LER_ANCHORS[LER_ANCHORS.length - 1].ler);
+}
+
+// ── Participation → Wellbeing caps (M, bounded) ───────────────
+// Soga et al. gardening meta wellbeing ES ~0.55; SDT autonomy
+// satisfaction g=0.81, competence g=0.63, relatedness g=0.28;
+// Karasek/Whitehall II decision latitude → strain; CSA civic
+// engagement; procedural justice → legitimacy.
+// Caps are deliberately modest: intervention-scale effect sizes
+// are not civilizational transformations.
+const PARTICIPATION_EFFECTS = {
+  wellbeingCap:  8,   // M — ~0.55 SD on a 0-100 scale
+  anomieCap:    10,   // M — Karasek decision latitude
+  trustCap:      6,   // M — CSA / cooperative participation
+  legitimacyCap: 5,   // M — procedural justice > distributional justice
+  // Coercion discount: observational participation studies are
+  // self-selected. Assigning participation ≠ choosing it.
+  coercionExponent: 1.5,
+  coercionNegativeThreshold: 45,
+  institutionalFailureThreshold: 40,
+  energyWeight: 0.4, agricultureWeight: 0.6, // food is more hands-on/daily
+  tier: 'M',
+};
+
+// ── Coercion → Productivity Penalty (M) ───────────────────────
+// A beneficial structure imposed by force underperforms a mediocre
+// one freely chosen. This is the single best-evidenced finding in
+// the Pass 10 sweep, and it applies to OUTPUT, not merely morale.
+//
+// Anchors:
+//  • Soviet private plots: ~1-3% of sown land produced ~25-27% of
+//    agricultural output — same farmers, same soil, same climate.
+//    The only difference is voluntary vs compelled effort.
+//  • Great Leap Forward: 26,000 communes covering virtually all
+//    rural China by late 1958; 61% of the output decline attributable
+//    to policy (resource diversion + excessive procurement), not
+//    weather; 15-55M excess deaths.
+//  • Romanian systematization: private plots banned inside villages
+//    while villages were simultaneously required to be
+//    agriculturally self-sufficient after 1981.
+//
+// Critically, none of these were low-capacity states. High coercion
+// is damaging REGARDLESS of institutional quality — institutions
+// modulate how bad it gets, not whether it happens.
+const COERCION_PRODUCTIVITY = {
+  maxPenalty: 0.55,   // I — capped well below the plot-level ratio,
+                      // which is an intensive-margin figure and must
+                      // not be extrapolated to national output
+  exponent: 1.2,
+  tier: 'M',
+  penalty(coercion) {
+    const c = Math.max(0, Math.min(100, coercion)) / 100;
+    return 1 - this.maxPenalty * Math.pow(c, this.exponent);
+  },
+};
+
+// ── Ecosystem Function (M) ────────────────────────────────────
+// Designed species interactions that substitute for external inputs:
+// allelopathic repellents, trap crops, nitrogen fixation, biological
+// weed and pest control. Distinct from Land Equivalent Ratio, which
+// measures spatial/temporal complementarity alone.
+//
+// Anchors:
+//  • Push-pull (Desmodium repels stemborers + suppresses Striga +
+//    fixes nitrogen; Napier grass traps pests): maize ~1 t/ha → 3.5
+//    t/ha "with minimal inputs", adopted by 122,650+ smallholders in
+//    East Africa.
+//  • Rice-duck-fish integration: significantly lower weed counts,
+//    reduced fertilizer-N and pesticide use vs rice monoculture.
+//
+// The gain scales INVERSELY with external input availability: these
+// systems replace inputs that are missing. Push-pull tripled yields
+// for farmers who could not afford pesticide or fertilizer; it does
+// far less for an already-optimized high-input system.
+//
+// Knowledge is the binding constraint (M): these practices are
+// "knowledge-intensive, complex and not fully understood, in need of
+// local adaptation". Documented barriers are seed cost and access,
+// land shortage, lack of knowledge, lack of long-term follow-up to
+// training, and labour requirements — plus a shortage of trained
+// agroecology extension agents.
+const ECOSYSTEM_FUNCTION = {
+  // M — Tamburini et al. (Science Advances): 5,188 studies and 41,946
+  // comparisons find diversification "maintained crop yields at the same
+  // level or even increased" them. The headline is yield MAINTENANCE
+  // plus ecosystem-service gains, not a large yield increase; a
+  // companion meta-analysis found yield "strongly determined by land
+  // use, independent of the pest control services provided by natural
+  // enemies". Push-pull's 1 -> 3.5 t/ha is a genuine but extreme case —
+  // a low-input system limited by Striga and stemborers — and is the
+  // upper bound, not the general effect.
+  // Reduced from an initial 0.35 after sensitivity analysis flagged this
+  // as the #2 driver of model outcomes while still tiered I.
+  maxYieldGain: 0.18,
+  lowInputWeight: 0.85,    // M — most of the benefit is input substitution
+  baseWeight: 0.15,
+  knowledgeDecay: 0.06,    // M — gains lapse without follow-up training
+  tier: 'M',
+};
+
+// ── Enabling Support (M) ──────────────────────────────────────
+// Governance providing CAPABILITY rather than compulsion: seeds and
+// planting material, access to technology, training, expert
+// specialists available for consultation, tax relief and
+// reimbursement of household expenditure.
+//
+// This is a separate axis from pathway coercion, and the distinction
+// matters: enabling support is the state doing things FOR people;
+// coercion is the state doing things TO people. They can be combined
+// in any proportion, and the model treats them independently.
+const ENABLING_SUPPORT = {
+  // M — Gillingham & Tsvetanov: PV price elasticity ~0.65; halving
+  // state incentives cuts installations ~9%. Hughes & Podolefsky: a
+  // ~7% rebate increase induces 7-15% more installations. Storage
+  // incentive step-downs of $0.05/Wh cut daily installations ~15%.
+  adoptionElasticity: 0.65,
+  maxAdoptionBoost: 0.80,
+
+  // M — making nonrefundable tax credits REFUNDABLE substantially
+  // raises adoption among low-income households with no notable
+  // change for higher-income ones. Support matters most exactly where
+  // capital access is worst; it is nearly redundant where capital is
+  // already abundant.
+  progressive: true,
+
+  // I — Farmer Field School meta-analysis finds real gains in
+  // knowledge, practice adoption, production and income. Tiered I
+  // rather than M because the review found NO study at low risk of
+  // bias, three-quarters made no serious attempt to control
+  // confounding, and the likely consequence was "systematic
+  // overestimation of effects for all outcomes".
+  knowledgeBoost: 0.45,
+
+  // M — "no evidence that neighbouring non-participant farmers
+  // benefit from diffusion". Training does NOT spill over. It reaches
+  // only those actually served, so its effect scales with delivery
+  // capacity rather than compounding through a network effect.
+  spillover: 0.0,
+
+  // M — Malawi FISP: ~1.5M smallholders (about half the country's
+  // farmers), fertilizer use more than doubled within three years and
+  // maize production rose ~670,000 t — but a significant share of
+  // benefits accrued to better-connected and larger farmers already
+  // using inputs, "raising questions about both additionality and
+  // cost-effectiveness". Support is neither free nor perfectly
+  // targeted.
+  fiscalDrain: 0.055,
+  eliteCaptureWeight: 0.55,
+
+  // M — gains lapse without renewal; documented barrier is "lack of
+  // long-term follow-up of received trainings"
+  decayRate: 0.05,
+  tier: 'M',
+};
+
+// ── Distribution Locality & the Post-Harvest Loss Chain (M) ────
+// How much food reaches people without trucks, trains, ships or
+// aircraft. Distinct from where food is GROWN — a civilization can
+// grow locally and still route everything through a distant depot.
+const DISTRIBUTION = {
+  // M — FAO: 13.2% of production lost post-harvest (transport,
+  // storage, wholesale, processing) in 2021. Fruit and vegetables
+  // 25.4% by 2023, due to perishability and handling requirements.
+  baseChainLoss: 13.2,
+  perishableChainLoss: 25.4,
+
+  // M — loss to cosmetic/aesthetic grading, which long supply chains
+  // impose and local distribution largely does not:
+  //   China fresh apple chain: 17.1% of harvest volume unmarketable,
+  //     mostly on aesthetic standards
+  //   Spain, persimmon: 16% of edible production rejected on appearance
+  //   Belgium: two-thirds of horticulturists unable to sell all
+  //     produce; ~10% of sales lost
+  //   North Carolina field study: 41.45% edible-but-unmarketable
+  //   Europe/UK: over a third of farm production lost for aesthetic
+  //     reasons
+  cosmeticRejectionMax: 28,
+  // M — most rejected produce is diverted to processing or animal
+  // feed rather than destroyed, so it is not a total loss
+  cosmeticRecoveryFraction: 0.55,
+
+  // M — harvest-timing loss. Produce for long-distance marketing is
+  // picked at mature-green; produce for fresh local consumption is
+  // picked full-ripe. Vitamin C, flavonoids and total phenolics rise
+  // significantly during ripening, and antioxidant vitamins A, E and
+  // C are higher at the red-ripe stage. Mechanical damage in transit
+  // further reduces vitamin C.
+  // This is a NUTRITIONAL QUALITY effect, not a calorie effect — it
+  // must not inflate food quantity.
+  maturityQualityGap: 16,
+
+  // M — distribution is ~15% of the supply-chain carbon footprint and
+  // postharvest handling and storage ~17%; ~40% of foods require
+  // refrigeration; within fruit and vegetable cold chains transport
+  // accounts for 82% of emissions, and warehousing alone is ~48% of
+  // energy use in industrial cold storage.
+  // Real and worth modelling — but production remains 83% of
+  // food-system emissions, so this must never be presented as
+  // transforming the total.
+  distributionEnergyShare: 0.15,
+  coldChainShare: 0.40,
+
+  // M — a large city cannot be fed within cart range. Urbanization is
+  // the binding physical constraint on distribution locality, and it
+  // is precisely why dense populations require a cold chain.
+  urbanizationPenalty: 0.70,
+  tier: 'M',
+};
+
+// ═══════════════════════════════════════════════════════════════
+// Pass 11 — Active Travel Networks
+// Interlocking local path networks for human-powered (and, at low
+// density, animal-powered) transport. See pass11-spec.md.
+// ═══════════════════════════════════════════════════════════════
+
+const ACTIVE_TRAVEL = {
+  // ── Mode shift (M) ──
+  // Seville 2006-2010: 12km of paths and 0.5% mode share -> a
+  // continuous 80km protected network -> 6-7% mode share, 6,000 to
+  // 70,000 daily cyclists, EUR 32M. The identified success factors
+  // were segregation from traffic, connectivity between residences
+  // and trip attractors, and CONTINUITY without gaps.
+  sevilleBaseShare: 0.5,
+  sevilleAchievedShare: 6.5,
+  // Continuity matters more than kilometres: a gapped network of the
+  // same length does not deliver the shift.
+  continuityWeight: 0.55,
+  coverageWeight: 0.45,
+
+  // ── Distance decay (M) ──
+  // Median cycling trip ~2km; share collapses beyond 5km; comfortable
+  // maximum 7.5km; practical limit 15km. Walking extends to ~3.5km.
+  // This is the binding constraint on metropolitan viability.
+  medianTripKm: 2, falloffKm: 5, comfortMaxKm: 7.5, hardLimitKm: 15,
+  walkingReachKm: 3.5,
+
+  // ── Transit integration (M) — the distance-decay solution ──
+  // Netherlands: 83% of rail journeys are multimodal; the bicycle is
+  // the access mode for ~47% of all rail passengers (70% at some
+  // stations); average 4km cycled to the station. Each local network
+  // only has to serve its own catchment; transit carries the
+  // inter-network leg.
+  transitAccessShare: 0.47,
+  transitAccessKm: 4,
+  // M — measured catchment expansion, not an assumption. Walking at
+  // 4.8 km/h covers ~800 m in the 10 minutes people will spend reaching
+  // transit; cycling at 15 km/h covers ~2,500 m in the same time — a
+  // linear reach ratio of ~3.1x. Bicycle-to-transit is commonly
+  // described as extending station catchment to two or three miles.
+  // Was 2.6 (tier I); sensitivity analysis ranked it #11 of 57, so it
+  // warranted a real anchor.
+  transitReachMultiplier: 3.1,
+
+  // ── Polycentric structure (M) ──
+  // Wuhan subcenters: 3.9km commutes, 16.6% car mode share, 36.8%
+  // non-motorized, 91.3% of commutes internal to the subcenter.
+  // BUT the literature is mixed: polycentricity does not automatically
+  // reduce travel. Decentralizing population while centralizing
+  // employment produces jobs-housing imbalance and worse outcomes.
+  // The gate is BALANCE, not subcenter count.
+  polycentricNonMotorizedCeiling: 36.8,
+  internalTripShare: 0.913,
+  jobsHousingGateFloor: 0.35,    // effect at total imbalance
+
+  // ── Health (M) ──
+  // Celis-Morales, BMJ 2017 (UK Biobank prospective cohort): cycle
+  // commuting -> all-cause mortality HR 0.59 (95% CI 0.42-0.83).
+  // Barcelona superblocks health impact assessment: 667 premature
+  // deaths prevented per year, +200 days life expectancy, decomposed
+  // as air pollution 291, noise 163, heat 117, green space 60.
+  // Modelled estimates, and the authors caution on limitations.
+  mortalityHR: 0.59,
+  maxDiseaseBurdenReduction: 12,   // I — bounded by the HR at full uptake
+  maxLifeExpectancyGain: 2.2,      // I — Barcelona +200 days ~= 0.55yr at
+                                   //     partial build; scaled for full
+  // ── Environment (M) ──
+  // Transport is ~1/3 of total energy demand; passenger transport is
+  // 60-70% of that; a car occupies 1.9-3.5 MJ/passenger-km. So urban
+  // passenger car travel is roughly 15-20% of total energy: a 10-point
+  // mode shift is ~2% of total energy. Real, but must not be
+  // overstated as transformational.
+  // Sensitivity analysis found these three had IDENTICAL influence
+  // (44.61) because they only ever appear as a product — three knobs
+  // where one suffices. Collapsed into a single addressable share.
+  // Components retained as documentation:
+  //   transport ~33% of energy demand
+  //   x passenger ~65% of transport
+  //   x urban ~55% of passenger
+  addressableEnergyShare: 0.118,
+  // Barcelona decomposition weights, renormalised
+  airPollutionWeight: 0.44, heatWeight: 0.175, greenWeight: 0.09,
+  noiseWeight: 0.245,              // no noise variable in civ-sim; -> wellbeing
+
+  // ── Security (M + T) ──
+  // Personal safety is a real barrier and it is GENDERED and SPECIFIC:
+  // women report 29% vs 20% fear walking evenings, and 30% vs 49%
+  // perceive their area as very safe. Fear of cycling is shaped by
+  // harassment, not traffic — and there is NO gendered difference in
+  // fear of collision. Protected lanes do not address this.
+  lightingCrimeReduction: 0.14,    // M — Welsh & Farrington 2022 (was 20-21%)
+  patrolWeight: 0.40,              // M — Braga: significant, with DIFFUSION
+                                   //     of benefits, not displacement
+  lightingWeight: 0.40,
+  amenityWeight: 0.20,             // T — amenities, call boxes, cellular.
+                                   //     Call boxes are documented as largely
+                                   //     symbolic, but the barrier IS
+                                   //     perception, so a small
+                                   //     perception-channel effect is
+                                   //     defensible; a use-channel one is not.
+  // Drones are deliberately absent: the one rigorous test (Swedish
+  // aerial patrol trial) found no significant effect of either
+  // intention-to-treat or actual presence.
+
+  // Gendered access. A civilization that builds paths but skips the
+  // security layer captures roughly half the available mode shift.
+  femaleSafetyElasticity: 0.55,
+  maleSafetyElasticity: 0.12,
+
+  // ── Neighbourhood economics (M, weak) ──
+  // NYC 9th Avenue protected lane: +49% retail sales, -49% commercial
+  // vacancies, -56% injuries to all street users. Agency before/after
+  // rather than a controlled study — direction solid, magnitude
+  // uncertain, so the coefficient is deliberately conservative.
+  // Trail-adjacent property premium +3-5% is better behaved.
+  localEconomyMax: 6,
+  injuryReduction: 0.56,
+
+  tier: 'M',
+};
+
+// ── Animal-Powered Transport (M, density-conditional) ─────────
+// Viable at low density and for freight; actively harmful as density
+// rises. This is evidence AGAINST urban adoption, not a data gap.
+// A horse produces 15-35 lb of manure daily; 1890s London with 50,000+
+// working horses saw ~1,000 tons/day on the streets. Stabling consumed
+// increasingly valuable urban land, hay acreage competed directly with
+// human food production, and manure and carcasses bred flies and
+// contaminated water, spreading typhoid and cholera.
+const ANIMAL_TRANSPORT = {
+  viableUrbanizationCeiling: 45,   // M — above this, costs dominate
+  manureLbPerDay: 25,              // M — midpoint of 15-35
+  sanitationPenaltyMax: 18,        // M — disease/pollution at high density
+  landCompetitionMax: 12,          // M — hay acreage vs human food.
+                                   //     Couples to the Pass 10 agriculture
+                                   //     parameter EMERGENTLY, via shared
+                                   //     land — not by a coded link.
+  freightBenefitMax: 8,            // M — genuinely useful at low density
+  tier: 'M',
+};
+
+// ── Wealth concentration rate (r > g) ─────────────────────────
+// Piketty: capital returns exceeding growth concentrate wealth
+// continuously, proportional to existing capital. Paired against the
+// dispersion force in _processNaturalEconomicForces, which runs on the
+// same cadence and scales with institutional quality and state capacity.
+// Calibrated empirically so a market economy with weak redistribution
+// concentrates, a strong-institution one holds it in check, and
+// non-accumulating models still decay to their floor.
+const WEALTH_CONCENTRATION_RATE = 0.30;
+
 // ── Governance Models ─────────────────────────────────────────
 const GOVERNANCE_MODELS = {
   none: {
@@ -2339,6 +2849,27 @@ const ECON_POWER_POTENTIAL = {
   commodity:    0.45,   // significant accumulation possible; historical mercantile pattern
   market:       0.85,   // unconstrained accumulation; strong plutocratic potential
   custom:       0.30,   // default for user-defined models
+};
+
+// State-to-wealth capture potential: how much state control of the economy
+// provides opportunities for neopatrimonial extraction (Médard 1982, Bratton
+// & van de Walle 1997). Complements ECON_POWER_POTENTIAL (wealth→state) with
+// the reverse channel (state→wealth): control of licensing, resource rents,
+// procurement, SOEs, and land allocation converts political power into personal
+// wealth. Highest for planned economies (total state control), substantial for
+// mixed (significant state role), lower for market economies (regulatory capture
+// and cronyism exist but the state controls less).
+const STATE_CAPTURE_POTENTIAL = {
+  gift:         0.05,   // minimal state apparatus
+  none:         0.05,   // subsistence — limited extractable surplus
+  commons:      0.08,   // collective ownership limits state extraction channels
+  labor_credit: 0.12,   // state mediates credit allocation
+  barter:       0.08,   // limited state role in exchange
+  planned:      0.80,   // state controls everything → maximum extraction opportunity
+  mixed:        0.55,   // significant state involvement → substantial capture channels
+  commodity:    0.40,   // state role in resource extraction and trade regulation
+  market:       0.25,   // regulatory capture, licensing, procurement — smaller but real
+  custom:       0.35,
 };
 
 // Base power-over-others each stratum holds (before scaling by effective hierarchy).

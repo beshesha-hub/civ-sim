@@ -95,6 +95,8 @@ class SustainabilityPanel {
     [
       { id: 'resources',    label: '⛏️ Resources' },
       { id: 'energy',       label: '⚡ Energy' },
+      { id: 'agriculture',  label: '🌾 Agriculture' },
+      { id: 'mobility',     label: '🚶 Mobility' },
       { id: 'strategy',     label: '🌿 Strategy' },
       { id: 'obsolescence', label: '🔄 Obsolescence' },
       { id: 'export',       label: '📊 Export' },
@@ -117,6 +119,8 @@ class SustainabilityPanel {
 
     if      (this.activeTab === 'resources')    this._renderResources(content, civ);
     else if (this.activeTab === 'energy')       this._renderEnergy(content, civ);
+    else if (this.activeTab === 'agriculture')  this._renderAgriculture(content, civ);
+    else if (this.activeTab === 'mobility')     this._renderMobility(content, civ);
     else if (this.activeTab === 'strategy')     this._renderStrategy(content, civ);
     else if (this.activeTab === 'obsolescence') this._renderObsolescence(content, civ);
     else if (this.activeTab === 'export')       this._renderExport(content, civ);
@@ -498,6 +502,443 @@ class SustainabilityPanel {
           yLabel: 'EROI',
         });
       });
+    }
+
+    // ── Pass 10: Production Structure ──────────────────────────
+    this._renderDecentralization(c, civ, 'energy');
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // 🌾 Agriculture Tab (Pass 10)
+  // ═══════════════════════════════════════════════════════════
+  _renderAgriculture(c, civ) {
+    const s  = civ.state;
+    const ag = s.agricultureSystem;
+    if (!ag) { c.textContent = 'Agricultural system not initialized.'; return; }
+
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Food Production'));
+    const foodSec = s.foodSecurity ?? 60;
+    c.appendChild(this._bar('Food Security', foodSec, 100, this._resourceColor(foodSec)));
+
+    // Land Equivalent Ratio
+    const ler = ag.landEquivalentRatio ?? 1.0;
+    c.appendChild(this._bar('Land Efficiency Gain (%)', (ler - 1) * 100, 100,
+      ler > 1.3 ? 'bar-green' : (ler > 1.1 ? 'bar-yellow' : '')));
+    const lerNote = Utils.createEl('div', 'society-help-text');
+    lerNote.textContent = `Land Equivalent Ratio ${ler.toFixed(2)} — output per unit land relative to monoculture (1.00). `
+      + `Measured anchors: monoculture 1.00, intercropping meta-analyses 1.22–1.32, silvoarable ceiling 2.00. `
+      + `Values are interpolated strictly between these and never exceed 2.00.`;
+    c.appendChild(lerNote);
+
+    // Ecosystem function
+    c.appendChild(this._bar('Ecosystem Function', ag.ecosystemFunction ?? 0, 100,
+      (ag.ecosystemFunction ?? 0) > 50 ? 'bar-green' : ''));
+    c.appendChild(this._bar('External Inputs Displaced', ag.inputSubstitution ?? 0, 100,
+      (ag.inputSubstitution ?? 0) > 40 ? 'bar-green' : ''));
+    const ecoNote = Utils.createEl('div', 'society-help-text');
+    ecoNote.textContent = 'Ecosystem function is the designed interaction between species — nitrogen-fixing '
+      + 'companions, plants whose exudates repel insect pests, trap crops that draw pests away, and animals '
+      + 'used as weeders. It substitutes for fertilizer and pesticide rather than adding to yield directly, '
+      + 'so the benefit is largest where external inputs are scarce. Anchor: push-pull cropping raised maize '
+      + 'from about 1 t/ha to 3.5 t/ha with minimal inputs across 122,650+ smallholder farms. '
+      + 'Knowledge is the binding constraint — these systems are knowledge-intensive and lapse without '
+      + 'sustained extension support, so this bar falls when education, state capacity or trust decline.';
+    c.appendChild(ecoNote);
+
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Production Structure'));
+    c.appendChild(this._bar('Local / Small-Scale Share', ag.localShare, 100,
+      ag.localShare > 60 ? 'bar-green' : ''));
+    c.appendChild(this._bar('Structural Baseline', ag.structuralBaseline ?? 0, 100, ''));
+    c.appendChild(this._bar('Programme Contribution', ag.pathwayOffset ?? 0, 70,
+      (ag.pathwayOffset ?? 0) > 20 ? 'bar-green' : ''));
+    c.appendChild(this._bar('Diversification Intensity', ag.diversificationIntensity, 100,
+      ag.diversificationIntensity > 50 ? 'bar-green' : ''));
+    c.appendChild(this._bar('Labor Intensity', ag.laborIntensity, 100,
+      ag.laborIntensity > 60 ? 'bar-yellow' : ''));
+
+    // Coercion penalty on structural gain
+    const cyf = ag.coercionYieldFactor ?? 1.0;
+    if (cyf < 0.99) {
+      c.appendChild(this._bar('Structural Gain Retained (%)', cyf * 100, 100,
+        cyf < 0.6 ? 'bar-red' : 'bar-yellow'));
+      const coNote = Utils.createEl('div', 'society-help-text');
+      coNote.textContent = `Compulsion is destroying ${Math.round((1 - cyf) * 100)}% of the advantage this `
+        + `production structure would otherwise deliver. A well-designed system imposed by force `
+        + `underperforms a mediocre one freely chosen — Soviet private plots on 1–3% of sown land produced `
+        + `25–27% of agricultural output, with the same farmers on the same soil. This penalty does not `
+        + `require a weak state: the USSR, China under the Great Leap Forward, and Romania under `
+        + `systematization all had formidable capacity.`;
+      c.appendChild(coNote);
+    }
+
+    const tradeoff = Utils.createEl('div', 'society-help-text');
+    tradeoff.textContent = 'Diversified systems are land-efficient and labor-intensive — they absorb workers '
+      + 'and suppress urbanization. Monoculture is labor-efficient and land-hungry — it releases workers to cities '
+      + 'at the cost of higher yield variance. Neither is strictly better (Boserup).';
+    c.appendChild(tradeoff);
+
+    // ── Distribution & post-harvest loss ──
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Distribution & Loss'));
+    c.appendChild(this._bar('Local Distribution', ag.distributionLocality ?? 0, 100,
+      (ag.distributionLocality ?? 0) > 55 ? 'bar-green' : ''));
+    c.appendChild(this._bar('Handling / Transit Loss (%)', ag.chainLoss ?? 0, 30,
+      (ag.chainLoss ?? 0) > 18 ? 'bar-red' : ((ag.chainLoss ?? 0) > 10 ? 'bar-amber' : 'bar-green')));
+    c.appendChild(this._bar('Cosmetic Rejection (%)', ag.cosmeticRejection ?? 0, 30,
+      (ag.cosmeticRejection ?? 0) > 12 ? 'bar-red' : ''));
+    c.appendChild(this._bar('Harvest Maturity', ag.harvestMaturity ?? 50, 100,
+      (ag.harvestMaturity ?? 50) > 65 ? 'bar-green' : ''));
+    c.appendChild(this._bar('Nutritional Quality', ag.nutritionalQuality ?? 50, 100,
+      (ag.nutritionalQuality ?? 50) > 65 ? 'bar-green' : ''));
+
+    const distNote = Utils.createEl('div', 'society-help-text');
+    distNote.textContent = 'Local distribution means food reaching people without trucks, trains, ships or '
+      + 'aircraft — which is a separate question from where it was grown. Three distinct losses shrink with it. '
+      + 'Handling, sorting, packaging and transit: about 13% of production is lost post-harvest, rising to 25% '
+      + 'for fruit and vegetables. Cosmetic rejection: graded markets discard produce on appearance — 17% of '
+      + 'harvest volume in one apple supply chain, 16% of edible persimmon production in another study, and over '
+      + 'a third of farm production in Europe and the UK by some estimates. Most of it is diverted to processing '
+      + 'or animal feed rather than destroyed, so it counts as a partial loss.';
+    c.appendChild(distNote);
+
+    const matNote = Utils.createEl('div', 'society-help-text');
+    matNote.textContent = 'Harvest maturity is the third loss and the least visible. Produce for long-distance '
+      + 'marketing is picked mature-green; produce for local fresh consumption is picked ripe. Vitamin C, '
+      + 'flavonoids and total phenolics rise significantly during ripening, and antioxidant vitamins A, E and C '
+      + 'are higher at full ripeness — transit damage reduces vitamin C further. This affects health and disease '
+      + 'burden, never calorie supply: a well-fed population eating nutrient-poor produce is still well-fed.';
+    c.appendChild(matNote);
+
+    const energyDistNote = Utils.createEl('div', 'society-help-text');
+    energyDistNote.textContent = 'Short chains also avoid long-haul transport and the cold chain — real energy, '
+      + 'since distribution is about 15% of the supply-chain footprint, postharvest handling and storage another '
+      + '17%, and roughly 40% of foods need refrigeration. The saving is scoped to the distribution segment only. '
+      + 'Production remains 83% of food-system emissions, so this never transforms the total.';
+    c.appendChild(energyDistNote);
+
+    const cityNote = Utils.createEl('div', 'society-help-text');
+    const capNow = Math.round(100 - (s.urbanizationRate ?? 15) * 0.70);
+    cityNote.textContent = `Urbanization is the hard limit: a large city cannot be fed within cart range, which `
+      + `is exactly why dense populations need a cold chain. At ${Math.round(s.urbanizationRate ?? 15)}% `
+      + `urbanization your local-distribution ceiling is about ${capNow}%.`;
+    c.appendChild(cityNote);
+
+    // Variance swap explanation
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Trade Exposure'));
+    const tradeDep = s.tradeDependency ?? 20;
+    c.appendChild(this._bar('Trade Dependency', tradeDep, 100, tradeDep > 60 ? 'bar-yellow' : ''));
+    const varNote = Utils.createEl('div', 'society-help-text');
+    varNote.textContent = 'Local self-reliance and import dependence are a variance swap, not a mean improvement. '
+      + 'High local share shields against blockade, export bans and global price shocks, but increases exposure to '
+      + 'local drought and weather. High trade dependency does the inverse. Local food receives no emissions bonus — '
+      + 'production is 83% of food-system emissions; all transport is 11%.';
+    c.appendChild(varNote);
+
+    // Diversification controls
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Agricultural Policy'));
+    const divRow = Utils.createEl('div', 'society-btn-row');
+    const divBtn = Utils.createEl('button', 'btn btn-secondary', '🌱 Promote Diversification');
+    divBtn.title = 'Extension services for intercropping, rotation and agroforestry. Raises Land Equivalent Ratio and soil health; raises labor demand. Effectiveness scales with education quality.';
+    divBtn.onclick = () => this._applyEvent('promote_diversification');
+    divRow.appendChild(divBtn);
+
+    const monoBtn = Utils.createEl('button', 'btn btn-secondary', '🚜 Promote Specialization');
+    monoBtn.title = 'Consolidate around fewer high-output crops. Frees labor for cities; raises yield variance and input dependence.';
+    monoBtn.onclick = () => this._applyEvent('promote_monoculture');
+    divRow.appendChild(monoBtn);
+    c.appendChild(divRow);
+
+    this._renderDecentralization(c, civ, 'agriculture');
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // 🚶 Mobility Tab (Pass 11)
+  // ═══════════════════════════════════════════════════════════
+  _renderMobility(c, civ) {
+    const s = civ.state;
+    const at = s.activeTravel;
+    if (!at) { c.textContent = 'Active travel system not initialized.'; return; }
+
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Active Travel'));
+    c.appendChild(this._bar('Mode Share', at.modeShare, 100, at.modeShare > 25 ? 'bar-green' : ''));
+    c.appendChild(this._bar('Structural Baseline', at.structuralBaseline, 100, ''));
+    c.appendChild(this._bar('Programme Contribution', at.pathwayOffset ?? 0, 70,
+      (at.pathwayOffset ?? 0) > 20 ? 'bar-green' : ''));
+    const bn = Utils.createEl('div', 'society-help-text');
+    bn.textContent = 'Before the automobile, cities were entirely walking and animal powered — the baseline was '
+      + 'near total, and motorization collapsed it. What you build is the contribution above that baseline. '
+      + 'Seville raised cycling from 0.5% to about 6.5% by building a continuous 80km protected network, and the '
+      + 'decisive factors were segregation from traffic, connectivity to real destinations, and continuity '
+      + 'without gaps. Length alone does not do it.';
+    c.appendChild(bn);
+
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Network'));
+    c.appendChild(this._bar('Coverage', at.networkCoverage, 100, at.networkCoverage > 55 ? 'bar-green' : ''));
+    c.appendChild(this._bar('Continuity', at.networkContinuity, 100, at.networkContinuity > 55 ? 'bar-green' : ''));
+    c.appendChild(this._bar('Transit Integration', at.transitIntegration, 100,
+      at.transitIntegration > 50 ? 'bar-green' : ''));
+    c.appendChild(this._bar('Effective Reach', at.effectiveReach, 100,
+      at.effectiveReach < 30 ? 'bar-red' : (at.effectiveReach < 55 ? 'bar-amber' : 'bar-green')));
+
+    const reachNote = Utils.createEl('div', 'society-help-text');
+    reachNote.textContent = 'A single network cannot serve a large metropolis. The median cycling trip is about '
+      + '2km and mode share collapses beyond 5km; 7.5km is the comfortable maximum. The answer is interlocking '
+      + 'local networks plus transit: each network serves its own catchment and transit carries the leg between '
+      + 'them. In the Netherlands the bicycle is the access mode for roughly 47% of rail passengers, cycling an '
+      + 'average of 4km to the station. Transit integration is what makes this viable at metropolitan scale — '
+      + 'watch Effective Reach rise as you build it.';
+    c.appendChild(reachNote);
+
+    c.appendChild(this._bar('Jobs–Housing Balance', at.jobsHousingBalance, 100,
+      at.jobsHousingBalance < 40 ? 'bar-red' : (at.jobsHousingBalance > 65 ? 'bar-green' : '')));
+    const jh = Utils.createEl('div', 'society-help-text');
+    jh.textContent = 'Polycentric form does not reduce travel by itself — the research is genuinely mixed. '
+      + 'Spreading people out while keeping jobs concentrated makes things worse. Balance within each local '
+      + 'centre is the gate on everything else here.';
+    c.appendChild(jh);
+
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Safety & Access'));
+    c.appendChild(this._bar('Perceived Safety', at.perceivedSafety, 100,
+      at.perceivedSafety > 60 ? 'bar-green' : (at.perceivedSafety < 40 ? 'bar-red' : '')));
+    c.appendChild(this._bar('Lighting', at.lightingLevel, 100, ''));
+    c.appendChild(this._bar('Patrols', at.patrolIntensity, 100, ''));
+    c.appendChild(this._bar('Rest Areas & Facilities', at.amenityLevel, 100, ''));
+    c.appendChild(this._bar("Men's Mode Share", at.modeShareMale, 100, ''));
+    c.appendChild(this._bar("Women's Mode Share", at.modeShareFemale, 100,
+      at.modeShareFemale < at.modeShareMale * 0.7 ? 'bar-red' : 'bar-green'));
+
+    const gap = at.modeShareMale - at.modeShareFemale;
+    const safetyNote = Utils.createEl('div', 'society-help-text');
+    safetyNote.textContent = gap > 3
+      ? `Women's use of the network trails men's by ${Math.round(gap)} points. Personal safety is a real and `
+        + `specific barrier: women report more fear walking in the evening (29% vs 20%) and are far less likely `
+        + `to perceive an area as very safe (30% vs 49%) — and it is shaped by harassment, not traffic. There is `
+        + `no gendered difference in fear of collision, so protected paths alone do not close this gap. Lighting `
+        + `and patrols do. Build paths without the safety layer and you capture roughly half the available shift.`
+      : 'Women and men use the network at similar rates — the safety layer is doing its job. Lighting cuts crime '
+        + 'about 14%, and focused patrols reduce it further with the benefit diffusing into surrounding '
+        + 'neighbourhoods rather than displacing crime into them.';
+    c.appendChild(safetyNote);
+
+    const droneNote = Utils.createEl('div', 'society-help-text');
+    droneNote.textContent = 'Rest areas, restrooms, emergency phones and signal coverage are grouped as '
+      + 'facilities and carry a deliberately small weight: emergency call boxes are documented as rarely used '
+      + 'for their intended purpose and largely symbolic, though symbolism may still matter when the barrier is '
+      + 'perception. Aerial drone patrol is not modelled at all — the one rigorous trial found no significant '
+      + 'deterrent effect, and inventing a coefficient would be worse than omitting it.';
+    c.appendChild(droneNote);
+
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Environmental Effect'));
+    c.appendChild(this._bar('Total Energy Displaced (%)', at.energySavedShare, 12,
+      at.energySavedShare > 4 ? 'bar-green' : ''));
+    const envNote = Utils.createEl('div', 'society-help-text');
+    envNote.textContent = `${at.energySavedShare.toFixed(1)}% of total energy demand avoided. Keep this in `
+      + 'proportion: transport is about a third of energy demand, passenger travel 60–70% of that, and urban '
+      + 'passenger car travel therefore roughly 15–20% of the total. A ten-point mode shift is around 2% of all '
+      + 'energy — real and worth having, not transformational. The larger effects are health and air quality: '
+      + 'cycle commuting carries an all-cause mortality hazard ratio of 0.59, and in the Barcelona superblocks '
+      + 'assessment air pollution was the single largest health channel.';
+    c.appendChild(envNote);
+
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Animal-Powered Transport'));
+    c.appendChild(this._bar('Animal Power Share', at.animalPowerShare, 100, ''));
+    const animalNote = Utils.createEl('div', 'society-help-text');
+    const urb = Math.round(s.urbanizationRate ?? 15);
+    animalNote.textContent = urb > 45
+      ? `At ${urb}% urbanization animal power is actively harmful. A horse produces 15–35 lb of manure a day; `
+        + `1890s London with over 50,000 working horses saw roughly 1,000 tons a day on the streets. Flies bred `
+        + `in it and contaminated water, spreading typhoid and cholera; stabling consumed valuable land; and hay `
+        + `acreage competed directly with growing food for people. Cities abandoned animal power because it `
+        + `failed at density, and this model reproduces that rather than assuming otherwise.`
+      : `At ${urb}% urbanization animal power remains practical and useful, particularly for freight. Its costs `
+        + `— sanitation, land for stabling, and hay acreage competing with human food — scale with density and `
+        + `become prohibitive above roughly 45% urbanization.`;
+    c.appendChild(animalNote);
+
+    c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Mobility Policy'));
+    const row1 = Utils.createEl('div', 'society-btn-row');
+    const b1 = Utils.createEl('button', 'btn btn-secondary', '🚶 Build Path Network');
+    b1.title = 'Segregated paths connecting residences to local destinations. Continuity matters more than length.';
+    b1.onclick = () => this._applyEvent('build_active_network');
+    row1.appendChild(b1);
+    const b2 = Utils.createEl('button', 'btn btn-secondary', '🚉 Integrate Transit');
+    b2.title = 'Secure cycle parking and direct path links at transit nodes. This is what defeats the ~5km distance limit.';
+    b2.onclick = () => this._applyEvent('integrate_transit');
+    row1.appendChild(b2);
+    c.appendChild(row1);
+
+    const row2 = Utils.createEl('div', 'society-btn-row');
+    const b3 = Utils.createEl('button', 'btn btn-secondary', '💡 Path Safety Programme');
+    b3.title = 'Lighting, patrols, rest areas and facilities. Addresses the barrier that keeps women off the network.';
+    b3.onclick = () => this._applyEvent('improve_path_safety');
+    row2.appendChild(b3);
+    const b4 = Utils.createEl('button', 'btn btn-secondary', '🏘️ Rebalance Jobs & Housing');
+    b4.title = 'Bring employment closer to housing within each local centre. Gates the benefit of everything else.';
+    b4.onclick = () => this._applyEvent('balance_jobs_housing');
+    row2.appendChild(b4);
+    c.appendChild(row2);
+
+    this._renderDecentralization(c, civ, 'mobility');
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // Shared: Decentralization pathway + participation (Pass 10)
+  // ═══════════════════════════════════════════════════════════
+  _renderDecentralization(c, civ, domain) {
+    const s = civ.state;
+    const sys = domain === 'energy' ? s.energySystem
+              : domain === 'mobility' ? s.activeTravel : s.agricultureSystem;
+    if (!sys) return;
+    const shareLabel = domain === 'energy' ? 'Distributed Share'
+                     : domain === 'mobility' ? 'Mode Share' : 'Local Share';
+    const share = domain === 'energy' ? sys.distributedShare
+                : domain === 'mobility' ? sys.modeShare : sys.localShare;
+
+    c.appendChild(Utils.createEl('div', 'society-section-hdr',
+      domain === 'energy' ? 'Production Structure' : 'Initiation Pathway'));
+
+    if (domain === 'energy') {
+      c.appendChild(this._bar(shareLabel, share, 100, share > 60 ? 'bar-green' : ''));
+      c.appendChild(this._bar('Structural Baseline', sys.structuralBaseline ?? 0, 100, ''));
+      c.appendChild(this._bar('Programme Contribution', sys.pathwayOffset ?? 0, 70,
+        (sys.pathwayOffset ?? 0) > 20 ? 'bar-green' : ''));
+      const baseNote = Utils.createEl('div', 'society-help-text');
+      baseNote.textContent = 'The structural baseline is what your infrastructure, urbanization and state '
+        + 'capacity make the default. A working grid centralizes production; a failing one forces it local — '
+        + 'this is why distributed generation collapsed during electrification and returns when grids fail. '
+        + 'Programme contribution is the part your chosen pathway actually earned on top of that baseline, and '
+        + 'it is the honest measure of whether a policy worked. It persists while the programme runs and decays '
+        + 'if you abandon it.';
+      c.appendChild(baseNote);
+      c.appendChild(this._bar('Land Intensity', sys.landIntensity, 100,
+        sys.landIntensity > 60 ? 'bar-yellow' : ''));
+      const pdNote = Utils.createEl('div', 'society-help-text');
+      pdNote.textContent = 'Land intensity reflects power density (Smil): biomass ~0.6 W/m², wind 1–2, '
+        + 'distributed solar 5–20, hydro/nuclear ~200, fossil extraction 1,000–10,000. Distributed renewables '
+        + 'compete with agriculture and forest for land — the two production parameters interact through this '
+        + 'shared constraint rather than through any direct coupling.';
+      c.appendChild(pdNote);
+    }
+
+    // Crisis + capital
+    c.appendChild(this._bar('Crisis Pressure', sys.crisisPressure, 100,
+      sys.crisisPressure > 60 ? 'bar-red' : (sys.crisisPressure > 30 ? 'bar-yellow' : '')));
+    c.appendChild(this._bar('Capital Access', sys.capitalAccess, 100,
+      sys.capitalAccess < 30 ? 'bar-red' : ''));
+    if (sys.crisisPressure > 45 && sys.capitalAccess < 30) {
+      const warn = Utils.createEl('div', 'society-help-text');
+      warn.textContent = '⚠️ Crisis pressure is high but capital access is low. Scarcity without a funding '
+        + 'channel produces hardship, not new capacity. Every historical case of rapid decentralization had one: '
+        + 'household purchasing power, concessional finance, grants, or pay-as-you-go credit.';
+      c.appendChild(warn);
+    }
+
+    // Ownership breadth
+    c.appendChild(this._bar('Ownership Breadth', (sys.ownershipBreadth ?? 0) * 100, 100,
+      (sys.ownershipBreadth ?? 0) > 0.6 ? 'bar-green' : ''));
+
+    // ── Enabling support (capability, not compulsion) ──
+    c.appendChild(this._bar('Enabling Support', sys.enablingSupport ?? 0, 100,
+      (sys.enablingSupport ?? 0) > 50 ? 'bar-green' : ''));
+    c.appendChild(this._bar('Support Reaching Intended (%)', sys.supportEffectiveness ?? 0, 100,
+      (sys.supportEffectiveness ?? 0) < (sys.enablingSupport ?? 0) * 0.6 ? 'bar-amber' : 'bar-green'));
+
+    const supNote = Utils.createEl('div', 'society-help-text');
+    supNote.textContent = 'Enabling support is equipment and material access, training, expert specialists '
+      + 'available for consultation, tax relief and reimbursement of household costs. It is the opposite of '
+      + 'compulsion — the state supplying capability rather than compelling behaviour — and it carries no '
+      + 'coercion penalty. It works best where capital access is worst: making tax credits refundable '
+      + 'substantially raises adoption among low-income households while barely moving high-income adoption.';
+    c.appendChild(supNote);
+
+    const capNote = Utils.createEl('div', 'society-help-text');
+    const leak = (sys.enablingSupport ?? 0) - (sys.supportEffectiveness ?? 0);
+    capNote.textContent = leak > 5
+      ? `About ${Math.round(leak)} points of this support is captured by those who least need it. Malawi's `
+        + `input subsidy programme reached ~1.5 million smallholders and more than doubled fertilizer use, but `
+        + `a significant share of the benefit went to better-connected and larger farmers already using inputs. `
+        + `Land concentration and weak institutions widen this gap. Support also drains the treasury while active `
+        + `and lapses without renewal.`
+      : 'Support is reaching its intended recipients reasonably well. It still drains the treasury while active '
+        + 'and decays without renewal — the most commonly documented failure is simply the absence of long-term '
+        + 'follow-up to training.';
+    c.appendChild(capNote);
+
+    const supRow = Utils.createEl('div', 'society-btn-row');
+    const domLabel = domain === 'energy' ? 'energy'
+                   : domain === 'mobility' ? 'mobility' : 'agriculture';
+    const fundBtn = Utils.createEl('button', 'btn btn-secondary', '🎓 Fund Support Programme');
+    fundBtn.title = 'Seeds and equipment, technology access, training, expert consultation, tax relief and '
+      + 'reimbursement of household expenditure. Raises adoption and (for agriculture) the knowledge ceiling on '
+      + 'ecosystem function. No coercion cost. Ongoing fiscal drain; partly captured where land is concentrated.';
+    fundBtn.onclick = () => this._applyEvent('fund_enabling_support', { domain: domLabel });
+    supRow.appendChild(fundBtn);
+    const cutBtn = Utils.createEl('button', 'btn btn-secondary', '✂️ Cut Support');
+    cutBtn.title = 'Scale back training, material access and reimbursement. Immediate fiscal relief; '
+      + 'knowledge-dependent practices decay without follow-up.';
+    cutBtn.onclick = () => this._applyEvent('reduce_enabling_support', { domain: domLabel });
+    supRow.appendChild(cutBtn);
+    c.appendChild(supRow);
+
+    // Pathway buttons
+    const pathRow = Utils.createEl('div', 'society-btn-row');
+    const evtType = domain === 'energy' ? 'set_energy_pathway'
+                  : domain === 'mobility' ? 'set_mobility_pathway' : 'set_agriculture_pathway';
+    Object.values(DECENTRALIZATION_PATHWAYS).forEach(pw => {
+      const active = sys.pathway === pw.id;
+      const btn = Utils.createEl('button',
+        'btn ' + (active ? 'btn-primary' : 'btn-secondary'),
+        `${pw.icon} ${pw.label}`);
+      btn.title = `${pw.description}\n\nEvidence tier: ${pw.tier}`
+        + (pw.anchor ? `\nAnchor: ${pw.anchor}` : '');
+      btn.onclick = () => this._applyEvent(evtType, { pathway: pw.id });
+      pathRow.appendChild(btn);
+    });
+    c.appendChild(pathRow);
+
+    const active = DECENTRALIZATION_PATHWAYS[sys.pathway];
+    if (active && active.id !== 'none') {
+      const info = Utils.createEl('div', 'society-help-text');
+      info.textContent = `${active.icon} ${active.label} — ${active.description} `
+        + `[tier ${active.tier}]${active.anchor ? ` Anchor: ${active.anchor}` : ''}`;
+      c.appendChild(info);
+    }
+
+    // ── Participation (shown once, on the energy tab) ──
+    if (domain === 'energy') {
+      c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Participation & Stakeholding'));
+      c.appendChild(this._bar('Participation Depth', s.participationDepth ?? 0, 100,
+        (s.participationDepth ?? 0) > 50 ? 'bar-green' : ''));
+      c.appendChild(this._bar('Coercion Level', s.participationCoercion ?? 0, 100,
+        (s.participationCoercion ?? 0) > 50 ? 'bar-red' : ''));
+
+      const pNote = Utils.createEl('div', 'society-help-text');
+      pNote.textContent = 'Participation depth is the share of people who are producers and stakeholders rather '
+        + 'than remote consumers. Bounded effects: wellbeing up to +8, anomie up to −10, trust up to +6, '
+        + 'legitimacy up to +5 (gardening and self-determination meta-analyses; Karasek/Whitehall II decision '
+        + 'latitude; procedural-justice research). Caps are deliberately modest — intervention-scale effect sizes '
+        + 'are not civilizational transformations.';
+      c.appendChild(pNote);
+
+      const cNote = Utils.createEl('div', 'society-help-text');
+      cNote.textContent = 'Coercion discounts every one of those benefits. Participation studies are self-selected: '
+        + 'assigning participation is not the same as choosing it. Under high coercion and weak institutions the '
+        + 'effect turns negative. This is why mandating offers of ownership succeeds where mandating participation '
+        + 'itself fails.';
+      c.appendChild(cNote);
+
+      // Energy → wellbeing saturation
+      c.appendChild(Utils.createEl('div', 'society-section-hdr', 'Energy & Wellbeing'));
+      const gj = s.energyPerCapita ?? 5;
+      const ceil = s.wellbeingEnergyCeiling ?? 100;
+      c.appendChild(this._bar('Energy per Capita (GJ/yr)', Math.min(gj, 200), 200,
+        gj < 20 ? 'bar-red' : (gj < 50 ? 'bar-yellow' : 'bar-green')));
+      c.appendChild(this._bar('Wellbeing Ceiling', ceil, 100, ''));
+      const eNote = Utils.createEl('div', 'society-help-text');
+      eNote.textContent = `At ${gj.toFixed(0)} GJ/capita/year the energy-imposed wellbeing ceiling is `
+        + `${ceil.toFixed(0)}. Social outcomes rise steeply between roughly 10 and 75 GJ/capita and saturate above `
+        + `100–150. This is a ceiling only — it constrains low-energy societies but grants no bonus to high-energy `
+        + `ones, so neither direction is rewarded.`;
+      c.appendChild(eNote);
     }
   }
 

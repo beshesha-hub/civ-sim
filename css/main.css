@@ -512,6 +512,26 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18p
 .chronicle-para:last-child { margin-bottom: 0; }
 .chronicle-para strong { color: var(--text); font-weight: 600; }
 
+/* ── Trajectory Analysis Panel ────────────────────────────── */
+.trajectory-content { display: flex; flex-direction: column; }
+.trajectory-header { padding: 20px 20px 12px; border-bottom: 1px solid var(--border); }
+.trajectory-header h3 { margin: 0 0 4px; font-size: 1rem; font-weight: 700; }
+.trajectory-meta { color: var(--text-dim); font-size: 0.82rem; margin: 0; }
+.trajectory-section { padding: 14px 20px; border-bottom: 1px solid var(--border); }
+.trajectory-section h4 { font-size: 0.85rem; font-weight: 700; color: var(--primary); margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+.trajectory-phase { display: flex; align-items: baseline; gap: 12px; padding: 4px 0; font-size: 0.85rem; }
+.phase-years { color: var(--text-dim); min-width: 140px; font-variant-numeric: tabular-nums; }
+.phase-label { font-weight: 600; color: var(--text); }
+.trajectory-transition { display: flex; align-items: baseline; gap: 12px; padding: 3px 0; font-size: 0.82rem; }
+.trans-year { color: var(--text-dim); min-width: 80px; font-variant-numeric: tabular-nums; }
+.trans-detail { color: var(--text); }
+.trajectory-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.trajectory-table th { text-align: left; padding: 4px 8px; border-bottom: 2px solid var(--border); color: var(--text-dim); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.trajectory-table td { padding: 4px 8px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+.trajectory-export { padding: 16px 20px; display: flex; gap: 8px; flex-wrap: wrap; }
+.trajectory-export button { background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 14px; font-size: 0.82rem; cursor: pointer; color: var(--text); font-family: inherit; transition: background 0.2s; }
+.trajectory-export button:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
 /* ── World State Panel ─────────────────────────────────────── */
 .world-stat { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; justify-content: space-between; }
 .civ-compare-row { background: var(--elevated); border-radius: var(--radius); padding: 10px; margin-bottom: 8px; }

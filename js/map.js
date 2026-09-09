@@ -30,7 +30,8 @@ class HexMap {
     // Overlay mode: 'terrain' | 'civilization' | 'fertility' | 'wellbeing' | 'warming'
     this.overlayMode = 'terrain';
 
-    this._noiseSeeds = [Math.random() * 1000, Math.random() * 1000, Math.random() * 1000];
+    // Seeded RNG so identical research seeds produce identical terrain
+    this._noiseSeeds = [Utils.random() * 1000, Utils.random() * 1000, Utils.random() * 1000];
     this._civTerritories = new Map(); // key -> civId
 
     // ── Climate bias (from world setup) ───────────────────────
@@ -230,7 +231,7 @@ class HexMap {
     for (const [key, tile] of this.tiles) {
       if (!tile.terrain.passable) continue;
       for (const res of RESOURCES) {
-        if (res.terrains.includes(tile.terrain.id) && Math.random() < res.probability) {
+        if (res.terrains.includes(tile.terrain.id) && Utils.random() < res.probability) {
           tile.resource = { ...res };
           break;
         }

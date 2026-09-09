@@ -1373,6 +1373,58 @@ class SocietyPanel {
         `${(typeof depRatio === 'number' ? depRatio : 0).toFixed(2)}`));
       c.appendChild(depRow);
 
+      // Companion module enrichment (when active)
+      const comp = civ.state.companion;
+      if (comp && comp.medianAge != null) {
+        c.appendChild(this._section('Companion Module — Detailed Age Structure'));
+
+        const compGrid = Utils.createEl('div', '');
+        compGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;margin-bottom:12px;';
+
+        const _card = (label, value) => {
+          const card = Utils.createEl('div', '');
+          card.style.cssText = 'background:rgba(255,255,255,0.05);border-radius:6px;padding:6px 8px;text-align:center;';
+          const lbl = Utils.createEl('div', '');
+          lbl.style.cssText = 'font-size:9px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1px;';
+          lbl.textContent = label;
+          const val = Utils.createEl('div', '');
+          val.style.cssText = 'font-size:14px;font-weight:600;';
+          val.textContent = value;
+          card.appendChild(lbl);
+          card.appendChild(val);
+          return card;
+        };
+
+        compGrid.appendChild(_card('Median Age', comp.medianAge.toFixed(1)));
+        compGrid.appendChild(_card('Growth Rate', (comp.growthRate * 100).toFixed(2) + '%'));
+        compGrid.appendChild(_card('Youth Bulge', (comp.youthBulgeIndex ?? 0).toFixed(1) + '%'));
+        compGrid.appendChild(_card('Labor Force', (comp.laborForceShare ?? 0).toFixed(1) + '%'));
+        compGrid.appendChild(_card('Dep. Ratio', (comp.dependencyRatio ?? 0).toFixed(2)));
+        compGrid.appendChild(_card('Births', comp.births != null ? Math.round(comp.births).toLocaleString() : '—'));
+        compGrid.appendChild(_card('Deaths', comp.deaths != null ? Math.round(comp.deaths).toLocaleString() : '—'));
+        c.appendChild(compGrid);
+
+        if (comp.demographicDividend > 0) {
+          const divNote = Utils.createEl('div', '');
+          divNote.style.cssText = 'background:rgba(45,138,78,0.15);border:1px solid rgba(45,138,78,0.3);border-radius:6px;padding:6px 10px;margin-bottom:10px;font-size:12px;';
+          divNote.textContent = `Demographic Dividend active (${(comp.demographicDividend * 100).toFixed(0)}%) — high labor force share with low dependency.`;
+          c.appendChild(divNote);
+        }
+
+        // Regime stability summary from micro-foundations
+        if (comp.regimeTransitionPressure != null) {
+          c.appendChild(this._section('Companion Module — Regime Stability'));
+          const pressure = comp.regimeTransitionPressure;
+          c.appendChild(this._bar('Regime Transition Pressure', pressure, 100,
+            pressure < 25 ? 'bar-green' : pressure < 50 ? 'bar-amber' : 'bar-red',
+            `${pressure.toFixed(1)}/100`));
+          c.appendChild(this._bar('Elite Cohesion', comp.eliteCohesion ?? 80, 100,
+            (comp.eliteCohesion ?? 80) > 60 ? 'bar-green' : (comp.eliteCohesion ?? 80) > 35 ? 'bar-amber' : 'bar-red'));
+          c.appendChild(this._bar('Mass Grievance', comp.massGrievance ?? 20, 100,
+            (comp.massGrievance ?? 20) < 30 ? 'bar-green' : (comp.massGrievance ?? 20) < 55 ? 'bar-amber' : 'bar-red'));
+        }
+      }
+
       // Epidemiological profile
       c.appendChild(this._section('Epidemiological Profile'));
       const disVal = Math.round(s.diseaseBurden ?? 60);

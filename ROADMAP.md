@@ -1,12 +1,25 @@
 # Civ-Sim — Project Roadmap
 
-*Last updated: 2026-03-08*
+*Last updated: 2026-09-08*
 
 ---
 
 ## Vision
 
 Civ-Sim is both a playable civilization simulation game and a serious research tool for socioeconomic systems study. It is designed to be free of the cultural assumptions and biases of existing similar games. When complete, it will be shared publicly, hosted online, and packaged as executables for Mac and Windows — for anyone who wants to play it or use it for research.
+
+---
+
+## Current Status (September 2026)
+
+The simulation engine, all 25 gameplay feature sets, and 5 modeling passes (Passes 7-11) are complete. Validation infrastructure is in place with hindcast, UQ calibration, and cross-validation systems operational.
+
+**Validation scores:**
+- UQ Coverage: 11-14/36 metrics (31-39%), ~12 stable
+- Hindcast: 30/38 (79%)
+- Robustness: ~77% (92/120 metrics with CV<15%)
+
+**Active work:** Documentation update, git repository setup, public hosting preparation.
 
 ---
 
@@ -58,11 +71,32 @@ Civ-Sim is both a playable civilization simulation game and a serious research t
 
 ---
 
+## Track 6 — Simulation Modeling Passes (March–September 2026)
+
+26. ✅ **Pass 7: Social Trust & Wealth Distribution** — social trust dynamics; wealth distribution with Pareto tails and r>g multiplicative dynamics; state capacity modeling; developmental state theory (Johnson/Amsden/Wade); organized corruption distinction; institutional resilience mechanism (Evans & Rauch)
+27. ✅ **Pass 8: Behavioral & Cultural Dynamics** — behavioral inertia (resistance to rapid policy change); cultural homogeneity pressure; enhanced fiscal policy modeling
+28. ✅ **Pass 9: Calibration & Sensitivity Analysis** — cross-system sensitivity analysis; 12-country calibration scenarios (UQ framework); p10-p90 interval testing
+29. ✅ **Pass 10: Energy & Agriculture** — energy system with EROI and decentralization; agriculture diversification; active travel modeling; confidence tiers (M = mechanistic, I = informed proxy, T = theoretical placeholder)
+30. ✅ **Pass 11: Companion Demographic Module** — sex-disaggregated cohorts; strata mobility; diffusion networks; collective action modeling; satisfaction-to-trust feedback; companion module integration with main simulation
+
+---
+
+## Track 7 — Validation & Diagnostics
+
+31. ✅ **Hindcast validation framework** — 4 historical scenarios: South Korea (developmental state), Chile (neoliberal transition), Russia (post-Soviet collapse), Rwanda (post-genocide reconstruction); current score: 30/38 (79%)
+32. ✅ **12-country UQ calibration system** — uncertainty quantification with p10-p90 interval testing; current coverage: 11-14/36 metrics (31-39%), ~12 stable
+33. ✅ **Cross-validation and sensitivity analysis infrastructure** — robustness score: ~77% (92/120 metrics with CV<15%)
+34. ✅ **Research panel with diagnostic tools** — in-game research panel for inspecting simulation internals
+35. ✅ **Model diagnostics infrastructure** — structured diagnostic logging and analysis tooling
+
+---
+
 ## Track 3 — Accessibility & Distribution
 
-10. **Online hosting** — GitHub Pages deployment; rethink save game persistence beyond browser localStorage
+10. **Git repository setup and public hosting** — GitHub Pages deployment; rethink save game persistence beyond browser localStorage
 11. **Executable packaging** — Electron wrapping for Mac and Windows
 12. **Onboarding improvements** — more explanatory text for governance and economy options during setup
+13. **Web-embeddable version** — embeddable build for World in Transition website
 
 ---
 
@@ -82,6 +116,12 @@ Civ-Sim is both a playable civilization simulation game and a serious research t
 - Addition of non-Western economic and governance models
 - ✅ ~~Rethink of linear tech level progression (levels 1–11 carry implicit assumptions)~~ — resolved via branching prerequisite tree (Track 1 item 4)
 - Full narrative and history prose translation (dependent on LLM approach decision)
+- **Trust mechanism improvements** — structural gaps in USA and Russia scenarios
+- **Corruption-IQ bistability investigation** — regression observed in Brazil/India calibration scenarios
+- **City-state module** — Singapore and similar city-state governance modeling
+- **ODD+D protocol document** — standardized model description for peer review submission
+- **Peer review submission** — target journal: JASSS (Journal of Artificial Societies and Social Simulation)
+- **Documentation update** — in progress as of September 2026
 
 ---
 
@@ -160,3 +200,16 @@ These features serve the same audience the game already appeals to. Research inf
 - ✅ Organized crime (street gangs, cartels, mafias, pirate networks; auto-emergence; countermeasures with multi-turn resolution)
 - ✅ Geography & climate (world climate bias on map generation, per-civ terrain/climate tags, per-turn stat modifiers)
 - ✅ Named scenarios & comparative analysis (save/rerun/compare/export CSV)
+- ✅ Social trust dynamics, wealth distribution (Pareto tails, r>g), state capacity, developmental state theory (Pass 7)
+- ✅ Behavioral inertia, cultural homogeneity pressure, enhanced fiscal policy (Pass 8)
+- ✅ Cross-system sensitivity analysis, 12-country UQ calibration, uncertainty quantification framework (Pass 9)
+- ✅ Energy system (EROI, decentralization), agriculture diversification, active travel, confidence tiers (Pass 10)
+- ✅ Companion demographic module: sex-disaggregated cohorts, strata mobility, diffusion networks, collective action (Pass 11)
+- ✅ Hindcast validation framework (S. Korea, Chile, Russia, Rwanda): 30/38 (79%)
+- ✅ 12-country UQ calibration with p10-p90 interval testing
+- ✅ Cross-validation and sensitivity analysis infrastructure: ~77% robustness (92/120 CV<15%)
+- ✅ Developmental state mechanism (Johnson/Amsden/Wade, organized corruption distinction)
+- ✅ Institutional resilience mechanism (Evans & Rauch)
+- ✅ Research panel with diagnostic tools
+- ✅ Model diagnostics infrastructure
+- ✅ Companion module integration (demographics, strata mobility, satisfaction-to-trust feedback)

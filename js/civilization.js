@@ -96,6 +96,7 @@ class Civilization {
       // ── Resource Management ───────────────────────────────────
       resourceStrategy:            'balanced_stewardship', // see RESOURCE_STRATEGIES
       obsolescenceModel:           'regulated',            // 'durability_first'|'regulated'|'market_driven'
+      resourceRentDependence:      0,                      // 0-100; share of state revenue from natural resource extraction
       resourceHistory:             [],                     // ring buffer, max 50 turns
       // ── Information Ecosystem ─────────────────────────────────
       informationEcosystem:        'free_market_media',    // see INFORMATION_ECOSYSTEM_TYPES
@@ -308,6 +309,7 @@ class Civilization {
       mediaLiteracy: 30,               // 0-100; Finland model
       mediaOligarchCapture: 0,         // 0-100; Berlusconi/Murdoch capture
       publicBroadcasting: 0,           // 0-100; BBC/NHK model
+      polarizationLevel: 0,            // 0-100; Sunstein/Haidt partisan sorting
       lastInvestigationYear: null,
       // ── Feature 4: Drug/Addiction Epidemics ───────────────────────
       addictionPrevalence: 0,          // 0-100; population affected
@@ -361,6 +363,89 @@ class Civilization {
         turnsInPhase: 0,               // how long in current phase
         governanceResponse: 'none',    // 'none'|'accommodating'|'cracking_down'|'integrated'
       },
+      // ── Pass 10: Production Decentralization ──────────────────
+      // Two INDEPENDENT parameters. No coded coupling between them —
+      // they interact emergently through shared land, labor and
+      // state capacity. See pass10-spec.md §1.4.
+      energySystem: {
+        distributedShare: 0,      // 0-100; share of energy from local/small-scale production
+        pathway: 'none',          // see DECENTRALIZATION_PATHWAYS
+        adoptionRate: 0,          // pts/turn, signed
+        crisisPressure: 0,        // 0-100; centralized-system failure driving adoption
+        capitalAccess: 50,        // 0-100; gates crisis-driven adoption
+        ownershipBreadth: 0,      // 0-1; how widely ownership is distributed
+        participationShare: 0,    // 0-100; population who are energy stakeholders
+        landIntensity: 0,         // 0-100; Smil power-density land burden
+        enablingSupport: 0,       // 0-100; equipment access, training, tax relief,
+                                  //   reimbursement — capability, NOT compulsion
+        supportEffectiveness: 0,  // 0-100; support surviving elite capture
+        structuralBaseline: 0,    // 0-100; default distributed share from
+                                  //   infrastructure/urbanization/state capacity
+        pathwayOffset: 0,         // 0-70; persistent shift above baseline from
+                                  //   a sustained programme; decays if abandoned
+        burstTurns: 0,            // turns remaining in burst regime
+        transitionTurns: 0,
+      },
+      agricultureSystem: {
+        localShare: 0,            // 0-100; share of food from local/small-scale production
+        diversificationIntensity: 0, // 0-100; monoculture → polyculture/agroforestry
+        pathway: 'none',
+        adoptionRate: 0,
+        crisisPressure: 0,
+        capitalAccess: 50,
+        ownershipBreadth: 0,
+        participationShare: 0,
+        laborIntensity: 0,        // 0-100; labor absorbed by diversified production
+        structuralBaseline: 0,    // 0-100; default local share from trade/urban/tech
+        pathwayOffset: 0,         // 0-70; persistent shift above baseline
+        ecosystemFunction: 0,     // 0-100; designed species interactions (N-fixation,
+                                  //   allelopathy, trap crops, biological pest/weed control)
+        inputSubstitution: 0,     // 0-100; external inputs displaced by ecosystem function
+        coercionYieldFactor: 1.0, // 0-1; structural gain surviving compulsion
+        enablingSupport: 0,       // 0-100; seeds, tools, training, specialists,
+                                  //   tax relief, expenditure reimbursement
+        supportEffectiveness: 0,  // 0-100; support surviving elite capture
+        distributionLocality: 0,  // 0-100; food reaching people without truck/rail/ship/air
+        chainLoss: 13.2,          // % lost in handling, sorting, packaging, transit
+        cosmeticRejection: 0,     // % rejected on appearance by graded markets
+        harvestMaturity: 50,      // 0-100; picked ripe (local) vs mature-green (long haul)
+        nutritionalQuality: 50,   // 0-100; derived from maturity + chain handling
+        landEquivalentRatio: 1.0, // derived from diversificationIntensity
+        burstTurns: 0,
+        transitionTurns: 0,
+      },
+      // ── Pass 11: Active Travel Networks ──────────────────────
+      activeTravel: {
+        networkCoverage: 0,       // 0-100; share of urban area served
+        networkContinuity: 0,     // 0-100; Seville: gaps kill a network
+        jobsHousingBalance: 50,   // 0-100; THE gate on polycentric benefit
+        transitIntegration: 0,    // 0-100; bike-friendly transit at nodes
+        effectiveReach: 0,        // 0-100; how much of metro travel is addressable
+        lightingLevel: 0,         // 0-100
+        patrolIntensity: 0,       // 0-100
+        amenityLevel: 0,          // 0-100; rest areas, restrooms, food, phones (T)
+        perceivedSafety: 50,      // 0-100; composite of the three above
+        modeShare: 0,             // 0-100; active travel share of trips
+        modeShareMale: 0,         // gendered access differs via perceivedSafety
+        modeShareFemale: 0,
+        animalPowerShare: 0,      // viable at low density, harmful at high
+        pathway: 'none',
+        enablingSupport: 0,
+        supportEffectiveness: 0,
+        structuralBaseline: 0,    // pre-motorization default; collapses with cars
+        pathwayOffset: 0,
+        crisisPressure: 0,
+        capitalAccess: 50,
+        marginalShift: 0,         // 0-100; share ABOVE baseline — the part that
+                                  //   actually displaces motorized travel
+        energySavedShare: 0,      // 0-100; share of total energy demand avoided
+        localEconomyEffect: 0,    // 0-100; neighbourhood retail/vacancy effect
+        transitionTurns: 0,
+      },
+      energyPerCapita: 5,         // GJ/capita/year proxy — drives the saturation curve
+      wellbeingEnergyCeiling: 100,// soft ceiling from ENERGY_WELLBEING
+      participationDepth: 0,      // 0-100; derived stakeholder share across both systems
+      participationCoercion: 0,   // 0-100; how compelled participation is
     };
 
     // Apply society initial values derived from founding configuration
@@ -669,13 +754,13 @@ class Civilization {
   }
 
   _updatePopulation(yearsDelta, mapTiles) {
+    if (this.state.companion?.totalPopulation > 0) return;
+
     let growthRate;
 
     if (this.state.demographicTransitionStage !== undefined && this.state._populationGrowthRate !== undefined) {
-      // Demographic transition system active — use computed growth rate
       growthRate = this.state._populationGrowthRate * (yearsDelta / 10);
     } else {
-      // Fallback: original base growth calculation
       const fertility = this._getAverageFertility(mapTiles);
       const wellbeing = this.state.averageWellbeing;
       growthRate = 0.005 * (yearsDelta / 10);
@@ -684,33 +769,22 @@ class Civilization {
       growthRate -= this.governance.corruptionLevel * 0.0002;
     }
 
-    // Event effects (always applied)
     for (const ev of this.activeEvents) {
       if (ev.populationRisk) growthRate -= ev.populationRisk * 0.5;
     }
 
-    // Starvation penalty (always applied — direct feedback)
     const food = this.state.resourceStores.food;
     if (food < 100) growthRate -= 0.02;
 
     let delta = Math.floor(this.state.population * growthRate);
 
-    // Population inertia: large populations decline more slowly (Fix 5)
-    // Demographic momentum — large populations have built-in growth inertia
-    // from age structure (young populations keep growing even after fertility drops)
     if (delta < 0 && this.state.population > 500) {
       const inertiaFactor = 1 / (1 + Math.log(this.state.population / 500) * 0.3);
       delta = Math.floor(delta * inertiaFactor);
     }
 
-    // R4b-3: Low-population recovery — when population is far below carrying capacity,
-    // resources per capita are abundant, empty land attracts settlers and refugees,
-    // and birth rates rise (Malthusian logic). This prevents the 200 floor from
-    // binding for most scenarios. Historical: post-plague Europe saw rapid recovery;
-    // frontier societies grew fast due to available land.
     const carryingCap = this.state.carryingCapacity ?? 5000;
     if (this.state.population < carryingCap * 0.1 && delta <= 0) {
-      // At very low population relative to capacity, add recovery growth
       const recoveryRate = Math.min(0.01, (1 - this.state.population / (carryingCap * 0.1)) * 0.02);
       delta = Math.max(delta, Math.floor(this.state.population * recoveryRate));
       if (delta < 1 && this.state.population < carryingCap * 0.05) delta = Math.max(delta, 1);
@@ -759,49 +833,83 @@ class Civilization {
   }
 
   _updateWellbeing() {
-    const b = this.state.behaviorReinforcement;
     const gov = this.governance;
     const p = this.operatingPrinciples;
 
-    let wellbeing = 50;
+    // Structural wellbeing target based on World Happiness Report
+    // methodology (Helliwell, Layard, Sachs): GDP, social support,
+    // healthy life expectancy, freedom, corruption, generosity.
+    // Translated to our model variables.
+    let wellbeing = 30;
 
-    // High cooperation and mutual aid → wellbeing
-    wellbeing += (b.cooperation - 50) * 0.2;
-    wellbeing += (b.mutualAid - 50) * 0.2;
+    // 1) Economic development — largest predictor (~30% of WHR variance)
+    // Sen 1999 capability approach: education, infrastructure, and
+    // state capacity produce material conditions for wellbeing
+    const edu = this.state.educationQuality ?? 50;
+    const infra = this.state.infrastructureLevel ?? 20;
+    const cap = this.state.stateCapacity ?? 50;
+    const econDev = edu * 0.35 + infra * 0.35 + cap * 0.30;
+    wellbeing += econDev * 0.45;
 
-    // High empathy → wellbeing
-    wellbeing += (this.state.empathyLevel - 50) * 0.15;
+    // 2) Social support — social trust enables cooperative networks
+    // (Helliwell & Putnam 2004, Knack & Keefer 1997)
+    const trust = this.state.socialTrust ?? 30;
+    wellbeing += trust * 0.10;
 
-    // Equality → wellbeing
-    wellbeing += (this.state.equalityIndex - 50) * 0.2;
-
-    // Freedom → wellbeing
-    wellbeing += (p.freedomLevel - 50) * 0.1;
-
-    // Corruption → wellbeing loss
-    wellbeing -= gov.corruptionLevel * 0.3;
-
-    // High acquisitiveness without adequate distribution → wellbeing loss
-    if (b.acquisitiveness > 60 && this.state.equalityIndex < 40) {
-      wellbeing -= (b.acquisitiveness - 60) * 0.2;
+    // 3) Health — food security as proxy for healthy life expectancy.
+    // FAO: 735M people faced hunger in 2022. Severe food insecurity
+    // correlates with 5-15 year life expectancy reduction, massive
+    // wellbeing impact. Non-linear: below 30 is crisis territory;
+    // above 70 has diminishing returns (basic nutrition met).
+    const foodSecWB = this.state.foodSecurity ?? 60;
+    if (foodSecWB < 30) {
+      wellbeing -= (30 - foodSecWB) * 0.25;
+    } else if (foodSecWB < 60) {
+      wellbeing += (foodSecWB - 30) * 0.12;
+    } else {
+      wellbeing += 3.6 + Math.min(foodSecWB - 60, 30) * 0.06;
     }
 
-    // Resources
-    if (this.state.resourceStores.food < 100) wellbeing -= 20;
+    // 4) Freedom to make life choices
+    wellbeing += p.freedomLevel * 0.06;
 
-    // Pollution erodes wellbeing — health, air quality, contaminated water
+    // 5) Corruption perception — reduces trust in institutions
+    // High-capacity states partially buffer corruption effects (Evans 1995)
+    const capBuffer = Math.max(0.4, 1.0 - cap / 200);
+    wellbeing -= gov.corruptionLevel * 0.12 * capBuffer;
+
+    // 6) Inequality drag (Wilkinson & Pickett 2009: inequality
+    // correlates with lower wellbeing across all income levels)
+    const wc = this.economic?.wealthConcentration ?? 50;
+    if (wc > 40) wellbeing -= (wc - 40) * 0.08;
+
+    // 7) Pollution — health and environmental quality
     const pollution = this.state.pollutionIndex || 0;
-    if (pollution > 20) wellbeing -= (pollution - 20) * 0.25;
+    if (pollution > 30) wellbeing -= (pollution - 30) * 0.10;
 
-    // Severe soil/water depletion hits food security and quality of life
+    // 8) Resource depletion — broadened beyond water alone.
+    // Soil degradation reduces agricultural capacity (Lal 2015: 24B tonnes
+    // of fertile soil lost per year). Deforestation disrupts hydrology,
+    // air quality, and livelihoods (Bradshaw et al. 2007). Water scarcity
+    // forces labor-intensive collection, reduces sanitation, and drives
+    // conflict (Mekonnen & Hoekstra 2016).
     const dep = this.state.resourceDepletion;
     if (dep) {
-      if (dep.soil < 40)  wellbeing -= (40 - dep.soil)  * 0.1;
-      if (dep.water < 40) wellbeing -= (40 - dep.water) * 0.15;
-      if (dep.forests < 20) wellbeing -= (20 - dep.forests) * 0.05;
+      if (dep.water < 30) wellbeing -= (30 - dep.water) * 0.08;
+      if (dep.soil !== undefined && dep.soil < 40)
+        wellbeing -= (40 - dep.soil) * 0.06;
+      if (dep.forests !== undefined && dep.forests < 30)
+        wellbeing -= (30 - dep.forests) * 0.04;
     }
 
-    // Colonization penalty — living under occupation suppresses wellbeing
+    // 8b) Ecosystem services — biodiversity underpins food production,
+    // disease regulation, water purification, and cultural identity
+    // (Costanza et al. 2014, IPBES 2019). Severe biodiversity loss
+    // degrades the natural capital that supports human wellbeing.
+    const biodiversity = this.state.biodiversityIndex ?? 80;
+    if (biodiversity < 50) wellbeing -= (50 - biodiversity) * 0.06;
+
+    // 9) Colonization penalty
     if (this._occupiedBy) {
       const penaltyByType = {
         extermination: 30, enslavement: 25, displacement: 20,
@@ -810,15 +918,13 @@ class Civilization {
       wellbeing -= (penaltyByType[this._colonizationType] || 15);
     }
 
-    // Active disasters
+    // 10) Active disasters
     for (const ev of this.activeEvents) {
-      if (ev.type === 'disaster') wellbeing -= 10;
+      if (ev.type === 'disaster') wellbeing -= 8;
     }
 
-    this.state.averageWellbeing = Utils.clamp(
-      Utils.lerp(this.state.averageWellbeing, wellbeing, 0.15),
-      0, 100
-    );
+    // Store structural target for simulation.js recovery system.
+    this.state._structuralWellbeing = Utils.clamp(wellbeing, 0, 100);
 
     // Update equality: drifts based on economic & governance structure
     const targetEquality = this._computeInitialEquality();
@@ -827,21 +933,31 @@ class Civilization {
       0, 100
     );
 
-    // Wealth concentration — multiplicative drift (Kesten/Pareto dynamics)
-    // Concentration accelerates as it grows, matching empirical wealth distributions
+    // Wealth concentration — concentration dynamics now handled by the
+    // comprehensive r>g model in _processNaturalEconomicForces (simulation.js),
+    // which includes hierarchy amplification, inheritance, market model,
+    // saturation, and the structural equilibrium restoring force.
+    // The old multiplicative drift here was a duplicate that doubled
+    // the concentration force for high-hierarchy societies.
     const _wc = this.economic.wealthConcentration;
-    const _inheritMult = { communal: 0.7, partible: 0.85, meritocratic: 1.0, primogeniture: 1.3 }
-      [this.governance.inheritanceSystem] ?? 1.0;
-    if (this.economic.accumulationAllowed && this.governance.hierarchyLevel > 40) {
-      // Base rate calibrated so delta ≈ old +0.05 at wc=20, accelerating at higher wc
-      const hierarchyFactor = (this.governance.hierarchyLevel - 40) / 60; // 0..1
-      const baseRate = 0.003 * (0.5 + hierarchyFactor) * _inheritMult;
-      this.economic.wealthConcentration = Utils.clamp(_wc * (1 + baseRate), 0, 95);
-    } else if (!this.economic.accumulationAllowed) {
-      // Exponential decay toward model-specific floor
+    if (!this.economic.accumulationAllowed) {
       const floor = { gift: 3, commons: 5, planned: 8, none: 5 }[this.economic.modelId] ?? 5;
+      // Planned economies suppress accumulation through state control.
+      // Decay strength depends on institutional control capacity —
+      // when state capacity and institutional lock-in erode, de facto
+      // accumulation occurs even in nominally planned systems
+      // (Matthews 1978: Soviet nomenklatura privileges;
+      //  Wintrobe 1998: dictator's dilemma of control)
+      const cap = this.state.stateCapacity ?? 50;
+      const lockin = this.state.institutionalLockin ?? 50;
+      const controlStrength = Math.min(cap, lockin) / 100;
+      // High control → stronger decay (faster pull toward floor)
+      // Low control → weaker decay (accumulation persists)
+      const decayRate = 0.995 - 0.04 * controlStrength;
+      // High control → lower ceiling; weak control → higher ceiling
+      const wcCeiling = 30 + 40 * (1 - controlStrength);
       this.economic.wealthConcentration = Utils.clamp(
-        floor + (_wc - floor) * 0.99, floor, 50
+        floor + (_wc - floor) * decayRate, floor, wcCeiling
       );
     }
   }
@@ -925,64 +1041,82 @@ class Civilization {
     const pop    = this.state.population;
     const scale  = yearsDelta / 10;
     const isGift = econId === 'gift' || econId === 'commons';
+    const resMod = this.state._resourceDepletionMod ?? 1.0;
 
-    // Deforestation — scales with population and industrial activity
-    // Market/commodity economies over-extract; gift/commons preserve
-    let forestRate = (pop / 5000) * scale;
-    if (techLv >= 7) forestRate += (techLv - 6) * 0.3 * scale; // industrial logging
-    // Moderated: was 1.5/0.4 (3.75x gap). Now 1.3/0.6 (2.2x gap).
-    // Real difference should emerge from resource strategy choices, not hardcoded.
+    // --- Forests ---
+    // Pre-industrial deforestation: ~0.2% of global forest per century (Williams 2003).
+    // Industrial era (1800-2000): ~0.5% per year at peak (FAO 2020).
+    // Population pressure scales logarithmically — each order of magnitude adds
+    // equal extraction pressure. Physically motivated: finite land area, marginal
+    // forest progressively harder to access, agricultural yields improve with scale.
+    // Extraction difficulty also increases as remaining forest shrinks (logistic).
+    const popPressure = Math.log10(Math.max(pop, 10));
+    const forestAvail = dep.forests / 100;
+    let forestRate = popPressure * 0.08 * forestAvail * scale;
+    if (techLv >= 7) forestRate += (techLv - 6) * 0.3 * forestAvail * scale;
     if (econId === 'market' || econId === 'commodity') forestRate *= 1.3;
     if (isGift) forestRate *= 0.6;
     if (this.state.adoptedTechnologies.includes('Sustainable Agriculture')) forestRate *= 0.5;
-    // Resource strategy multiplier (set each turn by _processResourceStrategy in simulation.js)
-    const resMod = this.state._resourceDepletionMod ?? 1.0;
-    dep.forests = Utils.clamp(dep.forests - forestRate * resMod, 0, 100);
 
-    // Soil quality — intensive farming degrades it; sustainable practices help
-    let soilRate = (pop / 8000) * scale;
-    if (econId === 'market') soilRate *= 1.2; // was 1.3 — moderate monoculture pressure
-    if (isGift) soilRate *= 0.7; // was 0.5
-    // Forests act as a soil buffer
-    if (dep.forests > 60) soilRate *= 0.6;
+    // Natural regeneration: secondary forest regrows ~2-5% per decade where
+    // conditions allow (Chazdon 2014). Rate proportional to deficit from
+    // regional carrying capacity, suppressed by ongoing extraction pressure.
+    const forestDeficit = (100 - dep.forests) / 100;
+    const regenSuppression = Math.min(1, forestRate * 3);
+    const forestRegen = 0.4 * forestDeficit * (1 - regenSuppression) * scale;
+
+    dep.forests = Utils.clamp(dep.forests - forestRate * resMod + forestRegen, 0, 100);
+
+    // --- Soil ---
+    // Soil formation: ~0.1mm/yr temperate (Montgomery 2007), ~1mm/yr tropical.
+    // Degradation from agriculture depends on practice — intensive monoculture
+    // degrades 10-100x faster than formation (Pimentel 2006).
+    const soilAvail = dep.soil / 100;
+    let soilRate = popPressure * 0.04 * soilAvail * scale;
+    if (techLv >= 7) soilRate += (techLv - 6) * 0.15 * soilAvail * scale;
+    if (econId === 'market') soilRate *= 1.2;
+    if (isGift) soilRate *= 0.7;
+    if (dep.forests > 60) soilRate *= 0.6; // forest cover protects soil
     if (this.state.adoptedTechnologies.includes('Sustainable Agriculture')) soilRate *= 0.4;
-    dep.soil = Utils.clamp(dep.soil - soilRate * resMod, 0, 100);
 
-    // Mineral depletion — industrial extraction
+    const soilDeficit = (100 - dep.soil) / 100;
+    const soilRegenBase = dep.forests > 50 ? 0.25 : 0.1;
+    const soilRegen = soilRegenBase * soilDeficit * scale;
+
+    dep.soil = Utils.clamp(dep.soil - soilRate * resMod + soilRegen, 0, 100);
+
+    // --- Minerals ---
+    // Pre-industrial: slow surface extraction (tin, copper, iron ore).
+    // Industrial: exponential increase with population and technology.
+    // No natural regeneration (geological timescale).
     let mineralRate = 0;
     if (techLv >= 8) {
-      mineralRate = ((techLv - 7) * 0.4 + (pop / 10000)) * scale;
-      if (econId === 'market' || econId === 'commodity') mineralRate *= 1.3; // was 1.6
-      if (isGift) mineralRate *= 0.6; // was 0.5
+      mineralRate = ((techLv - 7) * 0.3 + popPressure * 0.1) * scale;
+      if (econId === 'market' || econId === 'commodity') mineralRate *= 1.3;
+      if (isGift) mineralRate *= 0.6;
     } else if (techLv >= 5) {
-      mineralRate = 0.05 * scale; // slow pre-industrial extraction
+      mineralRate = 0.03 * scale;
     }
     dep.minerals = Utils.clamp(dep.minerals - mineralRate * resMod, 0, 100);
 
-    // Water quality — degrades with pollution and population; forests help
-    // Deforestation → rainfall disruption feedback (Amazon tipping point model):
-    // Forests generate ~30% of their own rainfall through transpiration.
-    // Below 40% forest cover, regional rainfall declines sharply (Nobre et al. 2016).
-    // Below 20%, hydrological collapse — aquifers don't recharge, rivers shrink.
+    // --- Water ---
+    // Pre-industrial: water "depletion" is contamination, not physical loss.
+    // Aquifers recharge naturally; deforestation disrupts rainfall (Nobre 2016).
+    // Industrial era: groundwater pumping exceeds recharge in many regions.
     const pollutionPressure = (this.state.pollutionIndex || 0) / 100;
-    let waterRate = (pop / 10000 + pollutionPressure * 0.5) * scale;
-    if (dep.forests > 50) waterRate *= 0.6; // forests filter water and maintain rainfall
+    let waterRate = (popPressure * 0.03 + pollutionPressure * 0.3) * scale;
+    if (techLv >= 7) waterRate += (techLv - 6) * 0.2 * scale;
+    if (dep.forests > 50) waterRate *= 0.5;
     else if (dep.forests < 40) {
-      // Deforestation → water crisis: rainfall disruption, aquifer depletion
-      // Accelerating water loss as forests decline below critical threshold
-      waterRate *= 1.0 + (40 - dep.forests) / 40 * 1.5; // up to 2.5x at forests=0
+      waterRate *= 1.0 + (40 - dep.forests) / 40 * 1.5;
     }
     if (this.state.adoptedTechnologies.includes('Sanitation Systems')) waterRate *= 0.5;
-    dep.water = Utils.clamp(dep.water - waterRate * resMod, 0, 100);
 
-    // Soil slowly recovers if population is low and forests are healthy
-    if (pop < 1000 && dep.forests > 60 && dep.soil < 80) {
-      dep.soil = Math.min(80, dep.soil + 0.1 * scale);
-    }
-    // Forests recover slightly in low-tech, low-pop eras
-    if (techLv <= 3 && pop < 2000 && dep.forests < 90) {
-      dep.forests = Math.min(90, dep.forests + 0.2 * scale);
-    }
+    const waterDeficit = (100 - dep.water) / 100;
+    const waterRegenBase = dep.forests > 40 ? 0.3 : 0.1;
+    const waterRegen = waterRegenBase * waterDeficit * scale;
+
+    dep.water = Utils.clamp(dep.water - waterRate * resMod + waterRegen, 0, 100);
   }
 
   // ── Pollution ─────────────────────────────────────────────────
@@ -1069,6 +1203,41 @@ class Civilization {
     // High waste accelerates disease → population penalty applied via wellbeing
     if (this.state.wasteAccumulation > 60 && Utils.random() < 0.05 * scale) {
       this.state.population = Math.max(50, Math.floor(this.state.population * 0.99));
+    }
+
+    // Landfill leachate → soil and water contamination.
+    // EPA/UNEP: landfills produce leachate containing heavy metals, organic
+    // pollutants, and microplastics that percolate into groundwater and soil.
+    // The effect scales with waste volume and is partially mitigated by
+    // sanitation infrastructure (lined landfills, treatment facilities).
+    if (this.state.wasteAccumulation > 35) {
+      const leachateRate = (this.state.wasteAccumulation - 35) / 65;
+      const sanitationMit = this.state.adoptedTechnologies.includes('Sanitation Systems') ? 0.4 : 1.0;
+      const leachateImpact = leachateRate * sanitationMit * 0.08 * scale;
+      this.state.resourceDepletion.soil = Utils.clamp(
+        (this.state.resourceDepletion.soil ?? 100) - leachateImpact, 0, 100);
+      this.state.resourceDepletion.water = Utils.clamp(
+        (this.state.resourceDepletion.water ?? 100) - leachateImpact * 0.7, 0, 100);
+    }
+
+    // Resource dispersal through waste: electronics, machinery, and consumer
+    // goods contain valuable and scarce materials (gold, silver, copper,
+    // rare earths, lithium, cobalt). When discarded to landfill rather than
+    // recycled, these materials are effectively lost from the usable supply.
+    // UNEP (2019): only 17.4% of e-waste is formally recycled globally.
+    // Hagelüken & Corti (2010): a metric ton of circuit boards contains
+    // 40-800g gold (vs. 5-10g/ton from mining). Under planned obsolescence,
+    // replacement cycles accelerate this dispersal dramatically.
+    // Gated on tech >= 8 (electronics era).
+    if (techLv >= 8 && this.state.wasteAccumulation > 20) {
+      const obsModel = this.state.obsolescenceModel ?? 'regulated';
+      const dispersalRate = obsModel === 'market_driven' ? 0.15
+        : obsModel === 'regulated' ? 0.06
+        : 0.02; // durability_first
+      const wasteLevel = (this.state.wasteAccumulation - 20) / 80;
+      const mineralLoss = dispersalRate * wasteLevel * scale;
+      this.state.resourceDepletion.minerals = Utils.clamp(
+        (this.state.resourceDepletion.minerals ?? 100) - mineralLoss, 0, 100);
     }
   }
 
@@ -1333,6 +1502,80 @@ class Civilization {
         'revolution');
     }
 
+    // Economic model transitions during revolutions.
+    // Revolutions frequently change economic systems:
+    //   Bolshevik (1917), Chinese (1949), Cuban (1959): market → planned
+    //   Pinochet (1973): mixed → market
+    //   Eastern Europe (1989-91): planned → market
+    // Direction depends on the revolution's character and society's conditions.
+    if (type === 'revolution_democratic' || type === 'revolution_authoritarian') {
+      const oldEconModel = this.economic.modelId;
+      const b = this.state.behaviorReinforcement;
+      const collectivism = this.operatingPrinciples.collectivismLevel ?? 50;
+      const coop = b.cooperation ?? 50;
+      const acquis = b.acquisitiveness ?? 50;
+      let targetEcon = null;
+      let econNarrative = '';
+
+      if (type === 'revolution_authoritarian') {
+        if (collectivism > 65 && coop > 45 && oldEconModel !== 'planned') {
+          // Socialist revolution: high collectivism → planned (Bolshevik, Mao, Castro)
+          targetEcon = 'planned';
+          econNarrative = `The revolutionary regime has seized the means of production. Private enterprise is being nationalized, and a centrally planned economy is being imposed. The stated goal is equitable distribution; the reality will depend on how power is exercised.`;
+        } else if (acquis > 55 && collectivism < 45 && oldEconModel !== 'market') {
+          // Right-wing coup: pro-market (Pinochet, Suharto)
+          targetEcon = 'market';
+          econNarrative = `The new regime has imposed market liberalization. State enterprises are being privatized, price controls removed, and market competition enforced — often brutally.`;
+        }
+      }
+
+      if (type === 'revolution_democratic') {
+        if (oldEconModel === 'planned') {
+          // Democratic revolution in planned economy → market (Eastern Europe 1989)
+          targetEcon = 'market';
+          econNarrative = `The collapse of centralized authority has triggered a transition to market structures. State enterprises are being privatized, often under conditions that favor well-connected insiders.`;
+        }
+      }
+
+      // Planned → market also triggers if planned economy faces institutional
+      // collapse (Soviet 1991: control structures fail even without explicit
+      // democratic revolution)
+      if (!targetEcon && oldEconModel === 'planned') {
+        const cap = this.state.stateCapacity ?? 50;
+        const lockin = this.state.institutionalLockin ?? 50;
+        if (cap < 40 && lockin < 40) {
+          targetEcon = 'market';
+          econNarrative = `The planned economy's control structures have disintegrated alongside the state's institutional capacity. Market forces are filling the vacuum — unregulated, chaotic, and dominated by those with access to the remnants of state power.`;
+        }
+      }
+
+      if (targetEcon && targetEcon !== oldEconModel && typeof ECONOMIC_MODELS !== 'undefined') {
+        const newModel = ECONOMIC_MODELS[targetEcon];
+        if (newModel) {
+          this.economic.modelId = targetEcon;
+          this.economic.model = newModel;
+          this.economic.accumulationAllowed = newModel.accumulationAllowed;
+          this.economic.currencyType = newModel.currencyType;
+          if (targetEcon === 'market') {
+            this.economic.scarcityOrientation = Math.max(50, this.economic.scarcityOrientation);
+            // Privatization shock (Shleifer & Treisman 2000)
+            this.economic.wealthConcentration = Utils.clamp(
+              (this.economic.wealthConcentration ?? 30) + 15, 0, 100);
+          } else if (targetEcon === 'planned') {
+            this.economic.accumulationAllowed = false;
+            this.economic.scarcityOrientation = Math.min(80, this.economic.scarcityOrientation + 20);
+            // Nationalization reduces WC initially
+            this.economic.wealthConcentration = Utils.clamp(
+              (this.economic.wealthConcentration ?? 50) * 0.5, 0, 100);
+          }
+          // Reset planned economy maturity counter on any transition
+          if (oldEconModel === 'planned') this.state._plannedEconTurns = 0;
+          this.addHistoryEntry(gameYear, 'Economic Transition',
+            econNarrative, 'economic_transition');
+        }
+      }
+    }
+
     // Refresh NPC pool to reflect new conditions
     if (typeof generateNPCPool === 'function') {
       this.npcs = generateNPCPool(this);
@@ -1579,7 +1822,10 @@ class Civilization {
       oligarchy: 35, tribal_chief: 40, autocratic: 30,
       shadow_government_complicit: 20, shadow_government_covert: 15, theocratic: 38,
     }[gov] ?? 45;
-    const corrPenalty = (this.state.corruptionLevel ?? 0) * 0.2;
+    this.state.corruptionLevel = soc.corruptionLevel !== undefined
+      ? soc.corruptionLevel
+      : (this.governance.corruptionLevel ?? 0);
+    const corrPenalty = this.state.corruptionLevel * 0.2;
     this.state.socialTrust = soc.socialTrust !== undefined
       ? soc.socialTrust
       : Utils.clamp(Math.round(govTrust - corrPenalty), 0, 100);
@@ -2125,9 +2371,8 @@ class Civilization {
     };
 
     // ── Pass 7 Init: Theocratic Empathy Bias ─────────────────────────────
-    const isTheocratic = gov === 'theocratic';
     const religionDom  = this.religion?.dominance ?? 0;
-    const biasActive   = isTheocratic || (religionDom > ((typeof THEOCRATIC_EMPATHY_BIAS !== 'undefined') ? THEOCRATIC_EMPATHY_BIAS.triggerReligionDominance : 70));
+    const biasActive   = religionDom > ((typeof THEOCRATIC_EMPATHY_BIAS !== 'undefined') ? THEOCRATIC_EMPATHY_BIAS.triggerReligionDominance : 70);
     const baseEmpathy  = this.state.empathyLevel ?? 50;
     this.state.theocraticEmpathyBias = {
       active:         biasActive,

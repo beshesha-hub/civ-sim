@@ -1,6 +1,6 @@
 # Modeling Assumptions and Scope
 
-**civ-sim** | Version: March 2026
+**civ-sim** | Version: September 2026
 
 ---
 
@@ -8,7 +8,7 @@
 
 civ-sim is a browser-based civilization simulator that models the co-evolution of economic, social, cultural, ecological, demographic, and governance systems over historical timescales. It is designed to be explored both as a game and as a tool for thinking about how civilizations develop, stagnate, and collapse.
 
-The simulation tracks roughly 120 distinct state variables per civilization across 12 interacting domains: economy, governance, social structure, culture, ecology, demographics, technology, infrastructure, psychology, organized crime, inter-civilization relations, and public health. These systems are connected by approximately 200 explicit cross-system feedback loops that produce emergent behavior not programmed into any single subsystem.
+The simulation tracks roughly 130 distinct state variables per civilization across 13 interacting domains: economy, governance, social structure, culture, ecology, demographics, technology, infrastructure, psychology, organized crime, inter-civilization relations, public health, and energy systems. These systems are connected by approximately 250 explicit cross-system feedback loops that produce emergent behavior not programmed into any single subsystem.
 
 The goal is not prediction. No simulation can predict the trajectory of a specific civilization. The goal is *structural plausibility*: when you invest in sanitation, infant mortality should fall, and decades later fertility should follow. When wealth concentrates unchecked, trust should erode and institutions should weaken. The causal chains should match what researchers observe in the historical and empirical record, even if the specific numbers are simplified.
 
@@ -38,12 +38,12 @@ civ-sim attempts to occupy the space between these approaches: broad enough to c
 
 Specifically:
 
-- **Breadth**: civ-sim models 12 interacting domains simultaneously. No academic ABM attempts this scope. Most commercial games model 4-6 domains.
+- **Breadth**: civ-sim models 13 interacting domains simultaneously. No academic ABM attempts this scope. Most commercial games model 4-6 domains.
 - **Mechanism fidelity**: Each subsystem is calibrated against specific research. The demographic transition model follows Omran's epidemiological transition and Caldwell's child-survival hypothesis. Wealth dynamics use multiplicative models (Bouchaud & Mezard). Trust erosion follows Knack & Keefer's corruption findings. Ethnic conflict uses Wimmer's political exclusion framework rather than the debunked "ancient hatreds" model.
 - **Emergent complexity**: Because systems are connected by explicit cross-effects rather than scripted outcomes, civ-sim can produce results the designer did not anticipate. A theocracy that suppresses education may inadvertently maintain high fertility, creating a youth bulge that eventually destabilizes it. This is not programmed as a "theocracy collapse event" -- it emerges from the interaction of education, gender equity, fertility, and stability systems.
 - **Transparency**: Every mechanism is visible. Unlike commercial games, which hide calculations behind "fog of game design," civ-sim exposes all driver lists, drift rates, and cross-effects in the UI.
 
-The trade-off is that civ-sim sacrifices the mathematical elegance of academic ABMs (we cannot prove convergence theorems about 120-variable systems) and the polish of commercial games (the UI prioritizes information density over visual spectacle).
+The trade-off is that civ-sim sacrifices the mathematical elegance of academic ABMs (we cannot prove convergence theorems about 130-variable systems) and the polish of commercial games (the UI prioritizes information density over visual spectacle).
 
 ---
 
@@ -73,6 +73,10 @@ Technological unemployment follows the Acemoglu-Restrepo task-displacement model
 
 Institutional quality follows the Acemoglu-Johnson-Robinson (2001/2005/2012) framework of inclusive vs. extractive institutions. Inclusive pressure builds from low corruption, democratic governance, education, social trust, epistemic health, and civilian control. Extractive pressure builds from wealth concentration, corruption, war, autocratic governance, and low freedom. The net balance determines institutional drift. AJR's concept of *critical junctures* is modeled: when a civilization recovers from a crisis, a window of institutional flux opens where reform or elite capture become more likely depending on the power balance. Institutional persistence (the empirical finding that colonial-era institutions persist for centuries) is modeled as strong inertia at both extremes.
 
+Developmental state theory (Johnson 1982, Amsden 1989, Wade 1990) is modeled through the interaction of state capacity, corruption, and institutional quality. The simulation distinguishes between organized corruption (where rent extraction follows predictable rules and does not prevent capacity-building) and disorganized corruption (where unpredictable predation destroys investment incentives), following Shleifer & Vishny 1993. A state with high capacity and moderate but organized corruption can drive rapid industrialization — the East Asian developmental state pattern — while the same corruption level in disorganized form produces stagnation. This distinction matters because it explains why some corrupt states develop rapidly while others do not: the structure of corruption, not only its level, determines whether capacity-building proceeds.
+
+Institutional resilience follows Evans & Rauch 1999 (Weberian bureaucracy and economic growth). Institutional quality provides resistance to capacity decay driven by instability shocks and by Washington Consensus-style structural adjustment conditionality. High-IQ (institutional quality) states recover faster from shocks and resist externally imposed capacity reduction more effectively, reflecting the empirical finding that meritocratic recruitment and predictable career paths create bureaucratic resilience independent of regime type.
+
 Military-civilian balance follows the Powell & Thyne (2011) global coup dataset. Coup risk is computed from seven multiplicative factors: recent coup history (the strongest single predictor — the "coup trap"), the military-civilian gap (Huntington's gap theory), economic crisis, food crisis, regime type (personalist autocracies most vulnerable, per Geddes 2003), political instability, and low legitimacy. Coup attempts have a ~50% base success rate (modified by social trust and state capacity), and failed coups are modeled as destabilizing events that paradoxically tighten civilian control. Military spending crowds out productive investment following the Nordhaus-Oneal burden model.
 
 **Key assumption:** Governance models are not ranked on a linear scale from "bad" to "good." Theocratic governance provides high social cohesion and legitimacy but suppresses innovation and out-group empathy. Flat consensus is egalitarian but scales poorly. Each model has structural strengths and weaknesses that interact with the rest of the system.
@@ -97,7 +101,9 @@ Generational value drift follows Inglehart's post-materialism theory (Inglehart 
 
 **Key assumption:** What a society says it values (stated values, derived from governance type and education) often diverges from what its economic system actually rewards (reinforced values). This gap is the primary driver of cynicism, and when it becomes large enough, of paradigm shift pressure. This reflects Gramsci's concept of cultural hegemony and Festinger's cognitive dissonance theory.
 
-**Key assumption:** Behavioral change after a paradigm shift (new governance or economic model) is not instant. Behavioral inertia, modeled via Bourdieu's habitus concept, means that old behaviors persist for years or decades after structural change, with the rate of adaptation depending on education, epistemic health, and institutional quality.
+**Key assumption:** Behavioral change after a paradigm shift (new governance or economic model) is not instant. Behavioral inertia, modeled via Bourdieu's habitus concept, means that old behaviors persist for years or decades after structural change, with the rate of adaptation depending on education, epistemic health, and institutional quality. Behavioral inertia is tracked as a per-turn resistance to rapid value shifts: when reinforced values change faster than the population can adapt, the inertia term dampens the transition and generates anomie from the mismatch between old habits and new incentives.
+
+**Key assumption:** Cultural homogeneity exerts conformity pressure on behavioral values. In culturally homogeneous societies (low fractionalization, high social cohesion, strong media consolidation), outlier values are pulled toward the population mean. This captures the empirical finding that conformity dynamics accelerate value convergence in tight-knit societies (Gelfand 2011, tight vs. loose cultures) while diverse societies sustain a wider range of behavioral variation. The pressure is bidirectional — it stabilizes prosocial norms in high-trust societies but also locks in maladaptive values when the prevailing culture is dysfunctional.
 
 ### 3.4a Power-Induced Empathy Suppression
 
@@ -209,6 +215,14 @@ Territorial expansion follows Turchin's (2003/2006) meta-ethnic frontier theory.
 
 **What is modeled:** Four types of organized crime (street gang, cartel, mafia, pirate network), each emerging from specific structural conditions and each with distinct suppression options. Four types of slavery (chattel, debt bondage, forced labor, penal), with an abolitionist movement that builds organically from empathy and prevalence. Slavery's economic effects (cheap labor, wealth concentration) are modeled alongside its social effects (empathy erosion, corruption, diplomatic stigma).
 
+### 3.10 Companion Module: Disaggregated Demographics and Social Dynamics
+
+**What is modeled:** A companion module extends the core simulation with sex-disaggregated demographics, multi-strata dynamics, information diffusion, and collective action networks. Population is tracked by sex across the five social strata, with strata-specific fertility, mortality, education access, and labor force participation. Information diffusion models how knowledge, norms, and grievances propagate through social networks with stratum-dependent transmission rates. Collective action networks model the conditions under which coordinated social movements emerge, following Olson's logic of collective action and Granovetter's threshold models.
+
+**Key assumption:** Disaggregating demographics by sex reveals dynamics that aggregate models miss. Differential education access, labor force participation, and mortality by sex interact with gender equity to produce distinct development trajectories that a single-sex population model cannot capture. A society where female education lags male education by 20 points behaves differently from one where both are at the average -- even though the aggregate education metric is identical.
+
+**Key assumption:** Collective action is not spontaneous. It requires network density, shared grievances above a threshold, and coordination capacity (communication technology, meeting spaces, organizational traditions). The companion module tracks these preconditions explicitly rather than treating social movements as exogenous events.
+
 ---
 
 ## 4. What civ-sim Does NOT Model
@@ -294,6 +308,8 @@ The following feedback loops are the structural backbone of the simulation. They
 - Inclusive institutions (AJR) --> State capacity --> Education quality --> Inclusive institutions
 - Democratic peace: Democracy --> Trade --> Institutional quality --> Lower war risk --> Stability --> Democracy
 - Gender equity --> Talent pool expansion (Hsieh) --> Innovation --> Development --> Gender equity (Duflo bidirectional)
+- Developmental state: State capacity --> Organized rent extraction --> Capacity-building investment --> Higher state capacity (Johnson/Amsden)
+- Institutional resilience: Meritocratic bureaucracy --> Shock resistance --> Institutional continuity --> Bureaucratic quality (Evans & Rauch)
 
 **Vicious cycles:**
 - Inequality --> Low mobility (Gatsby Curve) --> Entrenched inequality --> Political capture --> More inequality
@@ -306,6 +322,8 @@ The following feedback loops are the structural backbone of the simulation. They
 - Coup trap: Military coup --> Weak institutions --> Instability --> Next coup (Powell & Thyne)
 - Extractive institutions --> Elite capture --> Resistance to reform --> Extractive persistence (AJR)
 - Climate tipping points: Warming --> Permafrost methane --> More warming --> Ice sheet loss --> More warming (irreversible)
+- Behavioral inertia trap: Rapid structural change --> Old habits persist --> Cultural gap widens --> Anomie --> Resistance to further change
+- Cultural homogeneity lock-in: Conformity pressure --> Value convergence --> Reduced innovation --> Institutional rigidity --> Stronger conformity pressure
 
 **Ambiguous dynamics:**
 - Urbanization: boosts innovation and state capacity, but requires food security and infrastructure; without them, creates slums and instability
@@ -314,12 +332,15 @@ The following feedback loops are the structural backbone of the simulation. They
 - High fractionalization + high inclusion: cultural richness and innovation; but high fractionalization + low inclusion: conflict and state fragility
 - Post-materialism shift (Inglehart): prosperity creates self-expression values that support innovation and freedom, but can erode collective solidarity needed for crisis response
 - Imperial expansion (Turchin): frontier threat builds cohesion (asabiya), but successful expansion creates overstretch that erodes the cohesion that enabled it
+- Energy decentralization: increases resilience and participation depth, but costs 2-4x more per unit and competes with agriculture for land (Smil power density)
+- Agriculture diversification: raises Land Equivalent Ratio and food system resilience, but demands labor and knowledge, suppressing urbanization (Boserup)
+- Cultural homogeneity: stabilizes prosocial norms in high-trust societies, but locks in dysfunction when prevailing values are maladaptive
 
 ---
 
 ## 7. Empirical Grounding
 
-Each major system is calibrated against specific research traditions rather than being tuned for game balance. Selected examples:
+Each major system is calibrated against specific research traditions rather than being tuned for game balance. Beginning with Pass 10, every coefficient carries a confidence tier: **M** (Modeled -- empirically grounded with direct measurement anchors), **I** (Inferred -- reasonable extrapolation strictly between two or more measured anchors), **T** (Theoretical -- mechanism supported by research but magnitude assumed). Earlier systems are being retroactively tiered as they are revisited. Selected examples:
 
 | System | Research Basis |
 |--------|---------------|
@@ -352,6 +373,12 @@ Each major system is calibrated against specific research traditions rather than
 | Susceptibility distribution | Behavioral addiction research (Potenza; Grant et al.); pathogen susceptibility models (Miura et al. bimodal+gamma); ACE studies (Felitti et al.) |
 | Wealth capture | Gilens & Page (economic elite domination); Bartels (unequal democracy); Hacker & Pierson (winner-take-all politics) |
 | Cultural gap / cognitive dissonance | Festinger (cognitive dissonance theory); Gramsci (cultural hegemony); Scott (hidden transcripts of resistance) |
+| Developmental states | Johnson 1982 (MITI); Amsden 1989 (South Korea); Wade 1990 (Taiwan); Shleifer & Vishny 1993 (organized vs disorganized corruption) |
+| Institutional resilience | Evans & Rauch 1999 (Weberian bureaucracy); Rauch & Evans 2000 (meritocratic recruitment and growth) |
+| Cultural homogeneity | Gelfand 2011 (tight vs loose cultures); Triandis 1995 (individualism-collectivism); Asch 1951 (conformity) |
+| Energy decentralization | Lazard 2025 (LCOE); Grübler 1996/2012 (diffusion time constants); Smil 2017 (power density) |
+| Agriculture diversification | FAO (post-harvest loss); Li et al. (Land Equivalent Ratio meta-analysis); Khan (push-pull cropping) |
+| Active travel networks | Pucher & Buehler 2012 (cycling infrastructure); Buehler et al. (Dutch multimodal); Welsh & Farrington 2022 (street lighting) |
 | Consequence deficit | Acemoglu & Robinson (extractive institutions); Fukuyama (political decay); Olson (institutional sclerosis) |
 
 ---
@@ -368,7 +395,7 @@ civ-sim is useful for exploring structural questions: What happens to a society 
 
 ### What you cannot learn
 
-civ-sim cannot tell you what will happen to a specific real-world country. The simulation is too abstract (no geography-specific cultural factors, no named leaders, no specific historical events) and too simplified (120 variables for a system that has millions of relevant variables) to serve as a forecasting tool. It is a thinking aid, not an oracle.
+civ-sim cannot tell you what will happen to a specific real-world country. The simulation is too abstract (no geography-specific cultural factors, no named leaders, no specific historical events) and too simplified (130 variables for a system that has millions of relevant variables) to serve as a forecasting tool. It is a thinking aid, not an oracle.
 
 ### The coverage question
 
@@ -376,7 +403,7 @@ We estimate that civ-sim currently captures approximately 78-82% of the dynamics
 
 The theoretical ceiling for civilizational modeling is itself roughly 65-75% of actual real-world dynamics, due to irreducible factors: chaotic sensitivity to initial conditions, reflexivity (people change behavior when observed), incomplete social theory, measurement impossibility (some important variables cannot be quantified), genuine emergence (system-level properties that cannot be predicted from component behavior), and unknown unknowns (dynamics we have not yet identified).
 
-This means civ-sim captures roughly 55-60% of real-world civilizational dynamics in absolute terms. The improvement from the evidence-based upgrade pass is significant: not because 15 new variables were added (the variable count was already ~130), but because the *mechanisms* connecting those variables now follow empirically validated functional forms rather than ad-hoc drift rates. A Minsky financial cycle that produces endogenous crises through credit expansion is structurally different from a random crisis probability — even if both produce crises at similar frequencies. The former captures why crises happen; the latter only captures that they happen.
+This means civ-sim captures roughly 55-60% of real-world civilizational dynamics in absolute terms. The improvement from the evidence-based upgrade pass is significant: not because variables were added (the variable count was already substantial), but because the *mechanisms* connecting those variables now follow empirically validated functional forms rather than ad-hoc drift rates. A Minsky financial cycle that produces endogenous crises through credit expansion is structurally different from a random crisis probability — even if both produce crises at similar frequencies. The former captures why crises happen; the latter only captures that they happen.
 
 This level of coverage is sufficient for structural insight — you can see how feedback loops work, where vulnerabilities cluster, and why certain policy combinations fail — but insufficient for prediction. The gap between 60% and 100% is not something that can be closed by adding more variables; it reflects fundamental limits on modeling complex adaptive systems.
 
@@ -475,7 +502,7 @@ civ-sim can serve as a classroom tool for courses in world history, sociology, p
 
 ---
 
-## 11. Systems Added March 2026 (Balance & Realism Update)
+## 11. Systems Added Early 2026 (Balance & Realism Update)
 
 The following systems were added during a comprehensive balance and realism update to close identified gaps between the simulation and real-world dynamics. All are calibrated to academic research and designed to be governance-neutral (outcomes depend on institutional quality, not governance labels).
 
@@ -564,4 +591,768 @@ Prosperous civilizations (wellbeing > 70, food security > 70) have a higher mini
 
 Models bottom-up economic transitions where populations restructure their economy through collective action, bypassing governance. A dual economy emerges during transition; adoption follows Rogers' S-curve; coordination costs follow Ostrom's commons dynamics; governance adapts per selectorate theory. Five scaling models provide coordination at national scale: Polycentric Governance (Ostrom), Democratic Confederalism (Rojava/Ocalan), Liquid Democracy, adapted People's Congress System (Jamahiriya, with Ostrom safeguards, excluding the historical shadow-state), and Participatory Planning (Parecon). Five structural movement presets: Currency Refusal, Cooperative Production, Commons Reclamation, Direct Exchange Network, and Workers' Self-Management. Financial system (Minsky cycle, financial depth, debt) scales down with the formal economy share and reaches zero in currencyless economies. Taxation ceases post-transition — resources are accessed directly. Coordination instability replaces Minsky as the ongoing stability risk.
 
-*This document describes civ-sim as of March 2026. The simulation models ~130+ state variables across 13 domains connected by ~220 cross-system feedback loops, with 36 cumulative model enhancements across 6 rounds of development plus the bottom-up restructuring feature.*
+*This document describes civ-sim as of September 2026. The simulation models ~130 state variables across 13 domains connected by ~250 cross-system feedback loops, with cumulative model enhancements across 11 development passes including energy decentralization, agriculture diversification, active travel networks, behavioral inertia, cultural homogeneity dynamics, developmental state theory, institutional resilience, and a companion module with sex-disaggregated demographics.*
+
+---
+
+## 12. Pass 10 — Production Decentralization (Energy & Agriculture)
+
+Two **independent** configurable parameters: the degree to which energy
+production and agricultural production are organized at local/small scale
+versus large centralized scale. They are deliberately **not** coupled in code
+(see §12.7).
+
+Every coefficient carries a confidence tier: **M** = measured empirical anchor,
+**I** = interpolated strictly between ≥2 measured anchors, **T** = mechanism
+supported but magnitude assumed. Full derivation in `pass10-spec.md`.
+
+### 12.1 Design constraint: directional neutrality
+
+Every mechanism can help or harm depending on conditions. The evidence base
+genuinely flips sign by metric, and the model reproduces that rather than
+resolving it:
+
+- Distributed energy costs **2–4× more per unit** (Lazard 2025: utility-scale
+  solar $38–78/MWh vs residential rooftop $122–284/MWh) but avoids **2–19%**
+  transmission and distribution losses, with the benefit largest where grid
+  infrastructure is worst.
+- Distributed generation reduces **variance** (islanding through grid-wide
+  failure) without raising mean output.
+- Diversified agriculture raises output per unit land (Land Equivalent Ratio)
+  but costs labor, suppressing urbanization.
+- Local food receives **no emissions bonus** — production is 83% of food-system
+  emissions, all transport 11%, final delivery 4%.
+
+### 12.2 Crisis-driven adoption
+
+The strongest finding in the Pass 10 evidence sweep: **scarcity drives
+decentralization harder than subsidy does.** Four independent quantified cases
+(South Africa load shedding, Puerto Rico post-Maria, Cuba 2024–25 grid
+collapse, sub-Saharan off-grid solar).
+
+A mandatory **capital gate** accompanies it. Every observed case had a funding
+channel; crisis without capital produces hardship, not new capacity. The model
+enforces this — high crisis pressure with low capital access yields little
+adoption and falling wellbeing.
+
+**Bias guard:** Cuba's Special Period adaptation was real *and* Cubans lost
+roughly a third of their daily calories. Adaptation raises the floor; it never
+makes the crisis good.
+
+### 12.3 State-capacity gate
+
+Subsidies and mandates are state programmes requiring a functioning state to
+fund, administer and enforce. Grassroots adoption requires only capital.
+Without this gate the model would wrongly predict that mandates outperform
+self-organization during state collapse — the opposite of what South Africa
+shows, where private rooftop installs exceeded the utility's four procurement
+bid windows by more than 2× precisely while the utility was failing.
+
+Verified behaviour:
+
+| Regime | Ordering |
+|--------|----------|
+| Functioning state, no crisis | hybrid > mandated-ownership > incentive > grassroots > none |
+| State collapse + crisis | grassroots (1.7× mandate) > none > hybrid > mandate > incentive |
+
+### 12.4 Diffusion speed limits (Grübler)
+
+Characteristic time constants for large energy systems are 5–10 decades;
+invention → 80% share averages ~95 years. Caps: 8 pts/decade baseline,
+25 under crisis with capital, 40 in short bursts.
+
+### 12.5 Energy → wellbeing saturation
+
+Previously civ-sim had **no** energy→wellbeing link. Implemented as a soft
+ceiling: `30 + 55 × (1 − exp(−GJ/35))`. Anchors: HDI>0.7 attainable at
+50 GJ/cap; social metrics rise steeply between 10–75 GJ/cap and saturate above
+100–150.
+
+This is a **ceiling only**, never an additive bonus — it constrains low-energy
+societies and grants nothing to high-energy ones, so neither direction is
+rewarded. Energy per capita is calibrated to the historical range:
+pre-industrial organic economies ~10–20 GJ/cap, industrial ~100–150,
+high-consumption modern ~250–300.
+
+### 12.6 Participation, alienation and the coercion discount
+
+`participationDepth` is the share of people who are producers and stakeholders
+rather than remote consumers. Bounded effects: wellbeing up to **+8**, anomie
+up to **−10**, trust up to **+6**, legitimacy up to **+5**. Caps are
+deliberately modest — intervention-scale effect sizes (gardening meta-analyses
+~0.55 SD; SDT autonomy satisfaction g≈0.81) are not civilizational
+transformations.
+
+**The coercion discount is the critical bias guard.** Participation studies are
+self-selected: assigning participation is not the same as choosing it. Benefits
+scale by `(1 − coercion/100)^1.5` and turn **negative** above a coercion
+threshold of 45.
+
+Crucially, going negative does **not** require a weak state. The USSR, China
+under the Great Leap Forward, and Romania under systematization all commanded
+formidable state capacity and produced catastrophe regardless. Institutional
+quality modulates how bad it gets, not whether it happens. The Scott
+high-modernist failure event remains a *conditional risk*, never a
+deterministic penalty — the Tanzanian case is genuinely confounded by the 1974
+drought, which independently halved the harvest.
+
+### 12.6a Mandated ownership vs mandated participation
+
+The single most consequential distinction in the Pass 10 evidence base. Both
+are "legislation"; they produce opposite results, and modelling them as one
+pathway would erase the finding.
+
+| Pathway | Coercion | What is compelled | Outcome |
+|---------|----------|-------------------|---------|
+| **Mandated Ownership Rights** | 25 | The *offer* of a stake | Denmark 2008: ≥20% local ownership offer required; >50% of wind citizen-owned by 2016 |
+| **Compulsory Reorganization** | 85 | The *person* — resettlement, consolidation, abolition of private holdings | Soviet collectivization; Great Leap Forward; Romanian systematization; Tanzanian ujamaa |
+
+### 12.6b Coercion → productivity penalty
+
+Coercion does not merely depress morale; it destroys the productivity of the
+thing being reorganized. This is modelled as a penalty on the **structural
+gain** (Land Equivalent Ratio plus ecosystem function), not on the baseline —
+so forcing people into a better-designed system destroys precisely the
+advantage that design would have delivered. A high-LER, high-function system
+under compulsion can end up worse than a plain one freely chosen.
+
+`retained = 1 − 0.55 × (coercion/100)^1.2`
+
+Anchors:
+
+- **Soviet private plots**: roughly 1–3% of sown land produced 25–27% of
+  agricultural output — the same farmers, the same soil, the same climate. The
+  only variable is voluntary versus compelled effort. (The implied plot-level
+  ratio is enormous; the model caps the system-level penalty at 55% because an
+  intensive-margin figure must not be extrapolated to national output.)
+- **Great Leap Forward**: ~26,000 communes covering virtually all rural China
+  by late 1958; **61% of the output decline attributable to policy** — resource
+  diversion and excessive procurement — rather than weather.
+- **Romanian systematization**: private plots banned inside villages while
+  villages were simultaneously required to be agriculturally self-sufficient
+  after 1981.
+
+Verified with identical production structure and a strong state throughout
+(institutional quality 78, state capacity 80), varying only the pathway:
+
+| Pathway | Coercion | Gain retained | Food | Wellbeing | Legitimacy |
+|---------|----------|---------------|------|-----------|------------|
+| Grassroots | 0 | 100% | 83 | 70 | 100 |
+| Incentive | 10 | 97% | 90 | 71 | 100 |
+| Mandated ownership | 25 | 90% | 82 | 65 | 100 |
+| Compulsory reorganization | 85 | **55%** | 77 | **59** | **82** |
+
+### 12.6c Ecosystem function — designed species interactions
+
+Distinct from Land Equivalent Ratio. LER measures spatial and temporal
+complementarity; **ecosystem function** measures designed *interactions*
+between species that substitute for external inputs — nitrogen-fixing
+companions, plants whose root or leaf exudates repel insect pests, trap crops
+that draw pests away from the food crop, and animals used as weeders.
+
+Anchors:
+
+- **Push-pull cropping** (Desmodium repels stemborers *and* suppresses Striga
+  *and* fixes nitrogen; Napier grass traps pests at the field margin): maize
+  from about **1 t/ha to 3.5 t/ha "with minimal inputs"**, adopted by
+  **122,650+** smallholders in East Africa.
+- **Rice–duck–fish integration**: significantly lower weed counts and reduced
+  fertilizer-nitrogen and pesticide use versus rice monoculture.
+
+Two properties make this a genuine tradeoff rather than a free bonus:
+
+1. **The gain scales inversely with input availability.** These systems replace
+   inputs that are missing. Push-pull tripled yields for farmers who could not
+   afford pesticide or fertilizer; it does far less for an already
+   input-optimized system. Modelled as
+   `gain ∝ 0.15 + 0.85 × (1 − techLevel/6)`, capped at +35%.
+2. **Knowledge is the binding constraint.** These practices are
+   "knowledge-intensive, complex and not fully understood, in need of local
+   adaptation". Documented barriers are seed cost and access, land shortage,
+   lack of knowledge, lack of long-term follow-up to training, labour
+   requirements, and a shortage of trained agroecology extension agents.
+   Ecosystem function therefore accrues slowly, is gated on education, state
+   capacity and social trust, and **decays when that support lapses**.
+
+Note on terminology: the model deliberately does not name "permaculture". The
+peer-reviewed yield evidence for permaculture-as-a-system does not exist. The
+*mechanisms* it describes — symbiotic multi-species design, reduced external
+intervention, allelopathic pest suppression, biological weed control — are
+well evidenced under other names, and those are what is modelled.
+
+### 12.6d Enabling support — capability, not compulsion
+
+A separate axis from pathway coercion, and the distinction is the point:
+enabling support is the state doing things **for** people; coercion is the
+state doing things **to** them. Seeds and planting material, technology
+access, training, expert specialists available for consultation, tax relief,
+and reimbursement of household expenditure. Available on both the energy and
+agriculture parameters, combinable with any pathway, and carrying **no
+coercion cost**.
+
+Three effects:
+
+- **Adoption.** Bounded by measured subsidy elasticities — PV price elasticity
+  ~0.65; halving state incentives cuts installations ~9%; a ~7% rebate
+  increase induces 7–15% more installations; storage incentive step-downs of
+  $0.05/Wh cut daily installations ~15%.
+- **Progressivity (M).** Support substitutes for private capital and does so
+  unevenly: making nonrefundable tax credits **refundable** substantially
+  raises adoption among low-income households with no notable change for
+  higher-income ones. Verified in-model — support raised adoption +137% at low
+  capital access versus +90% at high.
+- **Knowledge (I).** Extension raises the ceiling on ecosystem function.
+  Tiered **I**, not M: the Farmer Field School review found **no study at low
+  risk of bias**, three-quarters made no serious attempt to control
+  confounding, and the likely consequence was "systematic overestimation of
+  effects for all outcomes". It also **does not spill over** — there is no
+  evidence non-participant neighbours benefit — so it scales with delivery
+  reach rather than compounding through a network effect.
+
+Two counterweights keep it from being a free win:
+
+- **Elite capture.** Malawi's FISP reached ~1.5M smallholders and more than
+  doubled fertilizer use, adding ~670,000 t of maize — but a significant share
+  of the benefit accrued to better-connected and larger farmers already using
+  inputs, "raising questions about both additionality and cost-effectiveness".
+  Effectiveness falls with land concentration and weak institutions; in-model,
+  land concentration 85 cut effective support from 69 to 55.
+- **Fiscal drain and decay.** Support costs state capacity while active and
+  lapses without renewal — the most commonly documented failure being simply
+  the absence of long-term follow-up to training.
+
+### 12.6e Distribution locality and the post-harvest loss chain
+
+Distinct from where food is *grown*: a civilization can grow locally and still
+route everything through a distant depot. Four separate effects, each anchored.
+
+**(a) Handling, sorting, packaging and transit loss.** FAO: 13.2% of
+production lost post-harvest in 2021, rising to 25.4% for fruit and vegetables
+by 2023 due to perishability and handling requirements. Diversified,
+perishable-heavy production loses more in a long chain and less in a short one.
+
+**(b) Cosmetic grading rejection.** Graded markets discard produce on
+appearance; local direct distribution largely does not. Anchors: 17.1% of
+harvest volume unmarketable in China's fresh apple chain, mostly on aesthetic
+standards; 16% of edible persimmon production rejected in Spain; two-thirds of
+Belgian horticulturists unable to sell all produce, losing ~10% of sales;
+41.45% edible-but-unmarketable in a North Carolina field study; over a third of
+farm production lost for aesthetic reasons in Europe and the UK by some
+estimates. Most rejected produce is diverted to processing or animal feed
+rather than destroyed, so the model counts 55% of it as recovered.
+
+**(c) Harvest maturity.** The least visible loss. Produce for long-distance
+marketing is picked **mature-green**; produce for local fresh consumption is
+picked **full-ripe**. Vitamin C, flavonoids and total phenolics rise
+significantly during ripening, and antioxidant vitamins A, E and C are higher
+at the red-ripe stage; mechanical damage in transit reduces vitamin C further.
+Modelled as a **nutritional quality** effect on disease burden and infant
+mortality — never as calorie supply. A well-fed population eating nutrient-poor
+produce is still well-fed, and the model must not conflate the two.
+
+**(d) Distribution energy.** Short chains avoid long-haul transport and the
+cold chain. Distribution is ~15% of the supply-chain carbon footprint,
+postharvest handling and storage ~17%; roughly 40% of foods require
+refrigeration; within fruit and vegetable cold chains transport is 82% of
+emissions and warehousing ~48% of energy use in industrial cold storage. Real,
+and scoped strictly to the distribution segment — production remains 83% of
+food-system emissions, so this never transforms the total.
+
+**The binding constraint is urbanization.** A large city cannot be fed within
+cart range, which is precisely why dense populations require a cold chain.
+Locality is capped at `100 − urbanization × 0.7`.
+
+Verified gradient:
+
+| Scenario | Locality | Chain loss | Cosmetic | Maturity | Nutrition |
+|----------|----------|-----------|----------|----------|-----------|
+| Rural, self-reliant, local production | 83 | 8.5% | 1.4% | 85 | 65 |
+| Mixed | 46 | 12.9% | 4.8% | 63 | 51 |
+| Urban, import-dependent, industrial | 13 | 16.2% | 9.9% | 43 | 38 |
+
+Note: adding this chain lowered food security roughly 10 points across all
+presets. That is a correction, not a regression — the previous model
+implicitly assumed zero post-harvest loss.
+
+### 12.6f Structural baseline vs programme contribution
+
+The audit exposed a significant modelling gap: distributed share could only
+**rise**. Historically it *collapsed* — from near-universal mills and hearths to
+a few percent — as grids, cities and capable utilities were built, and it
+returns when those fail. A ratchet-only parameter made post-industrial
+civilizations implausibly decentralized and left no room for the
+re-decentralization the parameter exists to represent.
+
+Both parameters now separate two quantities:
+
+- **Structural baseline** — what infrastructure, urbanization and state
+  capacity make the default. Energy:
+  `95 − infrastructure×0.55 − urbanization×0.25 − stateCapacity×0.15`.
+  A working grid centralizes production; a failing one forces it local.
+- **Programme contribution (`pathwayOffset`)** — the persistent shift a chosen
+  pathway earns *above* that baseline. A sustained programme changes the
+  equilibrium, not merely the level: Germany's feed-in tariff did not
+  temporarily bump distributed share, it changed what the German grid is. The
+  offset decays slowly if the programme is abandoned, and Grübler speed limits
+  still bound how fast it can grow.
+
+This separation also fixes how the crossover should be *measured*. Comparing
+total share conflates policy with physics. Comparing programme contribution
+isolates what the policy actually achieved:
+
+| Regime | Baseline | Ordering by programme contribution |
+|--------|----------|-----------------------------------|
+| Functioning state | 29 | compulsory +15.3 > mandated-ownership +12.8 > hybrid +11.6 > incentive +9.2 > grassroots +5.0 |
+| State collapse | 68 | grassroots +21.0 > hybrid +14.5 > compulsory +13.8 > mandated-ownership +12.7 > incentive +10.3 |
+
+Grassroots-versus-mandate under collapse is **1.65×** on programme
+contribution, against a measured South Africa anchor of >2×. Left conservative.
+
+A related defect fixed at the same time: `preIndustrial` was derived from
+`s.energySource`, which `_processEnergy` writes *later in the same turn*. The
+one-turn staleness let the pre-industrial branch slam distributed share to a
+high unearned value on the industrialization turn. Now derived from
+`adoptedTechnologies` directly.
+
+### 12.7 Why the two parameters are not coupled in code
+
+No empirical basis exists for a direct energy×agriculture coupling
+coefficient. They interact **emergently** through three shared constraints
+already in the model:
+
+- **Land** — Smil power density (biomass 0.6 W/m², wind 1–2, distributed solar
+  5–20, hydro/nuclear ~200, fossil extraction 1,000–10,000). Distributed
+  renewables compete with agriculture and forest for land.
+- **Labor** — diversification intensity and participation depth both absorb
+  labor, suppressing urbanization (Boserup).
+- **State capacity** — both crisis responses draw on the same institutional
+  capability.
+
+An emergent coupling through measured constraints is more defensible than an
+invented coefficient.
+
+### 12.8 Boundary conditions rather than free parameters
+
+- **Energy** is pinned near-fully-distributed before industrialization
+  (Domesday 1086: 5,624 watermills; ~15,000 by c.1300; Wrigley's organic
+  economy). The parameter only becomes free once a centralized grid is
+  technically possible.
+- **Agriculture** is meaningful across the whole 3000 BC → 3000 AD arc. A
+  structural baseline falls as trade, cities and industrial agriculture arrive;
+  a pathway pushes above that baseline, and absent one, local share relaxes
+  back toward it.
+
+### 12.8a Seeded reproducibility (fixed)
+
+During Pass 10 tightening, seeded reproducibility was found to be **broken**:
+`researchSeed` was set and `Utils.seedRNG()` existed, but three runs on an
+identical seed produced three different trajectories. Cause: map terrain
+generation (`Map._noiseSeeds`, resource placement) and NPC generation called
+`Math.random()` directly, bypassing the seeded RNG, and the value-noise
+permutation table was shuffled with `Math.random()` at module load — before any
+seed could be applied.
+
+Fixed: map and NPC randomness now route through `Utils.random()`, and the noise
+permutation table uses a fixed deterministic shuffle. Verified — identical
+seeds now produce bit-identical trajectories over 150 turns, and different
+seeds diverge.
+
+This matters beyond Pass 10: every prior balance and historical-scenario claim
+was made against a simulation that could not reproduce its own runs.
+
+### 12.8b Nutritional quality → health: tiering and turn order
+
+The nutrition channel was initially placed mid-chain, inside
+`_processFoodSecurity`. `_processHealthcare` runs later and drives disease
+burden toward its own equilibrium, silently erasing the effect. Moved to
+`_processNutritionalHealth()` at the end of the turn chain — the same failure
+mode that previously affected the participation and energy-ceiling systems, and
+now a known trap recorded in the project notes.
+
+Isolated measurement (channel disabled vs enabled, identical seed and scenario):
+
+| Outcome | Span across realistic nutritional quality (38–67) | Tier |
+|---------|--------------------------------------------------|------|
+| Disease burden | 8 points | **M** |
+| Infant mortality | 9 points | **I** |
+
+Infant mortality is deliberately tiered **I** and its coefficient was halved
+after a first pass produced an 18-point span. The measured evidence is that
+vitamin C, A, E, flavonoids and phenolics are higher in ripe than mature-green
+produce. The step from that to *population child mortality* is an
+extrapolation — plausible via micronutrient status, but not an established link
+at that magnitude. The model should not imply otherwise.
+
+The channel is suppressed entirely below food security 25: in famine, calorie
+shortfall dominates and micronutrient composition is not the binding
+constraint.
+
+### 12.8c Localization coverage (correction)
+
+An earlier note in this document described missing i18n for Pass 10 UI strings
+as a gap. That was mis-stated. **No panel in civ-sim uses i18n** — the
+sustainability, society, research, technology, paradigm and events panels are
+all English-only. `I18N` covers NPC and interview content plus a handful of
+top-level buttons in `game.js` and `ui.js`.
+
+Pass 10's panel strings being English-only is therefore *consistent with the
+existing codebase*, not a Pass 10 regression. Localizing only the new strings
+would make the codebase less consistent, not more. Panel localization remains a
+project-wide item that should be done as a single coherent pass if it is done
+at all.
+
+### 12.8d Research panel exposure
+
+All Pass 10 coefficients are now surfaced read-only in the Research panel's
+**Parameters** tab, each tagged with its confidence tier, across ten sections:
+evidence tiers, Land Equivalent Ratio, ecosystem function, coercion,
+participation caps, diffusion limits, pathways, enabling support, distribution
+and loss chain, and energy. This satisfies the transparency requirement that
+every model constant be inspectable without reading source.
+
+### 12.9 What remains outside the model
+
+- **Permaculture as a named system.** The peer-reviewed yield evidence does not
+  exist — the literature is dominated by popular books, and researchers state
+  explicitly that land-productivity evaluation of permaculture systems remains
+  to be carried out. Its *component practices* are modelled instead, as a
+  continuous diversification axis bounded by measured Land Equivalent Ratios
+  (monoculture 1.00, intercropping 1.22–1.32, silvoarable ceiling 2.00, hard
+  cap 2.00). Advantage is gated on soil quality, since the measured benefit is
+  largest in poor soils and variable in temperate zones.
+- **Per-technology energy breakdown** (solar vs wind vs geothermal). No evidence
+  that source composition produces distinct *societal* outcomes at decade
+  resolution. Modelled as an aggregate, which also leaves room for
+  technologies that have not been invented yet.
+- **The grassroots and hybrid pathway magnitudes** are tier **I**, not **M**.
+
+
+---
+
+## 13. Pass 11 — Active Travel Networks
+
+Government-initiated networks of paths for human-powered transport, built as
+**interlocking local networks** rather than one metro-spanning system, with
+supportive infrastructure and transit integration. Full derivation in
+`pass11-spec.md`. Same tiering as Pass 10 (M / I / T).
+
+### 13.1 Architecture reuse
+
+Deliberately identical to Pass 10: structural baseline (physics) + programme
+contribution (policy) + enabling support + crisis-driven adoption. Like energy,
+this is a **return, not a novelty** — pre-automobile cities were entirely
+walking and animal powered, and motorization collapsed that baseline.
+
+### 13.2 The distance-decay problem and its solution
+
+The median cycling trip is ~2 km, mode share collapses beyond 5 km, and 7.5 km
+is the comfortable maximum. **A single network cannot serve a large
+metropolis.**
+
+Interlocking local networks plus transit integration resolve this: each network
+serves its own catchment and transit carries the inter-network leg. The Dutch
+evidence is decisive — the bicycle is the access mode for roughly **47% of all
+rail passengers** (70% at some stations), cycling an average of 4 km to the
+station, with 83% of rail journeys multimodal.
+
+Verified: transit integration is the largest single lever in the model.
+
+| Build | Mode share | Marginal gain above baseline |
+|-------|-----------|------------------------------|
+| Nothing (baseline) | 18.1 | 0 |
+| Paths only | 23.4 | 5.3 |
+| + transit integration | **30.1** | 12.0 |
+| + safety layer | 32.4 | 14.3 |
+| + jobs–housing balance | **37.2** | 19.1 |
+| Same build, gapped network | 29.3 | 11.2 (−41%) |
+
+Transit integration remains the largest single lever. Paths alone deliver a
+modest gain — not the zero an earlier implementation reported, which was an
+artefact of a mis-specified baseline floor (see §13.9).
+
+### 13.3 Continuity, not kilometres
+
+Seville raised cycling from **0.5% to ~6.5%** with a continuous 80 km protected
+network for €32M. The identified factors were segregation, connectivity and
+**continuity without gaps**. In-model, an identical build with continuity 20
+instead of 80 loses ~40% of the mode shift.
+
+### 13.4 Jobs–housing balance is the gate
+
+Polycentricity does **not** automatically reduce travel — the empirical
+literature is genuinely mixed, and decentralizing population while centralizing
+employment makes matters worse. The parameter is balance, not subcenter count.
+
+### 13.5 Safety, and the gendered access gap
+
+Personal safety is a real barrier and it is **gendered and specific**: women
+report more fear walking in the evening (29% vs 20%) and are far less likely to
+perceive an area as very safe (30% vs 49%). Fear is shaped by harassment, and
+there is **no gendered difference in fear of collision** — so protected paths
+alone do not address it.
+
+`perceivedSafety` composites lighting (**−14% crime**, Welsh & Farrington 2022,
+revised down from 20–21%) and patrol intensity (Braga: significant, with
+**diffusion of benefits into surrounding areas rather than displacement**),
+plus a small tier-T facilities term.
+
+**Drone patrol is not modelled.** The one rigorous test — a Swedish aerial
+patrol trial — found no significant effect of intention-to-treat or actual
+presence. Emergency call boxes are documented as rarely used for their intended
+purpose (UC Davis 107→18; Nebraska removed ~100 costing $1.7M over 15 years),
+so they enter only through the perception channel at low weight, never a use
+channel.
+
+Consequence, verified — and the effect is properly located on the **marginal
+gain**, not total mode share, since the pre-existing baseline of walking is not
+gendered by network safety:
+
+| | Women's gain | Men's gain | Ratio |
+|---|---|---|---|
+| Without safety layer | 7.9 | 15.9 | **0.50** |
+| With safety layer | 11.9 | 16.9 | 0.70 |
+
+Building paths without the safety layer captures almost exactly half the
+available gain for women.
+
+### 13.6 Environmental effect at scale
+
+Transport is ~1/3 of energy demand, passenger travel 60–70% of that, urban
+passenger car travel therefore ~15–20% of the total. A 10-point mode shift is
+about **2% of total energy** — real, worth having, **not transformational**.
+
+A first implementation overstated the pollution channel by more than an order
+of magnitude (halving a civilization's pollution index off a 1.9% energy
+shift). Corrected coefficients give an isolated effect of **−4 pollution
+points**, with disease burden −5, life expectancy +1 and wellbeing +1 at full
+build. The Barcelona superblocks decomposition (air 291, noise 163, heat 117,
+green 60 of 667 deaths/year) sets the relative weights; the noise channel has
+no civ-sim variable and is routed to wellbeing.
+
+### 13.7 Animal power: modelled against, by density
+
+This is evidence *against* urban adoption, not a data gap. A horse produces
+15–35 lb of manure daily; 1890s London with 50,000+ working horses saw ~1,000
+tons/day on the streets. Stabling consumed valuable land, hay acreage competed
+directly with human food, and manure bred flies and contaminated water,
+spreading typhoid and cholera.
+
+Modelled with an inverted density response above 45% urbanization. Verified at
+85% urbanization versus 20%: **+15 pollution, +15 disease burden, −11
+sanitation, −15 food security**. The food-security term is hay-versus-human-food
+competition, which couples to the Pass 10 agriculture parameter **emergently
+through shared land**, not by a coded link.
+
+Below the density ceiling animal power is genuinely useful, particularly for
+freight, and the model grants it a modest benefit there.
+
+### 13.8 Verification
+
+Reproducibility bit-identical across 3 runs; 24 edge-case scenarios with zero
+NaN and zero range breaches; preset regression 10/12, unchanged from before
+Pass 11; all 7 panel tabs render; all 7 mobility buttons fire; zero console
+errors.
+
+
+### 13.9 Second audit — two further defects
+
+**Defect: the structural baseline was not being used as a floor.** `target` was
+computed as `max(baseline * 0.35, gain)`. The 0.35 was arbitrary, and it
+reported **29% active travel for a neolithic civilization whose own baseline
+said 83%** — a society with no wheeled vehicles walking for barely a quarter of
+its trips. Corrected to `baseline + gain`, mirroring the structural-baseline /
+programme-contribution split used throughout Pass 10.
+
+**Defect: benefits were granted with nothing to displace.** The HR 0.59 for
+cycle commuting is measured against a **sedentary, car-using counterfactual**.
+Where there is no motorized transport, everyone already walks: baseline health,
+energy use and air quality already reflect it, and there is no marginal gain
+from "adopting" active travel because it was never a choice.
+
+The first implementation ignored this and produced a **larger health benefit for
+a neolithic civilization (−14.7 disease burden) than for a modern motorized one
+(−5.8)** — exactly backwards. Benefits now scale by `marginalShift ×
+motorizationContext`:
+
+| Era | Baseline | No programme | Full build | Isolated disease benefit |
+|-----|----------|--------------|-----------|--------------------------|
+| Neolithic | 84 | 83 | 99 | **−0.4** |
+| Classical | 76 | 76 | 98 | −2 |
+| Industrial | 60 | 59 | 84 | −6 |
+| Modern | 17 | 17 | **38** | **−10.2** |
+
+Benefit now rises monotonically with motorization, and the modern full-build
+mode share of 38% sits at the top of the observed range for high-cycling cities.
+
+**Defect: animal power at density read as a wellbeing gain.** Averaged over five
+seeds, animal power above the density ceiling produced +23.4 disease burden and
+−15 sanitation yet **+2.4 wellbeing**, because higher mortality shrank the
+population and other systems rewarded the smaller denominator. The dense branch
+never touched wellbeing directly. A direct penalty was added: streets deep in
+manure were experienced as misery, and the model should say so rather than leave
+the sign to an indirect path that inverts it. Now −1.4 at density, +0.7 in a
+town.
+
+**Methodological note.** Single-seed comparison is unsafe once a configuration
+change alters RNG consumption: the same animal-power test showed +9 wellbeing on
+one seed and +2.4 averaged over five. **Average at least five seeds before
+concluding anything about a cross-system interaction.**
+
+### 13.10 Cross-system interaction check
+
+All three Pass 10/11 systems at maximum simultaneously, 50 turns:
+
+| Configuration | Wellbeing | Food | Pollution | Active mode share |
+|---|---|---|---|---|
+| None | 56 | 91 | 53 | 20 |
+| Energy only | 62 | 91 | 53 | 20 |
+| Agriculture only | 64 | 100 | 45 | 20 |
+| Mobility only | 64 | 91 | 49 | 45 |
+| All three | 65 | 100 | 41 | 45 |
+
+Effects compose **sub-additively** — no double-counting. The shared channels
+(land, pollution, wellbeing, food) are each touched by several systems and
+remain in range under simultaneous maximum load.
+
+
+---
+
+## 14. Collapse Realism and the Energy-Transition Fix
+
+### 14.1 Are the preset collapses realistic?
+
+Investigated against the quantitative historical record rather than assumed.
+
+**Empirical base rates.** Arbesman's analysis of 41 empires between 3000 BCE
+and 600 CE found a **mean duration of 220 years**, distributed exponentially
+and *memorylessly* — collapse rate independent of age. Empires enduring at
+least 200 years are roughly six times as common as those surviving eight
+centuries. Seshat-based survival analysis finds termination risk rising steeply
+over roughly the first two centuries after formation and stabilizing thereafter,
+i.e. state resilience *decreasing* with age.
+
+A 5,000-year run is therefore about **23 mean empire lifetimes**. Against that
+baseline, civ-sim's 11 of 12 seeded runs surviving to 3000 AD is **too
+forgiving, not too harsh.** The collapses are the most historically-behaved
+output the model produces, not a defect.
+
+**The important caveat.** civ-sim models a *civilization* as a continuous
+thread, not a single polity. Civilizational continuity genuinely does outlast
+polity duration — Chinese and Egyptian civilizational threads span three to four
+millennia through repeated dynastic collapse. Continuity is therefore defensible
+**provided the model shows internal collapse-and-renewal**, which it does:
+`barter_tribal` traces stability 89 → 39 → 64 → 30 → 89 across the run, a
+secular-cycle pattern.
+
+**Diagnosis of the persistent low-stability case.** `theocratic_autocracy` was
+initially suspected of being stuck in a degenerate attractor. Instrumenting the
+turn-by-turn stability budget shows otherwise: a single catastrophic shock
+(−39.4 in one turn) followed by slow but genuinely positive net recovery
+(+0.6/turn). With random events suppressed, stability recovers from 10 to 72 in
+about 32 turns. It is a fragile-state trajectory under repeated shocks, not a
+broken mechanism.
+
+**Two further suspicions checked and dismissed:**
+- **Forest irreversibility** — forests do regrow (0 → 23 over 60 turns once
+  pressure eases); the sustained zero in the failing preset is continuous
+  population pressure, not a missing regrowth path.
+- **Equality/wealth-concentration inconsistency** — equality 62 against wealth
+  concentration 49 in a normal run is coherent; the equality-0 reading came from
+  a preset with deliberately extreme inequality settings.
+
+**Conclusion: no fix indicated for the collapses.** Changing them would make the
+model less historically grounded, not more.
+
+### 14.2 Fix applied — energy transitions were instantaneous
+
+One genuine pre-existing defect was found. `energyEROI` snapped to the new
+source's value in a single turn:
+
+| Turn | Year | Transition | EROI |
+|------|------|-----------|------|
+| 491 | 1910 | wood → coal | 3.3 → **38.9** |
+| 501 | 2010 | coal → nuclear | 41.3 → **95.4** |
+| 511 | 2110 | nuclear → renewable | 96.7 → **19.3** |
+| 526 | 2260 | renewable → fusion | 19.4 → 64.7 |
+
+Four instantaneous step changes, including an 80% *drop* in a single decade.
+This contradicts evidence already relied on elsewhere in the model: Grübler's
+characteristic time constants for large energy systems are **5–10 decades**, and
+invention to 80% share averages ~95 years — the same anchors the Pass 10
+diffusion limits use for distributed share.
+
+The source *label* may flip in one turn; the generating fleet, grid and supply
+chain cannot. EROI now converges toward the source target at ~15% per decade,
+spreading each transition over roughly ten turns (~100 years), which is
+Grübler-consistent. The unsmoothed target is retained as
+`_energyEROITarget` for inspection.
+
+Verified: transitions now trace 3 → 8.4 → 26.1 → 42.5 rather than 3.3 → 38.9;
+preset regression unchanged at 11/12; era energy figures unaffected
+(neolithic 11 GJ/cap, industrial 84, modern 193); reproducibility bit-identical.
+
+
+---
+
+## 15. Military Power: Doctrine (added after seeded scenario re-run)
+
+The seeded historical-scenario re-run surfaced a defect that had been invisible
+in unseeded testing. Four of five scenario failures traced to a single cause.
+
+**The defect.** The only peacetime growth term for military power was
+`if (milPower > 60) milPower += 0.5` — institutional momentum that required
+already being above 60. Nothing in the drift referenced the civilization's own
+military orientation: an expansionist empire and a pacifist commune had
+identical peacetime dynamics apart from their starting value. Across all ten
+historical scenarios the observed maximum was **exactly 60**, while forcing the
+value to 90 showed it persisted and grew — so 60 was a static initial value,
+not a modelled ceiling. The Roman and Ottoman expectations of a >60 standing
+military were unreachable by construction.
+
+**The fix.** A standing-doctrine term drives military power toward a target set
+by outsider posture (aggressive 78, isolationist 52, trading 40, welcoming 30),
+governance form (autocratic/oligarchic +10, democratic −6) and declared core
+values (militarist/imperial +22, pacifist −12), converging at 7% per decade
+gated by fiscal capacity. States sustain large peacetime forces because of
+doctrine and threat perception, not only because they are already large.
+
+MIC momentum is retained but bounded to `doctrineTarget + 8`. Previously
+unconditional above 60, it ratcheted a militarist autocracy to a permanently
+pinned 100 — the same degenerate "stuck at a value" pattern criticized
+elsewhere in this document.
+
+**Resulting spread**, monotonic and not itself fitted:
+
+| Configuration | Military power |
+|---|---|
+| Pacifist democracy | 0 |
+| Trading democracy | 21 |
+| Isolationist elder council | 39 |
+| Militarist autocracy | 100 |
+
+**Overfitting caveat.** This fix was tuned twice against the scenario suite. The
+underlying defect is independently verifiable, and the cross-configuration and
+cross-preset spreads are plausible orderings no expectation tested — but a 100%
+pass rate on a suite used to guide the fix is a regression guard, not
+independent validation. See `HISTORICAL_SCENARIO_RESULTS_SEEDED.md`.
+
+
+---
+
+## 16. Validation Framework (September 2026)
+
+### 16.1 Hindcast Framework
+
+Four hindcast scenarios test the simulation against documented historical trajectories. Each scenario is configured to approximate initial conditions of a real historical case and run forward to see whether the simulation reproduces the structural dynamics (not the specific events) that the historical record shows. The scenarios are: (1) a post-colonial developmental state trajectory, (2) a resource-curse petrostate, (3) a post-war democratic reconstruction, and (4) a late-Soviet institutional sclerosis path. Pass criteria are structural plausibility of the trajectory shape, correct ordering of key metric movements, and absence of physically impossible states.
+
+### 16.2 Uncertainty Quantification Calibration
+
+UQ calibration has been conducted across 12 countries spanning different development levels, governance types, and geographic regions. For each country, initial conditions are configured from historical data and the simulation is run forward. The calibration assesses whether the simulation's output distributions (across stochastic seeds) bracket the observed historical values at appropriate confidence levels. This is not a claim that the simulation predicts these countries -- it is a test of whether the model's structural dynamics produce trajectories in the right neighborhood when started from realistic initial conditions.
+
+### 16.3 Sensitivity Analysis
+
+Global sensitivity analysis identifies which parameters have the largest influence on key outcomes (wellbeing, stability, institutional quality, ecological capacity). The analysis uses variance-based decomposition (Sobol indices) across the parameter space. Key findings: institutional quality and social trust consistently rank among the top-3 drivers of long-run wellbeing across all governance types, confirming that the AJR institutional framework is load-bearing in the model rather than decorative. Energy EROI and food security are the binding constraints for civilizational complexity, consistent with Tainter and Hall.
+
+### 16.4 Current Scores and Limitations
+
+Historical scenario testing (all rounds combined): 10 scenarios, structural plausibility 7.8/10. The hindcast framework and UQ calibration are designed to move validation beyond the in-sample scenario suite toward genuine out-of-sample testing. The primary remaining limitation is authoritarian subtype differentiation: distinct forms of autocratic governance (military junta, theocratic, bureaucratic-authoritarian, personalist) still converge more than the historical record suggests they should. This is flagged as the highest-priority modeling gap for future development passes.

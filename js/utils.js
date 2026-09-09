@@ -160,8 +160,22 @@ const Utils = {
     const perm = new Array(512);
     const p = [];
     for (let i = 0; i < 256; i++) p[i] = i;
+    // Deterministic Fisher-Yates. This table is built at module load,
+    // BEFORE any research seed can be applied, so it must not use
+    // Math.random() — otherwise identical seeds produce different
+    // terrain across sessions and reproducibility silently fails.
+    // Per-game map variety comes from Map._noiseSeeds, which IS drawn
+    // from the seeded RNG.
+    let _permState = 0x9E3779B9;
+    const _permRand = () => {
+      _permState = (_permState + 0x6D2B79F5) | 0;
+      let t = _permState;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
     for (let i = 255; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(_permRand() * (i + 1));
       [p[i], p[j]] = [p[j], p[i]];
     }
     for (let i = 0; i < 512; i++) perm[i] = p[i & 255];

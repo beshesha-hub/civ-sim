@@ -1,13 +1,13 @@
 # Civilization Simulation — User Manual
 
-*Version: Evidence-Based Upgrade Pass (15 empirical models)*
-*Last updated: March 2026*
+*Version: September 2026 (Passes 1-11)*
+*Last updated: September 2026*
 
 ---
 
 ## Overview
 
-This is a browser-based civilization simulation and research tool. You design a civilization from the ground up — choosing its governance model, economic structure, cultural values, and policies — and then observe how those choices interact over turns of simulated history. The simulation tracks roughly 120 distinct state variables per civilization across 12 interacting domains: economy, governance, social structure, culture, ecology, demographics, technology, infrastructure, psychology, organized crime, inter-civilization relations, and public health. These systems are connected by approximately 200 cross-system feedback loops that produce emergent behavior.
+This is a browser-based civilization simulation and research tool. You design a civilization from the ground up — choosing its governance model, economic structure, cultural values, and policies — and then observe how those choices interact over turns of simulated history. The simulation tracks roughly 130 distinct state variables per civilization across 12 interacting domains: economy, governance, social structure, culture, ecology, demographics, technology, infrastructure, psychology, organized crime, inter-civilization relations, and public health. These systems are connected by approximately 250 cross-system feedback loops that produce emergent behavior.
 
 The tool has three modes of use:
 
@@ -408,6 +408,16 @@ Accessed via the **🔬 Research** button. Designed for Track 2 (research mode) 
 - Speed factors: cooperation spreads fastest, cynicism at 55% speed, epistemic health at 35% speed
 - Theocratic civilizations suppress out-group contagion based on out-group empathy
 
+### Diagnostics Tab
+- Model diagnostics tools for analyzing simulation behavior
+- Detailed variable tracking and interaction analysis
+- Access to validation results and sensitivity data
+
+### Analysis Tab
+- Cross-system analysis tools
+- Variable correlation exploration
+- Mechanism pathway tracing
+
 ---
 
 ## Technology Panel (🔬)
@@ -730,6 +740,272 @@ Structural movements allow a population to bypass governance and directly restru
 
 ---
 
+### Production Decentralization: Energy and Agriculture
+
+Two independent parameters control how production is organized: at large
+centralized scale, or at local and small scale. They are found on the
+**⚡ Energy** and **🌾 Agriculture** tabs of the Sustainability panel.
+
+Neither direction is "correct". The simulation reproduces genuine tradeoffs
+rather than rewarding a preferred answer.
+
+**Energy.** Distributed production costs more per unit (2–4× in the modern
+evidence), but avoids transmission losses — and that benefit is largest where
+grid infrastructure is worst. It reduces the severity of failures without
+raising average output, and it takes far more land per unit of energy, which
+competes with farms and forests. Before industrialization the parameter is
+pinned near fully distributed: watermills and windmills were the norm, and
+there was no grid to centralize on.
+
+**Agriculture.** Meaningful across the entire span of the game. Local share
+starts high and falls as trade, cities and industrial farming arrive. Three
+separate levers matter:
+
+- **Diversification intensity** — polyculture and agroforestry raise output per
+  unit of land (Land Equivalent Ratio), but cost labour, which holds people on
+  the land and slows urbanization. Monoculture does the reverse.
+- **Ecosystem function** — designed interactions between species that replace
+  bought inputs: nitrogen-fixing companions, plants whose exudates repel
+  insects, trap crops, animals used as weeders. The benefit is largest where
+  fertilizer and pesticide are scarce, and it requires sustained knowledge and
+  extension support. Let education, state capacity or trust slide and it
+  decays.
+- **Local share vs trade dependency** — a variance swap, not an improvement.
+  Producing locally shields you from blockades, export bans and global price
+  shocks while exposing you to your own droughts. Importing does the opposite.
+  Local food gets no emissions bonus in the model, because the evidence does
+  not support one.
+
+### Initiation Pathways — and Why Force Fails
+
+Any shift toward distributed production has to start somehow. Five options:
+
+| Pathway | What it does |
+|---------|--------------|
+| 🌱 **Grassroots / Self-Organized** | Households build their own capacity. Slow in calm times. Fastest of all when the central system is failing *and* people have money — it needs capital, not a functioning state. |
+| 💰 **Subsidies & Incentives** | Steady and effective without a crisis, but it is a state programme: it needs a state able to fund it. At large scale, without protection for small producers, ownership drifts to large investors. |
+| ⚖️ **Mandated Ownership Rights** | Law requires that locals be *offered* a stake. Participation stays voluntary; only the offer is compulsory. |
+| 🚷 **Compulsory Reorganization** | Law compels people into the new structure directly. Fastest on paper. |
+| 🤝 **Hybrid** | State finance combined with community ownership. Fast, at the cost of coordination friction. |
+
+The last two look similar and behave completely differently, which is the most
+important thing to understand about this system.
+
+**A good idea imposed by force is negated by the force.** Compulsory
+reorganization destroys up to 55% of the advantage the new structure would
+otherwise deliver — and it does this *even when your state is strong and your
+institutions are excellent*. There is no combination of statistics that makes
+it work. Your civilization can adopt an objectively superior production system
+and end up worse off than a neighbour who kept a mediocre one people chose
+freely. Watch **Structural Gain Retained** on the Agriculture tab.
+
+If you want the structure without the catastrophe, mandate the *offer*, not the
+person.
+
+### Getting Around Without an Engine
+
+The **🚶 Mobility** tab lets you build a network of paths for walking and
+human-powered transport. Before the automobile this was simply how cities
+worked; motorization ended it, and this is how you bring some of it back.
+
+**Build interlocking local networks, not one big one.** The median cycling trip
+is about 2 km and people stop cycling past about 5 km. A network that tries to
+span a metropolis fails. Networks sized to real neighbourhoods, linked by
+transit, succeed.
+
+**Transit integration is the single most important thing you can build.** In
+the Netherlands the bicycle is how roughly 47% of rail passengers reach the
+station, cycling about 4 km. That is what makes local networks work at city
+scale. In the simulation, paths without transit integration barely move mode
+share at all in a large city — with it, mode share roughly doubles.
+
+**Continuity beats length.** Seville went from 0.5% to about 6.5% cycling with a
+continuous 80 km network. A network of the same size with gaps in it loses
+around 40% of the benefit. Watch the Continuity bar, not just Coverage.
+
+**Balance jobs and housing.** Spreading people into local centres while keeping
+work concentrated downtown makes travel worse, not better. This gates
+everything else on the tab.
+
+**Build the safety layer or lose half the benefit.** Watch the two mode-share
+bars. Women and men respond to path networks very differently — not because of
+traffic, where their concerns are identical, but because of personal safety.
+Lighting and patrols close that gap; paths alone do not. If your women's mode
+share is far below your men's, you have built half a system.
+
+Drone patrols are deliberately absent. The evidence for them as a deterrent
+does not exist, so the simulation does not pretend otherwise.
+
+**What it actually does for the environment.** Less than you might hope, and
+more than nothing. Transport is about a third of energy use and urban car
+travel maybe 15–20% of the total, so a large mode shift saves a few percent of
+all energy. The bigger wins are health and air quality — cycling commuters have
+substantially lower mortality, and air pollution is the largest single health
+channel in the research.
+
+**Animal power** is on the same tab and behaves very differently. It is
+practical in towns and useful for freight. In dense cities it is a disaster:
+manure, disease, land for stables, and hay fields competing with growing food
+for people. Cities abandoned it for good reasons and the simulation reflects
+that rather than romanticising it.
+
+### Two Numbers, Not One
+
+The Energy and Agriculture tabs both show a **Structural Baseline** and a
+**Programme Contribution** beneath the headline share.
+
+The baseline is what your infrastructure, cities and state capacity make the
+default — you don't choose it. A working grid centralizes energy production; a
+failing one pushes it local whether you want that or not. This is why
+distributed generation nearly vanished during electrification and comes back
+when grids fail.
+
+The programme contribution is the part your policy actually earned on top of
+that. It is the honest measure of whether what you did worked. It persists
+while you keep funding it and fades if you walk away.
+
+If your distributed share is high because your infrastructure collapsed, that
+is not a policy success.
+
+### Enabling Support: Helping Without Compelling
+
+Both the Energy and Agriculture tabs carry an **Enabling Support** programme —
+seeds and equipment, technology access, training, expert specialists available
+for consultation, tax relief, and reimbursement of what households spend
+themselves.
+
+This is the opposite of compulsion, and the model treats it as a completely
+separate axis. You can combine any level of support with any pathway. It
+carries **no coercion penalty**, it accelerates adoption, and for agriculture
+it raises the knowledge ceiling that ecosystem function depends on.
+
+It is not free:
+
+- **It leaks.** Watch **Support Reaching Intended**. Where land is concentrated
+  and institutions are weak, a large share of the benefit is captured by people
+  who least need it — those already equipped and connected.
+- **It drains the treasury** for as long as it runs.
+- **It decays** if you stop renewing it. Training that isn't followed up is
+  training that is forgotten, and knowledge-dependent farming practices fade
+  with it.
+
+Support does the most good where capital access is worst. If your people are
+already wealthy enough to act on their own, you are largely paying for things
+that would have happened anyway.
+
+### Distribution: Getting Food to People
+
+The Agriculture tab tracks **Local Distribution** — how much food reaches
+people without trucks, trains, ships or aircraft. This is a different question
+from where food is *grown*: you can farm locally and still route everything
+through a distant depot.
+
+Shortening the chain cuts three separate losses:
+
+- **Handling and transit.** Roughly 13% of production is lost after harvest —
+  25% for fruit and vegetables, which bruise and spoil. Short chains handle
+  produce fewer times.
+- **Cosmetic rejection.** Graded markets throw out food for looking wrong. In
+  studied supply chains this runs from 16–17% of harvest up to a third of farm
+  production. Local direct sale rarely imposes appearance standards. Most
+  rejected produce becomes animal feed or processing stock rather than being
+  destroyed, so it's a partial loss, not a total one.
+- **Harvest timing.** This is the one people miss. Food travelling a long way
+  must be picked unripe so it survives the journey. Food eaten locally can be
+  picked ripe. Vitamins C, A and E, flavonoids and phenolics all rise during
+  ripening, and transit damage cuts vitamin C further. Watch **Harvest
+  Maturity** and **Nutritional Quality** — these affect disease burden and
+  infant mortality, not how much food you have. A well-fed population eating
+  nutrient-poor food is still well-fed.
+
+Short chains also skip long-haul transport and refrigeration, which is real
+energy. But keep it in proportion: growing food is 83% of food-system
+emissions, so this helps at the margin rather than transforming anything.
+
+**Cities are the hard limit.** You cannot feed a metropolis within cart range —
+that is precisely why dense populations need a cold chain. Your local
+distribution ceiling falls as urbanization rises, and the panel shows you where
+it currently sits.
+
+### Seeing the Numbers Behind the Model
+
+Open the Research panel and choose **Parameters**. Every constant the
+production-decentralization systems use is listed there, read-only, with a
+confidence tag:
+
+- **M** — measured: the number traces to a published measurement
+- **I** — interpolated: bounded between two or more measured values, never
+  extrapolated past them
+- **T** — theoretical: the mechanism is supported but the magnitude is assumed
+
+If you want to know why the simulation did something, that tab is the fastest
+answer. It also explains where the model is confident and where it is guessing,
+which matters if you are using civ-sim to think about real questions.
+
+One example worth knowing: food ripeness affects health in the model, but the
+**disease burden** link is tagged M while the **infant mortality** link is
+tagged I — the evidence for the first is solid, and the second is a reasonable
+inference rather than a measured fact.
+
+### Participation and Stakeholding
+
+The Energy tab tracks **Participation Depth** — the share of people who are
+producers and stakeholders rather than remote consumers — and **Coercion
+Level**. Genuine participation modestly improves wellbeing, trust, legitimacy
+and social cohesion. The effects are deliberately small: real-world evidence
+shows meaningful but bounded gains, not transformation.
+
+Coercion discounts every one of those benefits, and past a threshold reverses
+them entirely.
+
+### Energy and Wellbeing
+
+Wellbeing is now capped by energy availability. Below roughly 10–75 GJ per
+person per year, more energy buys large gains in life expectancy, health and
+comfort. Above 100–150 it buys almost nothing. This is a ceiling only — a
+low-energy civilization is constrained by it, and a high-energy one gets no
+bonus for the excess. See **Energy & Wellbeing** on the Energy tab.
+
+## Systems Added Since March 2026 (Passes 7-11)
+
+### Behavioral Inertia (Pass 8)
+Population resistance to rapid value changes. Cultural and social values have momentum — sudden policy changes face pushback proportional to the speed of attempted change. Based on behavioral economics (Kahneman, loss aversion) and sociological institutional theory.
+
+### Cultural Homogeneity Pressure (Pass 8)
+Conformity dynamics in cultural values. Societies exert pressure toward cultural mean values, stronger in collectivist societies, weaker in individualist ones.
+
+### Energy System (Pass 10)
+EROI (Energy Return on Investment) dynamics and energy decentralization. Models the transition costs between energy sources, including the energetic cost of building renewable infrastructure. Based on Hall et al. energy economics research.
+
+### Agriculture Diversification (Pass 10)
+Food system resilience modeling. Diverse agricultural systems are more resilient to shocks than monocultures. Models the tradeoff between efficiency and resilience.
+
+### Active Travel Systems (Pass 10)
+Transportation mode choices and their effects on public health, emissions, and urban design.
+
+### Companion Demographic Module (Pass 11)
+A detailed demographic sub-model (`companion.js`) that provides:
+- **Sex-disaggregated population cohorts** — Male and female populations tracked by age group
+- **Social strata dynamics** — Population divided into strata with mobility between them driven by education, economic opportunity, and governance
+- **Information diffusion networks** — Models how information and ideas spread through social networks with topology approximation
+- **Collective action modeling** — Predicts conditions under which collective mobilization occurs based on grievance, capacity, and opportunity
+
+The companion module integrates bidirectionally with the main simulation: demographic pressures feed into governance evolution, strata satisfaction affects social trust, and diffusion metrics influence media dynamics.
+
+### Developmental State Mechanism
+Models the capacity-building pathway of developmental states (Johnson 1982, Amsden 1989, Wade 1990). Distinguishes organized from disorganized corruption (Shleifer & Vishny 1993). States with strong hierarchy, concentrated power, and organized corruption can build institutional capacity despite high corruption levels — matching the empirical trajectories of South Korea, Taiwan, and Singapore.
+
+### Institutional Resilience
+Based on Evans & Rauch 1999. Strong institutions (high institutional quality) resist capacity erosion during political instability and wealth concentration pressure. Japan and South Korea's bureaucracies operate independently of political turbulence.
+
+### Confidence Tiers
+Each mechanism is now tagged with a confidence tier:
+- **M (Modeled)** — Empirically grounded, with specific research citations
+- **I (Inferred)** — Reasonable extrapolation from related empirical findings
+- **T (Theoretical)** — Plausible but untested; flagged for future validation
+
+---
+
 ## Five Strata
 
 All per-stratum effects reference these five population groups:
@@ -826,6 +1102,35 @@ A: Coup risk follows the Powell & Thyne (2011) empirical model with seven compou
 
 **Q: What does the Research Panel seed do?**
 A: The research seed initializes a deterministic PRNG (Mulberry32) that drives all simulation-relevant randomness — stochastic events, probability checks, disaster timing, civil war triggers, disease outbreaks, and all other chance-based mechanics. Same seed + same parameters = identical trajectory, guaranteed. Non-simulation randomness (NPC interview flavor text, map noise, UI timing) uses standard Math.random() and does not affect reproducibility. The seed is visible in the Research Panel > Export tab and is included in Track 2 CSV exports.
+
+---
+
+## Validation Framework
+
+civ-sim includes automated validation tools for verifying empirical grounding:
+
+**Uncertainty Quantification (UQ)**: Tests whether real-world values fall within the model's p10-p90 interval across 12 countries (Denmark, USA, China, Nigeria, Saudi Arabia, Singapore, Brazil, Russia, Japan, Germany, India, South Korea) and 3 metrics each (social trust, wealth concentration, corruption).
+```
+node js/validation_suite.js uq --seeds=20
+```
+
+**Hindcast Scenarios**: Tests whether the model reproduces known historical trajectories:
+- South Korea 1960-2010 (developmental state, democratization)
+- Chile 1970-2000 (Allende, Pinochet, re-democratization)
+- Russia 1985-2015 (Soviet collapse, oligarchic transition)
+- Rwanda 1990-2020 (genocide, recovery, developmental state)
+```
+node js/hindcast_runner.js --seeds=10
+```
+
+**Calibration Scenarios**: 12 country-specific configurations with benchmark expectations:
+```
+node js/scenario_test_harness.js
+```
+
+Current scores (September 2026): UQ Coverage 11-14/36, Hindcast 30/38 (79%), Robustness ~77%.
+
+See `MODEL_DIAGNOSTICS.md` for detailed findings and `QUICK_START_RESEARCH.md` for research workflow guidance.
 
 ---
 

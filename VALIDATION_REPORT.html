@@ -1,0 +1,577 @@
+<title>Civ-Sim Validation Report</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #FAFAF8;
+  --surface: #F2F1EE;
+  --border: #DDD9D3;
+  --text: #2D2B29;
+  --text-secondary: #6B6560;
+  --text-tertiary: #9B9590;
+  --accent: #1B6B6D;
+  --accent-light: #E8F4F4;
+  --success: #2D7D46;
+  --success-bg: #EBF5EE;
+  --warning: #C4701A;
+  --warning-bg: #FDF3E8;
+  --danger: #B5342B;
+  --danger-bg: #FCEEED;
+  --table-stripe: #F6F5F2;
+  --code-bg: #EDECEA;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1A1918;
+    --surface: #242220;
+    --border: #3A3835;
+    --text: #E8E4DE;
+    --text-secondary: #A8A29C;
+    --text-tertiary: #706A64;
+    --accent: #5CC5C8;
+    --accent-light: #1E3333;
+    --success: #5CB874;
+    --success-bg: #1E2E22;
+    --warning: #E8923A;
+    --warning-bg: #2E2518;
+    --danger: #E05E55;
+    --danger-bg: #2E1C1A;
+    --table-stripe: #1F1E1C;
+    --code-bg: #2A2826;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1A1918;
+  --surface: #242220;
+  --border: #3A3835;
+  --text: #E8E4DE;
+  --text-secondary: #A8A29C;
+  --text-tertiary: #706A64;
+  --accent: #5CC5C8;
+  --accent-light: #1E3333;
+  --success: #5CB874;
+  --success-bg: #1E2E22;
+  --warning: #E8923A;
+  --warning-bg: #2E2518;
+  --danger: #E05E55;
+  --danger-bg: #2E1C1A;
+  --table-stripe: #1F1E1C;
+  --code-bg: #2A2826;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.report {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+}
+
+header {
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+header h1 {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+header .subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: 0.4rem;
+}
+header .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+header .meta span { white-space: nowrap; }
+
+h2 {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  text-wrap: balance;
+}
+h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+p { margin-bottom: 0.9rem; max-width: 65ch; }
+p + p { margin-top: 0; }
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 1.5rem;
+}
+.summary-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+}
+.summary-card .value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.summary-card .label {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 0.2rem;
+}
+.value.good { color: var(--success); }
+.value.warn { color: var(--warning); }
+.value.bad { color: var(--danger); }
+
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.75rem 0 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+thead th {
+  background: var(--surface);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+tbody td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody tr:nth-child(even) { background: var(--table-stripe); }
+tbody tr:last-child td { border-bottom: none; }
+
+td.country {
+  font-weight: 600;
+  color: var(--text);
+}
+.tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.tag-robust { background: var(--success-bg); color: var(--success); }
+.tag-moderate { background: var(--warning-bg); color: var(--warning); }
+.tag-noisy { background: var(--danger-bg); color: var(--danger); }
+.tag-covered { background: var(--success-bg); color: var(--success); }
+.tag-missed { background: var(--danger-bg); color: var(--danger); }
+.tag-gen { background: var(--success-bg); color: var(--success); }
+.tag-partial { background: var(--warning-bg); color: var(--warning); }
+.tag-overfit { background: var(--danger-bg); color: var(--danger); }
+
+.callout {
+  background: var(--accent-light);
+  border-left: 3px solid var(--accent);
+  padding: 0.9rem 1.1rem;
+  margin: 1rem 0 1.5rem;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.9rem;
+}
+.callout p { margin-bottom: 0; }
+
+.elast-bar {
+  display: inline-block;
+  height: 10px;
+  border-radius: 2px;
+  vertical-align: middle;
+  margin-left: 0.4rem;
+}
+.elast-neg { background: var(--danger); }
+.elast-pos { background: var(--success); }
+
+.methodology {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.methodology code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  background: var(--code-bg);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+</style>
+
+<div class="report">
+
+<header>
+  <h1>Civ-Sim Validation Report</h1>
+  <div class="subtitle">Uncertainty Quantification, Sensitivity Analysis, and Cross-Validation</div>
+  <div class="meta">
+    <span>August 31, 2026</span>
+    <span>100 seeds per scenario</span>
+    <span>8 calibration countries</span>
+    <span>8 parameter sweeps</span>
+    <span>4 hindcast transitions</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>Executive Summary</h2>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="value warn">41%</div>
+    <div class="label">Robust metrics (CV &lt; 15%)</div>
+  </div>
+  <div class="summary-card">
+    <div class="value warn">46%</div>
+    <div class="label">Targets within p10&ndash;p90</div>
+  </div>
+  <div class="summary-card">
+    <div class="value good">50%</div>
+    <div class="label">Cross-val generalizes</div>
+  </div>
+  <div class="summary-card">
+    <div class="value bad">37%</div>
+    <div class="label">Hindcast checks pass</div>
+  </div>
+</div>
+
+<p>This report documents three validation analyses applied to civ-sim's 8-country calibration set: uncertainty quantification across 100 stochastic seeds, one-at-a-time sensitivity sweeps on 8 input parameters, and leave-one-out cross-validation testing whether model behavior generalizes beyond initial-state tuning.</p>
+
+<p>The results are mixed. Wealth concentration and polarization are robustly determined by configuration; social trust and corruption are noise-dominated in several countries. The model's mechanisms generalize well for Nordic/egalitarian configurations but struggle with hybrid regimes (China, Singapore, Saudi Arabia). Hindcasting against four historical transitions (37% overall) revealed that polarization-driven instability is well-captured (Chile at 71%) but developmental state dynamics (South Korea at 9%) and system collapse (Russia at 36%) are structural gaps. Education quality and governance hierarchy are the dominant sensitivity levers.</p>
+
+<div class="callout">
+  <p><strong>Honest assessment:</strong> Civ-sim performs well as a qualitative exploration tool for democratic/authoritarian extremes and polarization dynamics. It cannot reproduce developmental state trajectories (state-directed capacity building despite autocracy) or rapid institutional collapse. The 42% overfit rate in cross-validation and 37% hindcast pass rate mean the model is best positioned as an exploration tool for "what-if" directional analysis, not a predictive instrument.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>1. Uncertainty Quantification</h2>
+
+<p>Each of 8 calibration scenarios was run 100 times with different random seeds. The tables below report final-turn distributions for key output metrics, compared against real-world targets drawn from V-Dem, World Bank, and Transparency International data.</p>
+
+<h3>Robustness by Country</h3>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Country</th><th>Metric</th><th>Mean</th><th>p10</th><th>p90</th><th>CV%</th><th>Robustness</th><th>Target</th><th>Coverage</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="country" rowspan="3">Denmark</td><td>Social trust</td><td>90.9</td><td>88</td><td>92</td><td>2.8</td><td><span class="tag tag-robust">Robust</span></td><td>74</td><td><span class="tag tag-missed">Missed</span></td></tr>
+    <tr><td>Wealth conc.</td><td>42.8</td><td>41</td><td>47.1</td><td>11.8</td><td><span class="tag tag-robust">Robust</span></td><td>28</td><td><span class="tag tag-missed">Missed</span></td></tr>
+    <tr><td>Corruption</td><td>0.1</td><td>0</td><td>0</td><td>59.7</td><td><span class="tag tag-noisy">Noisy</span></td><td>12</td><td><span class="tag tag-missed">Missed</span></td></tr>
+
+    <tr><td class="country" rowspan="3">USA</td><td>Social trust</td><td>48.6</td><td>26.8</td><td>56</td><td>26.7</td><td><span class="tag tag-moderate">Moderate</span></td><td>37</td><td><span class="tag tag-covered">Covered</span></td></tr>
+    <tr><td>Wealth conc.</td><td>68</td><td>63</td><td>80</td><td>10.6</td><td><span class="tag tag-robust">Robust</span></td><td>78</td><td><span class="tag tag-covered">Covered</span></td></tr>
+    <tr><td>Corruption</td><td>0.7</td><td>0</td><td>0</td><td>402.4</td><td><span class="tag tag-noisy">Noisy</span></td><td>27</td><td><span class="tag tag-missed">Missed</span></td></tr>
+
+    <tr><td class="country" rowspan="3">China</td><td>Social trust</td><td>40.3</td><td>16.9</td><td>64</td><td>47.2</td><td><span class="tag tag-noisy">Noisy</span></td><td>64</td><td><span class="tag tag-covered">Covered</span></td></tr>
+    <tr><td>Wealth conc.</td><td>83.1</td><td>68.7</td><td>90</td><td>10.5</td><td><span class="tag tag-robust">Robust</span></td><td>55</td><td><span class="tag tag-missed">Missed</span></td></tr>
+    <tr><td>Corruption</td><td>32.9</td><td>11</td><td>74.1</td><td>72.2</td><td><span class="tag tag-noisy">Noisy</span></td><td>39</td><td><span class="tag tag-covered">Covered</span></td></tr>
+
+    <tr><td class="country" rowspan="3">Singapore</td><td>Social trust</td><td>21.6</td><td>2</td><td>47.2</td><td>74</td><td><span class="tag tag-noisy">Noisy</span></td><td>38</td><td><span class="tag tag-covered">Covered</span></td></tr>
+    <tr><td>Wealth conc.</td><td>81.6</td><td>63.9</td><td>90.1</td><td>13.8</td><td><span class="tag tag-robust">Robust</span></td><td>45</td><td><span class="tag tag-missed">Missed</span></td></tr>
+    <tr><td>Corruption</td><td>52.7</td><td>22</td><td>81</td><td>45.1</td><td><span class="tag tag-noisy">Noisy</span></td><td>4</td><td><span class="tag tag-missed">Missed</span></td></tr>
+
+    <tr><td class="country" rowspan="3">Brazil</td><td>Social trust</td><td>3.6</td><td>0</td><td>9</td><td>103.9</td><td><span class="tag tag-noisy">Noisy</span></td><td>7</td><td><span class="tag tag-covered">Covered</span></td></tr>
+    <tr><td>Wealth conc.</td><td>85.5</td><td>83</td><td>89</td><td>4.4</td><td><span class="tag tag-robust">Robust</span></td><td>89</td><td><span class="tag tag-covered">Covered</span></td></tr>
+    <tr><td>Corruption</td><td>15.8</td><td>0</td><td>70.1</td><td>174.3</td><td><span class="tag tag-noisy">Noisy</span></td><td>62</td><td><span class="tag tag-covered">Covered</span></td></tr>
+
+    <tr><td class="country" rowspan="3">Nigeria</td><td>Social trust</td><td>2.8</td><td>1</td><td>9</td><td>96.5</td><td><span class="tag tag-noisy">Noisy</span></td><td>15</td><td><span class="tag tag-missed">Missed</span></td></tr>
+    <tr><td>Wealth conc.</td><td>83.3</td><td>64</td><td>90</td><td>12.1</td><td><span class="tag tag-robust">Robust</span></td><td>67</td><td><span class="tag tag-covered">Covered</span></td></tr>
+    <tr><td>Corruption</td><td>65.4</td><td>32</td><td>81.5</td><td>33.7</td><td><span class="tag tag-noisy">Noisy</span></td><td>74</td><td><span class="tag tag-covered">Covered</span></td></tr>
+
+    <tr><td class="country" rowspan="3">Saudi Arabia</td><td>Social trust</td><td>14.1</td><td>3</td><td>26</td><td>69.8</td><td><span class="tag tag-noisy">Noisy</span></td><td>53</td><td><span class="tag tag-missed">Missed</span></td></tr>
+    <tr><td>Wealth conc.</td><td>87.8</td><td>80.9</td><td>91</td><td>7.1</td><td><span class="tag tag-robust">Robust</span></td><td>65</td><td><span class="tag tag-missed">Missed</span></td></tr>
+    <tr><td>Corruption</td><td>65.8</td><td>29.8</td><td>80.1</td><td>33</td><td><span class="tag tag-noisy">Noisy</span></td><td>53</td><td><span class="tag tag-covered">Covered</span></td></tr>
+
+    <tr><td class="country" rowspan="3">Russia</td><td>Social trust</td><td>2.8</td><td>1</td><td>5.2</td><td>114.5</td><td><span class="tag tag-noisy">Noisy</span></td><td>28</td><td><span class="tag tag-missed">Missed</span></td></tr>
+    <tr><td>Wealth conc.</td><td>90.5</td><td>90</td><td>91</td><td>1.3</td><td><span class="tag tag-robust">Robust</span></td><td>78</td><td><span class="tag tag-missed">Missed</span></td></tr>
+    <tr><td>Corruption</td><td>80.4</td><td>80</td><td>81</td><td>8.1</td><td><span class="tag tag-robust">Robust</span></td><td>73</td><td><span class="tag tag-missed">Missed</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Robustness Summary</h3>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="value good">33/80</div>
+    <div class="label">Robust (CV &lt; 15%)</div>
+  </div>
+  <div class="summary-card">
+    <div class="value warn">11/80</div>
+    <div class="label">Moderate (15&ndash;30%)</div>
+  </div>
+  <div class="summary-card">
+    <div class="value bad">36/80</div>
+    <div class="label">Noisy (CV &gt; 30%)</div>
+  </div>
+</div>
+
+<p><strong>Key findings:</strong> Wealth concentration is the most robust output &mdash; robust in all 8 countries, because the multiplicative wealth dynamics and Pareto-tail mechanics are structurally stable. Polarization is also highly robust. Social trust and corruption are the least robust, particularly for mid-range configurations where the bistable trust&ndash;corruption attractor can tip either way depending on stochastic event timing.</p>
+
+<p><strong>Target coverage at 46%</strong> means that fewer than half the real-world benchmark values fall within the model's 80% confidence interval (p10&ndash;p90). The main systematic biases are: trust too high for Denmark (+17), trust too low for Russia (&minus;25) and Saudi (&minus;39), wealth concentration too high across authoritarian configurations, and corruption floor too low for developed democracies (the model drives corruption to 0 where real-world levels are 4&ndash;27).</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>2. Sensitivity Analysis</h2>
+
+<p>One-at-a-time parameter sweeps were run on the USA scenario (seed 1001). Eight input parameters were varied across their plausible ranges while holding everything else at baseline. Elasticity measures the percentage change in output per percentage change in input.</p>
+
+<h3>Elasticity Matrix</h3>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Trust</th><th>Wealth</th><th>Corrupt.</th><th>Stability</th><th>Polariz.</th><th>EH</th><th>State Cap.</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="country">Education quality</td><td>2.30</td><td>&minus;0.15</td><td><strong>&minus;4.21</strong></td><td><strong>3.53</strong></td><td>&minus;0.22</td><td>0</td><td><strong>4.38</strong></td></tr>
+    <tr><td class="country">Hierarchy level</td><td><strong>&minus;17.0</strong></td><td>0.03</td><td><strong>1.43</strong></td><td><strong>&minus;1.60</strong></td><td>0.07</td><td>0</td><td><strong>&minus;6.85</strong></td></tr>
+    <tr><td class="country">Scarcity orientation</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+    <tr><td class="country">Ethnic fractional.</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+    <tr><td class="country">Initial polarization</td><td>&minus;0.62</td><td>0.06</td><td>0</td><td>0.23</td><td>0.04</td><td>0</td><td>&minus;0.01</td></tr>
+    <tr><td class="country">Initial trust</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+    <tr><td class="country">Tariff level</td><td>0.10</td><td>0</td><td>0</td><td>0.05</td><td>0</td><td>0</td><td>0.01</td></tr>
+    <tr><td class="country">Initial corruption</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p><em>Bold values have |elasticity| &gt; 0.5. Em-dashes indicate the elasticity calculation was unstable (nonlinear jump near baseline preventing meaningful linear approximation).</em></p>
+
+<h3>Most Sensitive Relationships</h3>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Parameter</th><th>Output</th><th>Elasticity</th><th>Direction</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="country">Hierarchy level</td><td>Social trust</td><td>&minus;17.0</td><td>More hierarchy decimates trust</td></tr>
+    <tr><td class="country">Hierarchy level</td><td>State capacity</td><td>&minus;6.85</td><td>Excessive hierarchy destroys state capacity</td></tr>
+    <tr><td class="country">Education quality</td><td>State capacity</td><td>4.38</td><td>Education strongly builds state capacity</td></tr>
+    <tr><td class="country">Education quality</td><td>Corruption</td><td>&minus;4.21</td><td>Education suppresses corruption</td></tr>
+    <tr><td class="country">Education quality</td><td>Stability</td><td>3.53</td><td>Education stabilizes systems</td></tr>
+    <tr><td class="country">Education quality</td><td>Social trust</td><td>2.30</td><td>Education builds trust</td></tr>
+    <tr><td class="country">Hierarchy level</td><td>Stability</td><td>&minus;1.60</td><td>Hierarchy erodes stability</td></tr>
+    <tr><td class="country">Hierarchy level</td><td>Corruption</td><td>1.43</td><td>Hierarchy enables corruption</td></tr>
+    <tr><td class="country">Initial polarization</td><td>Social trust</td><td>&minus;0.62</td><td>Polarization erodes trust</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout">
+  <p><strong>Interpretation:</strong> Two parameters dominate the entire system: <em>governance hierarchy</em> and <em>education quality</em>. This is both a strength and a concern. It's directionally correct &mdash; research consistently shows these are among the most powerful determinants of societal outcomes. But the extreme elasticities (hierarchy&rarr;trust at &minus;17) suggest the model may be too sensitive to these levers, leaving little room for other mechanisms to matter.</p>
+  <p style="margin-top:0.5rem"><strong>Notable:</strong> Initial corruption level has zero elasticity &mdash; the model completely erases starting corruption within the simulation period. This is a known structural limitation: the corruption dynamics are dominated by governance configuration rather than path-dependent accumulation.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>3. Cross-Validation</h2>
+
+<p>For each country, we ran the simulation in two modes: <strong>Full</strong> (with scenario-specific initial state overrides) and <strong>Stripped</strong> (config-derived defaults only, no initial state overrides). If the model generalizes, the stripped version should still produce behavior near the real-world target &mdash; meaning the mechanisms do the explanatory work, not the manual tuning of starting conditions.</p>
+
+<h3>Full vs. Stripped vs. Target</h3>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Country</th><th>Metric</th><th>Target</th><th>Full</th><th>Stripped</th><th>&Delta; Full</th><th>&Delta; Strip</th><th>Verdict</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="country" rowspan="3">Denmark</td><td>Trust</td><td>74</td><td>91</td><td>87.8</td><td>+17</td><td>+13.8</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+    <tr><td>Wealth</td><td>28</td><td>42.4</td><td>41</td><td>+14.4</td><td>+13</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+    <tr><td>Corruption</td><td>12</td><td>0</td><td>0</td><td>&minus;12</td><td>&minus;12</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+
+    <tr><td class="country" rowspan="3">USA</td><td>Trust</td><td>37</td><td>45.2</td><td>47</td><td>+8.2</td><td>+10</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+    <tr><td>Wealth</td><td>78</td><td>70.4</td><td>68</td><td>&minus;7.6</td><td>&minus;10</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+    <tr><td>Corruption</td><td>27</td><td>0</td><td>0</td><td>&minus;27</td><td>&minus;27</td><td><span class="tag tag-overfit">Overfit</span></td></tr>
+
+    <tr><td class="country" rowspan="3">China</td><td>Trust</td><td>64</td><td>33.2</td><td>17.8</td><td>&minus;30.8</td><td>&minus;46.2</td><td><span class="tag tag-overfit">Overfit</span></td></tr>
+    <tr><td>Wealth</td><td>55</td><td>86.2</td><td>89</td><td>+31.2</td><td>+34</td><td><span class="tag tag-overfit">Overfit</span></td></tr>
+    <tr><td>Corruption</td><td>39</td><td>29.4</td><td>52.2</td><td>&minus;9.6</td><td>+13.2</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+
+    <tr><td class="country" rowspan="3">Nigeria</td><td>Trust</td><td>15</td><td>3.6</td><td>1.4</td><td>&minus;11.4</td><td>&minus;13.6</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+    <tr><td>Wealth</td><td>67</td><td>75.2</td><td>89.6</td><td>+8.2</td><td>+22.6</td><td><span class="tag tag-partial">Partial</span></td></tr>
+    <tr><td>Corruption</td><td>74</td><td>54.6</td><td>71.6</td><td>&minus;19.4</td><td>&minus;2.4</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+
+    <tr><td class="country" rowspan="3">Saudi Arabia</td><td>Trust</td><td>53</td><td>24.2</td><td>17.4</td><td>&minus;28.8</td><td>&minus;35.6</td><td><span class="tag tag-overfit">Overfit</span></td></tr>
+    <tr><td>Wealth</td><td>65</td><td>84.4</td><td>87.8</td><td>+19.4</td><td>+22.8</td><td><span class="tag tag-partial">Partial</span></td></tr>
+    <tr><td>Corruption</td><td>53</td><td>35</td><td>61</td><td>&minus;18</td><td>+8</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+
+    <tr><td class="country" rowspan="3">Singapore</td><td>Trust</td><td>38</td><td>19</td><td>3.8</td><td>&minus;19</td><td>&minus;34.2</td><td><span class="tag tag-overfit">Overfit</span></td></tr>
+    <tr><td>Wealth</td><td>45</td><td>86.8</td><td>84.8</td><td>+41.8</td><td>+39.8</td><td><span class="tag tag-overfit">Overfit</span></td></tr>
+    <tr><td>Corruption</td><td>4</td><td>63</td><td>69.2</td><td>+59</td><td>+65.2</td><td><span class="tag tag-overfit">Overfit</span></td></tr>
+
+    <tr><td class="country" rowspan="3">Brazil</td><td>Trust</td><td>7</td><td>3</td><td>40.6</td><td>&minus;4</td><td>+33.6</td><td><span class="tag tag-overfit">Overfit</span></td></tr>
+    <tr><td>Wealth</td><td>89</td><td>86.6</td><td>78.6</td><td>&minus;2.4</td><td>&minus;10.4</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+    <tr><td>Corruption</td><td>62</td><td>25.6</td><td>0</td><td>&minus;36.4</td><td>&minus;62</td><td><span class="tag tag-overfit">Overfit</span></td></tr>
+
+    <tr><td class="country" rowspan="3">Russia</td><td>Trust</td><td>28</td><td>3.6</td><td>2.2</td><td>&minus;24.4</td><td>&minus;25.8</td><td><span class="tag tag-overfit">Overfit</span></td></tr>
+    <tr><td>Wealth</td><td>78</td><td>90.8</td><td>89.8</td><td>+12.8</td><td>+11.8</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+    <tr><td>Corruption</td><td>73</td><td>80.8</td><td>78.6</td><td>+7.8</td><td>+5.6</td><td><span class="tag tag-gen">Generalizes</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Generalization Summary</h3>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="value good">12/24</div>
+    <div class="label">Generalizes (|err| &le; 15)</div>
+  </div>
+  <div class="summary-card">
+    <div class="value warn">2/24</div>
+    <div class="label">Partial (15 &lt; |err| &le; 25)</div>
+  </div>
+  <div class="summary-card">
+    <div class="value bad">10/24</div>
+    <div class="label">Overfit (|err| &gt; 25)</div>
+  </div>
+</div>
+
+<h3>Pattern Analysis</h3>
+
+<p><strong>Where the model generalizes:</strong> Democratic/egalitarian configurations (Denmark, USA) and extreme inequality configurations (Nigeria corruption, Russia corruption/wealth, Brazil wealth). These represent the stable attractors of the bistable trust&ndash;corruption system &mdash; the model's mechanisms naturally produce the right qualitative behavior at both extremes.</p>
+
+<p><strong>Where the model overfits:</strong> Hybrid regimes (China, Singapore, Saudi Arabia) and corruption for democracies (USA, Denmark, Brazil). The model lacks mechanisms for: (a) state-directed capitalism that constrains wealth concentration despite autocracy (China, Singapore), (b) meritocratic autocracy that suppresses corruption without democratic accountability (Singapore), and (c) moderate corruption equilibria in developed democracies (the floor problem).</p>
+
+<p><strong>Structural gap &mdash; corruption floor:</strong> The model drives corruption to 0 for any configuration with high education quality and moderate-to-low hierarchy. Real-world democracies sustain corruption levels of 4&ndash;27 (CPI-derived). This is the single most consistent bias across the model.</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>4. Hindcasting</h2>
+
+<p>Four historical transitions were simulated from documented starting conditions, with trajectory expectations and waypoint checks against known outcomes. Each scenario was run 20 times with different seeds. Sources: V-Dem v14, Polity5, Maddison Project, World Values Survey, Transparency International CPI.</p>
+
+<h3>Results by Country</h3>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Scenario</th><th>Period</th><th>Checks Pass</th><th>Score</th><th>Key Finding</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="country">Chile</td><td>1970&ndash;2000</td><td>5/7</td><td><span class="tag tag-gen">71%</span></td><td>Polarization&rarr;instability&rarr;recovery captured well</td></tr>
+    <tr><td class="country">Rwanda</td><td>1990&ndash;2020</td><td>4/9</td><td><span class="tag tag-partial">44%</span></td><td>Initial collapse correct; recovery too weak</td></tr>
+    <tr><td class="country">Russia</td><td>1985&ndash;2015</td><td>4/11</td><td><span class="tag tag-overfit">36%</span></td><td>Military/lock-in correct; no collapse produced</td></tr>
+    <tr><td class="country">South Korea</td><td>1960&ndash;2010</td><td>1/11</td><td><span class="tag tag-overfit">9%</span></td><td>Developmental state dynamics not modeled</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Trajectory Analysis</h3>
+
+<p><strong>Chile (71% &mdash; best performer):</strong> The model correctly reproduces the instability&ndash;recovery arc. High initial polarization (85) drives stability below 40 by turn 5, matching the 1973 coup period. Stability then recovers to 65 by turn 30, matching Chile's democratic consolidation. Institutional quality rises to 57. The model misses the magnitude of wealth concentration increase under Pinochet (simulated 32 vs. target 50+) because the simulation lacks a mechanism for authoritarian wealth extraction.</p>
+
+<p><strong>Rwanda (44%):</strong> The model produces the initial collapse (stability drops to 17 by turn 5), matching the genocide period. Wellbeing is above 15 by turn 15 (recovery underway). However, state capacity falls to 7 instead of rising &mdash; the model can't produce Rwanda's remarkable capacity recovery under developmental autocracy. Gender equity stays at 0 instead of rising to 70+ (the model lacks a mechanism for deliberate equity policy by an autocratic regime).</p>
+
+<p><strong>Russia (36%):</strong> Military power (84) and institutional lock-in (87) are correctly high at turn 30. But the model completely fails to produce the Soviet collapse: stability stays at 55&ndash;70 (should crash), wealth concentration stays at 20&ndash;21 (should explode to 80+), corruption stays near 0 (should be 60+). The planned economy + high education + high state capacity configuration is too stable &mdash; the model lacks mechanisms for legitimacy crisis and rapid institutional disintegration.</p>
+
+<p><strong>South Korea (9% &mdash; worst performer):</strong> Near-complete failure. State capacity declines from 45 to 8 when it should rise to 80+. Wellbeing declines from 47 to 14 when it should rise to 60+. The model's equation hierarchy &rarr; low trust &rarr; low capacity dominates, but real developmental states (Korea, Taiwan, Singapore) build capacity through directed hierarchy &mdash; a mechanism the model lacks entirely.</p>
+
+<div class="callout">
+  <p><strong>Structural gaps revealed by hindcasting:</strong></p>
+  <p style="margin-top:0.5rem">1. <strong>No developmental state mechanism:</strong> The model treats hierarchy as universally corrosive to state capacity. Real developmental states use hierarchy to build capacity rapidly. This affects Korea, Rwanda, Singapore, and China.</p>
+  <p style="margin-top:0.3rem">2. <strong>No system collapse mechanism:</strong> High lock-in + high state capacity configurations can't produce rapid institutional disintegration. The Soviet collapse is the paradigmatic case.</p>
+  <p style="margin-top:0.3rem">3. <strong>No authoritarian wealth extraction:</strong> The model doesn't distinguish between extractive autocracy (wealth concentration rises) and developmental autocracy (wealth concentration is managed).</p>
+  <p style="margin-top:0.3rem">4. <strong>No deliberate equity policy:</strong> Gender equity and similar metrics lack a mechanism for top-down policy intervention, making Rwanda's equity revolution invisible.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>5. Implications for Public Use</h2>
+<!-- (renumbered from 4 after hindcasting insertion) -->
+
+<h3>What civ-sim can credibly claim</h3>
+<ul style="padding-left:1.2rem; margin-bottom:1rem">
+  <li>Qualitative directional predictions: higher hierarchy and lower education produce worse outcomes across trust, stability, and state capacity</li>
+  <li>Robust wealth concentration dynamics: the Pareto-tail mechanics produce stable, credible inequality trajectories</li>
+  <li>Comparative analysis between regime types at the extremes (Nordic-style vs. kleptocratic)</li>
+  <li>Exploration of "what-if" scenarios for policy direction, not magnitude</li>
+</ul>
+
+<h3>What civ-sim cannot credibly claim</h3>
+<ul style="padding-left:1.2rem; margin-bottom:1rem">
+  <li>Point predictions for any specific country (46% target coverage is below standard)</li>
+  <li>Accurate modeling of hybrid regimes (state capitalism, developmental autocracy)</li>
+  <li>Reliable corruption dynamics (floor problem + high stochastic variance)</li>
+  <li>Stability or trust predictions for mid-range configurations (noise-competitive regime)</li>
+</ul>
+
+<h3>Recommended framing for public release</h3>
+<div class="callout">
+  <p>"An integrative exploration tool that models interactions between governance, economics, culture, and institutions. Grounded in published research on wealth dynamics, institutional quality, and social trust. Validated for qualitative directional analysis; not calibrated for country-specific point predictions. Validation report available."</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>6. Methodology</h2>
+
+<p class="methodology"><strong>Uncertainty quantification:</strong> 100 independent runs per scenario using seeds <code>1007, 2007, ..., 100007</code>. Distributions computed on final-turn values. Coefficient of variation (CV) = stddev/|mean| &times; 100. Robustness thresholds: Robust &lt; 15%, Moderate 15&ndash;30%, Noisy &gt; 30%. Target coverage tests whether the real-world benchmark falls within the p10&ndash;p90 interval.</p>
+
+<p class="methodology"><strong>Sensitivity analysis:</strong> One-at-a-time sweeps on 8 parameters using USA scenario at seed 1001. Each parameter varied across 6&ndash;9 values spanning its plausible range. Elasticity = (&Delta;output/baseline_output) / (&Delta;input/baseline_input) computed from the min-to-max range. Single-seed limitation: results reflect structural sensitivity but may miss stochastic interaction effects.</p>
+
+<p class="methodology"><strong>Cross-validation:</strong> Leave-one-out on initial state overrides. Each country run with full configuration (initialState + config) and stripped (config only, initialState = {}). Five seeds per run <code>[1001, 2002, 3003, 4004, 5005]</code>. Generalization threshold: stripped-mode error from target &le; 15 points. This tests whether the model's mechanisms produce correct behavior from configuration alone, or whether manual initial-state tuning is load-bearing.</p>
+
+<p class="methodology"><strong>Hindcasting:</strong> Four historical transitions (South Korea 1960&ndash;2010, Chile 1970&ndash;2000, Russia 1985&ndash;2015, Rwanda 1990&ndash;2020) run from documented starting conditions with 20 seeds each. Historical initial conditions derived from V-Dem v14, Polity5, Maddison Project GDP data, World Bank WDI, and academic literature. Two evaluation modes: standard expectations (trend/threshold tests as used in calibration) and waypoint checks (specific metric thresholds at specific turns corresponding to known historical dates). Waypoint checks use mean across seeds, reported with standard deviation and seed pass rate.</p>
+
+<p class="methodology"><strong>Targets:</strong> Social trust from World Values Survey (2017&ndash;2022), wealth concentration from World Bank Gini &times; estimated top-decile share, corruption from Transparency International CPI (inverted to 0&ndash;100 scale where 100 = most corrupt).</p>
+
+<p class="methodology"><strong>Reproducibility:</strong> Analysis code: <code>js/validation_suite.js</code> (UQ, sensitivity, cross-validation) and <code>js/hindcast_runner.js</code> + <code>js/hindcast_scenarios.js</code> (hindcasting). Raw JSON results in <code>validation_results/</code>. Run <code>node js/validation_suite.js all --seeds=100</code> and <code>node js/hindcast_runner.js --seeds=20</code> to reproduce.</p>
+
+<footer>
+  <p>Generated by civ-sim validation suite. Analysis code: <code>js/validation_suite.js</code>, <code>js/hindcast_runner.js</code>. Raw data: <code>validation_results/*.json</code>.</p>
+</footer>
+
+</div>

@@ -6,7 +6,7 @@
 
 ## What civ-sim Is (and Isn't)
 
-civ-sim is a browser-based civilization simulator that models the co-evolution of 12 interacting domains (economy, governance, demographics, ecology, psychology, and 7 others) across historical timescales. It tracks ~120 state variables connected by ~200 explicit cross-system feedback loops.
+civ-sim is a browser-based civilization simulator that models the co-evolution of 12 interacting domains (economy, governance, demographics, ecology, psychology, and 7 others) across historical timescales. It tracks ~130 state variables connected by ~250 explicit cross-system feedback loops.
 
 **It is:**
 - A structural plausibility tool — causal chains match empirical findings (Caldwell, Omran, Bouchaud & Mezard, Knack & Keefer, Wimmer, Urdal/Goldstone, Weber, Durkheim)
@@ -101,6 +101,80 @@ In multi-civilization runs, cooperation norms, cynicism, and epistemic health sp
 
 ### Bottom-Up Economic Restructuring (Dual Economy)
 Structural movements allow populations to bypass governance and restructure the economy directly. A dual economy emerges with S-curve adoption dynamics. Five scaling models (polycentric, confederal, delegative, congress, participatory planning) reduce coordination costs at scale. Autocratic governance cracks down but abandons enforcement when state capacity is drained. Financial metrics (Minsky, debt, financial depth) scale to zero in currencyless transitions. Post-transition, coordination instability replaces financial instability as the primary risk. Taxation ceases in currencyless economies. Access: Events → Movements → Structural Movements. Monitor: Society → Finance & Trade.
+
+---
+
+## Validation Tools
+
+civ-sim includes a validation framework for systematic assessment of simulation behavior. All commands run from the project root and save results as JSON to the `validation_results/` directory.
+
+### Uncertainty Quantification (UQ)
+```bash
+node js/validation_suite.js uq --seeds=20
+```
+Runs 12 countries across 3 target metrics with seed-averaged uncertainty bands. Tests whether the simulation produces appropriately bounded variance — too tight means the model is overfit; too wide means it lacks structural constraint. Current score: 11-14/36 (see Coverage and Limitations for interpretation).
+
+### Hindcast Scenarios
+```bash
+node js/hindcast_runner.js --seeds=10
+```
+Four historical trajectories used as structural plausibility checks:
+- **South Korea 1960-2010** — rapid industrialization, demographic transition, democratization
+- **Chile 1970-2000** — coup, authoritarian rule, neoliberal restructuring, re-democratization
+- **Russia 1985-2015** — Soviet collapse, institutional decay, partial recovery
+- **Rwanda 1990-2020** — genocide, post-conflict state-building, authoritarian development
+
+Current score: 30/38 across all scenarios.
+
+### Calibration Scenarios
+```bash
+node js/scenario_test_harness.js
+```
+12 scenarios testing specific causal chains (e.g., youth bulge instability, wealth capture spirals, demographic transition timing). Each scenario asserts that a known structural mechanism produces the expected directional effect.
+
+### Cross-Validation
+```bash
+node js/validation_suite.js crossval
+```
+Holds out parameter combinations and tests generalization — does the simulation produce plausible results for configurations it was not tuned against?
+
+### Sensitivity Analysis
+```bash
+node js/validation_suite.js sensitivity
+```
+Sweeps individual parameters to confirm monotonic relationships where theory demands them and to identify unexpected nonlinearities.
+
+### Current Validation Summary (September 2026)
+
+| Metric | Score | Notes |
+|--------|-------|-------|
+| UQ coverage | 11-14/36 | Deliberately conservative; many corridors are structurally wide |
+| Hindcast plausibility | 30/38 | Strongest on Korea and Rwanda; Chile transition timing is loose |
+| Robustness | ~77% | Fraction of random parameter sweeps that remain structurally plausible |
+
+---
+
+## Companion Module (Demographics)
+
+A demographic companion module (`companion.js`) provides sex-disaggregated population cohorts, social strata dynamics, information diffusion networks, and collective action modeling. It integrates bidirectionally with the main simulation:
+
+- **Population cohorts**: Age-sex pyramids with cohort-specific mortality, fertility, and migration rates that feed back into the main demographic transition model
+- **Social strata dynamics**: Mobility between strata, differential access to resources and information, strata-specific behavioral norms
+- **Information diffusion networks**: Models how information (and disinformation) propagates through social networks with strata-dependent transmission rates
+- **Collective action modeling**: Threshold-based mobilization (Granovetter 1978), free-rider dynamics, and movement sustainability as functions of grievance, network density, and state repression
+
+The companion module runs alongside the main simulation and exchanges state each turn. It is optional — the main simulation functions without it, but research questions involving within-population heterogeneity benefit from enabling it.
+
+---
+
+## Research Panel
+
+The UI includes a research panel (`research_panel.js`, toggle with the Research button or keyboard shortcut) that provides diagnostic and analysis tools for researchers:
+
+- **Parameters tab**: Read-only inspection of all model coefficients with confidence tier tags (M/I/T). Includes `Suppress Random Events` toggle for fully deterministic runs.
+- **Export tab**: Full Track 2 CSV download, research seed display, and run metadata
+- **Diagnostics tab**: Real-time feedback loop tracing, state variable inspection, and cross-system effect decomposition
+- **Analysis tools**: Comparative run overlays, parameter sensitivity sweeps, and structural plausibility scoring
 
 ---
 
@@ -211,7 +285,7 @@ Full table with 18 systems in `MODELING_ASSUMPTIONS.md` Section 7.
 
 civ-sim models approximately 71-73% of the practical ceiling for civilization dynamics (~50% absolute coverage of real-world complexity). The identified sweet spot is 72-75%, beyond which added complexity produces diminishing returns.
 
-**Validation status:** 10 historical scenarios scored 7.8/10 average structural plausibility across 6 rounds of development. Out-of-sample validation (8 untested scenarios) confirmed robustness for novel parameter combinations but revealed convergence in untested authoritarian subtypes. See `HISTORICAL_SCENARIO_RESULTS.md` for full data.
+**Validation status (September 2026):** The project now has a formal validation framework (see Validation Tools above). Current scores: hindcast plausibility 30/38, UQ coverage 11-14/36, robustness ~77%. Earlier qualitative validation (10 historical scenarios, 7.8/10 average structural plausibility across 6 rounds of development) and out-of-sample validation (8 untested scenarios) confirmed robustness for novel parameter combinations but revealed convergence in untested authoritarian subtypes. See `HISTORICAL_SCENARIO_RESULTS.md` for historical data and `validation_results/` for current quantitative results.
 
 **Not modeled (with rationale):**
 - Individual psychology / personality differences
@@ -312,6 +386,275 @@ Structural movements bypass governance to directly restructure the economy. A du
 
 ---
 
+## Production Decentralization (Pass 10)
+
+Two **independent** parameters — energy and agriculture production scale — plus
+three supporting subsystems. Full derivation in `pass10-spec.md`; assumptions
+and anchors in `MODELING_ASSUMPTIONS.md` §12.
+
+### Confidence tiers
+
+Every coefficient is tagged **M** (measured anchor), **I** (interpolated
+strictly between ≥2 measured anchors, never extrapolated past them), or **T**
+(mechanism supported, magnitude assumed). Pathway tiers are exposed in the UI
+tooltips.
+
+### Independent variables
+
+| Variable | Range | Notes |
+|----------|-------|-------|
+| `energySystem.pathway` | 5 pathways + none | see below |
+| `energySystem.distributedShare` | 0–100 | pinned near 100 pre-industrialization (boundary condition) |
+| `agricultureSystem.pathway` | 5 pathways + none | independent of energy |
+| `agricultureSystem.localShare` | 0–100 | relaxes toward a structural baseline from trade/urbanization/tech |
+| `agricultureSystem.diversificationIntensity` | 0–100 | player-steerable via two policy buttons |
+
+### Derived / dependent variables (in Track 2 export)
+
+`energyDistributedShare`, `energyPathway`, `energyPerCapita`,
+`wellbeingEnergyCeiling`, `agLocalShare`, `agDiversification`, `agPathway`,
+`landEquivalentRatio`, `agEcosystemFunction`, `agInputSubstitution`,
+`agCoercionYieldFactor`, `participationDepth`, `participationCoercion`.
+
+### The five pathways
+
+| Pathway | Coercion | State-dependent | Ownership breadth | Tier |
+|---------|----------|-----------------|-------------------|------|
+| grassroots | 0 | No | 0.85 | I |
+| incentive | 10 | Yes | 0.70 → 0.35 at scale | M |
+| decree_ownership | 25 | Yes | 0.55 | M |
+| decree_participation | 85 | Yes | 0.30 | M |
+| hybrid | 30 | Yes | 0.60 | I |
+
+The `decree_ownership` / `decree_participation` split is the most important
+design decision in Pass 10. Mandating an *offer of ownership* and mandating
+*participation itself* are both legislation and produce opposite outcomes;
+collapsing them into one pathway would erase the finding.
+
+### Experiments this supports
+
+1. **Crisis vs subsidy as adoption drivers.** Hold pathway fixed, vary
+   `maintenanceDebt` / `infrastructureLevel` / `stateCapacity`. Expect
+   grassroots to overtake state programmes by ~2× under state collapse, and to
+   lose to them under a functioning state.
+2. **The capital gate.** Impose crisis with `financialDepth` and
+   `averageWellbeing` low. Adoption should stall and wellbeing fall — scarcity
+   without a funding channel produces hardship, not capacity.
+3. **Coercion isolation.** Hold LER and ecosystem function identical, vary only
+   pathway. `agCoercionYieldFactor` should fall to ~0.55 under compulsory
+   reorganization while structural inputs stay constant. This isolates the
+   coercion effect from the design effect.
+4. **Does state strength rescue compulsion?** Set institutional quality and
+   state capacity high, then compel. It should not help. This is deliberate —
+   the USSR, Great Leap Forward and Romanian systematization were all
+   high-capacity states.
+5. **Knowledge dependence of ecosystem function.** Build `agEcosystemFunction`
+   up, then degrade `educationQuality` / `stateCapacity` / `socialTrust`. The
+   function should decay, reproducing the documented "lack of long-term
+   follow-up to training" failure mode.
+6. **Input-substitution gradient.** Vary `technologyLevel`. Ecosystem-function
+   yield gains should be large at low tech and small at high tech — these
+   systems replace inputs that are missing.
+7. **Trade variance swap.** Vary `localShare` against `tradeDependency` under
+   alternating global shocks and local droughts. Neither should dominate.
+8. **Energy–wellbeing saturation.** Sweep `energyPerCapita` and confirm the
+   ceiling `30 + 55(1 − e^(−GJ/35))` binds below ~75 GJ/cap and is inert above
+   ~150.
+
+### Seeded reproducibility — FIXED, and it changes how you should work
+
+Set `researchSeed` in the setup wizard (or `config.researchSeed`
+programmatically) and runs are now **bit-identical**. Verified: three runs on
+one seed produce identical population, wellbeing, stability and food security
+to three decimal places over 150 turns; different seeds diverge.
+
+This was broken until the Pass 10 tightening pass. `researchSeed` was being
+set and `Utils.seedRNG()` existed, but map terrain generation, resource
+placement and NPC generation all called `Math.random()` directly, and the
+value-noise permutation table was shuffled at module load before any seed could
+apply. Three runs on the same seed gave three different worlds.
+
+**Implication for prior results:** every balance and historical-scenario
+finding recorded before this fix was produced by a simulation that could not
+reproduce its own runs. Treat those numbers as indicative, not replicable, and
+re-run anything load-bearing.
+
+**Practical guidance:** always set a seed. Report it. For a distribution rather
+than a point estimate, sweep seeds (`for (const s of [1001, 1002, ...])`) —
+that gives you controlled variance instead of uncontrolled noise. Presets
+remain genuinely variable across seeds: `barter_tribal` survives on seed 1001
+and collapses on 2002, which is a real property of that configuration rather
+than a defect.
+
+### Enabling support (independent of pathway)
+
+`energySystem.enablingSupport` and `agricultureSystem.enablingSupport`, 0–100.
+Capability provision — material access, training, expert consultation, tax
+relief, expenditure reimbursement — orthogonal to pathway coercion. Events:
+`fund_enabling_support` / `reduce_enabling_support` with `{domain}`.
+
+| Property | Behaviour | Tier |
+|----------|-----------|------|
+| Adoption boost | bounded by measured subsidy elasticity (~0.65 for PV) | M |
+| Progressivity | substitutes for capital; large effect at low capital access, small at high | M |
+| Knowledge boost | raises the ecosystem-function ceiling; **no spillover to non-participants** | I |
+| Elite capture | effectiveness falls with land concentration and weak institutions | M |
+| Fiscal drain / decay | costs state capacity while active; lapses without renewal | M |
+
+The knowledge boost is tiered **I** deliberately: the Farmer Field School
+evidence base contains no study at low risk of bias and likely overstates
+effects.
+
+### Distribution and post-harvest loss
+
+`agricultureSystem.distributionLocality`, plus derived `chainLoss`,
+`cosmeticRejection`, `harvestMaturity`, `nutritionalQuality`. Capped at
+`100 − urbanization × 0.7`.
+
+Nutritional quality feeds **disease burden and infant mortality only** — never
+calorie supply. Keep that separation when interpreting output; conflating them
+is the most likely misreading.
+
+Additional experiments:
+
+9.  **Support vs compulsion at matched adoption.** Tune `enablingSupport` and
+    `decree_participation` to reach the same `agLocalShare`, then compare
+    wellbeing, legitimacy and `agCoercionYieldFactor`. This isolates *how* a
+    structure was achieved from *what* was achieved.
+10. **Elite capture gradient.** Sweep `landConcentration` at fixed support.
+    `agSupportEffectiveness` should fall away from `agEnablingSupport`.
+11. **Support decay.** Fund support, then stop. Both support and
+    `agEcosystemFunction` should decay — the documented follow-up failure.
+12. **Loss chain decomposition.** Sweep urbanization and trade dependency;
+    `distributionLocality` falls and `agChainLoss` / `agCosmeticRejection`
+    rise. Expect roughly 8.5% → 16% chain loss and 1.4% → 10% net cosmetic
+    rejection across the range.
+13. **Nutrition vs calories.** Confirm `agNutritionalQuality` moves disease
+    burden without moving `foodSecurity` directly.
+
+### Measure policy effects with `pathwayOffset`, not total share
+
+`energyDistributedShare` and `agLocalShare` are the sum of two very different
+things: a **structural baseline** set by infrastructure, urbanization and state
+capacity (physics), and a **programme contribution** earned by the chosen
+pathway (policy). Exported separately as `energyStructuralBaseline` /
+`energyPathwayOffset` and `agStructuralBaseline` / `agPathwayOffset`.
+
+For any experiment about *policy*, use the offset. Total share will otherwise
+be dominated by the baseline and your policy signal will look far weaker than
+it is — a mistake made and corrected during development.
+
+### Inspecting the coefficients
+
+Every Pass 10 constant is exposed read-only in the **Research panel →
+Parameters** tab, tagged with its confidence tier, across ten sections. You do
+not need to read source to audit the model. `Suppress Random Events` on the
+same tab, combined with a fixed `researchSeed`, gives fully deterministic runs
+with stochastic gates bypassed.
+
+### Tiering note on nutritional quality
+
+`agNutritionalQuality` drives two outcomes with **different** confidence:
+
+- **Disease burden** — tier M, span ~8 points across the realistic quality range.
+- **Infant mortality** — tier **I**, span ~9 points, coefficient deliberately
+  halved. The measured evidence concerns vitamin content in ripe versus
+  mature-green produce; extending that to population child mortality is an
+  extrapolation via micronutrient status, not an established link. Treat any
+  result that leans on this channel as suggestive.
+
+Both are suppressed below food security 25, where calorie shortfall dominates.
+
+### Localization
+
+No panel in civ-sim is localized — this is project-wide, not specific to Pass
+10. `I18N` covers NPC and interview content plus a few top-level buttons.
+Research output and panel labels are English only.
+
+## Active Travel Networks (Pass 11)
+
+Independent variables: `activeTravel.networkCoverage`, `.networkContinuity`,
+`.transitIntegration`, `.jobsHousingBalance`, `.lightingLevel`,
+`.patrolIntensity`, `.amenityLevel`, `.pathway`, `.enablingSupport`.
+Events: `build_active_network`, `integrate_transit`, `improve_path_safety`,
+`balance_jobs_housing`, `set_mobility_pathway`.
+
+Exported: `atModeShare`, `atModeShareMale`, `atModeShareFemale`,
+`atNetworkCoverage`, `atNetworkContinuity`, `atTransitIntegration`,
+`atEffectiveReach`, `atPerceivedSafety`, `atJobsHousingBalance`,
+`atEnergySavedShare`, `atAnimalPowerShare`, `atStructuralBaseline`.
+
+### Experiments this supports
+
+14. **Transit integration as the dominant lever.** Hold network quality fixed,
+    sweep `transitIntegration`. Expect mode share roughly to double and
+    `atEffectiveReach` to rise from ~26 to ~59. Paths without transit should
+    produce almost nothing in a high-urbanization civ — this is the
+    distance-decay constraint, not a bug.
+15. **Continuity vs coverage.** Equal-length networks at continuity 80 vs 20
+    should differ by ~40% in mode share.
+16. **Gendered access.** Sweep `lightingLevel` / `patrolIntensity` and compare
+    `atModeShareFemale` against `atModeShareMale`. Without the safety layer the
+    ratio is ~0.5; with it ~0.7. This is the model's most policy-relevant
+    asymmetry and it is anchored on measured fear differentials.
+17. **Jobs–housing gate.** Sweep `jobsHousingBalance` at fixed network quality.
+    Low balance should suppress everything else.
+18. **Environmental scale check.** Confirm `atEnergySavedShare` stays in low
+    single digits. A 10-point mode shift should be ~2% of total energy. If it
+    exceeds ~5% something is miscalibrated — an early implementation overstated
+    the pollution channel by more than an order of magnitude.
+19. **Animal power density inversion.** Sweep `urbanizationRate` at fixed
+    `animalPowerShare`. Below 45% expect a small benefit; above it, rising
+    pollution, disease burden and sanitation loss, plus a food-security hit from
+    hay-versus-food land competition.
+
+### Averaging: single seeds lie about interactions
+
+Seeded runs are reproducible, but **changing a configuration changes RNG
+consumption**, so two configs on the same seed are not a controlled comparison
+once their random draws diverge. During development an animal-power test read
++9 wellbeing on one seed where the true 5-seed average was −1.4 — opposite
+sign.
+
+**Average at least five seeds for any cross-system claim.** Single seeds are
+fine only for exact-reproducibility checks and for stub-based isolation where
+the RNG stream is unchanged.
+
+### Benefits scale with what is displaced
+
+`atMarginalShift` (mode share above `atStructuralBaseline`) times motorization
+context drives every Pass 11 benefit. This is deliberate: the HR 0.59 anchor is
+measured against a sedentary car-using counterfactual, so a society without
+motorized transport gains nothing from "adopting" active travel — everyone
+already walks and the baseline health reflects it. Verified monotonic:
+−0.4 / −2 / −6 / −10.2 disease burden across neolithic → modern.
+
+If you are comparing eras, compare marginal gains, not total mode share.
+
+### Isolating Pass 11 effects
+
+Stub `_processActiveTravel` on the simulation prototype to get a clean
+counterfactual on the same seed. At full build the isolated effects are
+pollution −4, disease burden −5, life expectancy +1, wellbeing +1.
+
+### Not modelled, deliberately
+
+- **Drone patrol.** The one rigorous aerial-patrol trial found no significant
+  effect. No coefficient was invented.
+- **Emergency call boxes as a use channel.** Documented as rarely used for
+  their intended purpose; they enter only through perception, at low weight.
+- **Noise as its own variable.** civ-sim has none; routed to wellbeing.
+
+### What is deliberately absent
+
+- No coded energy×agriculture coupling. They interact emergently through shared
+  land (power density), labour (diversification intensity) and state capacity.
+- No per-technology energy breakdown. Aggregate only.
+- No "permaculture" parameter. The peer-reviewed yield evidence for
+  permaculture-as-a-system does not exist; its component mechanisms are
+  modelled instead via `diversificationIntensity` and `ecosystemFunction`.
+- No emissions bonus for local food.
+
 ## File Reference
 
 | File | Contents |
@@ -322,6 +665,12 @@ Structural movements bypass governance to directly restructure the economy. A du
 | `QUICK_START_CASUAL.md` | Companion guide for non-specialist users |
 | `js/config.js` | All constants, preset values, stage definitions, threshold definitions |
 | `js/simulation.js` | All processing methods with explicit drift rates and cross-effects |
+| `js/companion.js` | Demographic companion module — population cohorts, strata dynamics, diffusion networks |
+| `js/research_panel.js` | Research panel UI — parameter inspection, diagnostics, analysis tools |
+| `js/validation_suite.js` | Validation framework — UQ, cross-validation, sensitivity analysis |
+| `js/hindcast_runner.js` | Hindcast scenario runner — historical trajectory plausibility tests |
+| `js/scenario_test_harness.js` | Calibration scenario harness — 12 directional-effect assertions |
+| `validation_results/` | JSON output from validation runs |
 
 ---
 

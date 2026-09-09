@@ -1,5 +1,6 @@
 node_modules/
 dist/
+web-embed/
 .claude/
 *.docx
 package-lock.json

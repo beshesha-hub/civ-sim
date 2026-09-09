@@ -1,4 +1,6 @@
-# Historical Scenario Test Results
+# Historical Scenario Test Results (ARCHIVED)
+
+> **This document is superseded by [HISTORICAL_SCENARIO_RESULTS_SEEDED.md](HISTORICAL_SCENARIO_RESULTS_SEEDED.md)**, which uses deterministic seeded runs. Kept for historical reference only.
 
 **civ-sim** | 10 Scenarios x 3 Runs Each | March 2026 | Round 5 (After 35 Model Enhancements)
 
