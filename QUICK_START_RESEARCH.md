@@ -112,7 +112,7 @@ civ-sim includes a validation framework for systematic assessment of simulation 
 ```bash
 node js/validation_suite.js uq --seeds=20
 ```
-Runs 12 countries across 3 target metrics with seed-averaged uncertainty bands. Tests whether the simulation produces appropriately bounded variance — too tight means the model is overfit; too wide means it lacks structural constraint. Current score: 11-14/36 (see Coverage and Limitations for interpretation).
+Runs 12 countries across 3 target metrics with seed-averaged uncertainty bands. Tests whether the simulation produces appropriately bounded variance — too tight means the model is overfit; too wide means it lacks structural constraint. Current score: ~10-13/36 (28-36%) (see Coverage and Limitations for interpretation).
 
 ### Hindcast Scenarios
 ```bash
@@ -124,7 +124,7 @@ Four historical trajectories used as structural plausibility checks:
 - **Russia 1985-2015** — Soviet collapse, institutional decay, partial recovery
 - **Rwanda 1990-2020** — genocide, post-conflict state-building, authoritarian development
 
-Current score: 30/38 across all scenarios.
+Current score: ~27-29/38 (71-76%) across all scenarios.
 
 ### Calibration Scenarios
 ```bash
@@ -148,9 +148,37 @@ Sweeps individual parameters to confirm monotonic relationships where theory dem
 
 | Metric | Score | Notes |
 |--------|-------|-------|
-| UQ coverage | 11-14/36 | Deliberately conservative; many corridors are structurally wide |
-| Hindcast plausibility | 30/38 | Strongest on Korea and Rwanda; Chile transition timing is loose |
+| UQ coverage | ~10-13/36 (28-36%) | Deliberately conservative; many corridors are structurally wide |
+| Hindcast plausibility | ~27-29/38 (71-76%) | Strongest on Korea and Rwanda; Chile transition timing is loose |
 | Robustness | ~77% | Fraction of random parameter sweeps that remain structurally plausible |
+
+**Counterfactual diagnostic findings (7 countries):** China near-perfect (err=4.9), Russia good (err=12.7), Germany configurable (err=39.8 reduced to 6.1 with event injection), USA structural (err=34.5), India structural (err=25.4), Nigeria structural (err=18.4), Singapore structural (err=52.3, events help 19%). See Lab Mode section above for details.
+
+---
+
+## Lab Mode (Counterfactual Analysis)
+
+Lab Mode provides snapshot, fork, and trajectory comparison tools for controlled counterfactual experiments.
+
+- **Snapshot:** Capture the full civilization state at any turn as a restoration point
+- **Fork:** Branch from a snapshot to create parallel trajectories under different conditions
+- **Compare:** Overlay forked trajectories to isolate the effect of specific interventions
+
+**Research application:** The 7-country diagnostic analysis used Lab Mode to classify UQ deviations as structural vs configurable. Germany's error (39.8) dropped to 6.1 with reunification-era event injection, confirming the deviation was historically specific rather than structural. China (4.9) and Russia (12.7) required no intervention. USA (34.5), India (25.4), Nigeria (18.4), and Singapore (52.3) showed irreducible structural error traceable to architectural limits (city-state dynamics, bistability, informal economy effects).
+
+Access Lab Mode from the Research panel.
+
+## Custom Events System
+
+A configurable event framework for modeling specific historical shocks and policy interventions.
+
+- **12 presets:** Pre-built events covering economic crises, regime transitions, environmental disasters, technological disruptions, and demographic shocks
+- **20 sliders:** Fine-grained control over event magnitude across all 13 domains
+- **Structural modifiers:** Change governance type, economic model, freedom level, or other foundational parameters as part of the event
+
+Custom Events enable controlled experiments that the wizard configuration alone cannot express — for example, injecting a reunification-equivalent shock at a specific turn to test whether a country's deviation is configurable, or modeling a simultaneous pandemic-plus-financial-crisis to study interaction effects.
+
+Access from the Events panel.
 
 ---
 
@@ -285,7 +313,7 @@ Full table with 18 systems in `MODELING_ASSUMPTIONS.md` Section 7.
 
 civ-sim models approximately 71-73% of the practical ceiling for civilization dynamics (~50% absolute coverage of real-world complexity). The identified sweet spot is 72-75%, beyond which added complexity produces diminishing returns.
 
-**Validation status (September 2026):** The project now has a formal validation framework (see Validation Tools above). Current scores: hindcast plausibility 30/38, UQ coverage 11-14/36, robustness ~77%. Earlier qualitative validation (10 historical scenarios, 7.8/10 average structural plausibility across 6 rounds of development) and out-of-sample validation (8 untested scenarios) confirmed robustness for novel parameter combinations but revealed convergence in untested authoritarian subtypes. See `HISTORICAL_SCENARIO_RESULTS.md` for historical data and `validation_results/` for current quantitative results.
+**Validation status (September 2026):** The project now has a formal validation framework (see Validation Tools above). Current scores: hindcast plausibility ~27-29/38 (71-76%), UQ coverage ~10-13/36 (28-36%), robustness ~77%. A 7-country counterfactual diagnostic classifies UQ deviations as structural (USA, India, Nigeria, Singapore) vs configurable (Germany). Earlier qualitative validation (10 historical scenarios, 7.8/10 average structural plausibility across 6 rounds of development) and out-of-sample validation (8 untested scenarios) confirmed robustness for novel parameter combinations but revealed convergence in untested authoritarian subtypes. See `HISTORICAL_SCENARIO_RESULTS.md` for historical data and `validation_results/` for current quantitative results.
 
 **Not modeled (with rationale):**
 - Individual psychology / personality differences
@@ -377,6 +405,8 @@ All prosperity, wealth dispersion, corruption decay, climate resilience, and env
 - What scaling model (polycentric, confederal, liquid democracy, congress system, participatory planning) is most effective for coordinating national-scale economic restructuring? (scaling model comparison)
 - At what behavioral alignment threshold does a currency-refusal movement reach critical mass? (S-curve adoption dynamics)
 - How does a currencyless post-transition economy compare in stability to a market economy? (coordination instability vs Minsky cycle)
+- Which country-level deviations in UQ results are structural (inherent to general mechanisms) versus configurable (addressable through event injection)? (Lab Mode counterfactual diagnostics)
+- What is the marginal impact of a specific historical shock (reunification, revolution, pandemic) on a civilization's trajectory? (Custom Events + Lab Mode fork/compare)
 
 ### Bottom-Up Economic Restructuring
 Structural movements bypass governance to directly restructure the economy. A dual economy emerges during transition with S-curve adoption (Rogers), coordination costs (Ostrom), supply chain disruption (Leontief), and governance adaptation (selectorate theory). Five scaling models provide national-scale coordination: Polycentric (Ostrom), Confederal (Rojava), Liquid Democracy, People's Congress (adapted Jamahiriya with Ostrom safeguards), and Participatory Planning (Parecon). Financial system metrics (Minsky, debt, financial depth) scale to zero in currencyless transitions; coordination instability replaces them. Taxation ceases post-transition. Grounded in: ILO informal economy data, currency crisis literature, Ostrom's commons governance (Nobel 2009), Rojava cooperative experiment, Parecon (Albert 2003). Access via Events → Movements → Structural Movements; monitor via Society → Finance & Trade.

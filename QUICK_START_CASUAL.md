@@ -323,6 +323,30 @@ tab to see where you sit.
 
 ---
 
+## Lab Mode (Counterfactual Analysis)
+
+Want to test "what if?" questions? Lab Mode lets you experiment with your civilization's trajectory without losing your current game.
+
+- **Snapshot** — Save your civilization's current state at any point
+- **Fork** — Create a branching copy from a snapshot and make different choices
+- **Compare Trajectories** — Run two versions side by side and see how they diverge over time
+
+**Example:** Snapshot your civilization at turn 50. Fork it. In one branch, invest heavily in education. In the other, invest in military. Run both 50 more turns and compare wellbeing, stability, and institutional quality. This shows you which structural choices actually matter — and which ones don't.
+
+Access Lab Mode from the Research panel or the toolbar.
+
+## Custom Events
+
+Design your own historical shocks and policy interventions using the Custom Events system.
+
+- **12 presets** — Pre-built events covering common scenarios (economic crisis, democratic revolution, environmental catastrophe, technological breakthrough, and more)
+- **20 sliders** — Fine-tune the event's impact across economy, governance, demographics, ecology, psychology, and other domains
+- **Structural modifiers** — Change governance type, economic model, or other foundational parameters as part of the event
+
+Custom Events let you model specific historical scenarios ("What if a pandemic hit during a financial crisis?") or test policy packages ("What if we combined land reform with universal education?"). Access from the Events panel.
+
+---
+
 ## Want to Go Deeper?
 
 - `USER_MANUAL.md` — Full documentation of every panel, metric, and system

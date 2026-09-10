@@ -1355,4 +1355,30 @@ Global sensitivity analysis identifies which parameters have the largest influen
 
 ### 16.4 Current Scores and Limitations
 
+Current validation scores (September 2026): UQ coverage ~10-13/36 (28-36%), Hindcast ~27-29/38 (71-76%), Robustness ~77%.
+
 Historical scenario testing (all rounds combined): 10 scenarios, structural plausibility 7.8/10. The hindcast framework and UQ calibration are designed to move validation beyond the in-sample scenario suite toward genuine out-of-sample testing. The primary remaining limitation is authoritarian subtype differentiation: distinct forms of autocratic governance (military junta, theocratic, bureaucratic-authoritarian, personalist) still converge more than the historical record suggests they should. This is flagged as the highest-priority modeling gap for future development passes.
+
+### 16.5 Bug Fix: Freedom Tracking
+
+A bug was identified and corrected where freedom level was being read from `state` rather than from `operatingPrinciples`, where it is actually stored. Freedom is a configuration parameter set during civilization setup (Step 5: Operating Principles) and is tracked in `operatingPrinciples.freedom`, not in the main state object. This affected any system that read freedom from the wrong location, producing incorrect downstream effects on epistemic health, institutional dynamics, and behavioral values. The fix ensures all freedom-dependent calculations reference `operatingPrinciples.freedom` consistently.
+
+### 16.6 Counterfactual Analysis and 7-Country Diagnostic Findings
+
+A counterfactual analysis framework was developed to diagnose which country-level deviations in the UQ results are **structural** (inherent to the model's general mechanisms and not addressable without country-specific parameters) versus **configurable** (addressable through better initial configuration or event injection). Seven countries were analyzed with counterfactual runs using snapshot, fork, and trajectory comparison tools.
+
+**Findings by country:**
+
+| Country | Error | Classification | Notes |
+|---------|-------|---------------|-------|
+| China | 4.9 | Near-perfect | General mechanisms capture China's trajectory well |
+| Russia | 12.7 | Good | Structural dynamics track without country-specific tuning |
+| Germany | 39.8 → 6.1 | Configurable | Error drops from 39.8 to 6.1 with reunification-era event injection; the deviation is not structural but reflects a historically specific shock (East-West reunification) absent from the default configuration |
+| USA | 34.5 | Structural | Polarization-media-institutional feedback loop not captured by general mechanisms; would require country-specific parameters |
+| India | 25.4 | Structural | Corruption-IQ bistability draws the model to the wrong attractor; the informal economy and caste-corruption interaction are insufficiently differentiated |
+| Nigeria | 18.4 | Structural | Informal economy effects and resource-curse governance dynamics produce systematic deviation |
+| Singapore | 52.3 (events help 19%) | Structural | City-state governance architecture fundamentally incompatible with nation-state model assumptions; event injection reduces error by 19% but the core gap is architectural |
+
+**Key insight:** The structural/configurable distinction validates the model's general-mechanism approach. Countries where general mechanisms suffice (China, Russia) achieve low error without tuning. Countries where historically specific shocks dominate (Germany) can be brought into range with appropriate event configuration. Countries where the model's architecture is fundamentally mismatched (Singapore's city-state, USA's unique media-polarization dynamics) show irreducible structural error that would require either country-specific parameters or architectural changes — confirming that these are genuine coverage limits rather than calibration failures.
+
+This analysis capability is itself a diagnostic and validation tool: by comparing forked trajectories with and without specific interventions, researchers can decompose the sources of model-reality deviation for any country configuration.

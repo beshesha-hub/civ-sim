@@ -420,6 +420,57 @@ Accessed via the **🔬 Research** button. Designed for Track 2 (research mode) 
 
 ---
 
+## Lab Mode (Counterfactual Analysis)
+
+Lab Mode provides tools for controlled counterfactual experiments. Access from the Research panel or main toolbar.
+
+### Snapshot
+Save the complete civilization state at any turn. Multiple snapshots can be stored simultaneously. Each snapshot captures all ~130 state variables, operating principles, technology tree state, and active events.
+
+### Fork
+Create a branching copy of the simulation from any saved snapshot. The forked version runs independently — make different policy choices, inject different events, or change configuration parameters. Both the original and forked trajectories continue advancing independently.
+
+### Compare Trajectories
+Overlay the original and forked trajectories to see where and how they diverge. The comparison view shows key metrics (wellbeing, stability, institutional quality, equality, epistemic health) side by side over time, highlighting the specific turns where interventions caused trajectories to separate.
+
+### Research Application
+Lab Mode was used for the 7-country counterfactual diagnostic analysis that classified UQ deviations as structural vs configurable. By forking country configurations and injecting historically specific events (e.g., reunification-era shocks for Germany), researchers can isolate which deviations are inherent to the model's general mechanisms and which are addressable through better configuration.
+
+---
+
+## Custom Events System
+
+The Custom Events system allows users to design and inject specific historical shocks and policy interventions at any point during the simulation. Access from the Events panel.
+
+### 12 Presets
+Pre-built event templates covering common scenarios:
+- Economic crisis, trade shock, debt crisis
+- Democratic revolution, military coup, governance reform
+- Environmental disaster, climate emergency
+- Technological breakthrough, automation wave
+- Pandemic, demographic shock
+- Cultural/ideological upheaval
+
+Each preset sets reasonable defaults across all 20 sliders but can be customized before injection.
+
+### 20 Sliders
+Fine-grained control over event impact across all modeled domains. Each slider controls the magnitude and direction of impact on a specific system: economy, governance, demographics, ecology, psychology, technology, social structure, military, information, health, and others. Sliders range from strongly negative to strongly positive impact.
+
+### Structural Modifiers
+In addition to the continuous sliders, Custom Events can trigger discrete structural changes:
+- Change governance type (e.g., from autocratic to representative)
+- Change economic model (e.g., from market to mixed)
+- Modify freedom level or other operating principles
+- Trigger or suppress specific subsystem states
+
+### Use Cases
+- **Historical modeling:** Inject reunification, revolution, or war events at historically accurate turns to test whether the simulation reproduces known trajectories
+- **Policy testing:** Model specific policy packages (land reform + universal education + press freedom protections) and compare outcomes against baseline
+- **Stress testing:** Combine multiple simultaneous shocks (pandemic + financial crisis + climate event) to test civilizational resilience under extreme conditions
+- **Validation:** The 7-country diagnostic used Custom Events to determine that Germany's UQ deviation dropped from 39.8 to 6.1 with appropriate event injection
+
+---
+
 ## Technology Panel (🔬)
 
 Accessed via the **🔬 Tech** button or keyboard shortcut **T**. Manages the civilization's technology tree, technology introduction/discontinuation, custom tech analysis, and automation levels.
@@ -1128,7 +1179,7 @@ node js/hindcast_runner.js --seeds=10
 node js/scenario_test_harness.js
 ```
 
-Current scores (September 2026): UQ Coverage 11-14/36, Hindcast 30/38 (79%), Robustness ~77%.
+Current scores (September 2026): UQ Coverage ~10-13/36 (28-36%), Hindcast ~27-29/38 (71-76%), Robustness ~77%.
 
 See `MODEL_DIAGNOSTICS.md` for detailed findings and `QUICK_START_RESEARCH.md` for research workflow guidance.
 

@@ -64,6 +64,11 @@ class SimulationEngine {
         civ.state._baseEducationQuality = civ.state.educationQuality ?? 50;
       }
 
+      // Sync operatingPrinciples.freedomLevel into state so sub-modules can read it
+      if (civ.operatingPrinciples) {
+        civ.state.freedomLevel = civ.operatingPrinciples.freedomLevel;
+      }
+
       // Companion pre-turn snapshot (captures state before civ-sim modifies it)
       if (companion?.isActive) companion.capturePreTurnSnapshot(civ);
 
@@ -1048,9 +1053,9 @@ class SimulationEngine {
 
     // 6. Wealth disparity → resentment (Alesina & Spolaore 2003)
     // Large wealth gaps between neighbors breed grievance
-    const c1Wealth = c1.state.wealthConcentration ?? 50;
-    const c2Wealth = c2.state.wealthConcentration ?? 50;
-    const wealthGap = Math.abs((c1.state.wellbeing ?? 50) - (c2.state.wellbeing ?? 50));
+    const c1Wealth = c1.economic?.wealthConcentration ?? 50;
+    const c2Wealth = c2.economic?.wealthConcentration ?? 50;
+    const wealthGap = Math.abs((c1.state.averageWellbeing ?? 50) - (c2.state.averageWellbeing ?? 50));
     if (wealthGap > 25) {
       rel1.attitude -= 0.2;
       rel2.attitude -= 0.2;
@@ -3794,6 +3799,21 @@ class SimulationEngine {
         }
       }
     }
+    if (event.structuralModifiers) {
+      const sm = event.structuralModifiers;
+      const s = civ.state;
+      if (sm.socialTrust)          s.socialTrust          = Utils.clamp((s.socialTrust ?? 50)          + sm.socialTrust, 0, 100);
+      if (sm.polarization)         s.politicalPolarization = Utils.clamp((s.politicalPolarization ?? 30) + sm.polarization, 0, 100);
+      if (sm.corruption)           s.corruptionLevel      = Utils.clamp((s.corruptionLevel ?? 30)      + sm.corruption, 0, 100);
+      if (sm.stateCapacity)        s.stateCapacity        = Utils.clamp((s.stateCapacity ?? 50)        + sm.stateCapacity, 0, 100);
+      if (sm.freedomLevel)         civ.operatingPrinciples.freedomLevel = Utils.clamp((civ.operatingPrinciples?.freedomLevel ?? 50) + sm.freedomLevel, 0, 100);
+      if (sm.legitimacy)           s.legitimacyLevel      = Utils.clamp((s.legitimacyLevel ?? 50)      + sm.legitimacy, 0, 100);
+      if (sm.wealthConcentration)  civ.economic.wealthConcentration = Utils.clamp((civ.economic.wealthConcentration ?? 50) + sm.wealthConcentration, 0, 100);
+      if (sm.socialMobility)       s.socialMobility       = Utils.clamp((s.socialMobility ?? 50)       + sm.socialMobility, 0, 100);
+      if (sm.epistemicHealth)      s.epistemicHealth       = Utils.clamp((s.epistemicHealth ?? 50)      + sm.epistemicHealth, 0, 100);
+      if (sm.collectiveTrauma)     s.collectiveTrauma      = Utils.clamp((s.collectiveTrauma ?? 0)      + sm.collectiveTrauma, 0, 100);
+      if (sm.pollution)            s.pollutionIndex        = Utils.clamp((s.pollutionIndex ?? 0)        + sm.pollution, 0, 100);
+    }
   }
 
   // ── Apply New Horizons Event ──────────────────────────────────
@@ -4869,7 +4889,7 @@ class SimulationEngine {
     const hierGE = (civ.governance?.hierarchyLevel ?? 50) / 100;
     const infoEcoGE = civ.state.informationEcosystem ?? 'free_market_media';
     const ecoModelGE = civ.economic?.modelId ?? '';
-    const innovTolGE = (civ.state.innovationTolerance ?? 50) / 100;
+    const innovTolGE = (civ.operatingPrinciples?.innovationTolerance ?? 50) / 100;
     const isExtractiveGE = (infoEcoGE === 'total_information_control' && ecoModelGE === 'planned')
                         || (infoEcoGE === 'total_information_control' && innovTolGE < 0.25);
     const isDevGE = !isExtractiveGE && (
@@ -5221,7 +5241,7 @@ class SimulationEngine {
     // Page 2014, Bartels 2008). Only dampens positive drift (improving
     // institutions) — decay from extraction is not slowed. Stronger in
     // participatory systems where wealth buys political access.
-    const wcInst = civ.state.wealthConcentration ?? (civ.economic?.wealthConcentration ?? 50);
+    const wcInst = civ.economic?.wealthConcentration ?? 50;
     if (wcInst > 55 && netDrift > 0) {
       const wcDampFrac = Math.min(1, (wcInst - 55) / 35);
       const isPartInst = civ.governance?.participationModel === 'voluntary';
@@ -6550,7 +6570,7 @@ class SimulationEngine {
 
     // ── Developmental state detection ──
     const hier = (civ.governance?.hierarchyLevel ?? 50) / 100;
-    const innovTol = (civ.state.innovationTolerance ?? 50) / 100;
+    const innovTol = (civ.operatingPrinciples?.innovationTolerance ?? 50) / 100;
     const ecoModel = civ.economic?.modelId ?? '';
     const isExtractive = (infoEco === 'total_information_control' && ecoModel === 'planned')
                       || (infoEco === 'total_information_control' && innovTol < 0.25);
@@ -10356,7 +10376,7 @@ class SimulationEngine {
       // Governance & freedom
       governanceModel:      g.model?.id ?? 'unknown',
       hierarchyLevel:       Math.round(g.hierarchyLevel ?? 50),
-      freedomLevel:         Math.round(s.freedomLevel ?? 50),
+      freedomLevel:         Math.round(civ.operatingPrinciples?.freedomLevel ?? 50),
       civilianControl:      Math.round(s.civilianControl ?? 50),
       stateCapacity:        Math.round(s.stateCapacity ?? 50),
       legitimacyLevel:      Math.round(s.legitimacyLevel ?? 50),
@@ -10444,7 +10464,7 @@ class SimulationEngine {
       startYear: first.year,
       endYear: last.year,
       totalTurns: traj.length,
-      participationModel: civ.state.participationModel ?? 'voluntary',
+      participationModel: civ.governance?.participationModel ?? 'voluntary',
     };
 
     // Time series: keyed by variable, array of {turn, year, value}
@@ -14801,7 +14821,7 @@ class SimulationEngine {
     // 2008, Winters 2011 "Oligarchy"). Strong institutions partially
     // resist capture (Acemoglu & Robinson 2012). Participatory systems
     // more vulnerable because wealth buys political access directly.
-    const wcCapture = civ.state.wealthConcentration ?? 50;
+    const wcCapture = civ.economic?.wealthConcentration ?? 50;
     if (wcCapture > 50) {
       const captureFrac = Math.min(1, (wcCapture - 50) / 40);
       const iqResist = Utils.clamp((iq - 20) / 50, 0, 1);
@@ -16797,8 +16817,8 @@ class SimulationEngine {
     // Low-WC societies (Scandinavia) can sustain higher stability than high-WC ones.
     // This breaks the 92-93 clustering where all democracies converged.
     if (stability > 80) {
-      const wc = civ.state.wealthConcentration ?? 40;
-      const anom = civ.state.anomie ?? 20;
+      const wc = civ.economic?.wealthConcentration ?? 40;
+      const anom = civ.state.anomieLevel ?? 20;
       const ceilingCoeff = 0.008 + Math.max(0, (wc - 25)) * 0.0004
                                  + Math.max(0, (anom - 15)) * 0.0003;
       const excess = stability - 80;
@@ -16811,7 +16831,7 @@ class SimulationEngine {
     // activates when state capacity is already above 25, so it doesn't
     // prevent genocide/collapse periods (where cap drops below 25).
     const hierStab = (civ.governance?.hierarchyLevel ?? 50) / 100;
-    const innovTolStab = (civ.state.innovationTolerance ?? 50) / 100;
+    const innovTolStab = (civ.operatingPrinciples?.innovationTolerance ?? 50) / 100;
     const infoEcoStab = civ.state.informationEcosystem ?? 'free_market_media';
     const ecoModelStab = civ.economic?.modelId ?? '';
     const isExtractiveStab = (infoEcoStab === 'total_information_control' && ecoModelStab === 'planned')

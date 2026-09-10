@@ -238,6 +238,12 @@ class Game {
       this.companionPanel = new CompanionPanel(this);
     }
 
+    // ── Counterfactual Lab ─────────────────────────────────────
+    if (typeof CounterfactualEngine !== 'undefined') {
+      this.counterfactual = new CounterfactualEngine(this);
+      this.counterfactualPanel = new CounterfactualPanel(this);
+    }
+
     // ── Callbacks ─────────────────────────────────────────────
     this.onEraTransition = (era) => {
       this.ui.showNotification(`🌅 New Era: ${era.label}`);
@@ -406,6 +412,15 @@ class Game {
       };
     }
 
+    // ── Counterfactual Lab Panel ─────────────────────────────────
+    const labBtn = Utils.el('btn-lab');
+    if (labBtn && this.counterfactualPanel) {
+      labBtn.onclick = () => {
+        this.counterfactualPanel.toggle();
+        labBtn.classList.toggle('btn-map-active', this.counterfactualPanel.visible);
+      };
+    }
+
     // Map view toggle (⬡ Hex ↔ 🗺️ Map)
     const mapViewBtn = Utils.el('btn-map-view');
     if (mapViewBtn) {
@@ -460,6 +475,10 @@ class Game {
       }
       if (e.key === 'C') { // Shift+C — Companion Module panel
         const btn = Utils.el('btn-companion');
+        if (btn) btn.click();
+      }
+      if (e.key === 'L') { // Shift+L — Counterfactual Lab panel
+        const btn = Utils.el('btn-lab');
         if (btn) btn.click();
       }
     });

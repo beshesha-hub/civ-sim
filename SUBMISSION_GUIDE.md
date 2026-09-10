@@ -37,7 +37,8 @@ JASSS accepts ODD protocol descriptions as standalone model description articles
 3. **Write cover letter.** Address to the Editor-in-Chief. Key points:
    - Model fills a gap: no existing macro-level civilization simulator operates at this breadth (13 domains, 250+ feedback loops) with explicit empirical grounding for each mechanism.
    - Distinguishing feature: absence of teleological or cultural assumptions. Novel societal configurations (currencyless, polycentric) can be modeled, not just variations of existing societies.
-   - Validation: multi-level framework (UQ, hindcast, held-out, robustness) rather than single-metric calibration.
+   - Validation: multi-level framework (UQ, hindcast, held-out, robustness) plus 7-country counterfactual diagnostic classifying deviations as structural vs configurable.
+   - Counterfactual analysis capability: Lab Mode (snapshot, fork, compare trajectories) and Custom Events (12 presets, 20 sliders, structural modifiers) enable controlled diagnostic experiments.
    - Reproducibility: seeded PRNG, browser-executable, no server dependencies.
 
 4. **Submit via JASSS online system.** Create account at the JASSS submission portal. Select article type: "Model Description." Upload HTML and supplementary zip.
@@ -48,7 +49,7 @@ JASSS reviewers will focus on:
 - Is the ODD+D complete? (Yes — all sections filled)
 - Is the model reproducible? (Yes — seeded PRNG, self-contained JS)
 - Are design choices justified? (Yes — every mechanism cites specific literature)
-- Is validation appropriate? (Discuss honestly: 33% UQ coverage is modest; emphasize it as a transparency measure, not a sufficiency claim)
+- Is validation appropriate? (Discuss honestly: 28-36% UQ coverage is modest; emphasize it as a transparency measure, not a sufficiency claim. The 7-country counterfactual diagnostic shows which deviations are structural vs configurable)
 
 ---
 

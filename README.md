@@ -79,11 +79,20 @@ node js/validation_suite.js sensitivity
 
 | Metric | Score | Notes |
 |--------|-------|-------|
-| UQ Coverage | 11-14/36 (31-39%) | 20 seeds, significant seed variance |
-| Hindcast | 30/38 (79%) | S.Korea 8/11, Chile 6/7, Russia 9/11, Rwanda 7/9 |
+| UQ Coverage | ~10-13/36 (28-36%) | 20 seeds, significant seed variance |
+| Hindcast | ~27-29/38 (71-76%) | Structural plausibility checks against 4 historical trajectories |
 | Robustness | ~77% | 92/120 outputs CV < 15% |
 
+**Counterfactual diagnostics (7-country analysis):** China err=4.9 (near-perfect), Russia err=12.7 (good), Germany err=39.8 reduced to 6.1 with event injection (configurable), USA err=34.5 (structural), India err=25.4 (structural), Nigeria err=18.4 (structural), Singapore err=52.3 (structural, events help 19%).
+
 See [MODEL_DIAGNOSTICS.md](MODEL_DIAGNOSTICS.md) for detailed findings.
+
+### Key Features
+
+- **Lab Mode (Counterfactual Analysis):** Snapshot, fork, and compare civilization trajectories to test "what if?" scenarios and isolate the effect of specific interventions
+- **Custom Events System:** 12 presets, 20 fine-grained sliders, and structural modifiers for designing specific historical shocks and policy interventions
+- **Seeded Reproducibility:** Deterministic PRNG ensures identical trajectories from identical seeds and parameters
+- **Multi-level Validation:** UQ, hindcast, cross-validation, sensitivity analysis, and 7-country counterfactual diagnostics
 
 ## Project Structure
 

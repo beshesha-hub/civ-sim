@@ -2478,3 +2478,68 @@ The structural wellbeing changes were neutral on coverage: same 13 targets cover
 | USA | 76.0 | 74.9 [74-76] | ~75 | Unchanged |
 | Japan | 78.6 | 78.3 [77-80] | ~78 | Unchanged |
 | Russia | 35.8 | 35.5 [28-40] | ~35 | Unchanged |
+
+
+---
+
+## 34. Freedom Tracking Bug Fix (September 10, 2026)
+
+Two bugs caused freedom to be invisible to the trajectory recorder and
+unmodifiable by custom events:
+
+1. **Trajectory recorder read wrong path.** `_recordTrajectory` read
+   `civ.state.freedomLevel`, but freedom lives in
+   `civ.operatingPrinciples.freedomLevel`. The read returned `undefined`,
+   which fell back to 50 via `?? 50`. Every recorded trajectory showed
+   freedom pinned at exactly 50 regardless of the civilization's actual
+   evolving freedom level.
+
+2. **Custom event structural modifier wrote wrong path.** The custom event
+   system's structural modifier for freedom wrote to
+   `civ.state.freedomLevel` instead of `civ.operatingPrinciples.freedomLevel`.
+   Custom events that modified freedom had no effect — the write went to a
+   field nothing reads.
+
+Both fixed by reading from and writing to `civ.operatingPrinciples.freedomLevel`.
+
+---
+
+## 35. Counterfactual Diagnostic Findings — 7 Countries (September 10, 2026)
+
+Counterfactual analysis tested across 7 countries. Results fall into three
+categories: good fit, tunable gap, and structural gap.
+
+### Results
+
+| Country | Error | Category | Notes |
+|---------|-------|----------|-------|
+| China | 4.9 | Near-perfect fit | No tuning needed |
+| Russia | 12.7 | Good fit | Small structural trust gap |
+| Germany | 39.8 → 6.1 | Tunable gap | Initial condition mapping gap; 85% improvement with tuned params |
+| Nigeria | 18.4 | Structural WC gap | No improvement possible via parameters |
+| India | 25.4 | Structural corruption gap | Corruption too low (42 vs target 61) |
+| USA | 34.5 | Structural trust gap | Trust too low (19 vs target 37) |
+| Singapore | 52.3 | Structural gap | Event injection partially bridges (19% improvement, corruption halved) |
+
+### Interpretation
+
+**China and Russia** fit well without intervention, confirming the core
+dynamics work for authoritarian-leaning configurations with moderate-to-high
+state capacity.
+
+**Germany** was the only case where parameter tuning substantially closed
+the gap. The 85% error reduction (39.8 → 6.1) indicates a mapping problem
+between German initial conditions and the model's parameter space, not a
+missing mechanism.
+
+**Nigeria, India, USA** each expose a single dominant structural gap — WC,
+corruption, and trust respectively — that parameter tuning cannot address.
+These are the same gaps identified in UQ analysis (§33): Nigeria's informal
+economy effects on WC, India's corruption-IQ bistability, and the USA's
+polarized media-institutional trust dynamics.
+
+**Singapore** has the largest error and the most complex gap. Event injection
+(halving corruption) produced only 19% improvement, confirming that
+Singapore's deviation is multi-dimensional rather than driven by a single
+variable. The city-state governance model remains the hardest case for the
+nation-state architecture.

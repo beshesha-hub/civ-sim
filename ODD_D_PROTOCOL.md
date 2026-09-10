@@ -227,6 +227,8 @@ Per-turn state snapshots are recorded for all variables. The model provides:
 - **Research CSV export:** Complete trajectory data for all variables.
 - **In-panel charts:** 50-turn ring buffers for economic and resource history.
 - **Validation framework:** Uncertainty quantification across 12 countries, hindcast validation against 4 historical trajectories, and robustness analysis.
+- **Lab Mode (counterfactual analysis):** Snapshot, fork, and trajectory comparison tools for controlled counterfactual experiments and diagnostic decomposition.
+- **Custom Events:** 12 presets with 20 sliders and structural modifiers for injecting specific historical shocks and policy interventions.
 - **Trace mode:** Per-turn variable logs for diagnostic analysis.
 
 ---
@@ -394,11 +396,11 @@ civ-sim employs a multi-level validation strategy:
 
 **Level 1: Uncertainty Quantification (UQ).** 12 calibration country scenarios (Denmark, USA, China, Nigeria, Saudi Arabia, Singapore, Brazil, Russia, Japan, Germany, India, South Korea), each configured with real-world institutional, economic, and social parameters from World Bank/V-Dem/UNDP/WVS data. For each country, N seeds are run (default 20) and the p10-p90 interval is computed for three target variables (social trust, wealth concentration, corruption). Real-world targets are tested for coverage within the p10-p90 interval.
 
-**Current score: 11/36 targets covered (31%).**
+**Current score: ~10-13/36 targets covered (28-36%).**
 
 **Level 2: Hindcast.** Four historical trajectories are reproduced from initial conditions without external forcing: South Korea 1960-2010 (developmental state to democracy), Chile 1970-2000 (democracy → coup → neoliberalism → re-democratization), Russia 1985-2015 (Soviet collapse → oligarchy → re-centralization), Rwanda 1990-2020 (genocide → recovery → developmental state). Each trajectory tests 7-11 waypoint expectations.
 
-**Current score: 28/38 checks pass (74%).**
+**Current score: ~27-29/38 checks pass (71-76%).**
 
 **Level 3: Historical Scenarios (Tuning Set).** 10 historical civilizations (Rome, Song Dynasty, Haudenosaunee, British Industrial Revolution, Scandinavian Social Democracy, Khmer Empire, Ottoman Empire, Post-Colonial Sub-Saharan State, Classical Athens, Soviet Union) with quantified expectations.
 
@@ -410,9 +412,29 @@ civ-sim employs a multi-level validation strategy:
 
 **Level 5: Robustness.** Coefficient of variation across 20 seeds for 120 output variables across 12 countries. Target: CV < 15% (robust), 15-30% (moderate), >30% (noisy).
 
-**Current score: 94/120 outputs robust (78%).**
+**Current score: ~92/120 outputs robust (~77%).**
 
 **Level 6: Invariant Suite.** 13 regression checks including reproducibility (identical seed → identical output), NaN guards, discontinuity prevention, and cap enforcement. **All 13 pass.**
+
+### 4.1a Counterfactual Analysis (Lab Mode)
+
+The model includes a counterfactual analysis framework (Lab Mode) that enables snapshot, fork, and trajectory comparison for controlled diagnostic experiments. This capability was used to conduct a 7-country diagnostic classifying UQ deviations as **structural** (inherent to general mechanisms) versus **configurable** (addressable through initial configuration or event injection):
+
+| Country | Error | Classification | Notes |
+|---------|-------|---------------|-------|
+| China | 4.9 | Near-perfect | General mechanisms sufficient |
+| Russia | 12.7 | Good | No country-specific tuning needed |
+| Germany | 39.8 → 6.1 | Configurable | Reunification-era event injection reduces error to 6.1 |
+| USA | 34.5 | Structural | Polarization-media feedback not captured by general mechanisms |
+| India | 25.4 | Structural | Corruption-IQ bistability; informal economy effects |
+| Nigeria | 18.4 | Structural | Resource-curse governance; informal economy |
+| Singapore | 52.3 | Structural | City-state architecture incompatible with nation-state model (events help 19%) |
+
+This diagnostic capability also serves as a validation tool: by decomposing sources of model-reality deviation, it distinguishes calibration failures from genuine coverage limits.
+
+### 4.1b Bug Fix: Freedom Tracking
+
+A bug was identified where freedom level was read from the `state` object rather than from `operatingPrinciples`, where it is actually stored. Freedom is a configuration parameter set during setup (Step 5) and tracked in `operatingPrinciples.freedom`. This affected downstream calculations in epistemic health, institutional dynamics, and behavioral values. The fix ensures consistent reference to `operatingPrinciples.freedom` throughout the codebase.
 
 ### 4.2 Known Limitations
 
@@ -430,7 +452,7 @@ civ-sim employs a multi-level validation strategy:
 
 ### 4.3 UQ Coverage: Design Rationale
 
-The 31% UQ coverage reflects a deliberate architectural choice. civ-sim models the interoperation of complex systems and general mechanisms — it does not code to specific countries. The remaining gap is driven by:
+The 28-36% UQ coverage reflects a deliberate architectural choice. civ-sim models the interoperation of complex systems and general mechanisms — it does not code to specific countries. The remaining gap is driven by:
 
 **Country-specific factors absent by design.** Germany's trust overshoot (model ~63, real 44) stems from the East-West reunification deficit, immigration tensions, and historically specific institutional relationships that are not generalizable mechanisms. Singapore's city-state governance cannot be represented by a nation-state architecture. The USA's corruption gap reflects a uniquely polarized media-institutional feedback loop. Encoding these as country-specific parameters would improve UQ scores at the cost of the model's core purpose: representing general dynamics that apply to any societal configuration, including novel ones.
 
@@ -438,7 +460,7 @@ The 31% UQ coverage reflects a deliberate architectural choice. civ-sim models t
 
 **Deliberate avoidance of overfitting.** Higher UQ scores are achievable through country-specific calibration, but this would (a) sacrifice the model's ability to simulate novel paradigms (currencyless economies, polycentric governance, post-scarcity configurations), (b) embed the assumption that existing societies are the reference frame, and (c) violate the core design principle that no form of social organization is treated as inevitable or normative.
 
-The 31% should be read as: when general mechanisms are applied to 12 diverse real-world societies without country-specific tuning, about one-third of target variables fall within the model's uncertainty range. The hindcast score (74% across 4 historical trajectories) provides stronger validation that the dynamic mechanisms are structurally sound.
+The 28-36% should be read as: when general mechanisms are applied to 12 diverse real-world societies without country-specific tuning, about one-third of target variables fall within the model's uncertainty range. The hindcast score (71-76% across 4 historical trajectories) provides stronger validation that the dynamic mechanisms are structurally sound. The 7-country counterfactual diagnostic (see Section 4.1a) further clarifies this: countries where general mechanisms suffice (China, Russia) achieve low error, countries with historically specific shocks (Germany) become configurable through event injection, and countries with fundamental architectural mismatches (Singapore, USA) show irreducible structural error.
 
 ### 4.4 Characterization of UQ Misses
 

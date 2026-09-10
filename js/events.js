@@ -997,7 +997,7 @@ class EventsPanel {
       return;
     }
 
-    const targetCivs = this._getTargetCivs;
+    const targetCivs = this._getTargetCivs();
 
     // Check current state of targeted civs
     const civs = this.game.civilizations;
@@ -1815,81 +1815,114 @@ class EventsPanel {
   }
 
   // ── Custom User-Defined Event ─────────────────────────────────
+
+  static CUSTOM_EVENT_PRESETS = [
+    { name: 'Universal Basic Income', desc: 'A guaranteed minimum income is provided to all citizens.',
+      vals: { wellbeing: 12, equality: 15, cooperation: 8, acquisitiveness: -5, socialTrust: 6, wealthConcentration: -8 } },
+    { name: 'Land Reform', desc: 'Redistributive land reform transfers property to smallholders.',
+      vals: { equality: 18, wealthConcentration: -15, socialTrust: -4, cooperation: 5, polarization: 8 } },
+    { name: 'Pandemic', desc: 'A major infectious disease outbreak spreads across the population.',
+      vals: { population: -8, wellbeing: -20, socialTrust: -6, stateCapacity: 4, polarization: 6 } },
+    { name: 'Green New Deal', desc: 'A comprehensive economic and environmental policy overhaul.',
+      vals: { wellbeing: 5, equality: 6, pollution: -15, cooperation: 4, innovation: 8, stateCapacity: 3 } },
+    { name: 'Austerity Program', desc: 'Government spending is sharply cut to reduce debt.',
+      vals: { wellbeing: -10, equality: -8, socialTrust: -6, stateCapacity: -4, corruption: -3, polarization: 10 } },
+    { name: 'Truth & Reconciliation', desc: 'A formal process addresses historical injustices.',
+      vals: { socialTrust: 12, polarization: -10, empathy: 10, cooperation: 6, collectiveTrauma: -8 } },
+    { name: 'Media Monopolization', desc: 'Media ownership concentrates in few hands.',
+      vals: { polarization: 12, epistemicHealth: -15, freedomLevel: -8, corruption: 5 } },
+    { name: 'Education Revolution', desc: 'A transformative expansion of educational access and quality.',
+      vals: { innovation: 12, socialMobility: 10, equality: 5, epistemicHealth: 8, empathy: 4 } },
+    { name: 'Resource Discovery', desc: 'A major natural resource deposit is discovered.',
+      vals: { wellbeing: 8, wealthConcentration: 6, corruption: 4, pollution: 5, fertility: 10 } },
+    { name: 'Constitutional Convention', desc: 'A new constitution is drafted through broad participation.',
+      vals: { freedomLevel: 10, socialTrust: 8, stateCapacity: 5, legitimacy: 10, polarization: -5 } },
+    { name: 'Mass Displacement', desc: 'A large segment of the population is forcibly displaced.',
+      vals: { population: -12, wellbeing: -15, socialTrust: -10, collectiveTrauma: 15, polarization: 8 } },
+    { name: 'Cooperative Movement', desc: 'Worker and community cooperatives proliferate.',
+      vals: { equality: 8, wealthConcentration: -6, cooperation: 12, socialTrust: 5, acquisitiveness: -6 } },
+  ];
+
+  static CUSTOM_SLIDER_DEFS = [
+    { section: 'Social & Wellbeing', sliders: [
+      { id: 'wellbeing',   label: 'Wellbeing',      min: -30, max: 30 },
+      { id: 'equality',    label: 'Equality',       min: -20, max: 20 },
+      { id: 'population',  label: 'Population %',   min: -25, max: 25 },
+      { id: 'fertility',   label: 'Land Fertility', min: -40, max: 40 },
+      { id: 'socialTrust', label: 'Social Trust',   min: -20, max: 20 },
+      { id: 'polarization',label: 'Polarization',   min: -15, max: 15 },
+    ]},
+    { section: 'Governance & Institutions', sliders: [
+      { id: 'corruption',    label: 'Corruption',      min: -15, max: 15 },
+      { id: 'stateCapacity', label: 'State Capacity',   min: -15, max: 15 },
+      { id: 'freedomLevel',  label: 'Freedom Level',    min: -15, max: 15 },
+      { id: 'legitimacy',    label: 'Legitimacy',       min: -15, max: 15 },
+    ]},
+    { section: 'Economy & Structure', sliders: [
+      { id: 'wealthConcentration', label: 'Wealth Concentration', min: -20, max: 20 },
+      { id: 'socialMobility',     label: 'Social Mobility',      min: -15, max: 15 },
+      { id: 'epistemicHealth',     label: 'Epistemic Health',     min: -15, max: 15 },
+      { id: 'collectiveTrauma',    label: 'Collective Trauma',    min: -15, max: 15 },
+    ]},
+    { section: 'Environment', sliders: [
+      { id: 'pollution', label: 'Pollution', min: -20, max: 20 },
+    ]},
+    { section: 'Behavioral', sliders: [
+      { id: 'cooperation',      label: 'Cooperation',      min: -20, max: 20 },
+      { id: 'acquisitiveness',  label: 'Acquisitiveness',  min: -20, max: 20 },
+      { id: 'conformity',       label: 'Conformity',       min: -20, max: 20 },
+      { id: 'innovation',       label: 'Innovation',       min: -20, max: 20 },
+      { id: 'empathy',          label: 'Empathy',          min: -20, max: 20 },
+    ]},
+  ];
+
   _renderCustomEvent(content) {
     const title = Utils.createEl('div', 'section-title', '✏️ Define a Custom Event');
     content.appendChild(title);
     const desc = Utils.createEl('p', 'section-desc',
-      'Create your own event with any combination of effects. Give it a name, describe what happened, then set the impacts. Changes are applied immediately to the targeted civilization(s).');
+      'Create your own event with any combination of effects, or start from a preset. Changes are applied immediately to the targeted civilization(s).');
     content.appendChild(desc);
+
+    // Preset selector
+    const presetWrap = Utils.createEl('div', 'custom-preset-wrap');
+    presetWrap.innerHTML = `<label style="font-weight:600;margin-right:8px;">Start from preset:</label>`;
+    const presetSelect = document.createElement('select');
+    presetSelect.id = 'custom-preset-select';
+    presetSelect.innerHTML = `<option value="">— Blank —</option>` +
+      EventsPanel.CUSTOM_EVENT_PRESETS.map((p, i) =>
+        `<option value="${i}">${p.name}</option>`).join('');
+    presetWrap.appendChild(presetSelect);
+    content.appendChild(presetWrap);
 
     const form = Utils.createEl('div', 'custom-event-form');
 
     // Name + description
-    form.innerHTML = `
+    let html = `
       <div class="form-group">
         <label>Event Name <span class="required">*</span></label>
         <input type="text" id="custom-evt-name" placeholder="e.g., Golden Age of Trade, Famine, Plague of Rats…" />
       </div>
       <div class="form-group">
         <label>Description (appears in History)</label>
-        <textarea id="custom-evt-desc" rows="3" placeholder="Describe what happened and why it matters…"></textarea>
-      </div>
+        <textarea id="custom-evt-desc" rows="2" placeholder="Describe what happened and why it matters…"></textarea>
+      </div>`;
 
-      <div class="section-label" style="margin:14px 0 6px">Numeric Effects <span class="form-hint">(0 = no change)</span></div>
+    // Build slider sections from definitions
+    for (const section of EventsPanel.CUSTOM_SLIDER_DEFS) {
+      html += `<div class="section-label" style="margin:14px 0 6px">${section.section} <span class="form-hint">(0 = no change)</span></div>`;
+      for (const s of section.sliders) {
+        html += `<div class="custom-slider-row">
+          <label>${s.label}</label>
+          <input type="range" id="cs-${s.id}" min="${s.min}" max="${s.max}" value="0" />
+          <span id="cs-${s.id}-val" class="slider-val">0</span>
+        </div>`;
+      }
+    }
+    form.innerHTML = html;
 
-      <div class="custom-slider-row">
-        <label>Wellbeing</label>
-        <input type="range" id="cs-wellbeing" min="-30" max="30" value="0" />
-        <span id="cs-wellbeing-val" class="slider-val">0</span>
-      </div>
-      <div class="custom-slider-row">
-        <label>Equality</label>
-        <input type="range" id="cs-equality" min="-20" max="20" value="0" />
-        <span id="cs-equality-val" class="slider-val">0</span>
-      </div>
-      <div class="custom-slider-row">
-        <label>Population %</label>
-        <input type="range" id="cs-population" min="-25" max="25" value="0" />
-        <span id="cs-population-val" class="slider-val">0</span>
-      </div>
-      <div class="custom-slider-row">
-        <label>Fertility</label>
-        <input type="range" id="cs-fertility" min="-40" max="40" value="0" />
-        <span id="cs-fertility-val" class="slider-val">0</span>
-      </div>
-
-      <div class="section-label" style="margin:14px 0 6px">Behavior Shifts <span class="form-hint">(optional)</span></div>
-
-      <div class="custom-slider-row">
-        <label>Cooperation</label>
-        <input type="range" id="cs-cooperation" min="-20" max="20" value="0" />
-        <span id="cs-cooperation-val" class="slider-val">0</span>
-      </div>
-      <div class="custom-slider-row">
-        <label>Acquisitiveness</label>
-        <input type="range" id="cs-acquisitiveness" min="-20" max="20" value="0" />
-        <span id="cs-acquisitiveness-val" class="slider-val">0</span>
-      </div>
-      <div class="custom-slider-row">
-        <label>Conformity</label>
-        <input type="range" id="cs-conformity" min="-20" max="20" value="0" />
-        <span id="cs-conformity-val" class="slider-val">0</span>
-      </div>
-      <div class="custom-slider-row">
-        <label>Innovation</label>
-        <input type="range" id="cs-innovation" min="-20" max="20" value="0" />
-        <span id="cs-innovation-val" class="slider-val">0</span>
-      </div>
-      <div class="custom-slider-row">
-        <label>Empathy</label>
-        <input type="range" id="cs-empathy" min="-20" max="20" value="0" />
-        <span id="cs-empathy-val" class="slider-val">0</span>
-      </div>
-    `;
-
-    // Wire slider live-update labels
-    const sliderIds = ['wellbeing','equality','population','fertility','cooperation','acquisitiveness','conformity','innovation','empathy'];
-    for (const id of sliderIds) {
+    // Wire all slider live-update labels
+    const allSliderIds = EventsPanel.CUSTOM_SLIDER_DEFS.flatMap(sec => sec.sliders.map(s => s.id));
+    for (const id of allSliderIds) {
       const slider = form.querySelector(`#cs-${id}`);
       const valEl  = form.querySelector(`#cs-${id}-val`);
       if (slider && valEl) {
@@ -1899,6 +1932,38 @@ class EventsPanel {
         };
       }
     }
+
+    // Preset change handler
+    presetSelect.onchange = () => {
+      const idx = presetSelect.value;
+      // Reset all sliders first
+      for (const id of allSliderIds) {
+        const slider = form.querySelector(`#cs-${id}`);
+        const valEl  = form.querySelector(`#cs-${id}-val`);
+        if (slider) slider.value = 0;
+        if (valEl) { valEl.textContent = '0'; valEl.style.color = ''; }
+      }
+      if (idx === '') {
+        Utils.el('custom-evt-name').value = '';
+        Utils.el('custom-evt-desc').value = '';
+        return;
+      }
+      const preset = EventsPanel.CUSTOM_EVENT_PRESETS[parseInt(idx)];
+      if (!preset) return;
+      Utils.el('custom-evt-name').value = preset.name;
+      Utils.el('custom-evt-desc').value = preset.desc;
+      for (const [key, val] of Object.entries(preset.vals)) {
+        const slider = form.querySelector(`#cs-${key}`);
+        const valEl  = form.querySelector(`#cs-${key}-val`);
+        if (slider) {
+          slider.value = val;
+          if (valEl) {
+            valEl.textContent = (val > 0 ? '+' : '') + val;
+            valEl.style.color = val > 0 ? '#00d4aa' : val < 0 ? '#ff6b6b' : '';
+          }
+        }
+      }
+    };
 
     const applyBtn = Utils.createEl('button', 'btn btn-primary', '✏️ Apply Custom Event');
     applyBtn.style.marginTop = '16px';
@@ -1915,6 +1980,7 @@ class EventsPanel {
       return;
     }
     const description  = Utils.el('custom-evt-desc')?.value.trim() || name;
+    const allSliderIds = EventsPanel.CUSTOM_SLIDER_DEFS.flatMap(sec => sec.sliders.map(s => s.id));
     const getVal = (id) => parseInt(form.querySelector(`#cs-${id}`)?.value || '0', 10);
 
     const wellbeingChange  = getVal('wellbeing');
@@ -1928,6 +1994,14 @@ class EventsPanel {
       if (v !== 0) behaviorModifiers[beh] = v;
     }
 
+    const structuralModifiers = {};
+    for (const key of ['socialTrust','polarization','corruption','stateCapacity','freedomLevel',
+                       'legitimacy','wealthConcentration','socialMobility','epistemicHealth',
+                       'collectiveTrauma','pollution']) {
+      const v = getVal(key);
+      if (v !== 0) structuralModifiers[key] = v;
+    }
+
     this.game.simulation.applyExternalEvent({
       type: 'custom',
       label: name,
@@ -1937,12 +2011,13 @@ class EventsPanel {
       populationChange,
       fertilityChange,
       behaviorModifiers,
+      structuralModifiers,
     }, this._getTargetCivs());
 
     this._showNotification(`✏️ "${name}" applied!`);
 
-    // Reset sliders to 0
-    for (const id of ['wellbeing','equality','population','fertility','cooperation','acquisitiveness','conformity','innovation','empathy']) {
+    // Reset all sliders
+    for (const id of allSliderIds) {
       const slider = form.querySelector(`#cs-${id}`);
       const valEl  = form.querySelector(`#cs-${id}-val`);
       if (slider) slider.value = 0;
@@ -1952,6 +2027,8 @@ class EventsPanel {
     const descEl = Utils.el('custom-evt-desc');
     if (nameEl) nameEl.value = '';
     if (descEl) descEl.value = '';
+    const presetSel = Utils.el('custom-preset-select');
+    if (presetSel) presetSel.value = '';
   }
 
   // ── Helpers ───────────────────────────────────────────────────
@@ -2300,7 +2377,7 @@ class EventsPanel {
       ? this.game.civilizations.filter(c => targetIds.includes(c.id))
       : this.game.civilizations;
     for (const civ of targets) {
-      this.game.simulation?.applyExternalEvent(civ, { type, ...extra });
+      this.game.simulation?.applyExternalEvent({ type, ...extra }, [civ.id]);
     }
     this._showNotification(`💰 Economy event: ${type.replace(/_/g, ' ')}`);
     this.render();
