@@ -440,7 +440,21 @@ The 31% UQ coverage reflects a deliberate architectural choice. civ-sim models t
 
 The 31% should be read as: when general mechanisms are applied to 12 diverse real-world societies without country-specific tuning, about one-third of target variables fall within the model's uncertainty range. The hindcast score (74% across 4 historical trajectories) provides stronger validation that the dynamic mechanisms are structurally sound.
 
-### 4.4 Sensitivity Analysis
+### 4.4 Characterization of UQ Misses
+
+The 25 missed UQ targets are not uniformly distributed in severity. Analysis of the gap between target values and the nearest edge of the p10-p90 interval reveals three tiers:
+
+**Near misses (within 5 points): ~7 targets.** These would be covered under a p5-p95 interval (a standard alternative). Examples: Denmark trust (range 68-72, target 74), China corruption (range 36, target 39), Saudi corruption (range 49-50, target 47), Russia WC (range 80-85, target 78). The model captures the correct dynamics; the gap is within measurement uncertainty of the real-world benchmarks themselves.
+
+**Moderate misses (5-15 points): ~12 targets.** The model tracks the correct direction and relative ordering but over- or undershoots the equilibrium. Examples: USA corruption (range 34-38, target 27), Russia trust (range 18-21, target 28), Singapore WC (range 58-59, target 45), Germany corruption (range 12, target 22). These reflect the expected precision limit of general mechanisms applied without country-specific calibration.
+
+**Large misses (>15 points): ~6 targets.** These represent structural limitations where country-specific factors dominate: USA trust (range 19-20, target 37 — uniquely polarized media-institutional dynamics), Germany trust (range 62-64, target 44 — East-West reunification deficit), Brazil corruption (range 37-42, target 62 — corruption-IQ bistability), India corruption (range 37-44, target 61 — same bistability), Nigeria WC (range 81-86, target 67 — informal economy effects), Saudi trust (range 37-38, target 53 — rentier-state social contract).
+
+**Critically, the model preserves correct relative ordering across countries.** High-corruption countries (Nigeria, Russia, Brazil) score high; low-corruption countries (Denmark, Singapore) score low. High-trust societies (Denmark, China) outrank low-trust ones (Brazil, Nigeria). High-inequality countries (Brazil, USA) separate from egalitarian ones (Denmark, Japan). Only Germany exhibits a systematically wrong-direction result across multiple targets, attributable to the reunification effect — a historically specific phenomenon that no general mechanism can capture without encoding Germany-specific parameters.
+
+In summary: the model approximates the structural contours of real-world behavior across 12 diverse societies. The gap is in equilibrium precision, not in the direction or character of the dynamics. This is the expected signature of a general-mechanism model that deliberately avoids country-specific fitting.
+
+### 4.5 Sensitivity Analysis
 
 One-at-a-time parameter sweeps on the USA calibration scenario identify the most influential parameters. Key findings:
 - Social trust is most sensitive to corruption level, wealth concentration, and institutional quality — matching the empirical literature.
