@@ -8,93 +8,93 @@
       "values": [
         {
           "value": 0,
-          "socialTrust": 26,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 86,
+          "corruption": 52,
+          "stability": 41,
+          "polarization": 67,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 66
         },
         {
           "value": 10,
-          "socialTrust": 29,
-          "wealthConcentration": 72,
-          "corruption": 33,
-          "stability": 87,
-          "polarization": 59,
+          "socialTrust": 19,
+          "wealthConcentration": 84,
+          "corruption": 44,
+          "stability": 33,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 72
         },
         {
           "value": 20,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
-          "epistemicHealth": 76,
-          "stateCapacity": 82
+          "socialTrust": 17,
+          "wealthConcentration": 87,
+          "corruption": 80,
+          "stability": 28,
+          "polarization": 68,
+          "epistemicHealth": 75,
+          "stateCapacity": 58
         },
         {
           "value": 30,
-          "socialTrust": 29,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 77,
-          "polarization": 58,
-          "epistemicHealth": 75,
-          "stateCapacity": 81
+          "socialTrust": 19,
+          "wealthConcentration": 84,
+          "corruption": 41,
+          "stability": 31,
+          "polarization": 66,
+          "epistemicHealth": 76,
+          "stateCapacity": 78
         },
         {
           "value": 40,
-          "socialTrust": 21,
-          "wealthConcentration": 67,
-          "corruption": 31,
-          "stability": 50,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 83,
+          "corruption": 63,
+          "stability": 23,
+          "polarization": 64,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 64
         },
         {
           "value": 50,
-          "socialTrust": 32,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 86,
-          "polarization": 59,
-          "epistemicHealth": 76,
-          "stateCapacity": 82
+          "socialTrust": 17,
+          "wealthConcentration": 86,
+          "corruption": 69,
+          "stability": 34,
+          "polarization": 67,
+          "epistemicHealth": 75,
+          "stateCapacity": 70
         },
         {
           "value": 60,
-          "socialTrust": 29,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
-          "epistemicHealth": 75,
-          "stateCapacity": 82
+          "socialTrust": 18,
+          "wealthConcentration": 84,
+          "corruption": 58,
+          "stability": 25,
+          "polarization": 66,
+          "epistemicHealth": 76,
+          "stateCapacity": 73
         },
         {
           "value": 70,
-          "socialTrust": 31,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
-          "epistemicHealth": 75,
-          "stateCapacity": 82
+          "socialTrust": 17,
+          "wealthConcentration": 86,
+          "corruption": 70,
+          "stability": 11,
+          "polarization": 66,
+          "epistemicHealth": 76,
+          "stateCapacity": 65
         },
         {
           "value": 80,
-          "socialTrust": 21,
-          "wealthConcentration": 67,
-          "corruption": 31,
-          "stability": 67,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 84,
+          "corruption": 36,
+          "stability": 31,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 78
         }
       ]
     },
@@ -104,73 +104,73 @@
       "values": [
         {
           "value": 30,
-          "socialTrust": 32,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 59,
+          "socialTrust": 20,
+          "wealthConcentration": 83,
+          "corruption": 37,
+          "stability": 33,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 78
         },
         {
           "value": 40,
-          "socialTrust": 22,
-          "wealthConcentration": 65,
-          "corruption": 31,
-          "stability": 85,
-          "polarization": 58,
+          "socialTrust": 18,
+          "wealthConcentration": 86,
+          "corruption": 69,
+          "stability": 25,
+          "polarization": 68,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 59
         },
         {
           "value": 50,
-          "socialTrust": 26,
-          "wealthConcentration": 70,
-          "corruption": 33,
-          "stability": 81,
-          "polarization": 58,
+          "socialTrust": 18,
+          "wealthConcentration": 84,
+          "corruption": 79,
+          "stability": 21,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 67
         },
         {
           "value": 60,
-          "socialTrust": 24,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 57,
+          "socialTrust": 17,
+          "wealthConcentration": 86,
+          "corruption": 69,
+          "stability": 25,
+          "polarization": 68,
           "epistemicHealth": 75,
-          "stateCapacity": 83
+          "stateCapacity": 68
         },
         {
           "value": 70,
-          "socialTrust": 20,
-          "wealthConcentration": 71,
-          "corruption": 33,
-          "stability": 87,
-          "polarization": 57,
-          "epistemicHealth": 76,
-          "stateCapacity": 83
+          "socialTrust": 18,
+          "wealthConcentration": 85,
+          "corruption": 52,
+          "stability": 25,
+          "polarization": 67,
+          "epistemicHealth": 75,
+          "stateCapacity": 70
         },
         {
           "value": 80,
-          "socialTrust": 21,
-          "wealthConcentration": 69,
-          "corruption": 33,
-          "stability": 87,
-          "polarization": 57,
-          "epistemicHealth": 76,
-          "stateCapacity": 83
+          "socialTrust": 17,
+          "wealthConcentration": 86,
+          "corruption": 59,
+          "stability": 19,
+          "polarization": 67,
+          "epistemicHealth": 75,
+          "stateCapacity": 72
         },
         {
           "value": 90,
-          "socialTrust": 21,
-          "wealthConcentration": 69,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 57,
-          "epistemicHealth": 76,
-          "stateCapacity": 83
+          "socialTrust": 14,
+          "wealthConcentration": 89,
+          "corruption": 83,
+          "stability": 14,
+          "polarization": 69,
+          "epistemicHealth": 75,
+          "stateCapacity": 43
         }
       ]
     },
@@ -180,83 +180,83 @@
       "values": [
         {
           "value": 10,
-          "socialTrust": 43,
-          "wealthConcentration": 66,
-          "corruption": 27,
-          "stability": 79,
-          "polarization": 46,
+          "socialTrust": 23,
+          "wealthConcentration": 84,
+          "corruption": 64,
+          "stability": 26,
+          "polarization": 50,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 69
         },
         {
           "value": 20,
-          "socialTrust": 40,
-          "wealthConcentration": 67,
-          "corruption": 29,
-          "stability": 88,
-          "polarization": 49,
+          "socialTrust": 22,
+          "wealthConcentration": 84,
+          "corruption": 56,
+          "stability": 29,
+          "polarization": 54,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 74
         },
         {
           "value": 30,
-          "socialTrust": 37,
-          "wealthConcentration": 68,
-          "corruption": 30,
-          "stability": 86,
-          "polarization": 52,
+          "socialTrust": 21,
+          "wealthConcentration": 84,
+          "corruption": 68,
+          "stability": 1,
+          "polarization": 56,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 56
         },
         {
           "value": 40,
-          "socialTrust": 24,
-          "wealthConcentration": 65,
-          "corruption": 30,
-          "stability": 63,
-          "polarization": 55,
+          "socialTrust": 21,
+          "wealthConcentration": 83,
+          "corruption": 38,
+          "stability": 27,
+          "polarization": 62,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 80
         },
         {
           "value": 50,
-          "socialTrust": 21,
-          "wealthConcentration": 67,
-          "corruption": 31,
-          "stability": 90,
-          "polarization": 58,
-          "epistemicHealth": 76,
-          "stateCapacity": 83
+          "socialTrust": 18,
+          "wealthConcentration": 86,
+          "corruption": 63,
+          "stability": 23,
+          "polarization": 68,
+          "epistemicHealth": 75,
+          "stateCapacity": 72
         },
         {
           "value": 60,
-          "socialTrust": 26,
-          "wealthConcentration": 71,
-          "corruption": 33,
-          "stability": 87,
-          "polarization": 62,
-          "epistemicHealth": 75,
-          "stateCapacity": 82
+          "socialTrust": 16,
+          "wealthConcentration": 86,
+          "corruption": 52,
+          "stability": 18,
+          "polarization": 71,
+          "epistemicHealth": 76,
+          "stateCapacity": 74
         },
         {
           "value": 70,
-          "socialTrust": 25,
-          "wealthConcentration": 71,
-          "corruption": 34,
-          "stability": 87,
-          "polarization": 65,
-          "epistemicHealth": 75,
-          "stateCapacity": 82
+          "socialTrust": 16,
+          "wealthConcentration": 85,
+          "corruption": 40,
+          "stability": 20,
+          "polarization": 75,
+          "epistemicHealth": 76,
+          "stateCapacity": 74
         },
         {
           "value": 80,
-          "socialTrust": 22,
-          "wealthConcentration": 71,
-          "corruption": 35,
-          "stability": 87,
-          "polarization": 68,
-          "epistemicHealth": 76,
-          "stateCapacity": 82
+          "socialTrust": 10,
+          "wealthConcentration": 90,
+          "corruption": 90,
+          "stability": 26,
+          "polarization": 88,
+          "epistemicHealth": 75,
+          "stateCapacity": 34
         }
       ]
     },
@@ -266,73 +266,73 @@
       "values": [
         {
           "value": 0,
-          "socialTrust": 22,
-          "wealthConcentration": 66,
-          "corruption": 31,
-          "stability": 81,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 85,
+          "corruption": 48,
+          "stability": 29,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 74
         },
         {
           "value": 5,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
-          "epistemicHealth": 76,
-          "stateCapacity": 82
+          "socialTrust": 15,
+          "wealthConcentration": 89,
+          "corruption": 82,
+          "stability": 29,
+          "polarization": 69,
+          "epistemicHealth": 75,
+          "stateCapacity": 36
         },
         {
           "value": 10,
-          "socialTrust": 22,
-          "wealthConcentration": 66,
-          "corruption": 31,
-          "stability": 77,
-          "polarization": 58,
+          "socialTrust": 17,
+          "wealthConcentration": 88,
+          "corruption": 80,
+          "stability": 17,
+          "polarization": 67,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 30
         },
         {
           "value": 15,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 86,
-          "polarization": 58,
+          "socialTrust": 17,
+          "wealthConcentration": 87,
+          "corruption": 74,
+          "stability": 15,
+          "polarization": 68,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 46
         },
         {
           "value": 20,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 84,
+          "corruption": 51,
+          "stability": 31,
+          "polarization": 67,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 68
         },
         {
           "value": 30,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 84,
+          "corruption": 57,
+          "stability": 21,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 73
         },
         {
           "value": 40,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 85,
+          "corruption": 38,
+          "stability": 26,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 76
         }
       ]
     },
@@ -343,82 +343,82 @@
         {
           "value": 20,
           "socialTrust": 19,
-          "wealthConcentration": 68,
-          "corruption": 33,
-          "stability": 93,
-          "polarization": 60,
+          "wealthConcentration": 83,
+          "corruption": 41,
+          "stability": 11,
+          "polarization": 68,
           "epistemicHealth": 75,
-          "stateCapacity": 83
+          "stateCapacity": 73
         },
         {
           "value": 30,
-          "socialTrust": 26,
-          "wealthConcentration": 72,
-          "corruption": 33,
-          "stability": 87,
-          "polarization": 61,
+          "socialTrust": 17,
+          "wealthConcentration": 87,
+          "corruption": 80,
+          "stability": 14,
+          "polarization": 69,
           "epistemicHealth": 75,
-          "stateCapacity": 81
+          "stateCapacity": 47
         },
         {
           "value": 40,
-          "socialTrust": 26,
-          "wealthConcentration": 74,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 61,
+          "socialTrust": 16,
+          "wealthConcentration": 87,
+          "corruption": 78,
+          "stability": 14,
+          "polarization": 70,
           "epistemicHealth": 75,
-          "stateCapacity": 81
+          "stateCapacity": 34
         },
         {
           "value": 50,
-          "socialTrust": 19,
-          "wealthConcentration": 68,
-          "corruption": 32,
-          "stability": 73,
-          "polarization": 60,
+          "socialTrust": 17,
+          "wealthConcentration": 85,
+          "corruption": 55,
+          "stability": 7,
+          "polarization": 68,
           "epistemicHealth": 75,
-          "stateCapacity": 83
+          "stateCapacity": 63
         },
         {
           "value": 60,
-          "socialTrust": 29,
-          "wealthConcentration": 70,
-          "corruption": 33,
-          "stability": 91,
-          "polarization": 59,
+          "socialTrust": 20,
+          "wealthConcentration": 83,
+          "corruption": 41,
+          "stability": 22,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 80
         },
         {
           "value": 70,
-          "socialTrust": 22,
-          "wealthConcentration": 66,
-          "corruption": 31,
-          "stability": 86,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 83,
+          "corruption": 59,
+          "stability": 15,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 73
         },
         {
           "value": 80,
-          "socialTrust": 31,
-          "wealthConcentration": 69,
-          "corruption": 32,
-          "stability": 69,
-          "polarization": 57,
-          "epistemicHealth": 75,
-          "stateCapacity": 81
+          "socialTrust": 19,
+          "wealthConcentration": 83,
+          "corruption": 49,
+          "stability": 25,
+          "polarization": 66,
+          "epistemicHealth": 76,
+          "stateCapacity": 73
         },
         {
           "value": 90,
-          "socialTrust": 30,
-          "wealthConcentration": 72,
-          "corruption": 33,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 84,
+          "corruption": 52,
+          "stability": 26,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 73
         }
       ]
     },
@@ -428,83 +428,83 @@
       "values": [
         {
           "value": 10,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 20,
+          "wealthConcentration": 83,
+          "corruption": 39,
+          "stability": 31,
+          "polarization": 65,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 80
         },
         {
           "value": 20,
-          "socialTrust": 22,
-          "wealthConcentration": 66,
-          "corruption": 31,
-          "stability": 52,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 85,
+          "corruption": 59,
+          "stability": 30,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 74
         },
         {
           "value": 30,
-          "socialTrust": 22,
-          "wealthConcentration": 66,
-          "corruption": 31,
-          "stability": 88,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 84,
+          "corruption": 58,
+          "stability": 17,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 76
         },
         {
           "value": 40,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 17,
+          "wealthConcentration": 85,
+          "corruption": 54,
+          "stability": 18,
+          "polarization": 67,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 67
         },
         {
           "value": 50,
-          "socialTrust": 28,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 84,
-          "polarization": 58,
+          "socialTrust": 0,
+          "wealthConcentration": 85,
+          "corruption": 66,
+          "stability": 0,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 68
         },
         {
           "value": 60,
-          "socialTrust": 21,
-          "wealthConcentration": 66,
-          "corruption": 31,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 86,
+          "corruption": 61,
+          "stability": 1,
+          "polarization": 65,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 43
         },
         {
           "value": 70,
-          "socialTrust": 30,
-          "wealthConcentration": 69,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
-          "epistemicHealth": 75,
-          "stateCapacity": 82
+          "socialTrust": 19,
+          "wealthConcentration": 85,
+          "corruption": 52,
+          "stability": 30,
+          "polarization": 66,
+          "epistemicHealth": 76,
+          "stateCapacity": 72
         },
         {
           "value": 80,
-          "socialTrust": 29,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 77,
-          "polarization": 58,
+          "socialTrust": 18,
+          "wealthConcentration": 86,
+          "corruption": 73,
+          "stability": 16,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 81
+          "stateCapacity": 63
         }
       ]
     },
@@ -514,83 +514,83 @@
       "values": [
         {
           "value": 5,
-          "socialTrust": 26,
-          "wealthConcentration": 72,
-          "corruption": 33,
-          "stability": 87,
-          "polarization": 59,
-          "epistemicHealth": 76,
-          "stateCapacity": 82
+          "socialTrust": 20,
+          "wealthConcentration": 83,
+          "corruption": 39,
+          "stability": 0,
+          "polarization": 66,
+          "epistemicHealth": 75,
+          "stateCapacity": 78
         },
         {
           "value": 10,
-          "socialTrust": 22,
-          "wealthConcentration": 66,
-          "corruption": 31,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 18,
+          "wealthConcentration": 84,
+          "corruption": 39,
+          "stability": 0,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 83
+          "stateCapacity": 78
         },
         {
           "value": 20,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
-          "epistemicHealth": 76,
-          "stateCapacity": 82
+          "socialTrust": 19,
+          "wealthConcentration": 84,
+          "corruption": 54,
+          "stability": 31,
+          "polarization": 66,
+          "epistemicHealth": 75,
+          "stateCapacity": 77
         },
         {
           "value": 30,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 18,
+          "wealthConcentration": 87,
+          "corruption": 78,
+          "stability": 28,
+          "polarization": 68,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 49
         },
         {
           "value": 40,
-          "socialTrust": 30,
-          "wealthConcentration": 70,
-          "corruption": 32,
-          "stability": 31,
-          "polarization": 58,
+          "socialTrust": 19,
+          "wealthConcentration": 84,
+          "corruption": 57,
+          "stability": 19,
+          "polarization": 67,
           "epistemicHealth": 76,
-          "stateCapacity": 81
+          "stateCapacity": 64
         },
         {
           "value": 50,
-          "socialTrust": 31,
-          "wealthConcentration": 69,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
+          "socialTrust": 18,
+          "wealthConcentration": 84,
+          "corruption": 39,
+          "stability": 20,
+          "polarization": 66,
           "epistemicHealth": 75,
-          "stateCapacity": 82
+          "stateCapacity": 74
         },
         {
           "value": 60,
-          "socialTrust": 31,
-          "wealthConcentration": 68,
-          "corruption": 32,
-          "stability": 87,
-          "polarization": 58,
-          "epistemicHealth": 76,
-          "stateCapacity": 82
+          "socialTrust": 15,
+          "wealthConcentration": 89,
+          "corruption": 90,
+          "stability": 15,
+          "polarization": 69,
+          "epistemicHealth": 75,
+          "stateCapacity": 34
         },
         {
           "value": 70,
-          "socialTrust": 24,
-          "wealthConcentration": 72,
-          "corruption": 31,
-          "stability": 87,
-          "polarization": 59,
-          "epistemicHealth": 76,
-          "stateCapacity": 82
+          "socialTrust": 17,
+          "wealthConcentration": 85,
+          "corruption": 59,
+          "stability": 4,
+          "polarization": 67,
+          "epistemicHealth": 75,
+          "stateCapacity": 59
         }
       ]
     },
@@ -600,112 +600,112 @@
       "values": [
         {
           "value": 20,
-          "socialTrust": 47,
-          "wealthConcentration": 41,
-          "corruption": 15,
-          "stability": 90,
-          "polarization": 46,
-          "epistemicHealth": 76,
-          "stateCapacity": 86
-        },
-        {
-          "value": 35,
-          "socialTrust": 44,
-          "wealthConcentration": 49,
+          "socialTrust": 43,
+          "wealthConcentration": 53,
           "corruption": 19,
-          "stability": 88,
-          "polarization": 49,
+          "stability": 83,
+          "polarization": 51,
           "epistemicHealth": 76,
           "stateCapacity": 85
         },
         {
-          "value": 50,
-          "socialTrust": 38,
-          "wealthConcentration": 56,
+          "value": 35,
+          "socialTrust": 26,
+          "wealthConcentration": 61,
           "corruption": 25,
-          "stability": 88,
-          "polarization": 53,
+          "stability": 65,
+          "polarization": 55,
+          "epistemicHealth": 76,
+          "stateCapacity": 82
+        },
+        {
+          "value": 50,
+          "socialTrust": 22,
+          "wealthConcentration": 69,
+          "corruption": 28,
+          "stability": 45,
+          "polarization": 59,
           "epistemicHealth": 76,
           "stateCapacity": 83
         },
         {
           "value": 65,
-          "socialTrust": 34,
-          "wealthConcentration": 64,
-          "corruption": 30,
-          "stability": 87,
-          "polarization": 56,
+          "socialTrust": 19,
+          "wealthConcentration": 84,
+          "corruption": 54,
+          "stability": 30,
+          "polarization": 66,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 67
         },
         {
           "value": 80,
-          "socialTrust": 28,
-          "wealthConcentration": 72,
-          "corruption": 33,
-          "stability": 86,
-          "polarization": 59,
+          "socialTrust": 18,
+          "wealthConcentration": 87,
+          "corruption": 65,
+          "stability": 0,
+          "polarization": 67,
           "epistemicHealth": 76,
-          "stateCapacity": 82
+          "stateCapacity": 21
         },
         {
           "value": 95,
-          "socialTrust": 25,
-          "wealthConcentration": 79,
-          "corruption": 36,
-          "stability": 87,
-          "polarization": 62,
-          "epistemicHealth": 75,
-          "stateCapacity": 78
+          "socialTrust": 17,
+          "wealthConcentration": 85,
+          "corruption": 57,
+          "stability": 13,
+          "polarization": 67,
+          "epistemicHealth": 76,
+          "stateCapacity": 63
         }
       ]
     }
   },
   "elasticities": {
     "initialPolarization": {
-      "socialTrust": -0.12,
-      "wealthConcentration": -0.02,
-      "corruption": -0.02,
-      "stability": -0.2,
-      "polarization": 0,
+      "socialTrust": 0,
+      "wealthConcentration": -0.01,
+      "corruption": -0.13,
+      "stability": -0.22,
+      "polarization": -0.01,
       "epistemicHealth": 0,
-      "stateCapacity": 0
+      "stateCapacity": 0.09
     },
     "hierarchyLevel": {
-      "socialTrust": -0.46,
-      "wealthConcentration": -0.01,
-      "corruption": 0,
-      "stability": 0,
-      "polarization": -0.04,
-      "epistemicHealth": 0,
-      "stateCapacity": 0.01
+      "socialTrust": -0.35,
+      "wealthConcentration": 0.07,
+      "corruption": 0.67,
+      "stability": -0.76,
+      "polarization": 0.04,
+      "epistemicHealth": -0.01,
+      "stateCapacity": -0.51
     },
     "tariffLevel": {
-      "socialTrust": 0.09,
-      "wealthConcentration": 0.02,
-      "corruption": 0.01,
-      "stability": 0.02,
+      "socialTrust": 0,
+      "wealthConcentration": 0,
+      "corruption": -0.03,
+      "stability": -0.04,
       "polarization": 0,
       "epistemicHealth": 0,
-      "stateCapacity": 0
+      "stateCapacity": 0.02
     },
     "educationQuality": {
-      "socialTrust": 0.5,
-      "wealthConcentration": 0.06,
-      "corruption": 0,
-      "stability": -0.07,
+      "socialTrust": 0,
+      "wealthConcentration": 0.01,
+      "corruption": 0.19,
+      "stability": 1,
       "polarization": -0.03,
       "epistemicHealth": 0.01,
-      "stateCapacity": -0.01
+      "stateCapacity": 0
     },
     "initialCorruption": {
-      "socialTrust": -0.02,
-      "wealthConcentration": 0,
-      "corruption": -0.02,
-      "stability": 0,
+      "socialTrust": -0.05,
+      "wealthConcentration": 0.01,
+      "corruption": 0.11,
+      "stability": 0.04,
       "polarization": 0,
       "epistemicHealth": 0,
-      "stateCapacity": 0
+      "stateCapacity": -0.08
     }
   }
 }

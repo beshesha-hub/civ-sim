@@ -436,6 +436,10 @@ This diagnostic capability also serves as a validation tool: by decomposing sour
 
 A bug was identified where freedom level was read from the `state` object rather than from `operatingPrinciples`, where it is actually stored. Freedom is a configuration parameter set during setup (Step 5) and tracked in `operatingPrinciples.freedom`. This affected downstream calculations in epistemic health, institutional dynamics, and behavioral values. The fix ensures consistent reference to `operatingPrinciples.freedom` throughout the codebase.
 
+### 4.1c Bug Fix: Corruption Level Sync
+
+Corruption level is written by multiple subsystems (authoritarian anti-corruption pathway, companion module corruption dynamics, history events) to `governance.corruptionLevel`, but `_processNaturalEconomicForces` read from `state.corruptionLevel`. Without a turn-start sync, all writes to `governance.corruptionLevel` were silently discarded each turn. A 2-line sync was added at turn start in `simulation.js` to copy `governance.corruptionLevel` into `state.corruptionLevel`, matching the existing `freedomLevel` sync pattern. This made the authoritarian anti-corruption pathway (developmental-state corruption reduction) functional and enabled companion module and history event corruption changes to persist.
+
 ### 4.2 Known Limitations
 
 1. **Corruption-IQ bistability:** The sigmoid feedback between corruption and institutional quality creates an attractor landscape with no stable equilibrium at moderate IQ (60-70). Countries like Brazil and India are drawn to the wrong attractor in UQ scenarios.

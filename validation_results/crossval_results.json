@@ -10,36 +10,36 @@
     "denmark": {
       "full": {
         "socialTrust": {
-          "mean": 73.2,
-          "stddev": 0.4,
-          "errorFromTarget": -0.8
+          "mean": 70.6,
+          "stddev": 1,
+          "errorFromTarget": -3.4
         },
         "wealthConcentration": {
-          "mean": 31.6,
-          "stddev": 1.2,
-          "errorFromTarget": 3.6
+          "mean": 33.6,
+          "stddev": 1.6,
+          "errorFromTarget": 5.6
         },
         "corruption": {
-          "mean": 11.6,
-          "stddev": 0.5,
-          "errorFromTarget": -0.4
+          "mean": 12,
+          "stddev": 0,
+          "errorFromTarget": 0
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 69.2,
-          "stddev": 0.4,
-          "errorFromTarget": -4.8
+          "mean": 50.8,
+          "stddev": 14,
+          "errorFromTarget": -23.2
         },
         "wealthConcentration": {
-          "mean": 33.4,
-          "stddev": 1.2,
-          "errorFromTarget": 5.4
+          "mean": 42.8,
+          "stddev": 3.1,
+          "errorFromTarget": 14.8
         },
         "corruption": {
-          "mean": 12.4,
-          "stddev": 0.5,
-          "errorFromTarget": 0.4
+          "mean": 13.2,
+          "stddev": 2.4,
+          "errorFromTarget": 1.2
         }
       },
       "targets": {
@@ -51,36 +51,36 @@
     "usa": {
       "full": {
         "socialTrust": {
-          "mean": 28.6,
-          "stddev": 3.3,
-          "errorFromTarget": -8.4
+          "mean": 18.2,
+          "stddev": 1,
+          "errorFromTarget": -18.8
         },
         "wealthConcentration": {
-          "mean": 69.4,
-          "stddev": 1.2,
-          "errorFromTarget": -8.6
+          "mean": 84.8,
+          "stddev": 1.5,
+          "errorFromTarget": 6.8
         },
         "corruption": {
-          "mean": 31.8,
-          "stddev": 0.4,
-          "errorFromTarget": 4.8
+          "mean": 63.6,
+          "stddev": 10.2,
+          "errorFromTarget": 36.6
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 28.2,
-          "stddev": 3.1,
-          "errorFromTarget": -8.8
+          "mean": 18.6,
+          "stddev": 0.5,
+          "errorFromTarget": -18.4
         },
         "wealthConcentration": {
-          "mean": 69.6,
-          "stddev": 2,
-          "errorFromTarget": -8.4
+          "mean": 84.6,
+          "stddev": 0.8,
+          "errorFromTarget": 6.6
         },
         "corruption": {
-          "mean": 32.2,
-          "stddev": 0.7,
-          "errorFromTarget": 5.2
+          "mean": 54.4,
+          "stddev": 15,
+          "errorFromTarget": 27.4
         }
       },
       "targets": {
@@ -92,36 +92,36 @@
     "china": {
       "full": {
         "socialTrust": {
-          "mean": 62,
-          "stddev": 0,
-          "errorFromTarget": -2
-        },
-        "wealthConcentration": {
-          "mean": 51.8,
-          "stddev": 0.4,
-          "errorFromTarget": -3.2
-        },
-        "corruption": {
-          "mean": 39,
+          "mean": 64,
           "stddev": 0,
           "errorFromTarget": 0
+        },
+        "wealthConcentration": {
+          "mean": 56,
+          "stddev": 0,
+          "errorFromTarget": 1
+        },
+        "corruption": {
+          "mean": 36.8,
+          "stddev": 1.6,
+          "errorFromTarget": -2.2
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 58.4,
-          "stddev": 0.5,
-          "errorFromTarget": -5.6
+          "mean": 54.4,
+          "stddev": 2.2,
+          "errorFromTarget": -9.6
         },
         "wealthConcentration": {
-          "mean": 51.2,
-          "stddev": 1,
-          "errorFromTarget": -3.8
+          "mean": 58.2,
+          "stddev": 0.7,
+          "errorFromTarget": 3.2
         },
         "corruption": {
-          "mean": 40,
+          "mean": 36,
           "stddev": 0,
-          "errorFromTarget": 1
+          "errorFromTarget": -3
         }
       },
       "targets": {
@@ -133,36 +133,36 @@
     "nigeria": {
       "full": {
         "socialTrust": {
-          "mean": 6.6,
-          "stddev": 2,
-          "errorFromTarget": -8.4
+          "mean": 14.2,
+          "stddev": 0.4,
+          "errorFromTarget": -0.8
         },
         "wealthConcentration": {
-          "mean": 74.2,
-          "stddev": 8.8,
-          "errorFromTarget": 7.2
+          "mean": 82.2,
+          "stddev": 3,
+          "errorFromTarget": 15.2
         },
         "corruption": {
-          "mean": 67.6,
-          "stddev": 4.8,
-          "errorFromTarget": -6.4
+          "mean": 90,
+          "stddev": 0,
+          "errorFromTarget": 16
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 29.2,
+          "mean": 20.6,
           "stddev": 2.7,
-          "errorFromTarget": 14.2
+          "errorFromTarget": 5.6
         },
         "wealthConcentration": {
-          "mean": 51.6,
-          "stddev": 1.4,
-          "errorFromTarget": -15.4
+          "mean": 68.4,
+          "stddev": 7.5,
+          "errorFromTarget": 1.4
         },
         "corruption": {
-          "mean": 20.2,
-          "stddev": 1.6,
-          "errorFromTarget": -53.8
+          "mean": 25.8,
+          "stddev": 11.8,
+          "errorFromTarget": -48.2
         }
       },
       "targets": {
@@ -174,36 +174,36 @@
     "saudi": {
       "full": {
         "socialTrust": {
-          "mean": 39.6,
-          "stddev": 3.1,
-          "errorFromTarget": -13.4
+          "mean": 34.2,
+          "stddev": 0.4,
+          "errorFromTarget": -18.8
         },
         "wealthConcentration": {
-          "mean": 61,
-          "stddev": 2.3,
-          "errorFromTarget": -4
+          "mean": 75.6,
+          "stddev": 1.9,
+          "errorFromTarget": 10.6
         },
         "corruption": {
-          "mean": 54,
-          "stddev": 0,
-          "errorFromTarget": 1
+          "mean": 69.6,
+          "stddev": 5.5,
+          "errorFromTarget": 16.6
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 57.4,
-          "stddev": 4.7,
-          "errorFromTarget": 4.4
+          "mean": 32.4,
+          "stddev": 14.2,
+          "errorFromTarget": -20.6
         },
         "wealthConcentration": {
-          "mean": 59.8,
-          "stddev": 0.7,
-          "errorFromTarget": -5.2
+          "mean": 76.6,
+          "stddev": 9.3,
+          "errorFromTarget": 11.6
         },
         "corruption": {
-          "mean": 36.4,
-          "stddev": 1.7,
-          "errorFromTarget": -16.6
+          "mean": 64,
+          "stddev": 16.7,
+          "errorFromTarget": 11
         }
       },
       "targets": {
@@ -215,36 +215,36 @@
     "singapore": {
       "full": {
         "socialTrust": {
-          "mean": 59.2,
-          "stddev": 0.4,
-          "errorFromTarget": 21.2
+          "mean": 56.4,
+          "stddev": 0.5,
+          "errorFromTarget": 18.4
         },
         "wealthConcentration": {
-          "mean": 52.8,
-          "stddev": 0.4,
-          "errorFromTarget": 7.8
+          "mean": 58,
+          "stddev": 0.6,
+          "errorFromTarget": 13
         },
         "corruption": {
-          "mean": 26.2,
-          "stddev": 0.4,
-          "errorFromTarget": 22.2
+          "mean": 27,
+          "stddev": 0.6,
+          "errorFromTarget": 23
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 57,
-          "stddev": 0,
-          "errorFromTarget": 19
+          "mean": 53.2,
+          "stddev": 2.2,
+          "errorFromTarget": 15.2
         },
         "wealthConcentration": {
-          "mean": 52.6,
-          "stddev": 0.8,
-          "errorFromTarget": 7.6
+          "mean": 59.2,
+          "stddev": 1.2,
+          "errorFromTarget": 14.2
         },
         "corruption": {
-          "mean": 27,
-          "stddev": 0,
-          "errorFromTarget": 23
+          "mean": 27.2,
+          "stddev": 1.5,
+          "errorFromTarget": 23.2
         }
       },
       "targets": {
@@ -256,36 +256,36 @@
     "brazil": {
       "full": {
         "socialTrust": {
-          "mean": 11.6,
-          "stddev": 2.2,
-          "errorFromTarget": 4.6
+          "mean": 11.2,
+          "stddev": 5.7,
+          "errorFromTarget": 4.2
         },
         "wealthConcentration": {
-          "mean": 74.8,
-          "stddev": 5.9,
-          "errorFromTarget": -14.2
+          "mean": 85.8,
+          "stddev": 5,
+          "errorFromTarget": -3.2
         },
         "corruption": {
-          "mean": 37,
-          "stddev": 2.2,
-          "errorFromTarget": -25
+          "mean": 70.4,
+          "stddev": 19.3,
+          "errorFromTarget": 8.4
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 25,
-          "stddev": 1.8,
-          "errorFromTarget": 18
+          "mean": 14.2,
+          "stddev": 1,
+          "errorFromTarget": 7.2
         },
         "wealthConcentration": {
-          "mean": 64.6,
-          "stddev": 1.7,
-          "errorFromTarget": -24.4
+          "mean": 86.2,
+          "stddev": 1.9,
+          "errorFromTarget": -2.8
         },
         "corruption": {
-          "mean": 31.6,
-          "stddev": 1.6,
-          "errorFromTarget": -30.4
+          "mean": 65.6,
+          "stddev": 15,
+          "errorFromTarget": 3.6
         }
       },
       "targets": {
@@ -297,36 +297,36 @@
     "russia": {
       "full": {
         "socialTrust": {
-          "mean": 13,
-          "stddev": 3,
-          "errorFromTarget": -15
+          "mean": 19.2,
+          "stddev": 1,
+          "errorFromTarget": -8.8
         },
         "wealthConcentration": {
-          "mean": 75.6,
-          "stddev": 3.1,
-          "errorFromTarget": -2.4
+          "mean": 84,
+          "stddev": 0.9,
+          "errorFromTarget": 6
         },
         "corruption": {
-          "mean": 72.6,
-          "stddev": 1.5,
-          "errorFromTarget": -0.4
+          "mean": 90,
+          "stddev": 0,
+          "errorFromTarget": 17
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 54,
-          "stddev": 0.6,
-          "errorFromTarget": 26
+          "mean": 36.4,
+          "stddev": 11.7,
+          "errorFromTarget": 8.4
         },
         "wealthConcentration": {
-          "mean": 58.4,
-          "stddev": 0.8,
-          "errorFromTarget": -19.6
+          "mean": 59.6,
+          "stddev": 1.7,
+          "errorFromTarget": -18.4
         },
         "corruption": {
-          "mean": 39.6,
-          "stddev": 0.8,
-          "errorFromTarget": -33.4
+          "mean": 37.8,
+          "stddev": 2.3,
+          "errorFromTarget": -35.2
         }
       },
       "targets": {
@@ -338,36 +338,36 @@
     "japan": {
       "full": {
         "socialTrust": {
-          "mean": 43.8,
-          "stddev": 1.6,
-          "errorFromTarget": 7.8
+          "mean": 39.4,
+          "stddev": 5.7,
+          "errorFromTarget": 3.4
         },
         "wealthConcentration": {
-          "mean": 32.8,
-          "stddev": 0.4,
-          "errorFromTarget": -15.2
+          "mean": 46.6,
+          "stddev": 0.8,
+          "errorFromTarget": -1.4
         },
         "corruption": {
-          "mean": 15,
-          "stddev": 0,
-          "errorFromTarget": -12
+          "mean": 12.8,
+          "stddev": 1.2,
+          "errorFromTarget": -14.2
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 29.8,
+          "mean": 22.2,
           "stddev": 0.7,
-          "errorFromTarget": -6.2
+          "errorFromTarget": -13.8
         },
         "wealthConcentration": {
-          "mean": 38.8,
-          "stddev": 1.2,
-          "errorFromTarget": -9.2
+          "mean": 56.4,
+          "stddev": 1.6,
+          "errorFromTarget": 8.4
         },
         "corruption": {
-          "mean": 20,
-          "stddev": 0,
-          "errorFromTarget": -7
+          "mean": 37.8,
+          "stddev": 8.4,
+          "errorFromTarget": 10.8
         }
       },
       "targets": {
@@ -379,36 +379,36 @@
     "germany": {
       "full": {
         "socialTrust": {
-          "mean": 74,
-          "stddev": 0,
-          "errorFromTarget": 30
+          "mean": 63.6,
+          "stddev": 0.5,
+          "errorFromTarget": 19.6
         },
         "wealthConcentration": {
-          "mean": 33.6,
-          "stddev": 0.5,
-          "errorFromTarget": -21.4
+          "mean": 42.8,
+          "stddev": 1.2,
+          "errorFromTarget": -12.2
         },
         "corruption": {
-          "mean": 8,
+          "mean": 12,
           "stddev": 0,
-          "errorFromTarget": -14
+          "errorFromTarget": -10
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 65.6,
-          "stddev": 0.5,
-          "errorFromTarget": 21.6
+          "mean": 46,
+          "stddev": 12,
+          "errorFromTarget": 2
         },
         "wealthConcentration": {
-          "mean": 38.6,
-          "stddev": 1.4,
-          "errorFromTarget": -16.4
+          "mean": 51.6,
+          "stddev": 2.4,
+          "errorFromTarget": -3.4
         },
         "corruption": {
-          "mean": 13,
-          "stddev": 0,
-          "errorFromTarget": -9
+          "mean": 19.8,
+          "stddev": 2.2,
+          "errorFromTarget": -2.2
         }
       },
       "targets": {
@@ -420,36 +420,36 @@
     "india": {
       "full": {
         "socialTrust": {
-          "mean": 11.8,
-          "stddev": 0.7,
-          "errorFromTarget": -9.2
+          "mean": 13.2,
+          "stddev": 0.4,
+          "errorFromTarget": -7.8
         },
         "wealthConcentration": {
-          "mean": 59.8,
-          "stddev": 1.8,
-          "errorFromTarget": -15.2
+          "mean": 88.6,
+          "stddev": 0.8,
+          "errorFromTarget": 13.6
         },
         "corruption": {
-          "mean": 35.8,
-          "stddev": 0.4,
-          "errorFromTarget": -25.2
+          "mean": 83.8,
+          "stddev": 5.2,
+          "errorFromTarget": 22.8
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 16,
-          "stddev": 3.6,
-          "errorFromTarget": -5
+          "mean": 16.2,
+          "stddev": 1.8,
+          "errorFromTarget": -4.8
         },
         "wealthConcentration": {
-          "mean": 53.2,
-          "stddev": 1.5,
-          "errorFromTarget": -21.8
+          "mean": 72.8,
+          "stddev": 7.4,
+          "errorFromTarget": -2.2
         },
         "corruption": {
-          "mean": 30.8,
-          "stddev": 1.2,
-          "errorFromTarget": -30.2
+          "mean": 60,
+          "stddev": 18.8,
+          "errorFromTarget": -1
         }
       },
       "targets": {
@@ -461,36 +461,36 @@
     "south_korea": {
       "full": {
         "socialTrust": {
-          "mean": 48.2,
-          "stddev": 0.4,
-          "errorFromTarget": 18.2
+          "mean": 46,
+          "stddev": 1.3,
+          "errorFromTarget": 16
         },
         "wealthConcentration": {
-          "mean": 37.2,
-          "stddev": 1.6,
-          "errorFromTarget": -17.8
+          "mean": 51.8,
+          "stddev": 1,
+          "errorFromTarget": -3.2
         },
         "corruption": {
-          "mean": 13.2,
-          "stddev": 0.4,
-          "errorFromTarget": -23.8
+          "mean": 17.4,
+          "stddev": 3.8,
+          "errorFromTarget": -19.6
         }
       },
       "stripped": {
         "socialTrust": {
-          "mean": 29.8,
-          "stddev": 6.9,
-          "errorFromTarget": -0.2
+          "mean": 21.8,
+          "stddev": 0.7,
+          "errorFromTarget": -8.2
         },
         "wealthConcentration": {
-          "mean": 44.2,
-          "stddev": 1.2,
-          "errorFromTarget": -10.8
+          "mean": 61,
+          "stddev": 2.1,
+          "errorFromTarget": 6
         },
         "corruption": {
-          "mean": 22.6,
-          "stddev": 1,
-          "errorFromTarget": -14.4
+          "mean": 36.6,
+          "stddev": 8.8,
+          "errorFromTarget": -0.4
         }
       },
       "targets": {

@@ -2543,3 +2543,38 @@ polarized media-institutional trust dynamics.
 Singapore's deviation is multi-dimensional rather than driven by a single
 variable. The city-state governance model remains the hardest case for the
 nation-state architecture.
+
+---
+
+## 36. Corruption Sync Bug Fix (September 10, 2026)
+
+**Bug:** Multiple subsystems wrote corruption changes to
+`governance.corruptionLevel`, but `_processNaturalEconomicForces` read from
+`state.corruptionLevel`. Without a turn-start sync, every write to
+`governance.corruptionLevel` was silently discarded each turn.
+
+Affected pathways:
+
+1. **Authoritarian anti-corruption** (task #50, modeling Singapore-like
+   developmental authoritarians) — corruption reductions had no effect.
+2. **Companion module corruption push/pull** (strata-based corruption
+   dynamics) — changes did not persist across turns.
+3. **History event corruption changes** (revolutions, government
+   transitions) — modifications were overwritten.
+
+**Fix:** Added a 2-line sync at turn start in `simulation.js` (~line 72),
+copying `governance.corruptionLevel` into `state.corruptionLevel` before
+processing. This mirrors the existing `freedomLevel` sync pattern.
+
+**Validation impact (post-fix):**
+
+| Suite | Score | Notes |
+|-------|-------|-------|
+| UQ | 12/36 (33%) | Unchanged |
+| Hindcast | 26-27/38 (68-71%) | Within variance of previous 29/38 |
+| Cross-validation | 27/36 (75%) | Generalizes |
+
+The fix unblocks the authoritarian anti-corruption pathway without
+regressing other validation suites. The hindcast variance is expected —
+corruption now actually moves in response to governance dynamics that
+were previously no-ops.

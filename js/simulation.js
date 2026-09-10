@@ -69,6 +69,11 @@ class SimulationEngine {
         civ.state.freedomLevel = civ.operatingPrinciples.freedomLevel;
       }
 
+      // Sync governance.corruptionLevel into state so post-economic-forces writes persist
+      if (civ.governance && civ.governance.corruptionLevel !== undefined) {
+        civ.state.corruptionLevel = civ.governance.corruptionLevel;
+      }
+
       // Companion pre-turn snapshot (captures state before civ-sim modifies it)
       if (companion?.isActive) companion.capturePreTurnSnapshot(civ);
 

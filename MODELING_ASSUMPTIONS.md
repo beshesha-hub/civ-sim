@@ -83,6 +83,8 @@ Military-civilian balance follows the Powell & Thyne (2011) global coup dataset.
 
 **Key assumption:** Corruption is self-reinforcing below a threshold of institutional quality (the "poverty trap" of weak institutions). Recovery requires simultaneous improvement in multiple systems -- institutional quality alone is insufficient if trust is low and capture is high. This reflects North's (1990) transaction costs framework and AJR's empirical finding that extractive institutions persist because elites resist inclusive reform to preserve their rents.
 
+**Implementation note:** Corruption level is stored in `governance.corruptionLevel` (the authoritative source, written by anti-corruption pathways, companion module dynamics, and history events) and synced into `state.corruptionLevel` at turn start for use by economic processing. A sync bug that caused writes to `governance.corruptionLevel` to be silently discarded was fixed in September 2026 (see MODEL_DIAGNOSTICS.md §36).
+
 **Key assumption:** Institutions are endogenous. Following AJR 2012, institutional quality is not a matter of good ideas adopted by enlightened leaders; it is shaped by the distribution of power. Inclusive institutions emerge when power is broadly distributed and multiple groups can check each other. Extractive institutions persist when a narrow elite can prevent reform. This means institutional improvement often requires a crisis (critical juncture) that disrupts the existing power balance.
 
 ### 3.3 Social Structure
