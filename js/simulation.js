@@ -10896,7 +10896,7 @@ class SimulationEngine {
     if (st.innovationCapacity > 60 && st._techAdoptionPressure) {
       const breakthroughChance = (st.innovationCapacity - 60) / 400;
       for (const techName of Object.keys(st._techAdoptionPressure)) {
-        if (Math.random() < breakthroughChance * timeScale) {
+        if (Utils.random() < breakthroughChance * timeScale) {
           st._techAdoptionPressure[techName] += 15;
         }
       }

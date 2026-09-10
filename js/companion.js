@@ -1391,7 +1391,7 @@ class MicroFoundationEngine {
     const currentTurn = civState._currentTurn ?? 0;
     if (currentTurn - recentHistory < 5) return null;
 
-    const rand = randFn ?? Math.random;
+    const rand = randFn ?? ((typeof Utils !== 'undefined') ? Utils.random : Math.random);
     const T = COMPANION_TRANSITION_THRESHOLDS;
 
     // ── Popular Revolution ──
@@ -1556,7 +1556,7 @@ class CompanionModule {
     );
 
     // 7. Micro-foundations (with diffusion data)
-    const randFn = this.game?.rng?.random ? () => this.game.rng.random() : Math.random;
+    const randFn = (typeof Utils !== 'undefined') ? Utils.random : Math.random;
     this.microFoundations.update(
       data.microFoundations, civ.state, civ.governance,
       data.demographic, data.diffusion, realYears, randFn

@@ -122,8 +122,8 @@
             "sd": 0
           },
           "stability": {
-            "mean": 49.3,
-            "sd": 8.1
+            "mean": 50,
+            "sd": 7.7
           },
           "stateCapacity": {
             "mean": 48.8,
@@ -134,8 +134,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 49.1,
-            "sd": 4.1
+            "mean": 49.6,
+            "sd": 3.8
           },
           "militaryPower": {
             "mean": 55,
@@ -161,8 +161,8 @@
         {
           "turn": 4,
           "socialTrust": {
-            "mean": 29,
-            "sd": 1.7
+            "mean": 28.8,
+            "sd": 1.8
           },
           "wealthConcentration": {
             "mean": 68.2,
@@ -173,8 +173,8 @@
             "sd": 0
           },
           "stability": {
-            "mean": 50.5,
-            "sd": 7
+            "mean": 49.2,
+            "sd": 8.1
           },
           "stateCapacity": {
             "mean": 49.9,
@@ -185,8 +185,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 49.9,
-            "sd": 3
+            "mean": 48.7,
+            "sd": 3.8
           },
           "militaryPower": {
             "mean": 55,
@@ -224,8 +224,8 @@
             "sd": 0
           },
           "stability": {
-            "mean": 50.8,
-            "sd": 7
+            "mean": 49.2,
+            "sd": 8.8
           },
           "stateCapacity": {
             "mean": 50.9,
@@ -236,8 +236,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 50.7,
-            "sd": 3.1
+            "mean": 49.5,
+            "sd": 3.5
           },
           "militaryPower": {
             "mean": 55,
@@ -256,7 +256,7 @@
             "sd": 0
           },
           "institutionalQuality": {
-            "mean": 36.2,
+            "mean": 36.4,
             "sd": 0.8
           }
         },
@@ -267,7 +267,7 @@
             "sd": 2
           },
           "wealthConcentration": {
-            "mean": 70.8,
+            "mean": 70.7,
             "sd": 0.8
           },
           "corruption": {
@@ -275,20 +275,20 @@
             "sd": 0
           },
           "stability": {
-            "mean": 50.8,
-            "sd": 9.2
+            "mean": 50.3,
+            "sd": 10.6
           },
           "stateCapacity": {
             "mean": 51.9,
-            "sd": 0.4
+            "sd": 0.3
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 50.8,
-            "sd": 3.6
+            "mean": 50,
+            "sd": 4.4
           },
           "militaryPower": {
             "mean": 55,
@@ -314,8 +314,8 @@
         {
           "turn": 7,
           "socialTrust": {
-            "mean": 28.6,
-            "sd": 2
+            "mean": 28.1,
+            "sd": 2.2
           },
           "wealthConcentration": {
             "mean": 71.6,
@@ -326,8 +326,8 @@
             "sd": 0
           },
           "stability": {
-            "mean": 52.5,
-            "sd": 8.2
+            "mean": 50.6,
+            "sd": 9.7
           },
           "stateCapacity": {
             "mean": 53,
@@ -338,8 +338,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 51.6,
-            "sd": 2.7
+            "mean": 50.3,
+            "sd": 3.6
           },
           "militaryPower": {
             "mean": 55,
@@ -358,15 +358,15 @@
             "sd": 0.3
           },
           "institutionalQuality": {
-            "mean": 37.3,
+            "mean": 37.4,
             "sd": 0.7
           }
         },
         {
           "turn": 8,
           "socialTrust": {
-            "mean": 28.3,
-            "sd": 2.1
+            "mean": 28.1,
+            "sd": 2.2
           },
           "wealthConcentration": {
             "mean": 72.3,
@@ -377,8 +377,8 @@
             "sd": 0.2
           },
           "stability": {
-            "mean": 52.8,
-            "sd": 8.8
+            "mean": 51,
+            "sd": 10.2
           },
           "stateCapacity": {
             "mean": 54,
@@ -389,8 +389,8 @@
             "sd": 0.4
           },
           "wellbeing": {
-            "mean": 52.1,
-            "sd": 2.8
+            "mean": 51,
+            "sd": 3.6
           },
           "militaryPower": {
             "mean": 55,
@@ -410,14 +410,14 @@
           },
           "institutionalQuality": {
             "mean": 38,
-            "sd": 0.9
+            "sd": 0.8
           }
         },
         {
           "turn": 9,
           "socialTrust": {
-            "mean": 27.8,
-            "sd": 2.2
+            "mean": 27.4,
+            "sd": 2.5
           },
           "wealthConcentration": {
             "mean": 72.5,
@@ -428,20 +428,20 @@
             "sd": 0
           },
           "stability": {
-            "mean": 52,
-            "sd": 9.2
+            "mean": 49.4,
+            "sd": 10.6
           },
           "stateCapacity": {
-            "mean": 55,
-            "sd": 0.5
+            "mean": 54.9,
+            "sd": 0.7
           },
           "epistemicHealth": {
             "mean": 31,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 51.3,
-            "sd": 3.7
+            "mean": 50.4,
+            "sd": 3.6
           },
           "militaryPower": {
             "mean": 55,
@@ -456,7 +456,7 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 34.3,
+            "mean": 34.2,
             "sd": 0.4
           },
           "institutionalQuality": {
@@ -467,32 +467,32 @@
         {
           "turn": 10,
           "socialTrust": {
-            "mean": 27.3,
-            "sd": 2.3
+            "mean": 26.4,
+            "sd": 2.5
           },
           "wealthConcentration": {
-            "mean": 72.9,
-            "sd": 0.8
+            "mean": 73,
+            "sd": 0.7
           },
           "corruption": {
             "mean": 56,
             "sd": 0
           },
           "stability": {
-            "mean": 51.8,
-            "sd": 8.3
+            "mean": 49,
+            "sd": 10.2
           },
           "stateCapacity": {
-            "mean": 56,
-            "sd": 0.6
+            "mean": 55.9,
+            "sd": 0.7
           },
           "epistemicHealth": {
             "mean": 31,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 51.2,
-            "sd": 3.7
+            "mean": 49.8,
+            "sd": 3.9
           },
           "militaryPower": {
             "mean": 55,
@@ -507,43 +507,43 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 36.3,
+            "mean": 36.2,
             "sd": 0.4
           },
           "institutionalQuality": {
             "mean": 39,
-            "sd": 0.7
+            "sd": 0.8
           }
         },
         {
           "turn": 11,
           "socialTrust": {
-            "mean": 26.4,
-            "sd": 2.2
+            "mean": 25.4,
+            "sd": 2.5
           },
           "wealthConcentration": {
-            "mean": 73.2,
-            "sd": 0.7
+            "mean": 73.3,
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 55,
-            "sd": 0.2
+            "mean": 55.1,
+            "sd": 0.3
           },
           "stability": {
-            "mean": 50,
-            "sd": 8.8
+            "mean": 47.7,
+            "sd": 10.1
           },
           "stateCapacity": {
-            "mean": 57,
-            "sd": 0.6
+            "mean": 56.8,
+            "sd": 0.7
           },
           "epistemicHealth": {
             "mean": 30,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 50.4,
-            "sd": 4.6
+            "mean": 49.3,
+            "sd": 4.5
           },
           "militaryPower": {
             "mean": 54.9,
@@ -558,34 +558,34 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 38.4,
-            "sd": 0.7
+            "mean": 38.3,
+            "sd": 0.6
           },
           "institutionalQuality": {
             "mean": 39.5,
-            "sd": 0.9
+            "sd": 0.6
           }
         },
         {
           "turn": 12,
           "socialTrust": {
-            "mean": 25.3,
-            "sd": 1.8
+            "mean": 24.1,
+            "sd": 1.7
           },
           "wealthConcentration": {
             "mean": 73.5,
-            "sd": 0.6
+            "sd": 0.5
           },
           "corruption": {
             "mean": 54.5,
             "sd": 0.5
           },
           "stability": {
-            "mean": 49.4,
-            "sd": 8.2
+            "mean": 46.3,
+            "sd": 12.7
           },
           "stateCapacity": {
-            "mean": 57.9,
+            "mean": 57.7,
             "sd": 0.6
           },
           "epistemicHealth": {
@@ -593,8 +593,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 49.9,
-            "sd": 3.5
+            "mean": 48.6,
+            "sd": 4.9
           },
           "militaryPower": {
             "mean": 54.8,
@@ -609,31 +609,31 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 40.4,
-            "sd": 0.7
+            "mean": 40.3,
+            "sd": 0.6
           },
           "institutionalQuality": {
-            "mean": 39.6,
-            "sd": 1
+            "mean": 39.9,
+            "sd": 0.9
           }
         },
         {
           "turn": 13,
           "socialTrust": {
-            "mean": 24.8,
-            "sd": 1
+            "mean": 24.1,
+            "sd": 1.8
           },
           "wealthConcentration": {
             "mean": 73.6,
-            "sd": 0.7
+            "sd": 0.6
           },
           "corruption": {
             "mean": 54,
             "sd": 0.2
           },
           "stability": {
-            "mean": 50,
-            "sd": 10.6
+            "mean": 47.6,
+            "sd": 12.9
           },
           "stateCapacity": {
             "mean": 58,
@@ -644,7 +644,7 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 49.7,
+            "mean": 50,
             "sd": 3.9
           },
           "militaryPower": {
@@ -664,39 +664,39 @@
             "sd": 0.8
           },
           "institutionalQuality": {
-            "mean": 40.1,
-            "sd": 1
+            "mean": 40.3,
+            "sd": 0.8
           }
         },
         {
           "turn": 14,
           "socialTrust": {
-            "mean": 24.9,
-            "sd": 1
+            "mean": 24,
+            "sd": 2.2
           },
           "wealthConcentration": {
-            "mean": 73.7,
-            "sd": 0.8
+            "mean": 73.6,
+            "sd": 0.7
           },
           "corruption": {
-            "mean": 53.2,
+            "mean": 53.1,
             "sd": 0.4
           },
           "stability": {
-            "mean": 49.5,
-            "sd": 11.7
+            "mean": 48.3,
+            "sd": 14.6
           },
           "stateCapacity": {
-            "mean": 58.6,
-            "sd": 0.5
+            "mean": 58.5,
+            "sd": 0.6
           },
           "epistemicHealth": {
             "mean": 29,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 50.8,
-            "sd": 3.9
+            "mean": 50.3,
+            "sd": 5.1
           },
           "militaryPower": {
             "mean": 54.8,
@@ -711,43 +711,43 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 44.7,
+            "mean": 44.5,
             "sd": 0.8
           },
           "institutionalQuality": {
-            "mean": 40.1,
-            "sd": 0.9
+            "mean": 40.2,
+            "sd": 0.7
           }
         },
         {
           "turn": 15,
           "socialTrust": {
-            "mean": 25.1,
-            "sd": 1.1
+            "mean": 24.3,
+            "sd": 2.3
           },
           "wealthConcentration": {
-            "mean": 73.7,
-            "sd": 0.8
+            "mean": 73.6,
+            "sd": 0.9
           },
           "corruption": {
-            "mean": 53,
-            "sd": 0.2
+            "mean": 53.1,
+            "sd": 0.3
           },
           "stability": {
-            "mean": 50.3,
-            "sd": 11.9
+            "mean": 48.1,
+            "sd": 13.1
           },
           "stateCapacity": {
-            "mean": 59,
-            "sd": 0.4
+            "mean": 58.8,
+            "sd": 0.6
           },
           "epistemicHealth": {
             "mean": 28.1,
             "sd": 0.4
           },
           "wellbeing": {
-            "mean": 51.8,
-            "sd": 3.6
+            "mean": 50.6,
+            "sd": 5.9
           },
           "militaryPower": {
             "mean": 54.8,
@@ -762,43 +762,43 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 46.7,
+            "mean": 46.5,
             "sd": 0.8
           },
           "institutionalQuality": {
-            "mean": 40.5,
-            "sd": 1.2
+            "mean": 40.4,
+            "sd": 1
           }
         },
         {
           "turn": 16,
           "socialTrust": {
-            "mean": 25.1,
-            "sd": 1.6
+            "mean": 24.1,
+            "sd": 2.5
           },
           "wealthConcentration": {
             "mean": 73.7,
             "sd": 0.9
           },
           "corruption": {
-            "mean": 52.2,
+            "mean": 52.1,
             "sd": 0.4
           },
           "stability": {
-            "mean": 50.3,
+            "mean": 48.4,
             "sd": 13.4
           },
           "stateCapacity": {
             "mean": 59,
-            "sd": 0.4
+            "sd": 0.6
           },
           "epistemicHealth": {
             "mean": 28,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 52.5,
-            "sd": 4
+            "mean": 51.4,
+            "sd": 5.8
           },
           "militaryPower": {
             "mean": 54.8,
@@ -813,50 +813,50 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 48.8,
+            "mean": 48.6,
             "sd": 0.8
           },
           "institutionalQuality": {
-            "mean": 40.7,
-            "sd": 1.1
+            "mean": 40.9,
+            "sd": 0.9
           }
         },
         {
           "turn": 17,
           "socialTrust": {
-            "mean": 24.8,
-            "sd": 1.7
+            "mean": 24.1,
+            "sd": 2.3
           },
           "wealthConcentration": {
             "mean": 73.7,
-            "sd": 1
+            "sd": 0.9
           },
           "corruption": {
-            "mean": 52,
-            "sd": 0.2
+            "mean": 52.1,
+            "sd": 0.3
           },
           "stability": {
-            "mean": 52.1,
-            "sd": 14.1
+            "mean": 49.1,
+            "sd": 13.7
           },
           "stateCapacity": {
-            "mean": 59.5,
-            "sd": 0.5
+            "mean": 59.3,
+            "sd": 0.8
           },
           "epistemicHealth": {
-            "mean": 27.5,
+            "mean": 27.6,
             "sd": 0.5
           },
           "wellbeing": {
-            "mean": 53.4,
-            "sd": 3.3
+            "mean": 51.7,
+            "sd": 4.5
           },
           "militaryPower": {
-            "mean": 54.5,
-            "sd": 0.5
+            "mean": 54.8,
+            "sd": 0.4
           },
           "polarization": {
-            "mean": 19.4,
+            "mean": 19.3,
             "sd": 0.5
           },
           "institutionalLockIn": {
@@ -864,148 +864,148 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 50.9,
+            "mean": 50.6,
             "sd": 0.8
           },
           "institutionalQuality": {
-            "mean": 40.8,
-            "sd": 1
+            "mean": 41,
+            "sd": 1.1
           }
         },
         {
           "turn": 18,
           "socialTrust": {
-            "mean": 24.9,
-            "sd": 1.7
+            "mean": 23.8,
+            "sd": 2.3
           },
           "wealthConcentration": {
-            "mean": 73.6,
-            "sd": 1
+            "mean": 73.7,
+            "sd": 0.9
           },
           "corruption": {
-            "mean": 51.3,
-            "sd": 0.6
+            "mean": 51.4,
+            "sd": 0.7
           },
           "stability": {
-            "mean": 53.9,
-            "sd": 12.7
+            "mean": 48,
+            "sd": 14.4
           },
           "stateCapacity": {
-            "mean": 59.9,
-            "sd": 0.5
+            "mean": 59.6,
+            "sd": 0.8
           },
           "epistemicHealth": {
-            "mean": 27,
-            "sd": 0
+            "mean": 27.1,
+            "sd": 0.2
           },
           "wellbeing": {
-            "mean": 54.3,
-            "sd": 2.7
+            "mean": 51.6,
+            "sd": 4.7
           },
           "militaryPower": {
-            "mean": 54.5,
-            "sd": 0.5
+            "mean": 54.8,
+            "sd": 0.4
           },
           "polarization": {
             "mean": 19.1,
-            "sd": 0.2
+            "sd": 0.4
           },
           "institutionalLockIn": {
             "mean": 80,
             "sd": 0
           },
           "genderEquity": {
-            "mean": 53,
+            "mean": 52.8,
             "sd": 1
           },
           "institutionalQuality": {
-            "mean": 41.3,
+            "mean": 41.1,
             "sd": 1.2
           }
         },
         {
           "turn": 19,
           "socialTrust": {
-            "mean": 24.4,
-            "sd": 2.1
+            "mean": 23.8,
+            "sd": 2.3
           },
           "wealthConcentration": {
-            "mean": 73.6,
-            "sd": 1
+            "mean": 73.7,
+            "sd": 1.1
           },
           "corruption": {
-            "mean": 51.3,
+            "mean": 51.2,
             "sd": 0.5
           },
           "stability": {
-            "mean": 53.5,
-            "sd": 13.1
+            "mean": 49.1,
+            "sd": 12.8
           },
           "stateCapacity": {
-            "mean": 60,
-            "sd": 0.6
+            "mean": 59.8,
+            "sd": 0.9
           },
           "epistemicHealth": {
             "mean": 27,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 53.8,
-            "sd": 3.3
+            "mean": 52.5,
+            "sd": 3.8
           },
           "militaryPower": {
-            "mean": 54.5,
+            "mean": 54.6,
             "sd": 0.5
           },
           "polarization": {
-            "mean": 19.1,
-            "sd": 0.2
+            "mean": 19,
+            "sd": 0
           },
           "institutionalLockIn": {
             "mean": 82,
             "sd": 0
           },
           "genderEquity": {
-            "mean": 54.5,
-            "sd": 0.5
+            "mean": 54.4,
+            "sd": 0.6
           },
           "institutionalQuality": {
             "mean": 41.5,
-            "sd": 1.1
+            "sd": 1.2
           }
         },
         {
           "turn": 20,
           "socialTrust": {
-            "mean": 23.3,
-            "sd": 2
+            "mean": 24.1,
+            "sd": 2.4
           },
           "wealthConcentration": {
-            "mean": 73.9,
-            "sd": 0.9
+            "mean": 73.6,
+            "sd": 1.1
           },
           "corruption": {
             "mean": 51,
             "sd": 0.7
           },
           "stability": {
-            "mean": 52,
-            "sd": 14.2
+            "mean": 49.3,
+            "sd": 12.9
           },
           "stateCapacity": {
-            "mean": 60.3,
-            "sd": 0.7
+            "mean": 60.4,
+            "sd": 1
           },
           "epistemicHealth": {
             "mean": 26.1,
             "sd": 0.3
           },
           "wellbeing": {
-            "mean": 52.5,
-            "sd": 4.4
+            "mean": 53.1,
+            "sd": 3.4
           },
           "militaryPower": {
-            "mean": 54.4,
+            "mean": 54.5,
             "sd": 0.5
           },
           "polarization": {
@@ -1018,30 +1018,30 @@
           },
           "genderEquity": {
             "mean": 54.9,
-            "sd": 0.4
+            "sd": 0.5
           },
           "institutionalQuality": {
             "mean": 41.8,
-            "sd": 1.2
+            "sd": 1.3
           }
         },
         {
           "turn": 21,
           "socialTrust": {
-            "mean": 23.3,
-            "sd": 2
+            "mean": 23.9,
+            "sd": 2.6
           },
           "wealthConcentration": {
-            "mean": 73.9,
-            "sd": 0.9
+            "mean": 73.7,
+            "sd": 1.1
           },
           "corruption": {
             "mean": 50.5,
             "sd": 0.9
           },
           "stability": {
-            "mean": 53.5,
-            "sd": 13.9
+            "mean": 48.3,
+            "sd": 12.6
           },
           "stateCapacity": {
             "mean": 60.5,
@@ -1052,11 +1052,11 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 53.5,
-            "sd": 3.6
+            "mean": 53,
+            "sd": 3.3
           },
           "militaryPower": {
-            "mean": 54.4,
+            "mean": 54.5,
             "sd": 0.5
           },
           "polarization": {
@@ -1073,41 +1073,41 @@
           },
           "institutionalQuality": {
             "mean": 42,
-            "sd": 1.3
+            "sd": 1.2
           }
         },
         {
           "turn": 22,
           "socialTrust": {
-            "mean": 23.2,
-            "sd": 2.2
+            "mean": 23.4,
+            "sd": 2.7
           },
           "wealthConcentration": {
-            "mean": 73.8,
+            "mean": 73.6,
             "sd": 1
           },
           "corruption": {
             "mean": 50.4,
-            "sd": 0.8
+            "sd": 0.9
           },
           "stability": {
-            "mean": 54.3,
-            "sd": 15
+            "mean": 48,
+            "sd": 12.5
           },
           "stateCapacity": {
-            "mean": 60.8,
-            "sd": 1
+            "mean": 60.6,
+            "sd": 1.1
           },
           "epistemicHealth": {
-            "mean": 25.3,
+            "mean": 25.4,
             "sd": 0.5
           },
           "wellbeing": {
-            "mean": 53.5,
+            "mean": 53.3,
             "sd": 3.8
           },
           "militaryPower": {
-            "mean": 54.4,
+            "mean": 54.5,
             "sd": 0.5
           },
           "polarization": {
@@ -1123,27 +1123,27 @@
             "sd": 0.5
           },
           "institutionalQuality": {
-            "mean": 42.1,
-            "sd": 1.2
+            "mean": 42.5,
+            "sd": 1.3
           }
         },
         {
           "turn": 23,
           "socialTrust": {
-            "mean": 23.3,
-            "sd": 2.1
+            "mean": 23.6,
+            "sd": 2.4
           },
           "wealthConcentration": {
-            "mean": 73.9,
-            "sd": 1
+            "mean": 73.7,
+            "sd": 1.1
           },
           "corruption": {
             "mean": 50.4,
-            "sd": 0.8
+            "sd": 0.9
           },
           "stability": {
-            "mean": 55.5,
-            "sd": 14.9
+            "mean": 47.2,
+            "sd": 14.4
           },
           "stateCapacity": {
             "mean": 61,
@@ -1154,8 +1154,8 @@
             "sd": 0.2
           },
           "wellbeing": {
-            "mean": 54,
-            "sd": 3.6
+            "mean": 53.5,
+            "sd": 5.4
           },
           "militaryPower": {
             "mean": 54.4,
@@ -1170,35 +1170,35 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 55.3,
+            "mean": 55.1,
             "sd": 0.6
           },
           "institutionalQuality": {
             "mean": 42.6,
-            "sd": 1.5
+            "sd": 1.3
           }
         },
         {
           "turn": 24,
           "socialTrust": {
-            "mean": 23.1,
-            "sd": 2
+            "mean": 23.3,
+            "sd": 2.3
           },
           "wealthConcentration": {
-            "mean": 74,
-            "sd": 1
+            "mean": 73.8,
+            "sd": 1.1
           },
           "corruption": {
-            "mean": 50.3,
-            "sd": 0.9
+            "mean": 50.1,
+            "sd": 1
           },
           "stability": {
-            "mean": 54.4,
-            "sd": 15.7
+            "mean": 46.9,
+            "sd": 14.9
           },
           "stateCapacity": {
-            "mean": 61.3,
-            "sd": 1.3
+            "mean": 61.1,
+            "sd": 1.2
           },
           "epistemicHealth": {
             "mean": 24.6,
@@ -1206,11 +1206,11 @@
           },
           "wellbeing": {
             "mean": 54,
-            "sd": 4
+            "sd": 4.5
           },
           "militaryPower": {
             "mean": 54.4,
-            "sd": 0.5
+            "sd": 0.6
           },
           "polarization": {
             "mean": 18.8,
@@ -1221,50 +1221,50 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 55.4,
+            "mean": 55.3,
             "sd": 0.7
           },
           "institutionalQuality": {
             "mean": 42.9,
-            "sd": 1.5
+            "sd": 1.3
           }
         },
         {
           "turn": 25,
           "socialTrust": {
-            "mean": 22.9,
+            "mean": 22.8,
             "sd": 2.4
           },
           "wealthConcentration": {
-            "mean": 73.9,
-            "sd": 1
+            "mean": 73.7,
+            "sd": 1.2
           },
           "corruption": {
-            "mean": 50.2,
-            "sd": 1
+            "mean": 50,
+            "sd": 1.1
           },
           "stability": {
-            "mean": 53.8,
-            "sd": 16.1
+            "mean": 45.8,
+            "sd": 13.8
           },
           "stateCapacity": {
-            "mean": 61.5,
-            "sd": 1.5
+            "mean": 61.1,
+            "sd": 1.6
           },
           "epistemicHealth": {
             "mean": 24.1,
-            "sd": 0.3
+            "sd": 0.4
           },
           "wellbeing": {
-            "mean": 54.2,
-            "sd": 4.3
+            "mean": 53.7,
+            "sd": 4.6
           },
           "militaryPower": {
             "mean": 54.4,
-            "sd": 0.5
+            "sd": 0.6
           },
           "polarization": {
-            "mean": 18.6,
+            "mean": 18.4,
             "sd": 0.5
           },
           "institutionalLockIn": {
@@ -1276,46 +1276,46 @@
             "sd": 0.7
           },
           "institutionalQuality": {
-            "mean": 43,
+            "mean": 43.2,
             "sd": 1.4
           }
         },
         {
           "turn": 26,
           "socialTrust": {
-            "mean": 22.5,
-            "sd": 2
+            "mean": 22.2,
+            "sd": 2.7
           },
           "wealthConcentration": {
-            "mean": 74,
-            "sd": 1.1
+            "mean": 73.9,
+            "sd": 1.3
           },
           "corruption": {
-            "mean": 50.2,
+            "mean": 50,
             "sd": 1.1
           },
           "stability": {
-            "mean": 51.9,
-            "sd": 14.6
+            "mean": 43.8,
+            "sd": 12
           },
           "stateCapacity": {
-            "mean": 61.6,
-            "sd": 1.7
+            "mean": 61.2,
+            "sd": 1.8
           },
           "epistemicHealth": {
             "mean": 23.9,
-            "sd": 0.3
+            "sd": 0.4
           },
           "wellbeing": {
-            "mean": 53.3,
-            "sd": 4.4
+            "mean": 52.4,
+            "sd": 4.7
           },
           "militaryPower": {
             "mean": 54.4,
-            "sd": 0.5
+            "sd": 0.6
           },
           "polarization": {
-            "mean": 18.4,
+            "mean": 18.3,
             "sd": 0.5
           },
           "institutionalLockIn": {
@@ -1323,250 +1323,250 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 55.5,
-            "sd": 0.9
+            "mean": 55.4,
+            "sd": 0.8
           },
           "institutionalQuality": {
-            "mean": 43.4,
+            "mean": 43.1,
             "sd": 1.5
           }
         },
         {
           "turn": 27,
           "socialTrust": {
-            "mean": 22.4,
-            "sd": 2.3
+            "mean": 21.8,
+            "sd": 2.7
           },
           "wealthConcentration": {
             "mean": 74,
-            "sd": 1.1
+            "sd": 1.4
           },
           "corruption": {
-            "mean": 50,
-            "sd": 1.1
+            "mean": 49.9,
+            "sd": 1.2
           },
           "stability": {
-            "mean": 50.5,
-            "sd": 14
+            "mean": 42.9,
+            "sd": 11.1
           },
           "stateCapacity": {
-            "mean": 61.8,
-            "sd": 2
+            "mean": 61.1,
+            "sd": 2.1
           },
           "epistemicHealth": {
             "mean": 23.4,
             "sd": 0.5
           },
           "wellbeing": {
-            "mean": 53.8,
-            "sd": 3.8
+            "mean": 52.3,
+            "sd": 4.1
           },
           "militaryPower": {
             "mean": 54.4,
-            "sd": 0.5
-          },
-          "polarization": {
-            "mean": 18.3,
-            "sd": 0.4
-          },
-          "institutionalLockIn": {
-            "mean": 90,
-            "sd": 0.2
-          },
-          "genderEquity": {
-            "mean": 55.5,
-            "sd": 0.9
-          },
-          "institutionalQuality": {
-            "mean": 43.6,
-            "sd": 1.6
-          }
-        },
-        {
-          "turn": 28,
-          "socialTrust": {
-            "mean": 21.9,
-            "sd": 2.2
-          },
-          "wealthConcentration": {
-            "mean": 74.2,
-            "sd": 1.3
-          },
-          "corruption": {
-            "mean": 50,
-            "sd": 1.3
-          },
-          "stability": {
-            "mean": 48.1,
-            "sd": 11.6
-          },
-          "stateCapacity": {
-            "mean": 61.7,
-            "sd": 2.3
-          },
-          "epistemicHealth": {
-            "mean": 23.1,
-            "sd": 0.2
-          },
-          "wellbeing": {
-            "mean": 53.2,
-            "sd": 4
-          },
-          "militaryPower": {
-            "mean": 54.4,
-            "sd": 0.5
+            "sd": 0.6
           },
           "polarization": {
             "mean": 18.2,
             "sd": 0.4
           },
           "institutionalLockIn": {
-            "mean": 90,
-            "sd": 0
+            "mean": 89.9,
+            "sd": 0.3
           },
           "genderEquity": {
-            "mean": 55.6,
-            "sd": 1
+            "mean": 55.5,
+            "sd": 0.9
           },
           "institutionalQuality": {
-            "mean": 43.8,
-            "sd": 1.6
+            "mean": 43.1,
+            "sd": 1.5
           }
         },
         {
-          "turn": 29,
+          "turn": 28,
           "socialTrust": {
-            "mean": 21.8,
-            "sd": 2.2
+            "mean": 21.6,
+            "sd": 2.5
           },
           "wealthConcentration": {
             "mean": 74.2,
-            "sd": 1.5
+            "sd": 1.3
           },
           "corruption": {
-            "mean": 50.1,
+            "mean": 49.9,
             "sd": 1.5
           },
           "stability": {
-            "mean": 47.6,
-            "sd": 11
+            "mean": 41.4,
+            "sd": 11.1
           },
           "stateCapacity": {
-            "mean": 61.9,
+            "mean": 60.9,
             "sd": 2.5
           },
           "epistemicHealth": {
-            "mean": 22.6,
-            "sd": 0.5
+            "mean": 23.1,
+            "sd": 0.4
           },
           "wellbeing": {
-            "mean": 53.3,
-            "sd": 4.5
+            "mean": 52.5,
+            "sd": 3.5
           },
           "militaryPower": {
-            "mean": 54.4,
-            "sd": 0.5
+            "mean": 54.3,
+            "sd": 0.6
           },
           "polarization": {
             "mean": 18.1,
             "sd": 0.4
           },
           "institutionalLockIn": {
-            "mean": 91,
+            "mean": 90,
             "sd": 0
           },
           "genderEquity": {
-            "mean": 55.6,
+            "mean": 55.4,
             "sd": 1.1
           },
           "institutionalQuality": {
-            "mean": 43.9,
+            "mean": 43.1,
             "sd": 1.8
           }
         },
         {
-          "turn": 30,
+          "turn": 29,
           "socialTrust": {
-            "mean": 21.6,
-            "sd": 1.7
+            "mean": 21.1,
+            "sd": 2
           },
           "wealthConcentration": {
-            "mean": 74.2,
-            "sd": 1.6
+            "mean": 74.3,
+            "sd": 1.4
           },
           "corruption": {
-            "mean": 50.1,
+            "mean": 49.8,
             "sd": 1.5
           },
           "stability": {
-            "mean": 46.1,
-            "sd": 10.7
+            "mean": 40.5,
+            "sd": 11.2
           },
           "stateCapacity": {
-            "mean": 61.9,
-            "sd": 2.8
+            "mean": 60.7,
+            "sd": 2.7
           },
           "epistemicHealth": {
-            "mean": 22.1,
-            "sd": 0.3
+            "mean": 22.6,
+            "sd": 0.5
           },
           "wellbeing": {
-            "mean": 53.4,
+            "mean": 52,
             "sd": 4.1
           },
           "militaryPower": {
-            "mean": 54.4,
-            "sd": 0.5
+            "mean": 54.3,
+            "sd": 0.6
           },
           "polarization": {
             "mean": 18.1,
-            "sd": 0.3
+            "sd": 0.2
           },
           "institutionalLockIn": {
             "mean": 91,
             "sd": 0
           },
           "genderEquity": {
-            "mean": 55.8,
-            "sd": 1.3
+            "mean": 55.3,
+            "sd": 1.1
           },
           "institutionalQuality": {
-            "mean": 44,
-            "sd": 1.8
+            "mean": 43,
+            "sd": 2
+          }
+        },
+        {
+          "turn": 30,
+          "socialTrust": {
+            "mean": 21.1,
+            "sd": 2
+          },
+          "wealthConcentration": {
+            "mean": 74.3,
+            "sd": 1.5
+          },
+          "corruption": {
+            "mean": 49.9,
+            "sd": 1.6
+          },
+          "stability": {
+            "mean": 41,
+            "sd": 10
+          },
+          "stateCapacity": {
+            "mean": 60.5,
+            "sd": 3.1
+          },
+          "epistemicHealth": {
+            "mean": 22.2,
+            "sd": 0.4
+          },
+          "wellbeing": {
+            "mean": 53.4,
+            "sd": 3.1
+          },
+          "militaryPower": {
+            "mean": 54.3,
+            "sd": 0.5
+          },
+          "polarization": {
+            "mean": 18.1,
+            "sd": 0.2
+          },
+          "institutionalLockIn": {
+            "mean": 91,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 55.3,
+            "sd": 1.4
+          },
+          "institutionalQuality": {
+            "mean": 43,
+            "sd": 2.1
           }
         },
         {
           "turn": 31,
           "socialTrust": {
-            "mean": 21.6,
-            "sd": 1.7
+            "mean": 21.2,
+            "sd": 2.1
           },
           "wealthConcentration": {
-            "mean": 74,
+            "mean": 74.5,
             "sd": 1.6
           },
           "corruption": {
-            "mean": 50,
-            "sd": 1.5
+            "mean": 49.9,
+            "sd": 1.6
           },
           "stability": {
-            "mean": 45.1,
-            "sd": 11.3
+            "mean": 41.1,
+            "sd": 10.3
           },
           "stateCapacity": {
-            "mean": 61.9,
-            "sd": 3
+            "mean": 60.3,
+            "sd": 3.6
           },
           "epistemicHealth": {
             "mean": 21.9,
-            "sd": 0.5
+            "sd": 0.6
           },
           "wellbeing": {
-            "mean": 54.1,
-            "sd": 4.3
+            "mean": 54.4,
+            "sd": 2.6
           },
           "militaryPower": {
-            "mean": 54.4,
+            "mean": 54.2,
             "sd": 0.5
           },
           "polarization": {
@@ -1578,458 +1578,458 @@
             "sd": 0.5
           },
           "genderEquity": {
-            "mean": 55.8,
-            "sd": 1.4
+            "mean": 55,
+            "sd": 1.7
           },
           "institutionalQuality": {
-            "mean": 44,
-            "sd": 1.9
+            "mean": 43.1,
+            "sd": 2.4
           }
         },
         {
           "turn": 32,
           "socialTrust": {
-            "mean": 21.7,
-            "sd": 1.9
-          },
-          "wealthConcentration": {
-            "mean": 74,
-            "sd": 1.8
-          },
-          "corruption": {
-            "mean": 50.3,
-            "sd": 1.8
-          },
-          "stability": {
-            "mean": 46.1,
-            "sd": 13.1
-          },
-          "stateCapacity": {
-            "mean": 61.6,
-            "sd": 3.2
-          },
-          "epistemicHealth": {
-            "mean": 21.4,
-            "sd": 0.5
-          },
-          "wellbeing": {
-            "mean": 54.4,
-            "sd": 4
-          },
-          "militaryPower": {
-            "mean": 54.4,
-            "sd": 0.5
-          },
-          "polarization": {
-            "mean": 18.1,
-            "sd": 0.2
-          },
-          "institutionalLockIn": {
-            "mean": 92,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 55.8,
-            "sd": 1.5
-          },
-          "institutionalQuality": {
-            "mean": 44.2,
-            "sd": 2.1
-          }
-        },
-        {
-          "turn": 33,
-          "socialTrust": {
-            "mean": 21.9,
-            "sd": 2
-          },
-          "wealthConcentration": {
-            "mean": 74,
-            "sd": 1.9
-          },
-          "corruption": {
-            "mean": 50.2,
-            "sd": 1.9
-          },
-          "stability": {
-            "mean": 46,
-            "sd": 14.3
-          },
-          "stateCapacity": {
-            "mean": 61.5,
-            "sd": 3.6
-          },
-          "epistemicHealth": {
-            "mean": 20.9,
-            "sd": 0.4
-          },
-          "wellbeing": {
-            "mean": 54.6,
-            "sd": 4.7
-          },
-          "militaryPower": {
-            "mean": 54.4,
-            "sd": 0.5
-          },
-          "polarization": {
-            "mean": 18.1,
-            "sd": 0.2
-          },
-          "institutionalLockIn": {
-            "mean": 92,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 55.7,
-            "sd": 1.6
-          },
-          "institutionalQuality": {
-            "mean": 44.2,
-            "sd": 2.3
-          }
-        },
-        {
-          "turn": 34,
-          "socialTrust": {
-            "mean": 22.1,
-            "sd": 2
-          },
-          "wealthConcentration": {
-            "mean": 74.1,
-            "sd": 1.9
-          },
-          "corruption": {
-            "mean": 50.2,
-            "sd": 1.9
-          },
-          "stability": {
-            "mean": 43.5,
-            "sd": 15.7
-          },
-          "stateCapacity": {
-            "mean": 61.4,
-            "sd": 3.9
-          },
-          "epistemicHealth": {
-            "mean": 20.6,
-            "sd": 0.6
-          },
-          "wellbeing": {
-            "mean": 53.9,
-            "sd": 4.7
-          },
-          "militaryPower": {
-            "mean": 54.3,
-            "sd": 0.5
-          },
-          "polarization": {
-            "mean": 18.1,
-            "sd": 0.2
-          },
-          "institutionalLockIn": {
-            "mean": 92,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 55.5,
-            "sd": 1.8
-          },
-          "institutionalQuality": {
-            "mean": 44.3,
-            "sd": 2.3
-          }
-        },
-        {
-          "turn": 35,
-          "socialTrust": {
-            "mean": 21.5,
-            "sd": 2
-          },
-          "wealthConcentration": {
-            "mean": 74.1,
-            "sd": 1.9
-          },
-          "corruption": {
-            "mean": 50.4,
-            "sd": 2.1
-          },
-          "stability": {
-            "mean": 42.9,
-            "sd": 14.4
-          },
-          "stateCapacity": {
-            "mean": 61.3,
-            "sd": 4.4
-          },
-          "epistemicHealth": {
-            "mean": 20.1,
-            "sd": 0.5
-          },
-          "wellbeing": {
-            "mean": 53.8,
-            "sd": 4.3
-          },
-          "militaryPower": {
-            "mean": 54.3,
-            "sd": 0.5
-          },
-          "polarization": {
-            "mean": 18.1,
-            "sd": 0.2
-          },
-          "institutionalLockIn": {
-            "mean": 92,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 55.5,
-            "sd": 2.1
-          },
-          "institutionalQuality": {
-            "mean": 44.3,
-            "sd": 2.4
-          }
-        },
-        {
-          "turn": 36,
-          "socialTrust": {
-            "mean": 21.3,
-            "sd": 1.6
-          },
-          "wealthConcentration": {
-            "mean": 74.3,
-            "sd": 2.1
-          },
-          "corruption": {
-            "mean": 50.5,
-            "sd": 2.1
-          },
-          "stability": {
-            "mean": 42.1,
-            "sd": 15.8
-          },
-          "stateCapacity": {
-            "mean": 61,
-            "sd": 4.6
-          },
-          "epistemicHealth": {
-            "mean": 19.8,
-            "sd": 0.5
-          },
-          "wellbeing": {
-            "mean": 53.1,
-            "sd": 4.6
-          },
-          "militaryPower": {
-            "mean": 54.3,
-            "sd": 0.5
-          },
-          "polarization": {
-            "mean": 18.1,
-            "sd": 0.2
-          },
-          "institutionalLockIn": {
-            "mean": 93,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 55.5,
-            "sd": 2.2
-          },
-          "institutionalQuality": {
-            "mean": 44.1,
-            "sd": 2.4
-          }
-        },
-        {
-          "turn": 37,
-          "socialTrust": {
-            "mean": 21.4,
-            "sd": 1.7
-          },
-          "wealthConcentration": {
-            "mean": 74.4,
-            "sd": 2.3
-          },
-          "corruption": {
-            "mean": 50.8,
-            "sd": 2.4
-          },
-          "stability": {
-            "mean": 42,
-            "sd": 15
-          },
-          "stateCapacity": {
-            "mean": 60.8,
-            "sd": 4.9
-          },
-          "epistemicHealth": {
-            "mean": 19.4,
-            "sd": 0.7
-          },
-          "wellbeing": {
-            "mean": 53.8,
-            "sd": 3.8
-          },
-          "militaryPower": {
-            "mean": 54.3,
-            "sd": 0.5
-          },
-          "polarization": {
-            "mean": 17.9,
-            "sd": 0.4
-          },
-          "institutionalLockIn": {
-            "mean": 93,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 55.3,
-            "sd": 2.3
-          },
-          "institutionalQuality": {
-            "mean": 44.2,
-            "sd": 2.6
-          }
-        },
-        {
-          "turn": 38,
-          "socialTrust": {
-            "mean": 20.9,
-            "sd": 1.9
-          },
-          "wealthConcentration": {
-            "mean": 74.3,
-            "sd": 2.4
-          },
-          "corruption": {
-            "mean": 50.9,
-            "sd": 2.3
-          },
-          "stability": {
-            "mean": 42.4,
-            "sd": 14.5
-          },
-          "stateCapacity": {
-            "mean": 60.5,
-            "sd": 5.3
-          },
-          "epistemicHealth": {
-            "mean": 19,
-            "sd": 0.5
-          },
-          "wellbeing": {
-            "mean": 53,
-            "sd": 3.8
-          },
-          "militaryPower": {
-            "mean": 54.3,
-            "sd": 0.5
-          },
-          "polarization": {
-            "mean": 17.7,
-            "sd": 0.6
-          },
-          "institutionalLockIn": {
-            "mean": 93,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 55.1,
-            "sd": 2.5
-          },
-          "institutionalQuality": {
-            "mean": 44.1,
-            "sd": 2.8
-          }
-        },
-        {
-          "turn": 39,
-          "socialTrust": {
             "mean": 21.1,
-            "sd": 1.9
+            "sd": 2.1
           },
           "wealthConcentration": {
             "mean": 74.5,
-            "sd": 2.6
+            "sd": 1.7
           },
           "corruption": {
-            "mean": 52,
-            "sd": 4.4
+            "mean": 50.1,
+            "sd": 1.7
           },
           "stability": {
-            "mean": 40.1,
-            "sd": 16.5
+            "mean": 41.3,
+            "sd": 9.9
           },
           "stateCapacity": {
-            "mean": 60,
-            "sd": 5.4
+            "mean": 60.1,
+            "sd": 4
           },
           "epistemicHealth": {
-            "mean": 18.6,
-            "sd": 0.7
-          },
-          "wellbeing": {
-            "mean": 53.2,
-            "sd": 3.6
-          },
-          "militaryPower": {
-            "mean": 54.3,
+            "mean": 21.4,
             "sd": 0.5
           },
-          "polarization": {
-            "mean": 17.8,
-            "sd": 0.6
-          },
-          "institutionalLockIn": {
-            "mean": 93,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 55,
-            "sd": 2.7
-          },
-          "institutionalQuality": {
-            "mean": 44.1,
-            "sd": 2.9
-          }
-        },
-        {
-          "turn": 40,
-          "socialTrust": {
-            "mean": 21.1,
-            "sd": 1.8
-          },
-          "wealthConcentration": {
-            "mean": 74.6,
-            "sd": 2.6
-          },
-          "corruption": {
-            "mean": 52.1,
-            "sd": 4.2
-          },
-          "stability": {
-            "mean": 39.9,
-            "sd": 15
-          },
-          "stateCapacity": {
-            "mean": 59.8,
-            "sd": 5.5
-          },
-          "epistemicHealth": {
-            "mean": 18.2,
-            "sd": 0.7
-          },
           "wellbeing": {
-            "mean": 53.6,
-            "sd": 3.3
+            "mean": 54.6,
+            "sd": 3.2
           },
           "militaryPower": {
             "mean": 54.2,
             "sd": 0.4
           },
           "polarization": {
-            "mean": 17.7,
+            "mean": 18.1,
+            "sd": 0.2
+          },
+          "institutionalLockIn": {
+            "mean": 92,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 55,
+            "sd": 1.8
+          },
+          "institutionalQuality": {
+            "mean": 43.2,
+            "sd": 2.4
+          }
+        },
+        {
+          "turn": 33,
+          "socialTrust": {
+            "mean": 21.3,
+            "sd": 2.1
+          },
+          "wealthConcentration": {
+            "mean": 74.5,
+            "sd": 2
+          },
+          "corruption": {
+            "mean": 50.1,
+            "sd": 1.8
+          },
+          "stability": {
+            "mean": 41.8,
+            "sd": 9.9
+          },
+          "stateCapacity": {
+            "mean": 60,
+            "sd": 4.3
+          },
+          "epistemicHealth": {
+            "mean": 21,
+            "sd": 0.5
+          },
+          "wellbeing": {
+            "mean": 55.3,
+            "sd": 2.6
+          },
+          "militaryPower": {
+            "mean": 54.2,
+            "sd": 0.4
+          },
+          "polarization": {
+            "mean": 18.1,
+            "sd": 0.2
+          },
+          "institutionalLockIn": {
+            "mean": 92,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 54.9,
+            "sd": 2
+          },
+          "institutionalQuality": {
+            "mean": 43.1,
+            "sd": 2.5
+          }
+        },
+        {
+          "turn": 34,
+          "socialTrust": {
+            "mean": 20.9,
+            "sd": 1.9
+          },
+          "wealthConcentration": {
+            "mean": 74.5,
+            "sd": 2.1
+          },
+          "corruption": {
+            "mean": 50.3,
+            "sd": 2
+          },
+          "stability": {
+            "mean": 40.9,
+            "sd": 12.4
+          },
+          "stateCapacity": {
+            "mean": 59.6,
+            "sd": 4.5
+          },
+          "epistemicHealth": {
+            "mean": 20.6,
+            "sd": 0.7
+          },
+          "wellbeing": {
+            "mean": 54.4,
+            "sd": 3.9
+          },
+          "militaryPower": {
+            "mean": 54.1,
+            "sd": 0.4
+          },
+          "polarization": {
+            "mean": 18.1,
+            "sd": 0.2
+          },
+          "institutionalLockIn": {
+            "mean": 92,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 54.8,
+            "sd": 2
+          },
+          "institutionalQuality": {
+            "mean": 42.9,
+            "sd": 2.5
+          }
+        },
+        {
+          "turn": 35,
+          "socialTrust": {
+            "mean": 21.1,
+            "sd": 2.1
+          },
+          "wealthConcentration": {
+            "mean": 74.5,
+            "sd": 2.3
+          },
+          "corruption": {
+            "mean": 50.4,
+            "sd": 2.1
+          },
+          "stability": {
+            "mean": 40.5,
+            "sd": 12.5
+          },
+          "stateCapacity": {
+            "mean": 59.5,
+            "sd": 4.8
+          },
+          "epistemicHealth": {
+            "mean": 20.2,
+            "sd": 0.7
+          },
+          "wellbeing": {
+            "mean": 54.3,
+            "sd": 3.7
+          },
+          "militaryPower": {
+            "mean": 54.1,
+            "sd": 0.4
+          },
+          "polarization": {
+            "mean": 18,
+            "sd": 0.3
+          },
+          "institutionalLockIn": {
+            "mean": 92,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 54.5,
+            "sd": 2.3
+          },
+          "institutionalQuality": {
+            "mean": 43,
+            "sd": 2.7
+          }
+        },
+        {
+          "turn": 36,
+          "socialTrust": {
+            "mean": 20.9,
+            "sd": 1.7
+          },
+          "wealthConcentration": {
+            "mean": 74.6,
+            "sd": 2.3
+          },
+          "corruption": {
+            "mean": 50.5,
+            "sd": 2.3
+          },
+          "stability": {
+            "mean": 37.3,
+            "sd": 14.8
+          },
+          "stateCapacity": {
+            "mean": 59.2,
+            "sd": 5.4
+          },
+          "epistemicHealth": {
+            "mean": 19.9,
+            "sd": 0.6
+          },
+          "wellbeing": {
+            "mean": 52.3,
+            "sd": 4.8
+          },
+          "militaryPower": {
+            "mean": 54.1,
+            "sd": 0.4
+          },
+          "polarization": {
+            "mean": 18,
+            "sd": 0.3
+          },
+          "institutionalLockIn": {
+            "mean": 93,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 54.5,
+            "sd": 2.5
+          },
+          "institutionalQuality": {
+            "mean": 43.1,
+            "sd": 2.7
+          }
+        },
+        {
+          "turn": 37,
+          "socialTrust": {
+            "mean": 21.1,
+            "sd": 1.8
+          },
+          "wealthConcentration": {
+            "mean": 74.8,
+            "sd": 2.6
+          },
+          "corruption": {
+            "mean": 50.6,
+            "sd": 2.3
+          },
+          "stability": {
+            "mean": 38.2,
+            "sd": 13.1
+          },
+          "stateCapacity": {
+            "mean": 58.9,
+            "sd": 5.7
+          },
+          "epistemicHealth": {
+            "mean": 19.4,
+            "sd": 0.9
+          },
+          "wellbeing": {
+            "mean": 53.6,
+            "sd": 3.9
+          },
+          "militaryPower": {
+            "mean": 54.1,
+            "sd": 0.4
+          },
+          "polarization": {
+            "mean": 17.9,
+            "sd": 0.4
+          },
+          "institutionalLockIn": {
+            "mean": 93,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 54.5,
+            "sd": 2.6
+          },
+          "institutionalQuality": {
+            "mean": 43,
+            "sd": 2.7
+          }
+        },
+        {
+          "turn": 38,
+          "socialTrust": {
+            "mean": 20.8,
+            "sd": 1.7
+          },
+          "wealthConcentration": {
+            "mean": 75,
+            "sd": 2.6
+          },
+          "corruption": {
+            "mean": 50.7,
+            "sd": 2.4
+          },
+          "stability": {
+            "mean": 37.6,
+            "sd": 13.6
+          },
+          "stateCapacity": {
+            "mean": 58.6,
+            "sd": 5.9
+          },
+          "epistemicHealth": {
+            "mean": 19.2,
+            "sd": 0.7
+          },
+          "wellbeing": {
+            "mean": 53,
+            "sd": 3.6
+          },
+          "militaryPower": {
+            "mean": 54.1,
+            "sd": 0.4
+          },
+          "polarization": {
+            "mean": 17.9,
+            "sd": 0.4
+          },
+          "institutionalLockIn": {
+            "mean": 93,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 54.4,
+            "sd": 2.7
+          },
+          "institutionalQuality": {
+            "mean": 43,
+            "sd": 2.9
+          }
+        },
+        {
+          "turn": 39,
+          "socialTrust": {
+            "mean": 20.9,
+            "sd": 1.9
+          },
+          "wealthConcentration": {
+            "mean": 75.1,
+            "sd": 2.7
+          },
+          "corruption": {
+            "mean": 51.8,
+            "sd": 4.7
+          },
+          "stability": {
+            "mean": 35.2,
+            "sd": 15.7
+          },
+          "stateCapacity": {
+            "mean": 58.2,
+            "sd": 6.1
+          },
+          "epistemicHealth": {
+            "mean": 18.6,
+            "sd": 0.9
+          },
+          "wellbeing": {
+            "mean": 51.1,
+            "sd": 7.7
+          },
+          "militaryPower": {
+            "mean": 54.1,
+            "sd": 0.3
+          },
+          "polarization": {
+            "mean": 17.8,
+            "sd": 0.5
+          },
+          "institutionalLockIn": {
+            "mean": 93,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 54.1,
+            "sd": 2.9
+          },
+          "institutionalQuality": {
+            "mean": 43,
+            "sd": 2.9
+          }
+        },
+        {
+          "turn": 40,
+          "socialTrust": {
+            "mean": 20.9,
+            "sd": 2
+          },
+          "wealthConcentration": {
+            "mean": 75.3,
+            "sd": 3
+          },
+          "corruption": {
+            "mean": 52,
+            "sd": 4.5
+          },
+          "stability": {
+            "mean": 35.6,
+            "sd": 14.4
+          },
+          "stateCapacity": {
+            "mean": 57.8,
+            "sd": 6.3
+          },
+          "epistemicHealth": {
+            "mean": 18.3,
+            "sd": 0.8
+          },
+          "wellbeing": {
+            "mean": 51.3,
+            "sd": 6.5
+          },
+          "militaryPower": {
+            "mean": 54.1,
+            "sd": 0.3
+          },
+          "polarization": {
+            "mean": 17.6,
             "sd": 0.6
           },
           "institutionalLockIn": {
@@ -2037,46 +2037,250 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 54.8,
-            "sd": 2.7
+            "mean": 54,
+            "sd": 3
           },
           "institutionalQuality": {
-            "mean": 44,
-            "sd": 2.9
+            "mean": 42.7,
+            "sd": 3.1
           }
         },
         {
           "turn": 41,
           "socialTrust": {
-            "mean": 20.9,
-            "sd": 2.1
+            "mean": 20.2,
+            "sd": 1.4
           },
           "wealthConcentration": {
-            "mean": 74.7,
-            "sd": 2.6
+            "mean": 75.5,
+            "sd": 3
           },
           "corruption": {
-            "mean": 52.1,
-            "sd": 4.4
+            "mean": 52.3,
+            "sd": 4.5
           },
           "stability": {
-            "mean": 39.5,
-            "sd": 15.1
+            "mean": 34.8,
+            "sd": 10.9
           },
           "stateCapacity": {
-            "mean": 59.3,
-            "sd": 5.6
+            "mean": 57.2,
+            "sd": 6.7
           },
           "epistemicHealth": {
-            "mean": 17.9,
-            "sd": 0.8
+            "mean": 18,
+            "sd": 0.9
           },
           "wellbeing": {
-            "mean": 52.8,
-            "sd": 4.3
+            "mean": 50.5,
+            "sd": 5.1
           },
           "militaryPower": {
             "mean": 54.1,
+            "sd": 0.3
+          },
+          "polarization": {
+            "mean": 17.6,
+            "sd": 0.6
+          },
+          "institutionalLockIn": {
+            "mean": 93,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 53.6,
+            "sd": 3.2
+          },
+          "institutionalQuality": {
+            "mean": 42.5,
+            "sd": 3.1
+          }
+        },
+        {
+          "turn": 42,
+          "socialTrust": {
+            "mean": 20.3,
+            "sd": 1
+          },
+          "wealthConcentration": {
+            "mean": 75.7,
+            "sd": 3.1
+          },
+          "corruption": {
+            "mean": 52.3,
+            "sd": 4.4
+          },
+          "stability": {
+            "mean": 32.5,
+            "sd": 13.8
+          },
+          "stateCapacity": {
+            "mean": 56.7,
+            "sd": 7.1
+          },
+          "epistemicHealth": {
+            "mean": 17.5,
+            "sd": 1
+          },
+          "wellbeing": {
+            "mean": 49.2,
+            "sd": 7.2
+          },
+          "militaryPower": {
+            "mean": 54.1,
+            "sd": 0.3
+          },
+          "polarization": {
+            "mean": 17.6,
+            "sd": 0.6
+          },
+          "institutionalLockIn": {
+            "mean": 93,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 53.5,
+            "sd": 3.4
+          },
+          "institutionalQuality": {
+            "mean": 42.3,
+            "sd": 3.1
+          }
+        },
+        {
+          "turn": 43,
+          "socialTrust": {
+            "mean": 20.2,
+            "sd": 1.4
+          },
+          "wealthConcentration": {
+            "mean": 75.8,
+            "sd": 3.2
+          },
+          "corruption": {
+            "mean": 52.5,
+            "sd": 4.5
+          },
+          "stability": {
+            "mean": 32.4,
+            "sd": 13.2
+          },
+          "stateCapacity": {
+            "mean": 56.1,
+            "sd": 7.4
+          },
+          "epistemicHealth": {
+            "mean": 17.1,
+            "sd": 1
+          },
+          "wellbeing": {
+            "mean": 49.6,
+            "sd": 5.8
+          },
+          "militaryPower": {
+            "mean": 54.1,
+            "sd": 0.3
+          },
+          "polarization": {
+            "mean": 17.6,
+            "sd": 0.6
+          },
+          "institutionalLockIn": {
+            "mean": 93,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 53.1,
+            "sd": 3.5
+          },
+          "institutionalQuality": {
+            "mean": 42.1,
+            "sd": 3.2
+          }
+        },
+        {
+          "turn": 44,
+          "socialTrust": {
+            "mean": 20.1,
+            "sd": 1.4
+          },
+          "wealthConcentration": {
+            "mean": 76,
+            "sd": 3.3
+          },
+          "corruption": {
+            "mean": 52.8,
+            "sd": 4.6
+          },
+          "stability": {
+            "mean": 33.2,
+            "sd": 11.1
+          },
+          "stateCapacity": {
+            "mean": 55.6,
+            "sd": 7.6
+          },
+          "epistemicHealth": {
+            "mean": 16.9,
+            "sd": 1
+          },
+          "wellbeing": {
+            "mean": 49.8,
+            "sd": 5
+          },
+          "militaryPower": {
+            "mean": 54,
+            "sd": 0.4
+          },
+          "polarization": {
+            "mean": 17.7,
+            "sd": 0.7
+          },
+          "institutionalLockIn": {
+            "mean": 93,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 52.9,
+            "sd": 3.7
+          },
+          "institutionalQuality": {
+            "mean": 41.8,
+            "sd": 3.2
+          }
+        },
+        {
+          "turn": 45,
+          "socialTrust": {
+            "mean": 20.3,
+            "sd": 1.7
+          },
+          "wealthConcentration": {
+            "mean": 76.3,
+            "sd": 3.4
+          },
+          "corruption": {
+            "mean": 53,
+            "sd": 4.5
+          },
+          "stability": {
+            "mean": 32,
+            "sd": 8
+          },
+          "stateCapacity": {
+            "mean": 54.9,
+            "sd": 8
+          },
+          "epistemicHealth": {
+            "mean": 16.4,
+            "sd": 1.2
+          },
+          "wellbeing": {
+            "mean": 49.9,
+            "sd": 5
+          },
+          "militaryPower": {
+            "mean": 54,
             "sd": 0.5
           },
           "polarization": {
@@ -2088,46 +2292,46 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 54.6,
-            "sd": 2.9
+            "mean": 52.5,
+            "sd": 3.7
           },
           "institutionalQuality": {
-            "mean": 43.8,
-            "sd": 2.9
+            "mean": 41.6,
+            "sd": 3.3
           }
         },
         {
-          "turn": 42,
+          "turn": 46,
           "socialTrust": {
-            "mean": 20.9,
-            "sd": 2.3
+            "mean": 20.3,
+            "sd": 1.7
           },
           "wealthConcentration": {
-            "mean": 75,
-            "sd": 2.8
+            "mean": 76.5,
+            "sd": 3.6
           },
           "corruption": {
-            "mean": 52.3,
-            "sd": 4.4
+            "mean": 53.1,
+            "sd": 4.7
           },
           "stability": {
-            "mean": 35.3,
-            "sd": 12.2
+            "mean": 33,
+            "sd": 8.5
           },
           "stateCapacity": {
-            "mean": 59,
-            "sd": 5.9
+            "mean": 54.3,
+            "sd": 8.3
           },
           "epistemicHealth": {
-            "mean": 17.3,
-            "sd": 0.8
+            "mean": 16.1,
+            "sd": 1.2
           },
           "wellbeing": {
-            "mean": 51.3,
-            "sd": 5.6
+            "mean": 50,
+            "sd": 5.3
           },
           "militaryPower": {
-            "mean": 54.1,
+            "mean": 54,
             "sd": 0.6
           },
           "polarization": {
@@ -2139,251 +2343,47 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 54.5,
-            "sd": 3
-          },
-          "institutionalQuality": {
-            "mean": 43.6,
-            "sd": 2.9
-          }
-        },
-        {
-          "turn": 43,
-          "socialTrust": {
-            "mean": 21.1,
-            "sd": 2.2
-          },
-          "wealthConcentration": {
-            "mean": 75,
-            "sd": 2.9
-          },
-          "corruption": {
-            "mean": 52.5,
-            "sd": 4.4
-          },
-          "stability": {
-            "mean": 33.2,
-            "sd": 12.2
-          },
-          "stateCapacity": {
-            "mean": 58.5,
-            "sd": 6.1
-          },
-          "epistemicHealth": {
-            "mean": 17,
-            "sd": 0.8
-          },
-          "wellbeing": {
-            "mean": 50.9,
-            "sd": 5.2
-          },
-          "militaryPower": {
-            "mean": 54,
-            "sd": 0.8
-          },
-          "polarization": {
-            "mean": 17.6,
-            "sd": 0.7
-          },
-          "institutionalLockIn": {
-            "mean": 93,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 54.3,
-            "sd": 2.9
-          },
-          "institutionalQuality": {
-            "mean": 43.6,
-            "sd": 2.9
-          }
-        },
-        {
-          "turn": 44,
-          "socialTrust": {
-            "mean": 20.9,
-            "sd": 2.2
-          },
-          "wealthConcentration": {
-            "mean": 75.3,
-            "sd": 3.2
-          },
-          "corruption": {
-            "mean": 54.5,
-            "sd": 7.6
-          },
-          "stability": {
-            "mean": 29.7,
-            "sd": 14.7
-          },
-          "stateCapacity": {
-            "mean": 58.1,
-            "sd": 6.4
-          },
-          "epistemicHealth": {
-            "mean": 16.8,
-            "sd": 0.9
-          },
-          "wellbeing": {
-            "mean": 50.5,
-            "sd": 5.5
-          },
-          "militaryPower": {
-            "mean": 54,
-            "sd": 0.8
-          },
-          "polarization": {
-            "mean": 17.6,
-            "sd": 0.7
-          },
-          "institutionalLockIn": {
-            "mean": 93,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 54.1,
-            "sd": 3.1
-          },
-          "institutionalQuality": {
-            "mean": 43.4,
-            "sd": 3.2
-          }
-        },
-        {
-          "turn": 45,
-          "socialTrust": {
-            "mean": 20.5,
-            "sd": 1.5
-          },
-          "wealthConcentration": {
-            "mean": 75.5,
-            "sd": 3.3
-          },
-          "corruption": {
-            "mean": 54.8,
-            "sd": 7.5
-          },
-          "stability": {
-            "mean": 31.1,
-            "sd": 13.6
-          },
-          "stateCapacity": {
-            "mean": 57.5,
-            "sd": 7
-          },
-          "epistemicHealth": {
-            "mean": 16.1,
-            "sd": 1
-          },
-          "wellbeing": {
-            "mean": 50.1,
+            "mean": 52.3,
             "sd": 4
           },
-          "militaryPower": {
-            "mean": 53.9,
-            "sd": 1
-          },
-          "polarization": {
-            "mean": 17.6,
-            "sd": 0.7
-          },
-          "institutionalLockIn": {
-            "mean": 93,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 53.9,
-            "sd": 3.2
-          },
           "institutionalQuality": {
-            "mean": 43.1,
-            "sd": 3.2
-          }
-        },
-        {
-          "turn": 46,
-          "socialTrust": {
-            "mean": 20.8,
-            "sd": 1.7
-          },
-          "wealthConcentration": {
-            "mean": 75.5,
-            "sd": 3.4
-          },
-          "corruption": {
-            "mean": 54.8,
-            "sd": 7.4
-          },
-          "stability": {
-            "mean": 32.3,
-            "sd": 12.8
-          },
-          "stateCapacity": {
-            "mean": 57,
-            "sd": 7.5
-          },
-          "epistemicHealth": {
-            "mean": 15.9,
-            "sd": 0.9
-          },
-          "wellbeing": {
-            "mean": 50.5,
-            "sd": 4.4
-          },
-          "militaryPower": {
-            "mean": 53.8,
-            "sd": 1.2
-          },
-          "polarization": {
-            "mean": 17.6,
-            "sd": 0.7
-          },
-          "institutionalLockIn": {
-            "mean": 93,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 53.5,
-            "sd": 3.6
-          },
-          "institutionalQuality": {
-            "mean": 42.9,
-            "sd": 3.4
+            "mean": 41.4,
+            "sd": 3.3
           }
         },
         {
           "turn": 47,
           "socialTrust": {
-            "mean": 20.8,
-            "sd": 1.8
+            "mean": 20.3,
+            "sd": 1.7
           },
           "wealthConcentration": {
-            "mean": 75.7,
+            "mean": 76.7,
             "sd": 3.7
           },
           "corruption": {
-            "mean": 55.1,
-            "sd": 7.4
+            "mean": 53.6,
+            "sd": 4.5
           },
           "stability": {
-            "mean": 33.9,
-            "sd": 12.3
+            "mean": 32.3,
+            "sd": 10.5
           },
           "stateCapacity": {
-            "mean": 56.5,
-            "sd": 7.9
+            "mean": 53.7,
+            "sd": 8.6
           },
           "epistemicHealth": {
-            "mean": 15.5,
-            "sd": 1.1
+            "mean": 15.7,
+            "sd": 1.3
           },
           "wellbeing": {
-            "mean": 51.5,
-            "sd": 4.1
+            "mean": 50.8,
+            "sd": 4.6
           },
           "militaryPower": {
-            "mean": 53.7,
-            "sd": 1.3
+            "mean": 53.9,
+            "sd": 0.9
           },
           "polarization": {
             "mean": 17.6,
@@ -2394,47 +2394,47 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 53.3,
-            "sd": 3.8
+            "mean": 51.9,
+            "sd": 4
           },
           "institutionalQuality": {
-            "mean": 42.9,
+            "mean": 41.3,
             "sd": 3.5
           }
         },
         {
           "turn": 48,
           "socialTrust": {
-            "mean": 20.8,
-            "sd": 2.1
+            "mean": 20.1,
+            "sd": 1.8
           },
           "wealthConcentration": {
-            "mean": 75.8,
-            "sd": 3.8
+            "mean": 76.8,
+            "sd": 3.9
           },
           "corruption": {
-            "mean": 55.3,
-            "sd": 7.4
+            "mean": 53.8,
+            "sd": 4.6
           },
           "stability": {
-            "mean": 31.6,
-            "sd": 14.6
+            "mean": 33,
+            "sd": 9.4
           },
           "stateCapacity": {
-            "mean": 55.9,
-            "sd": 8.6
+            "mean": 53.1,
+            "sd": 8.9
           },
           "epistemicHealth": {
-            "mean": 15.2,
-            "sd": 1.2
+            "mean": 15.3,
+            "sd": 1.3
           },
           "wellbeing": {
-            "mean": 50,
-            "sd": 7.7
+            "mean": 51,
+            "sd": 5.2
           },
           "militaryPower": {
-            "mean": 53.6,
-            "sd": 1.5
+            "mean": 53.8,
+            "sd": 1
           },
           "polarization": {
             "mean": 17.6,
@@ -2445,47 +2445,47 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 53,
-            "sd": 4
+            "mean": 51.6,
+            "sd": 4.3
           },
           "institutionalQuality": {
-            "mean": 42.7,
-            "sd": 3.6
+            "mean": 41,
+            "sd": 3.5
           }
         },
         {
           "turn": 49,
           "socialTrust": {
-            "mean": 20.9,
-            "sd": 2.2
+            "mean": 20.3,
+            "sd": 1.8
           },
           "wealthConcentration": {
-            "mean": 75.8,
-            "sd": 3.9
+            "mean": 77,
+            "sd": 4
           },
           "corruption": {
-            "mean": 56.5,
-            "sd": 8.4
+            "mean": 54.1,
+            "sd": 4.8
           },
           "stability": {
-            "mean": 30.4,
-            "sd": 14.6
+            "mean": 33.4,
+            "sd": 9.6
           },
           "stateCapacity": {
-            "mean": 55.6,
-            "sd": 8.8
+            "mean": 52.5,
+            "sd": 9.2
           },
           "epistemicHealth": {
-            "mean": 14.8,
-            "sd": 1.2
+            "mean": 15,
+            "sd": 1.4
           },
           "wellbeing": {
-            "mean": 50.1,
-            "sd": 7.1
+            "mean": 51,
+            "sd": 5.4
           },
           "militaryPower": {
-            "mean": 53.5,
-            "sd": 1.8
+            "mean": 53.8,
+            "sd": 0.9
           },
           "polarization": {
             "mean": 17.6,
@@ -2496,50 +2496,50 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 52.8,
-            "sd": 4.3
+            "mean": 51.4,
+            "sd": 4.4
           },
           "institutionalQuality": {
-            "mean": 42.5,
-            "sd": 3.9
+            "mean": 40.8,
+            "sd": 3.5
           }
         },
         {
           "turn": 50,
           "socialTrust": {
-            "mean": 20.9,
-            "sd": 2
+            "mean": 20.1,
+            "sd": 2.2
           },
           "wealthConcentration": {
-            "mean": 76,
-            "sd": 4.1
+            "mean": 77.2,
+            "sd": 4.2
           },
           "corruption": {
-            "mean": 56.6,
-            "sd": 8.4
+            "mean": 54.3,
+            "sd": 4.8
           },
           "stability": {
-            "mean": 32.4,
-            "sd": 12.9
+            "mean": 33.4,
+            "sd": 8.8
           },
           "stateCapacity": {
-            "mean": 55.1,
-            "sd": 8.9
+            "mean": 51.8,
+            "sd": 9.6
           },
           "epistemicHealth": {
-            "mean": 14.3,
-            "sd": 1.2
+            "mean": 14.7,
+            "sd": 1.5
           },
           "wellbeing": {
             "mean": 50.5,
-            "sd": 6.4
+            "sd": 7.4
           },
           "militaryPower": {
-            "mean": 53.5,
-            "sd": 1.9
+            "mean": 53.8,
+            "sd": 1
           },
           "polarization": {
-            "mean": 17.5,
+            "mean": 17.6,
             "sd": 0.7
           },
           "institutionalLockIn": {
@@ -2547,12 +2547,12 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 52.6,
-            "sd": 4.4
+            "mean": 51,
+            "sd": 4.7
           },
           "institutionalQuality": {
-            "mean": 42.4,
-            "sd": 3.9
+            "mean": 40.5,
+            "sd": 3.4
           }
         }
       ],
@@ -2560,16 +2560,16 @@
         {
           "key": "stateCapacity",
           "phrase": "rising after turn 10",
-          "verdict": "PASS",
-          "passRate": 55,
-          "avgScore": 0.621
+          "verdict": "FAIL",
+          "passRate": 45,
+          "avgScore": 0.477
         },
         {
           "key": "wellbeing",
           "phrase": "rising after turn 10",
-          "verdict": "FAIL",
-          "passRate": 40,
-          "avgScore": 0.565
+          "verdict": "PASS",
+          "passRate": 60,
+          "avgScore": 0.688
         },
         {
           "key": "wealthConcentration",
@@ -2582,8 +2582,8 @@
           "key": "stability",
           "phrase": ">30 sustained",
           "verdict": "PASS",
-          "passRate": 95,
-          "avgScore": 0.999
+          "passRate": 100,
+          "avgScore": 1
         }
       ],
       "waypoints": [
@@ -2595,8 +2595,8 @@
               "metric": "stateCapacity",
               "expected": "> 55",
               "note": "Developmental state built",
-              "mean": 60.3,
-              "stddev": 0.7,
+              "mean": 60.4,
+              "stddev": 1,
               "pass": true,
               "passRate": 100
             },
@@ -2604,8 +2604,8 @@
               "metric": "wellbeing",
               "expected": "> 30",
               "note": "GDP growth underway",
-              "mean": 52.5,
-              "stddev": 4.4,
+              "mean": 53.1,
+              "stddev": 3.4,
               "pass": true,
               "passRate": 100
             }
@@ -2619,8 +2619,8 @@
               "metric": "stateCapacity",
               "expected": "> 65",
               "note": "Strong institutions survived transition",
-              "mean": 61.9,
-              "stddev": 2.8,
+              "mean": 60.5,
+              "stddev": 3.1,
               "pass": false,
               "passRate": 0
             },
@@ -2629,7 +2629,7 @@
               "expected": "> 40",
               "note": "Middle-income achieved",
               "mean": 53.4,
-              "stddev": 4.1,
+              "stddev": 3.1,
               "pass": true,
               "passRate": 100
             }
@@ -2643,8 +2643,8 @@
               "metric": "stateCapacity",
               "expected": "> 75",
               "note": "OECD-level institutions",
-              "mean": 55.1,
-              "stddev": 8.9,
+              "mean": 51.8,
+              "stddev": 9.6,
               "pass": false,
               "passRate": 0
             },
@@ -2653,18 +2653,18 @@
               "expected": "> 50",
               "note": "High-income economy",
               "mean": 50.5,
-              "stddev": 6.4,
+              "stddev": 7.4,
               "pass": true,
-              "passRate": 50
+              "passRate": 65
             },
             {
               "metric": "socialTrust",
               "expected": "> 20",
               "note": "WVS trust ~27-30%",
-              "mean": 20.9,
-              "stddev": 2,
+              "mean": 20.1,
+              "stddev": 2.2,
               "pass": true,
-              "passRate": 35
+              "passRate": 20
             }
           ]
         }
@@ -2832,20 +2832,20 @@
         {
           "turn": 4,
           "socialTrust": {
-            "mean": 20.1,
-            "sd": 0.2
+            "mean": 19.9,
+            "sd": 0.5
           },
           "wealthConcentration": {
             "mean": 65,
-            "sd": 0
+            "sd": 0.2
           },
           "corruption": {
-            "mean": 46,
-            "sd": 0
+            "mean": 45.6,
+            "sd": 1.5
           },
           "stability": {
-            "mean": 35.4,
-            "sd": 2.6
+            "mean": 35,
+            "sd": 3.1
           },
           "stateCapacity": {
             "mean": 51,
@@ -2883,20 +2883,20 @@
         {
           "turn": 5,
           "socialTrust": {
-            "mean": 20,
-            "sd": 0
+            "mean": 19.9,
+            "sd": 0.5
           },
           "wealthConcentration": {
             "mean": 66,
             "sd": 0
           },
           "corruption": {
-            "mean": 46,
-            "sd": 0
+            "mean": 45.3,
+            "sd": 2.1
           },
           "stability": {
-            "mean": 36.5,
-            "sd": 2.4
+            "mean": 36.1,
+            "sd": 2.8
           },
           "stateCapacity": {
             "mean": 51,
@@ -2934,24 +2934,24 @@
         {
           "turn": 6,
           "socialTrust": {
-            "mean": 20,
-            "sd": 0
+            "mean": 19.9,
+            "sd": 0.2
           },
           "wealthConcentration": {
-            "mean": 68,
-            "sd": 0
+            "mean": 67.9,
+            "sd": 0.3
           },
           "corruption": {
-            "mean": 46,
-            "sd": 0
+            "mean": 45.3,
+            "sd": 2.1
           },
           "stability": {
-            "mean": 37.5,
-            "sd": 2.4
+            "mean": 37.1,
+            "sd": 2.8
           },
           "stateCapacity": {
             "mean": 51.9,
-            "sd": 0.4
+            "sd": 0.5
           },
           "epistemicHealth": {
             "mean": 46,
@@ -2985,32 +2985,32 @@
         {
           "turn": 7,
           "socialTrust": {
-            "mean": 20,
-            "sd": 0
+            "mean": 19.9,
+            "sd": 0.4
           },
           "wealthConcentration": {
             "mean": 69,
-            "sd": 0
+            "sd": 0.4
           },
           "corruption": {
-            "mean": 46,
-            "sd": 0
+            "mean": 45.4,
+            "sd": 1.8
           },
           "stability": {
-            "mean": 38.1,
-            "sd": 3.7
+            "mean": 37.5,
+            "sd": 4.1
           },
           "stateCapacity": {
             "mean": 51.9,
-            "sd": 0.4
+            "sd": 0.5
           },
           "epistemicHealth": {
             "mean": 46,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 57,
-            "sd": 0.2
+            "mean": 56.2,
+            "sd": 2.5
           },
           "militaryPower": {
             "mean": 42,
@@ -3022,7 +3022,7 @@
           },
           "institutionalLockIn": {
             "mean": 38,
-            "sd": 0
+            "sd": 0.2
           },
           "genderEquity": {
             "mean": 27,
@@ -3037,19 +3037,19 @@
           "turn": 8,
           "socialTrust": {
             "mean": 19.9,
-            "sd": 0.5
+            "sd": 0.2
           },
           "wealthConcentration": {
             "mean": 70,
-            "sd": 0
+            "sd": 0.4
           },
           "corruption": {
-            "mean": 47,
-            "sd": 0
+            "mean": 46.3,
+            "sd": 2.1
           },
           "stability": {
-            "mean": 40,
-            "sd": 3.7
+            "mean": 39.5,
+            "sd": 4.2
           },
           "stateCapacity": {
             "mean": 51.9,
@@ -3060,8 +3060,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 56.9,
-            "sd": 0.5
+            "mean": 56.4,
+            "sd": 1.9
           },
           "militaryPower": {
             "mean": 41,
@@ -3087,23 +3087,23 @@
         {
           "turn": 9,
           "socialTrust": {
-            "mean": 19.9,
-            "sd": 0.2
+            "mean": 20,
+            "sd": 0
           },
           "wealthConcentration": {
             "mean": 71,
-            "sd": 0
+            "sd": 0.4
           },
           "corruption": {
-            "mean": 47,
-            "sd": 0
+            "mean": 46.3,
+            "sd": 2.1
           },
           "stability": {
-            "mean": 41.1,
-            "sd": 3.5
+            "mean": 39.8,
+            "sd": 5.2
           },
           "stateCapacity": {
-            "mean": 52.2,
+            "mean": 52.3,
             "sd": 0.7
           },
           "epistemicHealth": {
@@ -3111,8 +3111,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 57,
-            "sd": 0.2
+            "mean": 56.1,
+            "sd": 2.6
           },
           "militaryPower": {
             "mean": 40,
@@ -3131,30 +3131,30 @@
             "sd": 0
           },
           "institutionalQuality": {
-            "mean": 46,
-            "sd": 0
+            "mean": 46.1,
+            "sd": 0.3
           }
         },
         {
           "turn": 10,
           "socialTrust": {
-            "mean": 19.8,
-            "sd": 0.6
+            "mean": 19.9,
+            "sd": 0.4
           },
           "wealthConcentration": {
             "mean": 71.3,
-            "sd": 0.5
+            "sd": 0.6
           },
           "corruption": {
-            "mean": 46.6,
-            "sd": 1.5
+            "mean": 46,
+            "sd": 2.5
           },
           "stability": {
-            "mean": 41.3,
-            "sd": 4.6
+            "mean": 40.9,
+            "sd": 4.9
           },
           "stateCapacity": {
-            "mean": 52.9,
+            "mean": 52.8,
             "sd": 0.7
           },
           "epistemicHealth": {
@@ -3163,7 +3163,7 @@
           },
           "wellbeing": {
             "mean": 56.4,
-            "sd": 2.2
+            "sd": 1.9
           },
           "militaryPower": {
             "mean": 39,
@@ -3182,30 +3182,30 @@
             "sd": 0
           },
           "institutionalQuality": {
-            "mean": 45,
-            "sd": 0
+            "mean": 45.1,
+            "sd": 0.3
           }
         },
         {
           "turn": 11,
           "socialTrust": {
-            "mean": 19.5,
-            "sd": 0.8
+            "mean": 19.4,
+            "sd": 0.9
           },
           "wealthConcentration": {
             "mean": 72.2,
-            "sd": 0.4
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 46.6,
-            "sd": 1.5
+            "mean": 46,
+            "sd": 2.3
           },
           "stability": {
-            "mean": 40.1,
-            "sd": 5.6
+            "mean": 39.4,
+            "sd": 5.8
           },
           "stateCapacity": {
-            "mean": 52.9,
+            "mean": 52.8,
             "sd": 0.7
           },
           "epistemicHealth": {
@@ -3213,8 +3213,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 54.7,
-            "sd": 4
+            "mean": 54,
+            "sd": 4.2
           },
           "militaryPower": {
             "mean": 38,
@@ -3233,39 +3233,39 @@
             "sd": 0
           },
           "institutionalQuality": {
-            "mean": 44.8,
-            "sd": 0.4
+            "mean": 44.9,
+            "sd": 0.5
           }
         },
         {
           "turn": 12,
           "socialTrust": {
-            "mean": 18.7,
-            "sd": 1.3
+            "mean": 18.9,
+            "sd": 1.1
           },
           "wealthConcentration": {
             "mean": 73.5,
             "sd": 0.5
           },
           "corruption": {
-            "mean": 46.6,
-            "sd": 1.5
+            "mean": 46,
+            "sd": 2.3
           },
           "stability": {
-            "mean": 36.1,
-            "sd": 6.7
+            "mean": 37,
+            "sd": 6.4
           },
           "stateCapacity": {
-            "mean": 53.3,
-            "sd": 0.9
+            "mean": 53.1,
+            "sd": 1
           },
           "epistemicHealth": {
             "mean": 46,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 51.3,
-            "sd": 5.4
+            "mean": 51.9,
+            "sd": 4.5
           },
           "militaryPower": {
             "mean": 37,
@@ -3285,38 +3285,38 @@
           },
           "institutionalQuality": {
             "mean": 44,
-            "sd": 0
+            "sd": 0.4
           }
         },
         {
           "turn": 13,
           "socialTrust": {
             "mean": 18.4,
-            "sd": 1
+            "sd": 1.2
           },
           "wealthConcentration": {
-            "mean": 74.6,
+            "mean": 74.5,
             "sd": 0.5
           },
           "corruption": {
-            "mean": 47.6,
-            "sd": 1.5
+            "mean": 46.6,
+            "sd": 2.8
           },
           "stability": {
-            "mean": 32.2,
-            "sd": 6
+            "mean": 34.2,
+            "sd": 3.8
           },
           "stateCapacity": {
-            "mean": 53.5,
-            "sd": 0.9
+            "mean": 53.4,
+            "sd": 1
           },
           "epistemicHealth": {
             "mean": 46,
             "sd": 0.2
           },
           "wellbeing": {
-            "mean": 47.8,
-            "sd": 3.1
+            "mean": 49.7,
+            "sd": 3.4
           },
           "militaryPower": {
             "mean": 36,
@@ -3336,38 +3336,38 @@
           },
           "institutionalQuality": {
             "mean": 43,
-            "sd": 0
+            "sd": 0.4
           }
         },
         {
           "turn": 14,
           "socialTrust": {
-            "mean": 19,
-            "sd": 0.5
+            "mean": 18.8,
+            "sd": 0.7
           },
           "wealthConcentration": {
-            "mean": 75.1,
-            "sd": 0.3
+            "mean": 75,
+            "sd": 0.4
           },
           "corruption": {
-            "mean": 47.6,
-            "sd": 1.5
+            "mean": 46.6,
+            "sd": 2.8
           },
           "stability": {
-            "mean": 32.9,
-            "sd": 5.3
+            "mean": 33.8,
+            "sd": 3.8
           },
           "stateCapacity": {
-            "mean": 53.6,
-            "sd": 0.9
+            "mean": 53.5,
+            "sd": 1
           },
           "epistemicHealth": {
             "mean": 46.2,
             "sd": 0.4
           },
           "wellbeing": {
-            "mean": 49.5,
-            "sd": 2.3
+            "mean": 49.9,
+            "sd": 2.7
           },
           "militaryPower": {
             "mean": 36,
@@ -3386,42 +3386,93 @@
             "sd": 0
           },
           "institutionalQuality": {
-            "mean": 42,
-            "sd": 0.2
+            "mean": 42.2,
+            "sd": 0.5
           }
         },
         {
           "turn": 15,
           "socialTrust": {
             "mean": 19.1,
-            "sd": 0.4
+            "sd": 0.2
           },
           "wealthConcentration": {
-            "mean": 75.9,
-            "sd": 0.3
+            "mean": 75.7,
+            "sd": 0.7
           },
           "corruption": {
-            "mean": 47.6,
-            "sd": 1.5
+            "mean": 46.7,
+            "sd": 2.6
           },
           "stability": {
-            "mean": 34.6,
-            "sd": 4.4
+            "mean": 34.9,
+            "sd": 3.8
           },
           "stateCapacity": {
-            "mean": 53.1,
-            "sd": 1.1
+            "mean": 53,
+            "sd": 1
           },
           "epistemicHealth": {
             "mean": 46.5,
             "sd": 0.5
           },
           "wellbeing": {
-            "mean": 51.3,
-            "sd": 1.6
+            "mean": 51.5,
+            "sd": 2
           },
           "militaryPower": {
             "mean": 35,
+            "sd": 0
+          },
+          "polarization": {
+            "mean": 65,
+            "sd": 0.2
+          },
+          "institutionalLockIn": {
+            "mean": 43,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 29,
+            "sd": 0
+          },
+          "institutionalQuality": {
+            "mean": 41.3,
+            "sd": 0.6
+          }
+        },
+        {
+          "turn": 16,
+          "socialTrust": {
+            "mean": 19.1,
+            "sd": 0.3
+          },
+          "wealthConcentration": {
+            "mean": 76,
+            "sd": 0.5
+          },
+          "corruption": {
+            "mean": 46.7,
+            "sd": 2.5
+          },
+          "stability": {
+            "mean": 37.1,
+            "sd": 4.6
+          },
+          "stateCapacity": {
+            "mean": 52.8,
+            "sd": 1
+          },
+          "epistemicHealth": {
+            "mean": 47,
+            "sd": 0
+          },
+          "wellbeing": {
+            "mean": 52.9,
+            "sd": 1.8
+          },
+          "militaryPower": {
+            "mean": 34,
             "sd": 0
           },
           "polarization": {
@@ -3437,81 +3488,30 @@
             "sd": 0
           },
           "institutionalQuality": {
-            "mean": 41,
-            "sd": 0.2
-          }
-        },
-        {
-          "turn": 16,
-          "socialTrust": {
-            "mean": 19.1,
-            "sd": 0.2
-          },
-          "wealthConcentration": {
-            "mean": 76,
-            "sd": 0
-          },
-          "corruption": {
-            "mean": 47.6,
-            "sd": 1.4
-          },
-          "stability": {
-            "mean": 36.5,
-            "sd": 4.5
-          },
-          "stateCapacity": {
-            "mean": 52.9,
-            "sd": 1.1
-          },
-          "epistemicHealth": {
-            "mean": 47,
-            "sd": 0
-          },
-          "wellbeing": {
-            "mean": 52.6,
-            "sd": 1.5
-          },
-          "militaryPower": {
-            "mean": 34.1,
-            "sd": 0.4
-          },
-          "polarization": {
-            "mean": 65,
-            "sd": 0
-          },
-          "institutionalLockIn": {
-            "mean": 43,
-            "sd": 0.2
-          },
-          "genderEquity": {
-            "mean": 29.1,
-            "sd": 0.7
-          },
-          "institutionalQuality": {
-            "mean": 41,
-            "sd": 0.3
+            "mean": 40.9,
+            "sd": 0.5
           }
         },
         {
           "turn": 17,
           "socialTrust": {
             "mean": 18.9,
-            "sd": 0.4
+            "sd": 0.6
           },
           "wealthConcentration": {
             "mean": 76.3,
-            "sd": 0.5
+            "sd": 0.6
           },
           "corruption": {
-            "mean": 47.6,
-            "sd": 1.5
+            "mean": 46.4,
+            "sd": 2.7
           },
           "stability": {
-            "mean": 36.1,
-            "sd": 7.3
+            "mean": 38.3,
+            "sd": 5.2
           },
           "stateCapacity": {
-            "mean": 52.8,
+            "mean": 52.7,
             "sd": 1.4
           },
           "epistemicHealth": {
@@ -3519,12 +3519,12 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 52.7,
-            "sd": 2.8
+            "mean": 53.7,
+            "sd": 1.5
           },
           "militaryPower": {
-            "mean": 34.1,
-            "sd": 0.4
+            "mean": 34,
+            "sd": 0.2
           },
           "polarization": {
             "mean": 65,
@@ -3532,11 +3532,11 @@
           },
           "institutionalLockIn": {
             "mean": 44,
-            "sd": 0.2
+            "sd": 0
           },
           "genderEquity": {
-            "mean": 29.3,
-            "sd": 1.1
+            "mean": 29.1,
+            "sd": 0.7
           },
           "institutionalQuality": {
             "mean": 40.9,
@@ -3547,47 +3547,47 @@
           "turn": 18,
           "socialTrust": {
             "mean": 18.9,
-            "sd": 0.2
+            "sd": 0.6
           },
           "wealthConcentration": {
-            "mean": 76.7,
+            "mean": 76.5,
             "sd": 0.7
           },
           "corruption": {
-            "mean": 48.4,
-            "sd": 1.8
+            "mean": 46.9,
+            "sd": 3
           },
           "stability": {
-            "mean": 37.4,
-            "sd": 6.8
+            "mean": 38,
+            "sd": 7.3
           },
           "stateCapacity": {
-            "mean": 52.5,
-            "sd": 1.7
+            "mean": 52.7,
+            "sd": 1.6
           },
           "epistemicHealth": {
             "mean": 47,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 53.6,
-            "sd": 2.2
+            "mean": 53.5,
+            "sd": 2.9
           },
           "militaryPower": {
             "mean": 33.2,
-            "sd": 0.9
+            "sd": 0.7
           },
           "polarization": {
-            "mean": 65,
-            "sd": 0
+            "mean": 64.9,
+            "sd": 0.3
           },
           "institutionalLockIn": {
             "mean": 44.1,
-            "sd": 0.4
+            "sd": 0.3
           },
           "genderEquity": {
-            "mean": 30.4,
-            "sd": 1.5
+            "mean": 30.3,
+            "sd": 1
           },
           "institutionalQuality": {
             "mean": 40.9,
@@ -3598,86 +3598,86 @@
           "turn": 19,
           "socialTrust": {
             "mean": 18.9,
-            "sd": 0.2
+            "sd": 0.5
           },
           "wealthConcentration": {
-            "mean": 77.1,
-            "sd": 0.4
+            "mean": 77,
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 48.3,
-            "sd": 2
+            "mean": 46.9,
+            "sd": 2.9
           },
           "stability": {
-            "mean": 38.8,
-            "sd": 6.8
+            "mean": 38.1,
+            "sd": 8
           },
           "stateCapacity": {
-            "mean": 52,
-            "sd": 1.9
+            "mean": 52.2,
+            "sd": 2
           },
           "epistemicHealth": {
             "mean": 47,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 53.9,
-            "sd": 2.8
+            "mean": 53.4,
+            "sd": 3.6
           },
           "militaryPower": {
-            "mean": 32.3,
+            "mean": 32.4,
             "sd": 1.1
           },
           "polarization": {
-            "mean": 64.1,
-            "sd": 0.3
+            "mean": 64.2,
+            "sd": 0.4
           },
           "institutionalLockIn": {
             "mean": 45.1,
-            "sd": 0.4
+            "sd": 0.3
           },
           "genderEquity": {
-            "mean": 30.5,
-            "sd": 2.2
+            "mean": 30.6,
+            "sd": 1.8
           },
           "institutionalQuality": {
             "mean": 40.9,
-            "sd": 0.7
+            "sd": 0.8
           }
         },
         {
           "turn": 20,
           "socialTrust": {
-            "mean": 18.9,
+            "mean": 19,
             "sd": 0.4
           },
           "wealthConcentration": {
-            "mean": 77.2,
-            "sd": 0.5
+            "mean": 77.1,
+            "sd": 0.7
           },
           "corruption": {
-            "mean": 48.3,
-            "sd": 2
+            "mean": 46.9,
+            "sd": 2.9
           },
           "stability": {
-            "mean": 40.1,
-            "sd": 6.5
+            "mean": 39.6,
+            "sd": 7.7
           },
           "stateCapacity": {
-            "mean": 51.8,
-            "sd": 2.2
+            "mean": 52,
+            "sd": 2.4
           },
           "epistemicHealth": {
             "mean": 47,
             "sd": 0.2
           },
           "wellbeing": {
-            "mean": 54.6,
-            "sd": 2.1
+            "mean": 54.3,
+            "sd": 2.9
           },
           "militaryPower": {
-            "mean": 32.4,
-            "sd": 1.3
+            "mean": 32.5,
+            "sd": 1.4
           },
           "polarization": {
             "mean": 64,
@@ -3685,88 +3685,37 @@
           },
           "institutionalLockIn": {
             "mean": 45.2,
-            "sd": 0.7
+            "sd": 0.6
           },
           "genderEquity": {
-            "mean": 30.8,
-            "sd": 2.7
+            "mean": 30.9,
+            "sd": 2.6
           },
           "institutionalQuality": {
             "mean": 40.9,
-            "sd": 0.7
+            "sd": 0.9
           }
         },
         {
           "turn": 21,
           "socialTrust": {
-            "mean": 18.8,
-            "sd": 0.5
-          },
-          "wealthConcentration": {
-            "mean": 77.3,
-            "sd": 0.6
-          },
-          "corruption": {
-            "mean": 47.9,
-            "sd": 2.4
-          },
-          "stability": {
-            "mean": 41.5,
-            "sd": 6.6
-          },
-          "stateCapacity": {
-            "mean": 51.8,
-            "sd": 2.4
-          },
-          "epistemicHealth": {
-            "mean": 47.1,
+            "mean": 19,
             "sd": 0.4
           },
-          "wellbeing": {
-            "mean": 54.8,
-            "sd": 1.9
-          },
-          "militaryPower": {
-            "mean": 31.5,
-            "sd": 1.6
-          },
-          "polarization": {
-            "mean": 64,
-            "sd": 0
-          },
-          "institutionalLockIn": {
-            "mean": 46.1,
-            "sd": 0.5
-          },
-          "genderEquity": {
-            "mean": 31,
-            "sd": 3.4
-          },
-          "institutionalQuality": {
-            "mean": 41,
-            "sd": 0.9
-          }
-        },
-        {
-          "turn": 22,
-          "socialTrust": {
-            "mean": 18.8,
-            "sd": 0.5
-          },
           "wealthConcentration": {
-            "mean": 77.3,
+            "mean": 77.2,
             "sd": 0.7
           },
           "corruption": {
-            "mean": 48.5,
-            "sd": 3
+            "mean": 47,
+            "sd": 2.9
           },
           "stability": {
-            "mean": 42.4,
-            "sd": 7.8
+            "mean": 41,
+            "sd": 7.7
           },
           "stateCapacity": {
-            "mean": 51.4,
+            "mean": 51.8,
             "sd": 2.8
           },
           "epistemicHealth": {
@@ -3774,50 +3723,50 @@
             "sd": 0.4
           },
           "wellbeing": {
-            "mean": 54.3,
-            "sd": 3.1
+            "mean": 54.6,
+            "sd": 2.4
           },
           "militaryPower": {
             "mean": 31.6,
-            "sd": 1.9
+            "sd": 1.7
           },
           "polarization": {
             "mean": 64,
             "sd": 0
           },
           "institutionalLockIn": {
-            "mean": 46.3,
-            "sd": 0.8
+            "mean": 46.2,
+            "sd": 0.6
           },
           "genderEquity": {
-            "mean": 32.2,
-            "sd": 3.9
+            "mean": 31.1,
+            "sd": 3.3
           },
           "institutionalQuality": {
-            "mean": 40.9,
-            "sd": 1.1
+            "mean": 41,
+            "sd": 1
           }
         },
         {
-          "turn": 23,
+          "turn": 22,
           "socialTrust": {
-            "mean": 18.6,
-            "sd": 0.7
+            "mean": 19.1,
+            "sd": 0.5
           },
           "wealthConcentration": {
-            "mean": 77.5,
-            "sd": 0.9
+            "mean": 77.3,
+            "sd": 0.8
           },
           "corruption": {
-            "mean": 48.1,
+            "mean": 47.5,
             "sd": 3.4
           },
           "stability": {
-            "mean": 43.1,
-            "sd": 9.1
+            "mean": 42.3,
+            "sd": 7.3
           },
           "stateCapacity": {
-            "mean": 51.3,
+            "mean": 51.6,
             "sd": 3.1
           },
           "epistemicHealth": {
@@ -3825,12 +3774,63 @@
             "sd": 0.4
           },
           "wellbeing": {
-            "mean": 54,
-            "sd": 3.9
+            "mean": 55.1,
+            "sd": 1.7
           },
           "militaryPower": {
-            "mean": 30.7,
-            "sd": 2.2
+            "mean": 31.6,
+            "sd": 2
+          },
+          "polarization": {
+            "mean": 64,
+            "sd": 0
+          },
+          "institutionalLockIn": {
+            "mean": 46.3,
+            "sd": 0.9
+          },
+          "genderEquity": {
+            "mean": 32.3,
+            "sd": 3.9
+          },
+          "institutionalQuality": {
+            "mean": 41,
+            "sd": 1.1
+          }
+        },
+        {
+          "turn": 23,
+          "socialTrust": {
+            "mean": 18.9,
+            "sd": 0.6
+          },
+          "wealthConcentration": {
+            "mean": 77.3,
+            "sd": 0.9
+          },
+          "corruption": {
+            "mean": 47,
+            "sd": 3.6
+          },
+          "stability": {
+            "mean": 44.3,
+            "sd": 6.9
+          },
+          "stateCapacity": {
+            "mean": 51.4,
+            "sd": 3.5
+          },
+          "epistemicHealth": {
+            "mean": 47.3,
+            "sd": 0.4
+          },
+          "wellbeing": {
+            "mean": 55.4,
+            "sd": 1.4
+          },
+          "militaryPower": {
+            "mean": 30.8,
+            "sd": 2.3
           },
           "polarization": {
             "mean": 64,
@@ -3842,198 +3842,147 @@
           },
           "genderEquity": {
             "mean": 32.5,
-            "sd": 4.6
+            "sd": 4.7
           },
           "institutionalQuality": {
-            "mean": 41,
-            "sd": 1.2
+            "mean": 41.1,
+            "sd": 1.4
           }
         },
         {
           "turn": 24,
+          "socialTrust": {
+            "mean": 19,
+            "sd": 0.3
+          },
+          "wealthConcentration": {
+            "mean": 77.4,
+            "sd": 1
+          },
+          "corruption": {
+            "mean": 46.9,
+            "sd": 3.7
+          },
+          "stability": {
+            "mean": 45.5,
+            "sd": 7
+          },
+          "stateCapacity": {
+            "mean": 51.4,
+            "sd": 3.9
+          },
+          "epistemicHealth": {
+            "mean": 47.4,
+            "sd": 0.5
+          },
+          "wellbeing": {
+            "mean": 55.7,
+            "sd": 1.3
+          },
+          "militaryPower": {
+            "mean": 30.9,
+            "sd": 2.5
+          },
+          "polarization": {
+            "mean": 63.9,
+            "sd": 0.3
+          },
+          "institutionalLockIn": {
+            "mean": 47.5,
+            "sd": 1.2
+          },
+          "genderEquity": {
+            "mean": 33.1,
+            "sd": 5.4
+          },
+          "institutionalQuality": {
+            "mean": 41.1,
+            "sd": 1.5
+          }
+        },
+        {
+          "turn": 25,
           "socialTrust": {
             "mean": 18.8,
             "sd": 0.5
           },
           "wealthConcentration": {
             "mean": 77.5,
-            "sd": 1.1
+            "sd": 1
           },
           "corruption": {
-            "mean": 48.1,
-            "sd": 3.3
+            "mean": 46.9,
+            "sd": 3.7
           },
           "stability": {
-            "mean": 42.9,
-            "sd": 11
+            "mean": 46.1,
+            "sd": 7.1
           },
           "stateCapacity": {
-            "mean": 51,
-            "sd": 3.5
-          },
-          "epistemicHealth": {
-            "mean": 47.4,
-            "sd": 0.5
-          },
-          "wellbeing": {
-            "mean": 53.6,
-            "sd": 5.8
-          },
-          "militaryPower": {
-            "mean": 30.8,
-            "sd": 2.5
-          },
-          "polarization": {
-            "mean": 64,
-            "sd": 0
-          },
-          "institutionalLockIn": {
-            "mean": 47.4,
-            "sd": 1.2
-          },
-          "genderEquity": {
-            "mean": 32.7,
-            "sd": 5.3
-          },
-          "institutionalQuality": {
-            "mean": 41,
-            "sd": 1.4
-          }
-        },
-        {
-          "turn": 25,
-          "socialTrust": {
-            "mean": 18.6,
-            "sd": 0.7
-          },
-          "wealthConcentration": {
-            "mean": 77.7,
-            "sd": 1.1
-          },
-          "corruption": {
-            "mean": 48.1,
-            "sd": 3.4
-          },
-          "stability": {
-            "mean": 42.7,
-            "sd": 12.2
-          },
-          "stateCapacity": {
-            "mean": 50.9,
-            "sd": 3.8
+            "mean": 51.5,
+            "sd": 4.1
           },
           "epistemicHealth": {
             "mean": 47.5,
             "sd": 0.5
           },
           "wellbeing": {
-            "mean": 53.1,
-            "sd": 6.1
+            "mean": 55.5,
+            "sd": 2.2
           },
           "militaryPower": {
-            "mean": 30.1,
-            "sd": 2.7
+            "mean": 30.6,
+            "sd": 3.1
           },
           "polarization": {
-            "mean": 64,
-            "sd": 0
+            "mean": 63.9,
+            "sd": 0.3
           },
           "institutionalLockIn": {
-            "mean": 48.4,
+            "mean": 48.5,
             "sd": 1.2
           },
           "genderEquity": {
-            "mean": 33.9,
-            "sd": 5.7
+            "mean": 34.4,
+            "sd": 6
           },
           "institutionalQuality": {
-            "mean": 41.1,
-            "sd": 1.7
+            "mean": 41.3,
+            "sd": 1.6
           }
         },
         {
           "turn": 26,
           "socialTrust": {
             "mean": 18.9,
-            "sd": 0.3
-          },
-          "wealthConcentration": {
-            "mean": 77.8,
-            "sd": 1.2
-          },
-          "corruption": {
-            "mean": 48.1,
-            "sd": 3.7
-          },
-          "stability": {
-            "mean": 43.6,
-            "sd": 11.7
-          },
-          "stateCapacity": {
-            "mean": 50.5,
-            "sd": 4.4
-          },
-          "epistemicHealth": {
-            "mean": 47.6,
             "sd": 0.5
           },
-          "wellbeing": {
-            "mean": 54.1,
-            "sd": 4.5
-          },
-          "militaryPower": {
-            "mean": 30,
-            "sd": 3.1
-          },
-          "polarization": {
-            "mean": 64,
-            "sd": 0
-          },
-          "institutionalLockIn": {
-            "mean": 48.5,
-            "sd": 1.5
-          },
-          "genderEquity": {
-            "mean": 34.1,
-            "sd": 6.6
-          },
-          "institutionalQuality": {
-            "mean": 41,
-            "sd": 1.8
-          }
-        },
-        {
-          "turn": 27,
-          "socialTrust": {
-            "mean": 19,
-            "sd": 0.3
-          },
           "wealthConcentration": {
-            "mean": 77.8,
-            "sd": 1.4
+            "mean": 77.7,
+            "sd": 1.1
           },
           "corruption": {
-            "mean": 48.8,
-            "sd": 4
+            "mean": 46.9,
+            "sd": 4.1
           },
           "stability": {
-            "mean": 44.3,
-            "sd": 11.1
+            "mean": 47.3,
+            "sd": 7.1
           },
           "stateCapacity": {
-            "mean": 50.5,
-            "sd": 4.7
+            "mean": 51.4,
+            "sd": 4.6
           },
           "epistemicHealth": {
-            "mean": 47.9,
-            "sd": 0.5
+            "mean": 47.7,
+            "sd": 0.6
           },
           "wellbeing": {
-            "mean": 54.9,
-            "sd": 3.6
+            "mean": 56,
+            "sd": 1.9
           },
           "militaryPower": {
-            "mean": 30,
+            "mean": 30.4,
             "sd": 3.2
           },
           "polarization": {
@@ -4041,169 +3990,220 @@
             "sd": 0.4
           },
           "institutionalLockIn": {
-            "mean": 49.5,
-            "sd": 1.5
+            "mean": 48.7,
+            "sd": 1.6
           },
           "genderEquity": {
-            "mean": 34.4,
-            "sd": 7.4
+            "mean": 35,
+            "sd": 6.9
           },
           "institutionalQuality": {
-            "mean": 41.2,
-            "sd": 2.1
+            "mean": 41.5,
+            "sd": 1.9
+          }
+        },
+        {
+          "turn": 27,
+          "socialTrust": {
+            "mean": 19.1,
+            "sd": 0.5
+          },
+          "wealthConcentration": {
+            "mean": 77.5,
+            "sd": 1.3
+          },
+          "corruption": {
+            "mean": 47.3,
+            "sd": 4.5
+          },
+          "stability": {
+            "mean": 49,
+            "sd": 6.9
+          },
+          "stateCapacity": {
+            "mean": 51.5,
+            "sd": 5.1
+          },
+          "epistemicHealth": {
+            "mean": 47.9,
+            "sd": 0.4
+          },
+          "wellbeing": {
+            "mean": 56.3,
+            "sd": 1.5
+          },
+          "militaryPower": {
+            "mean": 30.6,
+            "sd": 3.4
+          },
+          "polarization": {
+            "mean": 63.8,
+            "sd": 0.4
+          },
+          "institutionalLockIn": {
+            "mean": 49.7,
+            "sd": 1.6
+          },
+          "genderEquity": {
+            "mean": 35.5,
+            "sd": 7.8
+          },
+          "institutionalQuality": {
+            "mean": 41.8,
+            "sd": 2
           }
         },
         {
           "turn": 28,
           "socialTrust": {
-            "mean": 18.9,
-            "sd": 0.5
+            "mean": 19.1,
+            "sd": 0.4
           },
           "wealthConcentration": {
-            "mean": 77.9,
+            "mean": 77.5,
             "sd": 1.4
           },
           "corruption": {
-            "mean": 48.8,
-            "sd": 4.1
+            "mean": 47.3,
+            "sd": 4.6
           },
           "stability": {
-            "mean": 43.5,
-            "sd": 11.3
+            "mean": 50,
+            "sd": 6.8
           },
           "stateCapacity": {
-            "mean": 50.5,
-            "sd": 5.2
+            "mean": 51.5,
+            "sd": 5.6
           },
           "epistemicHealth": {
-            "mean": 48,
-            "sd": 0.4
+            "mean": 48.1,
+            "sd": 0.3
           },
           "wellbeing": {
-            "mean": 54.2,
-            "sd": 3.8
+            "mean": 56.4,
+            "sd": 1.2
           },
           "militaryPower": {
-            "mean": 29.2,
-            "sd": 3.7
+            "mean": 29.9,
+            "sd": 4
           },
           "polarization": {
             "mean": 63.5,
             "sd": 0.5
           },
           "institutionalLockIn": {
-            "mean": 49.6,
-            "sd": 1.8
+            "mean": 50,
+            "sd": 2.1
           },
           "genderEquity": {
-            "mean": 34.6,
-            "sd": 8.1
+            "mean": 36,
+            "sd": 8.8
           },
           "institutionalQuality": {
-            "mean": 41.4,
-            "sd": 2.3
+            "mean": 42,
+            "sd": 2.2
           }
         },
         {
           "turn": 29,
           "socialTrust": {
-            "mean": 18.6,
-            "sd": 1
+            "mean": 18.9,
+            "sd": 0.6
           },
           "wealthConcentration": {
-            "mean": 78.2,
-            "sd": 1.5
-          },
-          "corruption": {
-            "mean": 48.8,
-            "sd": 4.2
-          },
-          "stability": {
-            "mean": 41.6,
-            "sd": 11.9
-          },
-          "stateCapacity": {
-            "mean": 50.2,
-            "sd": 5.5
-          },
-          "epistemicHealth": {
-            "mean": 48.1,
-            "sd": 0.4
-          },
-          "wellbeing": {
-            "mean": 52,
-            "sd": 5.2
-          },
-          "militaryPower": {
-            "mean": 29.3,
-            "sd": 3.8
-          },
-          "polarization": {
-            "mean": 63.5,
-            "sd": 0.5
-          },
-          "institutionalLockIn": {
-            "mean": 50.6,
-            "sd": 2
-          },
-          "genderEquity": {
-            "mean": 35.9,
-            "sd": 8.7
-          },
-          "institutionalQuality": {
-            "mean": 41.4,
-            "sd": 2.3
-          }
-        },
-        {
-          "turn": 30,
-          "socialTrust": {
-            "mean": 18.3,
-            "sd": 1
-          },
-          "wealthConcentration": {
-            "mean": 78.5,
+            "mean": 77.5,
             "sd": 1.4
           },
           "corruption": {
-            "mean": 48.9,
-            "sd": 4.6
+            "mean": 47.1,
+            "sd": 4.9
           },
           "stability": {
-            "mean": 40,
-            "sd": 11
+            "mean": 50,
+            "sd": 7.1
           },
           "stateCapacity": {
-            "mean": 49.9,
-            "sd": 5.7
+            "mean": 51.6,
+            "sd": 6.1
           },
           "epistemicHealth": {
-            "mean": 48.1,
+            "mean": 48.2,
             "sd": 0.4
           },
           "wellbeing": {
-            "mean": 50.1,
-            "sd": 4.7
+            "mean": 55.9,
+            "sd": 2.6
           },
           "militaryPower": {
-            "mean": 29.1,
-            "sd": 3.8
+            "mean": 30,
+            "sd": 4.2
           },
           "polarization": {
             "mean": 63.4,
             "sd": 0.5
           },
           "institutionalLockIn": {
-            "mean": 50.9,
-            "sd": 2.3
+            "mean": 51,
+            "sd": 2.1
           },
           "genderEquity": {
-            "mean": 36,
-            "sd": 9.3
+            "mean": 37.4,
+            "sd": 9.4
           },
           "institutionalQuality": {
-            "mean": 41.3,
-            "sd": 2.7
+            "mean": 42.1,
+            "sd": 2.5
+          }
+        },
+        {
+          "turn": 30,
+          "socialTrust": {
+            "mean": 18.3,
+            "sd": 0.9
+          },
+          "wealthConcentration": {
+            "mean": 77.8,
+            "sd": 1.5
+          },
+          "corruption": {
+            "mean": 47.1,
+            "sd": 5.1
+          },
+          "stability": {
+            "mean": 47.5,
+            "sd": 8.2
+          },
+          "stateCapacity": {
+            "mean": 51.9,
+            "sd": 6.4
+          },
+          "epistemicHealth": {
+            "mean": 48.2,
+            "sd": 0.4
+          },
+          "wellbeing": {
+            "mean": 52.8,
+            "sd": 5.1
+          },
+          "militaryPower": {
+            "mean": 29.9,
+            "sd": 4.5
+          },
+          "polarization": {
+            "mean": 63.4,
+            "sd": 0.5
+          },
+          "institutionalLockIn": {
+            "mean": 51.3,
+            "sd": 2.5
+          },
+          "genderEquity": {
+            "mean": 37.9,
+            "sd": 10.4
+          },
+          "institutionalQuality": {
+            "mean": 42.2,
+            "sd": 2.8
           }
         }
       ],
@@ -4239,8 +4239,8 @@
               "metric": "stability",
               "expected": "< 40",
               "note": "Coup/instability period",
-              "mean": 36.5,
-              "stddev": 2.4,
+              "mean": 36.1,
+              "stddev": 2.8,
               "pass": true,
               "passRate": 100
             }
@@ -4254,8 +4254,8 @@
               "metric": "wealthConcentration",
               "expected": "> 50",
               "note": "Inequality rose under Pinochet (Gini ~57)",
-              "mean": 77.2,
-              "stddev": 0.5,
+              "mean": 77.1,
+              "stddev": 0.7,
               "pass": true,
               "passRate": 100
             }
@@ -4269,24 +4269,24 @@
               "metric": "stability",
               "expected": "> 40",
               "note": "Regained democratic stability",
-              "mean": 40,
-              "stddev": 11,
-              "pass": false,
-              "passRate": 60
+              "mean": 47.5,
+              "stddev": 8.2,
+              "pass": true,
+              "passRate": 90
             },
             {
               "metric": "institutionalQuality",
               "expected": "> 40",
               "note": "Institutional recovery underway",
-              "mean": 41.3,
-              "stddev": 2.7,
+              "mean": 42.2,
+              "stddev": 2.8,
               "pass": true,
-              "passRate": 70
+              "passRate": 75
             }
           ]
         }
       ],
-      "overallPass": 6,
+      "overallPass": 7,
       "overallTotal": 7
     },
     "hc_russia": {
@@ -4461,8 +4461,8 @@
             "sd": 1.7
           },
           "stability": {
-            "mean": 53.8,
-            "sd": 4.2
+            "mean": 54.5,
+            "sd": 3
           },
           "stateCapacity": {
             "mean": 70,
@@ -4473,8 +4473,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 54.5,
-            "sd": 2.5
+            "mean": 55,
+            "sd": 1.2
           },
           "militaryPower": {
             "mean": 87,
@@ -4512,20 +4512,20 @@
             "sd": 1.7
           },
           "stability": {
-            "mean": 52,
-            "sd": 6.3
+            "mean": 55.1,
+            "sd": 4.2
           },
           "stateCapacity": {
-            "mean": 69,
-            "sd": 0.3
+            "mean": 68.9,
+            "sd": 0.4
           },
           "epistemicHealth": {
             "mean": 31,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 53.6,
-            "sd": 3.9
+            "mean": 55.1,
+            "sd": 1.8
           },
           "militaryPower": {
             "mean": 87,
@@ -4551,7 +4551,7 @@
         {
           "turn": 6,
           "socialTrust": {
-            "mean": 36.4,
+            "mean": 36.3,
             "sd": 1.3
           },
           "wealthConcentration": {
@@ -4563,20 +4563,20 @@
             "sd": 1.7
           },
           "stability": {
-            "mean": 52.5,
-            "sd": 5.5
+            "mean": 55.3,
+            "sd": 3.7
           },
           "stateCapacity": {
-            "mean": 68,
-            "sd": 0.3
+            "mean": 67.8,
+            "sd": 0.7
           },
           "epistemicHealth": {
             "mean": 31,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 54.5,
-            "sd": 2.5
+            "mean": 55.4,
+            "sd": 1.5
           },
           "militaryPower": {
             "mean": 86,
@@ -4602,7 +4602,7 @@
         {
           "turn": 7,
           "socialTrust": {
-            "mean": 36.5,
+            "mean": 36.4,
             "sd": 1.2
           },
           "wealthConcentration": {
@@ -4614,20 +4614,20 @@
             "sd": 1.5
           },
           "stability": {
-            "mean": 52.9,
-            "sd": 5.7
+            "mean": 54.5,
+            "sd": 5.5
           },
           "stateCapacity": {
-            "mean": 67,
-            "sd": 0.3
+            "mean": 66.7,
+            "sd": 1
           },
           "epistemicHealth": {
             "mean": 31.3,
             "sd": 0.4
           },
           "wellbeing": {
-            "mean": 54.6,
-            "sd": 2.6
+            "mean": 54.4,
+            "sd": 3.5
           },
           "militaryPower": {
             "mean": 86,
@@ -4653,8 +4653,8 @@
         {
           "turn": 8,
           "socialTrust": {
-            "mean": 37.4,
-            "sd": 1.3
+            "mean": 37.1,
+            "sd": 1.4
           },
           "wealthConcentration": {
             "mean": 56,
@@ -4665,20 +4665,20 @@
             "sd": 1.5
           },
           "stability": {
-            "mean": 52,
-            "sd": 6.8
+            "mean": 54.5,
+            "sd": 6.4
           },
           "stateCapacity": {
-            "mean": 66.5,
-            "sd": 0.6
+            "mean": 66.3,
+            "sd": 1.2
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 54,
-            "sd": 3.1
+            "mean": 54.4,
+            "sd": 3.5
           },
           "militaryPower": {
             "mean": 85,
@@ -4704,8 +4704,8 @@
         {
           "turn": 9,
           "socialTrust": {
-            "mean": 37.4,
-            "sd": 1.3
+            "mean": 37,
+            "sd": 1.4
           },
           "wealthConcentration": {
             "mean": 56,
@@ -4716,20 +4716,20 @@
             "sd": 1.5
           },
           "stability": {
-            "mean": 52.4,
-            "sd": 7
+            "mean": 54.3,
+            "sd": 6.5
           },
           "stateCapacity": {
-            "mean": 65.8,
-            "sd": 0.5
+            "mean": 65.4,
+            "sd": 1.4
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 54.5,
-            "sd": 2
+            "mean": 54,
+            "sd": 3.2
           },
           "militaryPower": {
             "mean": 85,
@@ -4755,8 +4755,8 @@
         {
           "turn": 10,
           "socialTrust": {
-            "mean": 37.4,
-            "sd": 1.3
+            "mean": 37.1,
+            "sd": 1.2
           },
           "wealthConcentration": {
             "mean": 56,
@@ -4767,24 +4767,24 @@
             "sd": 1.5
           },
           "stability": {
-            "mean": 52.5,
-            "sd": 6
+            "mean": 53.6,
+            "sd": 6.7
           },
           "stateCapacity": {
-            "mean": 64.8,
-            "sd": 0.5
+            "mean": 64.4,
+            "sd": 1.6
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 54.5,
-            "sd": 1.5
+            "mean": 53.8,
+            "sd": 2.8
           },
           "militaryPower": {
-            "mean": 85.9,
-            "sd": 0.3
+            "mean": 85.8,
+            "sd": 0.4
           },
           "polarization": {
             "mean": 29,
@@ -4806,36 +4806,36 @@
         {
           "turn": 11,
           "socialTrust": {
-            "mean": 38.4,
-            "sd": 1.3
+            "mean": 37.9,
+            "sd": 1.5
           },
           "wealthConcentration": {
             "mean": 56,
-            "sd": 0
+            "sd": 0.2
           },
           "corruption": {
-            "mean": 59.7,
-            "sd": 1.3
+            "mean": 59.6,
+            "sd": 1.5
           },
           "stability": {
-            "mean": 52.7,
-            "sd": 6.2
+            "mean": 53.4,
+            "sd": 6.6
           },
           "stateCapacity": {
-            "mean": 64.3,
-            "sd": 0.7
+            "mean": 63.9,
+            "sd": 1.7
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 54.4,
-            "sd": 0.9
+            "mean": 53.4,
+            "sd": 2.7
           },
           "militaryPower": {
-            "mean": 85.9,
-            "sd": 0.3
+            "mean": 85.8,
+            "sd": 0.4
           },
           "polarization": {
             "mean": 29,
@@ -4857,36 +4857,36 @@
         {
           "turn": 12,
           "socialTrust": {
-            "mean": 38.4,
-            "sd": 1.3
+            "mean": 37.9,
+            "sd": 1.5
           },
           "wealthConcentration": {
-            "mean": 56,
-            "sd": 0
+            "mean": 56.1,
+            "sd": 0.3
           },
           "corruption": {
             "mean": 59.7,
             "sd": 1.3
           },
           "stability": {
-            "mean": 54.2,
-            "sd": 5.8
+            "mean": 54.5,
+            "sd": 6.9
           },
           "stateCapacity": {
-            "mean": 63.5,
-            "sd": 0.7
+            "mean": 63.3,
+            "sd": 1.8
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 54.3,
-            "sd": 0.9
+            "mean": 53.3,
+            "sd": 2.8
           },
           "militaryPower": {
-            "mean": 85.9,
-            "sd": 0.3
+            "mean": 85.8,
+            "sd": 0.4
           },
           "polarization": {
             "mean": 28,
@@ -4908,11 +4908,11 @@
         {
           "turn": 13,
           "socialTrust": {
-            "mean": 36.3,
-            "sd": 3.3
+            "mean": 36.8,
+            "sd": 2.6
           },
           "wealthConcentration": {
-            "mean": 56.5,
+            "mean": 56.4,
             "sd": 0.5
           },
           "corruption": {
@@ -4920,20 +4920,20 @@
             "sd": 1.3
           },
           "stability": {
-            "mean": 51.1,
-            "sd": 6.4
+            "mean": 53,
+            "sd": 7.5
           },
           "stateCapacity": {
-            "mean": 62.6,
-            "sd": 0.8
+            "mean": 62.3,
+            "sd": 1.8
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 51,
-            "sd": 3.7
+            "mean": 51.1,
+            "sd": 4.3
           },
           "militaryPower": {
             "mean": 85.8,
@@ -4959,12 +4959,12 @@
         {
           "turn": 14,
           "socialTrust": {
-            "mean": 34.6,
-            "sd": 2.8
+            "mean": 33.8,
+            "sd": 2.7
           },
           "wealthConcentration": {
             "mean": 57,
-            "sd": 0.2
+            "sd": 0
           },
           "corruption": {
             "mean": 59.7,
@@ -4972,19 +4972,19 @@
           },
           "stability": {
             "mean": 46.3,
-            "sd": 5.7
+            "sd": 5.1
           },
           "stateCapacity": {
-            "mean": 62.2,
-            "sd": 1.1
+            "mean": 61.6,
+            "sd": 2.2
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 47,
-            "sd": 3.9
+            "mean": 46.7,
+            "sd": 3.6
           },
           "militaryPower": {
             "mean": 85.8,
@@ -5010,40 +5010,40 @@
         {
           "turn": 15,
           "socialTrust": {
-            "mean": 33.4,
-            "sd": 1.2
+            "mean": 32.9,
+            "sd": 1.8
           },
           "wealthConcentration": {
             "mean": 57,
-            "sd": 0.2
+            "sd": 0
           },
           "corruption": {
-            "mean": 59.8,
-            "sd": 1.1
+            "mean": 59.7,
+            "sd": 1.3
           },
           "stability": {
-            "mean": 44.8,
-            "sd": 4.9
+            "mean": 44.9,
+            "sd": 4.2
           },
           "stateCapacity": {
-            "mean": 61.4,
-            "sd": 1.1
+            "mean": 61,
+            "sd": 2.2
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 46.6,
-            "sd": 4
+            "mean": 46.9,
+            "sd": 2.6
           },
           "militaryPower": {
-            "mean": 85.6,
+            "mean": 85.7,
             "sd": 0.5
           },
           "polarization": {
-            "mean": 27,
-            "sd": 0
+            "mean": 27.1,
+            "sd": 0.3
           },
           "institutionalLockIn": {
             "mean": 92,
@@ -5061,8 +5061,8 @@
         {
           "turn": 16,
           "socialTrust": {
-            "mean": 33.4,
-            "sd": 1.2
+            "mean": 32.9,
+            "sd": 1.8
           },
           "wealthConcentration": {
             "mean": 57,
@@ -5073,24 +5073,24 @@
             "sd": 1.1
           },
           "stability": {
-            "mean": 46.6,
-            "sd": 5
+            "mean": 46.5,
+            "sd": 3.9
           },
           "stateCapacity": {
-            "mean": 60.8,
-            "sd": 1.2
+            "mean": 60.4,
+            "sd": 2.5
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 48.9,
-            "sd": 2.3
+            "mean": 48.6,
+            "sd": 1.7
           },
           "militaryPower": {
-            "mean": 85,
-            "sd": 0.2
+            "mean": 85.1,
+            "sd": 0.3
           },
           "polarization": {
             "mean": 27,
@@ -5112,32 +5112,32 @@
         {
           "turn": 17,
           "socialTrust": {
-            "mean": 33.3,
-            "sd": 1.2
+            "mean": 32.9,
+            "sd": 1.8
           },
           "wealthConcentration": {
             "mean": 57,
             "sd": 0.2
           },
           "corruption": {
-            "mean": 59.8,
-            "sd": 1.1
+            "mean": 59.9,
+            "sd": 1.2
           },
           "stability": {
-            "mean": 47.8,
-            "sd": 5.3
+            "mean": 47,
+            "sd": 4
           },
           "stateCapacity": {
-            "mean": 60.1,
-            "sd": 1.2
+            "mean": 59.8,
+            "sd": 2.5
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 49.5,
-            "sd": 1.7
+            "mean": 49,
+            "sd": 2.5
           },
           "militaryPower": {
             "mean": 85.7,
@@ -5163,36 +5163,36 @@
         {
           "turn": 18,
           "socialTrust": {
-            "mean": 34,
-            "sd": 1.4
+            "mean": 33.5,
+            "sd": 2.2
           },
           "wealthConcentration": {
-            "mean": 57,
-            "sd": 0.2
+            "mean": 57.1,
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 59.8,
-            "sd": 1.1
+            "mean": 59.9,
+            "sd": 1.2
           },
           "stability": {
-            "mean": 48.2,
-            "sd": 4.4
+            "mean": 48.4,
+            "sd": 3.8
           },
           "stateCapacity": {
-            "mean": 59.6,
-            "sd": 1.3
+            "mean": 59.4,
+            "sd": 2.5
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 49.6,
-            "sd": 2.2
+            "mean": 49.4,
+            "sd": 2
           },
           "militaryPower": {
-            "mean": 85.7,
-            "sd": 0.5
+            "mean": 85.8,
+            "sd": 0.4
           },
           "polarization": {
             "mean": 26.1,
@@ -5214,40 +5214,40 @@
         {
           "turn": 19,
           "socialTrust": {
-            "mean": 34.1,
-            "sd": 1.4
+            "mean": 33.5,
+            "sd": 2.2
           },
           "wealthConcentration": {
-            "mean": 57,
-            "sd": 0.2
+            "mean": 57.1,
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 60,
-            "sd": 1
+            "mean": 59.9,
+            "sd": 1.2
           },
           "stability": {
-            "mean": 49.3,
-            "sd": 3.9
+            "mean": 48.8,
+            "sd": 4.2
           },
           "stateCapacity": {
-            "mean": 59.2,
-            "sd": 1.2
+            "mean": 58.8,
+            "sd": 2.6
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 49.7,
-            "sd": 1.7
+            "mean": 49.1,
+            "sd": 3.7
           },
           "militaryPower": {
             "mean": 85.7,
             "sd": 0.5
           },
           "polarization": {
-            "mean": 26,
-            "sd": 0
+            "mean": 26.1,
+            "sd": 0.3
           },
           "institutionalLockIn": {
             "mean": 92,
@@ -5265,40 +5265,40 @@
         {
           "turn": 20,
           "socialTrust": {
-            "mean": 34.1,
-            "sd": 1.4
+            "mean": 33.6,
+            "sd": 2.2
           },
           "wealthConcentration": {
-            "mean": 57,
-            "sd": 0.2
+            "mean": 57.1,
+            "sd": 0.5
           },
           "corruption": {
             "mean": 60,
-            "sd": 1
+            "sd": 1.2
           },
           "stability": {
-            "mean": 50.2,
-            "sd": 3.5
+            "mean": 49.9,
+            "sd": 4.7
           },
           "stateCapacity": {
-            "mean": 59,
-            "sd": 1.2
+            "mean": 58.5,
+            "sd": 2.5
           },
           "epistemicHealth": {
             "mean": 32,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 49.6,
-            "sd": 1.5
+            "mean": 49,
+            "sd": 2.9
           },
           "militaryPower": {
             "mean": 85.7,
             "sd": 0.5
           },
           "polarization": {
-            "mean": 26,
-            "sd": 0
+            "mean": 26.1,
+            "sd": 0.2
           },
           "institutionalLockIn": {
             "mean": 92,
@@ -5316,32 +5316,32 @@
         {
           "turn": 21,
           "socialTrust": {
-            "mean": 34.1,
-            "sd": 1.4
+            "mean": 33.7,
+            "sd": 2.2
           },
           "wealthConcentration": {
-            "mean": 57,
-            "sd": 0.2
+            "mean": 57.2,
+            "sd": 0.7
           },
           "corruption": {
             "mean": 60.8,
             "sd": 1.1
           },
           "stability": {
-            "mean": 51.1,
-            "sd": 3.1
+            "mean": 50.4,
+            "sd": 4.6
           },
           "stateCapacity": {
-            "mean": 58.7,
-            "sd": 1.1
+            "mean": 58.1,
+            "sd": 2.6
           },
           "epistemicHealth": {
             "mean": 31.9,
-            "sd": 0.3
+            "sd": 0.2
           },
           "wellbeing": {
-            "mean": 49.6,
-            "sd": 1.2
+            "mean": 49.1,
+            "sd": 2.5
           },
           "militaryPower": {
             "mean": 85.5,
@@ -5367,40 +5367,40 @@
         {
           "turn": 22,
           "socialTrust": {
-            "mean": 34.2,
-            "sd": 1.4
+            "mean": 33.8,
+            "sd": 2.2
           },
           "wealthConcentration": {
-            "mean": 57,
-            "sd": 0.2
+            "mean": 57.2,
+            "sd": 0.7
           },
           "corruption": {
             "mean": 60.8,
             "sd": 1.1
           },
           "stability": {
-            "mean": 52.3,
-            "sd": 3.5
+            "mean": 50.5,
+            "sd": 5.2
           },
           "stateCapacity": {
-            "mean": 58.3,
-            "sd": 1
+            "mean": 57.8,
+            "sd": 2.4
           },
           "epistemicHealth": {
-            "mean": 31.8,
-            "sd": 0.4
+            "mean": 31.7,
+            "sd": 0.5
           },
           "wellbeing": {
-            "mean": 49.7,
-            "sd": 1
+            "mean": 48.5,
+            "sd": 3.2
           },
           "militaryPower": {
             "mean": 85.2,
             "sd": 0.4
           },
           "polarization": {
-            "mean": 26,
-            "sd": 0
+            "mean": 25.9,
+            "sd": 0.2
           },
           "institutionalLockIn": {
             "mean": 92,
@@ -5418,32 +5418,32 @@
         {
           "turn": 23,
           "socialTrust": {
-            "mean": 34.5,
-            "sd": 1.5
+            "mean": 34,
+            "sd": 2.6
           },
           "wealthConcentration": {
-            "mean": 57,
-            "sd": 0.3
+            "mean": 57.3,
+            "sd": 0.7
           },
           "corruption": {
             "mean": 60.8,
-            "sd": 0.9
+            "sd": 1.1
           },
           "stability": {
-            "mean": 49.5,
-            "sd": 5.7
+            "mean": 50.5,
+            "sd": 5.6
           },
           "stateCapacity": {
-            "mean": 58,
-            "sd": 1
+            "mean": 57.5,
+            "sd": 2.5
           },
           "epistemicHealth": {
-            "mean": 31.6,
+            "mean": 31.5,
             "sd": 0.5
           },
           "wellbeing": {
-            "mean": 47.1,
-            "sd": 4
+            "mean": 47.8,
+            "sd": 3.4
           },
           "militaryPower": {
             "mean": 85.6,
@@ -5469,32 +5469,32 @@
         {
           "turn": 24,
           "socialTrust": {
-            "mean": 34.6,
-            "sd": 1.5
+            "mean": 34.1,
+            "sd": 2.6
           },
           "wealthConcentration": {
-            "mean": 57.1,
-            "sd": 0.5
+            "mean": 57.4,
+            "sd": 0.7
           },
           "corruption": {
-            "mean": 60.8,
+            "mean": 60.9,
             "sd": 0.9
           },
           "stability": {
-            "mean": 50.1,
-            "sd": 6.2
+            "mean": 51.5,
+            "sd": 5.6
           },
           "stateCapacity": {
-            "mean": 57.8,
-            "sd": 1
+            "mean": 57.3,
+            "sd": 2.4
           },
           "epistemicHealth": {
-            "mean": 31.6,
+            "mean": 31.4,
             "sd": 0.5
           },
           "wellbeing": {
-            "mean": 47.2,
-            "sd": 3.1
+            "mean": 48.1,
+            "sd": 2.4
           },
           "militaryPower": {
             "mean": 85.6,
@@ -5502,7 +5502,7 @@
           },
           "polarization": {
             "mean": 25.3,
-            "sd": 0.4
+            "sd": 0.5
           },
           "institutionalLockIn": {
             "mean": 92,
@@ -5520,35 +5520,188 @@
         {
           "turn": 25,
           "socialTrust": {
-            "mean": 34.7,
-            "sd": 1.6
+            "mean": 34.1,
+            "sd": 2.6
           },
           "wealthConcentration": {
-            "mean": 57.6,
-            "sd": 0.6
+            "mean": 57.9,
+            "sd": 0.7
           },
           "corruption": {
-            "mean": 60.9,
-            "sd": 0.9
-          },
-          "stability": {
-            "mean": 51,
-            "sd": 5.5
-          },
-          "stateCapacity": {
-            "mean": 57.4,
+            "mean": 61,
             "sd": 1
           },
+          "stability": {
+            "mean": 52.6,
+            "sd": 4.8
+          },
+          "stateCapacity": {
+            "mean": 56.9,
+            "sd": 2.4
+          },
           "epistemicHealth": {
-            "mean": 31.3,
-            "sd": 0.5
+            "mean": 31.2,
+            "sd": 0.4
           },
           "wellbeing": {
             "mean": 48,
-            "sd": 1.7
+            "sd": 2.2
           },
           "militaryPower": {
             "mean": 85.6,
+            "sd": 0.5
+          },
+          "polarization": {
+            "mean": 25.1,
+            "sd": 0.4
+          },
+          "institutionalLockIn": {
+            "mean": 92,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 80,
+            "sd": 0
+          },
+          "institutionalQuality": {
+            "mean": 55,
+            "sd": 0
+          }
+        },
+        {
+          "turn": 26,
+          "socialTrust": {
+            "mean": 34.1,
+            "sd": 2.6
+          },
+          "wealthConcentration": {
+            "mean": 58,
+            "sd": 0.9
+          },
+          "corruption": {
+            "mean": 61.1,
+            "sd": 1
+          },
+          "stability": {
+            "mean": 53.1,
+            "sd": 4.2
+          },
+          "stateCapacity": {
+            "mean": 56.8,
+            "sd": 2.4
+          },
+          "epistemicHealth": {
+            "mean": 31.1,
+            "sd": 0.3
+          },
+          "wellbeing": {
+            "mean": 48.1,
+            "sd": 2
+          },
+          "militaryPower": {
+            "mean": 85.5,
+            "sd": 0.5
+          },
+          "polarization": {
+            "mean": 25.1,
+            "sd": 0.3
+          },
+          "institutionalLockIn": {
+            "mean": 92,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 80,
+            "sd": 0
+          },
+          "institutionalQuality": {
+            "mean": 55,
+            "sd": 0
+          }
+        },
+        {
+          "turn": 27,
+          "socialTrust": {
+            "mean": 34.1,
+            "sd": 2.6
+          },
+          "wealthConcentration": {
+            "mean": 58,
+            "sd": 0.9
+          },
+          "corruption": {
+            "mean": 61.8,
+            "sd": 1.1
+          },
+          "stability": {
+            "mean": 53.6,
+            "sd": 4.8
+          },
+          "stateCapacity": {
+            "mean": 56.5,
+            "sd": 2.3
+          },
+          "epistemicHealth": {
+            "mean": 31.1,
+            "sd": 0.2
+          },
+          "wellbeing": {
+            "mean": 47.6,
+            "sd": 3.4
+          },
+          "militaryPower": {
+            "mean": 85.2,
+            "sd": 0.4
+          },
+          "polarization": {
+            "mean": 25.1,
+            "sd": 0.3
+          },
+          "institutionalLockIn": {
+            "mean": 92,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 80,
+            "sd": 0
+          },
+          "institutionalQuality": {
+            "mean": 55,
+            "sd": 0
+          }
+        },
+        {
+          "turn": 28,
+          "socialTrust": {
+            "mean": 34.2,
+            "sd": 2.7
+          },
+          "wealthConcentration": {
+            "mean": 58,
+            "sd": 0.8
+          },
+          "corruption": {
+            "mean": 61.9,
+            "sd": 0.9
+          },
+          "stability": {
+            "mean": 52.6,
+            "sd": 5.8
+          },
+          "stateCapacity": {
+            "mean": 56.3,
+            "sd": 2.4
+          },
+          "epistemicHealth": {
+            "mean": 30.9,
+            "sd": 0.3
+          },
+          "wellbeing": {
+            "mean": 46.6,
+            "sd": 3.7
+          },
+          "militaryPower": {
+            "mean": 85.5,
             "sd": 0.5
           },
           "polarization": {
@@ -5569,195 +5722,42 @@
           }
         },
         {
-          "turn": 26,
+          "turn": 29,
           "socialTrust": {
-            "mean": 34.7,
-            "sd": 1.6
+            "mean": 34.2,
+            "sd": 2.7
           },
           "wealthConcentration": {
-            "mean": 57.6,
-            "sd": 0.6
+            "mean": 58.1,
+            "sd": 0.7
           },
           "corruption": {
-            "mean": 61,
-            "sd": 1
-          },
-          "stability": {
-            "mean": 51.9,
-            "sd": 4.9
-          },
-          "stateCapacity": {
-            "mean": 57.2,
+            "mean": 61.9,
             "sd": 0.9
           },
+          "stability": {
+            "mean": 52.9,
+            "sd": 5.2
+          },
+          "stateCapacity": {
+            "mean": 55.8,
+            "sd": 2.4
+          },
           "epistemicHealth": {
-            "mean": 31.1,
-            "sd": 0.3
+            "mean": 30.8,
+            "sd": 0.4
           },
           "wellbeing": {
-            "mean": 48.1,
-            "sd": 1.2
+            "mean": 46.4,
+            "sd": 3.5
           },
           "militaryPower": {
             "mean": 85.5,
             "sd": 0.5
           },
           "polarization": {
-            "mean": 25,
-            "sd": 0
-          },
-          "institutionalLockIn": {
-            "mean": 92,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 80,
-            "sd": 0
-          },
-          "institutionalQuality": {
-            "mean": 55,
-            "sd": 0
-          }
-        },
-        {
-          "turn": 27,
-          "socialTrust": {
-            "mean": 34.8,
-            "sd": 1.6
-          },
-          "wealthConcentration": {
-            "mean": 57.6,
-            "sd": 0.6
-          },
-          "corruption": {
-            "mean": 61.8,
-            "sd": 0.9
-          },
-          "stability": {
-            "mean": 50.1,
-            "sd": 6.6
-          },
-          "stateCapacity": {
-            "mean": 56.9,
-            "sd": 0.8
-          },
-          "epistemicHealth": {
-            "mean": 31.1,
-            "sd": 0.5
-          },
-          "wellbeing": {
-            "mean": 45.6,
-            "sd": 7.2
-          },
-          "militaryPower": {
-            "mean": 85,
+            "mean": 25.1,
             "sd": 0.2
-          },
-          "polarization": {
-            "mean": 25,
-            "sd": 0
-          },
-          "institutionalLockIn": {
-            "mean": 92,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 80,
-            "sd": 0
-          },
-          "institutionalQuality": {
-            "mean": 55,
-            "sd": 0
-          }
-        },
-        {
-          "turn": 28,
-          "socialTrust": {
-            "mean": 34.8,
-            "sd": 1.6
-          },
-          "wealthConcentration": {
-            "mean": 57.9,
-            "sd": 0.4
-          },
-          "corruption": {
-            "mean": 61.8,
-            "sd": 0.9
-          },
-          "stability": {
-            "mean": 50.3,
-            "sd": 6.1
-          },
-          "stateCapacity": {
-            "mean": 56.6,
-            "sd": 0.7
-          },
-          "epistemicHealth": {
-            "mean": 31.1,
-            "sd": 0.5
-          },
-          "wellbeing": {
-            "mean": 46.2,
-            "sd": 5.1
-          },
-          "militaryPower": {
-            "mean": 85.6,
-            "sd": 0.5
-          },
-          "polarization": {
-            "mean": 25,
-            "sd": 0
-          },
-          "institutionalLockIn": {
-            "mean": 92,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 80,
-            "sd": 0
-          },
-          "institutionalQuality": {
-            "mean": 55,
-            "sd": 0
-          }
-        },
-        {
-          "turn": 29,
-          "socialTrust": {
-            "mean": 34.8,
-            "sd": 1.6
-          },
-          "wealthConcentration": {
-            "mean": 57.9,
-            "sd": 0.4
-          },
-          "corruption": {
-            "mean": 61.8,
-            "sd": 0.9
-          },
-          "stability": {
-            "mean": 51.1,
-            "sd": 5.4
-          },
-          "stateCapacity": {
-            "mean": 56,
-            "sd": 0.9
-          },
-          "epistemicHealth": {
-            "mean": 30.9,
-            "sd": 0.7
-          },
-          "wellbeing": {
-            "mean": 47,
-            "sd": 3.2
-          },
-          "militaryPower": {
-            "mean": 85.6,
-            "sd": 0.5
-          },
-          "polarization": {
-            "mean": 25,
-            "sd": 0
           },
           "institutionalLockIn": {
             "mean": 92,
@@ -5775,40 +5775,40 @@
         {
           "turn": 30,
           "socialTrust": {
-            "mean": 34.8,
-            "sd": 1.6
+            "mean": 34.2,
+            "sd": 2.7
           },
           "wealthConcentration": {
-            "mean": 57.9,
-            "sd": 0.3
+            "mean": 58.2,
+            "sd": 0.9
           },
           "corruption": {
-            "mean": 62.2,
-            "sd": 1.3
+            "mean": 62,
+            "sd": 1
           },
           "stability": {
-            "mean": 50.8,
-            "sd": 6.4
+            "mean": 52,
+            "sd": 5.9
           },
           "stateCapacity": {
-            "mean": 55.5,
-            "sd": 0.7
+            "mean": 55.1,
+            "sd": 2.1
           },
           "epistemicHealth": {
-            "mean": 30.7,
-            "sd": 0.8
+            "mean": 30.6,
+            "sd": 0.5
           },
           "wellbeing": {
-            "mean": 47,
-            "sd": 4.1
+            "mean": 45.8,
+            "sd": 3.3
           },
           "militaryPower": {
-            "mean": 85.6,
+            "mean": 85.5,
             "sd": 0.5
           },
           "polarization": {
-            "mean": 25,
-            "sd": 0
+            "mean": 25.1,
+            "sd": 0.2
           },
           "institutionalLockIn": {
             "mean": 92,
@@ -5836,8 +5836,8 @@
           "key": "socialTrust",
           "phrase": "declining after turn 5",
           "verdict": "PASS",
-          "passRate": 100,
-          "avgScore": 1
+          "passRate": 95,
+          "avgScore": 0.974
         },
         {
           "key": "corruption",
@@ -5863,8 +5863,8 @@
               "metric": "stability",
               "expected": "< 40",
               "note": "System collapse, GDP fell 40%",
-              "mean": 52.9,
-              "stddev": 5.7,
+              "mean": 54.5,
+              "stddev": 5.5,
               "pass": false,
               "passRate": 0
             },
@@ -5888,7 +5888,7 @@
               "expected": "> 65",
               "note": "Oligarchs peaked, Gini ~48",
               "mean": 57,
-              "stddev": 0.2,
+              "stddev": 0,
               "pass": false,
               "passRate": 0
             },
@@ -5896,8 +5896,8 @@
               "metric": "corruption",
               "expected": "> 60",
               "note": "TI CPI very poor",
-              "mean": 59.8,
-              "stddev": 1.1,
+              "mean": 59.7,
+              "stddev": 1.3,
               "pass": false,
               "passRate": 0
             },
@@ -5905,10 +5905,10 @@
               "metric": "socialTrust",
               "expected": "< 30",
               "note": "WVS trust ~25%",
-              "mean": 33.4,
-              "stddev": 1.2,
+              "mean": 32.9,
+              "stddev": 1.8,
               "pass": false,
-              "passRate": 0
+              "passRate": 10
             }
           ]
         },
@@ -5920,7 +5920,7 @@
               "metric": "militaryPower",
               "expected": "> 50",
               "note": "Military rebuilt",
-              "mean": 85.6,
+              "mean": 85.5,
               "stddev": 0.5,
               "pass": true,
               "passRate": 100
@@ -6049,8 +6049,8 @@
         {
           "turn": 3,
           "socialTrust": {
-            "mean": 13.9,
-            "sd": 3.4
+            "mean": 14.7,
+            "sd": 1.1
           },
           "wealthConcentration": {
             "mean": 73,
@@ -6061,8 +6061,8 @@
             "sd": 4.1
           },
           "stability": {
-            "mean": 24.7,
-            "sd": 7.1
+            "mean": 26.1,
+            "sd": 4.3
           },
           "stateCapacity": {
             "mean": 32.8,
@@ -6073,8 +6073,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 44.6,
-            "sd": 7.5
+            "mean": 45.9,
+            "sd": 5.6
           },
           "militaryPower": {
             "mean": 28,
@@ -6100,8 +6100,8 @@
         {
           "turn": 4,
           "socialTrust": {
-            "mean": 13.8,
-            "sd": 3.4
+            "mean": 14.2,
+            "sd": 3.3
           },
           "wealthConcentration": {
             "mean": 76,
@@ -6112,8 +6112,8 @@
             "sd": 4.1
           },
           "stability": {
-            "mean": 25.8,
-            "sd": 7.5
+            "mean": 27.7,
+            "sd": 6.8
           },
           "stateCapacity": {
             "mean": 33,
@@ -6124,8 +6124,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 42.7,
-            "sd": 7.8
+            "mean": 44.5,
+            "sd": 7
           },
           "militaryPower": {
             "mean": 29,
@@ -6151,71 +6151,20 @@
         {
           "turn": 5,
           "socialTrust": {
-            "mean": 14.7,
-            "sd": 1.1
+            "mean": 13.9,
+            "sd": 3.4
           },
           "wealthConcentration": {
             "mean": 78,
             "sd": 0
           },
           "corruption": {
-            "mean": 64,
-            "sd": 4.1
+            "mean": 65,
+            "sd": 5.9
           },
           "stability": {
-            "mean": 29.2,
-            "sd": 5.4
-          },
-          "stateCapacity": {
-            "mean": 33.7,
-            "sd": 0.6
-          },
-          "epistemicHealth": {
-            "mean": 11,
-            "sd": 0
-          },
-          "wellbeing": {
-            "mean": 43.7,
-            "sd": 7.3
-          },
-          "militaryPower": {
-            "mean": 29.8,
-            "sd": 0.4
-          },
-          "polarization": {
-            "mean": 68.6,
-            "sd": 0.5
-          },
-          "institutionalLockIn": {
-            "mean": 35,
-            "sd": 0
-          },
-          "genderEquity": {
-            "mean": 18,
-            "sd": 0
-          },
-          "institutionalQuality": {
-            "mean": 21,
-            "sd": 0.3
-          }
-        },
-        {
-          "turn": 6,
-          "socialTrust": {
-            "mean": 14.8,
-            "sd": 0.5
-          },
-          "wealthConcentration": {
-            "mean": 79,
-            "sd": 0
-          },
-          "corruption": {
-            "mean": 62.9,
-            "sd": 3.9
-          },
-          "stability": {
-            "mean": 30.9,
-            "sd": 4.4
+            "mean": 27.4,
+            "sd": 10.1
           },
           "stateCapacity": {
             "mean": 33.8,
@@ -6226,8 +6175,59 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 44.1,
-            "sd": 7
+            "mean": 44.4,
+            "sd": 8.1
+          },
+          "militaryPower": {
+            "mean": 29.9,
+            "sd": 0.4
+          },
+          "polarization": {
+            "mean": 68.8,
+            "sd": 0.4
+          },
+          "institutionalLockIn": {
+            "mean": 35,
+            "sd": 0
+          },
+          "genderEquity": {
+            "mean": 18,
+            "sd": 0
+          },
+          "institutionalQuality": {
+            "mean": 20.9,
+            "sd": 0.2
+          }
+        },
+        {
+          "turn": 6,
+          "socialTrust": {
+            "mean": 13.8,
+            "sd": 3.4
+          },
+          "wealthConcentration": {
+            "mean": 79,
+            "sd": 0.2
+          },
+          "corruption": {
+            "mean": 63.9,
+            "sd": 5.6
+          },
+          "stability": {
+            "mean": 27.8,
+            "sd": 9
+          },
+          "stateCapacity": {
+            "mean": 33.7,
+            "sd": 0.6
+          },
+          "epistemicHealth": {
+            "mean": 11,
+            "sd": 0
+          },
+          "wellbeing": {
+            "mean": 43.3,
+            "sd": 8.2
           },
           "militaryPower": {
             "mean": 30,
@@ -6253,32 +6253,32 @@
         {
           "turn": 7,
           "socialTrust": {
-            "mean": 14.1,
-            "sd": 3.3
+            "mean": 14.7,
+            "sd": 1.1
           },
           "wealthConcentration": {
-            "mean": 80,
-            "sd": 0
+            "mean": 80.2,
+            "sd": 0.4
           },
           "corruption": {
-            "mean": 61,
-            "sd": 4.1
+            "mean": 63.1,
+            "sd": 7
           },
           "stability": {
-            "mean": 30.1,
-            "sd": 7.7
+            "mean": 28.9,
+            "sd": 8.3
           },
           "stateCapacity": {
-            "mean": 33.9,
-            "sd": 0.4
+            "mean": 33.6,
+            "sd": 0.8
           },
           "epistemicHealth": {
             "mean": 10,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 42.9,
-            "sd": 9.1
+            "mean": 43.6,
+            "sd": 7
           },
           "militaryPower": {
             "mean": 31,
@@ -6298,38 +6298,38 @@
           },
           "institutionalQuality": {
             "mean": 22.9,
-            "sd": 0.4
+            "sd": 0.3
           }
         },
         {
           "turn": 8,
           "socialTrust": {
-            "mean": 13.3,
-            "sd": 4.5
+            "mean": 14.8,
+            "sd": 0.4
           },
           "wealthConcentration": {
             "mean": 81,
             "sd": 0
           },
           "corruption": {
-            "mean": 60,
-            "sd": 3.9
+            "mean": 62,
+            "sd": 6.8
           },
           "stability": {
-            "mean": 28.1,
-            "sd": 9.8
+            "mean": 30,
+            "sd": 6.2
           },
           "stateCapacity": {
-            "mean": 33.9,
-            "sd": 0.3
+            "mean": 33.6,
+            "sd": 0.7
           },
           "epistemicHealth": {
             "mean": 9,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 40.9,
-            "sd": 9.9
+            "mean": 43.4,
+            "sd": 6
           },
           "militaryPower": {
             "mean": 32,
@@ -6355,32 +6355,32 @@
         {
           "turn": 9,
           "socialTrust": {
-            "mean": 14.3,
-            "sd": 1.4
+            "mean": 14.2,
+            "sd": 3.3
           },
           "wealthConcentration": {
             "mean": 82,
             "sd": 0
           },
           "corruption": {
-            "mean": 59,
-            "sd": 3.9
+            "mean": 60.9,
+            "sd": 6.6
           },
           "stability": {
-            "mean": 29.4,
+            "mean": 29.8,
             "sd": 7.2
           },
           "stateCapacity": {
-            "mean": 34,
-            "sd": 0.2
+            "mean": 33.8,
+            "sd": 0.7
           },
           "epistemicHealth": {
             "mean": 8.1,
             "sd": 0.2
           },
           "wellbeing": {
-            "mean": 41,
-            "sd": 8.7
+            "mean": 42.1,
+            "sd": 6.9
           },
           "militaryPower": {
             "mean": 33,
@@ -6395,43 +6395,43 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 25,
-            "sd": 0
+            "mean": 24.9,
+            "sd": 0.2
           },
           "institutionalQuality": {
             "mean": 23.9,
-            "sd": 0.2
+            "sd": 0.3
           }
         },
         {
           "turn": 10,
           "socialTrust": {
-            "mean": 13.2,
-            "sd": 4.4
+            "mean": 13.7,
+            "sd": 3.3
           },
           "wealthConcentration": {
-            "mean": 82,
-            "sd": 0.2
+            "mean": 82.2,
+            "sd": 0.4
           },
           "corruption": {
-            "mean": 58.9,
-            "sd": 5.6
+            "mean": 59.8,
+            "sd": 6.4
           },
           "stability": {
-            "mean": 25.7,
-            "sd": 10.8
+            "mean": 27.9,
+            "sd": 7.1
           },
           "stateCapacity": {
-            "mean": 34.3,
-            "sd": 0.5
+            "mean": 34,
+            "sd": 0.7
           },
           "epistemicHealth": {
             "mean": 8,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 37.9,
-            "sd": 8.7
+            "mean": 38.6,
+            "sd": 6.7
           },
           "militaryPower": {
             "mean": 33.5,
@@ -6442,98 +6442,98 @@
             "sd": 0
           },
           "institutionalLockIn": {
-            "mean": 42,
-            "sd": 0.2
+            "mean": 41.9,
+            "sd": 0.3
           },
           "genderEquity": {
             "mean": 26.9,
-            "sd": 0.2
+            "sd": 0.3
           },
           "institutionalQuality": {
-            "mean": 24.9,
-            "sd": 0.4
+            "mean": 24.8,
+            "sd": 0.5
           }
         },
         {
           "turn": 11,
           "socialTrust": {
-            "mean": 14.4,
-            "sd": 1.3
+            "mean": 13.1,
+            "sd": 4.5
           },
           "wealthConcentration": {
             "mean": 83,
             "sd": 0
           },
           "corruption": {
-            "mean": 57.9,
-            "sd": 5.4
+            "mean": 58.8,
+            "sd": 6.3
           },
           "stability": {
-            "mean": 26.1,
-            "sd": 6.4
+            "mean": 24.9,
+            "sd": 9.9
           },
           "stateCapacity": {
-            "mean": 34.3,
-            "sd": 0.6
+            "mean": 34.1,
+            "sd": 0.9
           },
           "epistemicHealth": {
             "mean": 7,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 36.5,
-            "sd": 7.3
+            "mean": 34.9,
+            "sd": 9.8
           },
           "militaryPower": {
             "mean": 34,
             "sd": 0
           },
           "polarization": {
-            "mean": 55.9,
-            "sd": 0.4
+            "mean": 56,
+            "sd": 0.2
           },
           "institutionalLockIn": {
             "mean": 43,
             "sd": 0
           },
           "genderEquity": {
-            "mean": 28.9,
-            "sd": 0.2
+            "mean": 28.8,
+            "sd": 0.4
           },
           "institutionalQuality": {
-            "mean": 25.8,
-            "sd": 0.5
+            "mean": 25.7,
+            "sd": 0.6
           }
         },
         {
           "turn": 12,
           "socialTrust": {
-            "mean": 14.9,
-            "sd": 0.9
+            "mean": 14.3,
+            "sd": 1.4
           },
           "wealthConcentration": {
             "mean": 83,
             "sd": 0
           },
           "corruption": {
-            "mean": 56.9,
-            "sd": 5.4
+            "mean": 58.9,
+            "sd": 7.1
           },
           "stability": {
-            "mean": 27.6,
-            "sd": 4.9
+            "mean": 25.4,
+            "sd": 8.7
           },
           "stateCapacity": {
-            "mean": 34.4,
-            "sd": 0.7
+            "mean": 34.3,
+            "sd": 0.8
           },
           "epistemicHealth": {
             "mean": 6,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 36,
-            "sd": 6.1
+            "mean": 34.4,
+            "sd": 8.1
           },
           "militaryPower": {
             "mean": 35,
@@ -6548,47 +6548,47 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 30.8,
-            "sd": 0.4
+            "mean": 30.7,
+            "sd": 0.5
           },
           "institutionalQuality": {
-            "mean": 25.9,
-            "sd": 0.4
+            "mean": 25.8,
+            "sd": 0.5
           }
         },
         {
           "turn": 13,
           "socialTrust": {
-            "mean": 14.6,
-            "sd": 3.4
+            "mean": 13.7,
+            "sd": 4.6
           },
           "wealthConcentration": {
-            "mean": 83,
-            "sd": 0.2
+            "mean": 83.2,
+            "sd": 0.4
           },
           "corruption": {
-            "mean": 55.9,
-            "sd": 5.2
+            "mean": 57.8,
+            "sd": 7
           },
           "stability": {
-            "mean": 28.6,
-            "sd": 7.4
+            "mean": 26.8,
+            "sd": 9.8
           },
           "stateCapacity": {
-            "mean": 34.8,
-            "sd": 0.6
+            "mean": 34.5,
+            "sd": 0.8
           },
           "epistemicHealth": {
-            "mean": 5.3,
+            "mean": 5.2,
             "sd": 0.4
           },
           "wellbeing": {
-            "mean": 36.7,
-            "sd": 7.1
+            "mean": 34.3,
+            "sd": 7.3
           },
           "militaryPower": {
-            "mean": 35.9,
-            "sd": 0.3
+            "mean": 35.6,
+            "sd": 0.5
           },
           "polarization": {
             "mean": 53,
@@ -6603,81 +6603,81 @@
             "sd": 0.2
           },
           "institutionalQuality": {
-            "mean": 26.9,
-            "sd": 0.5
+            "mean": 26.6,
+            "sd": 0.7
           }
         },
         {
           "turn": 14,
           "socialTrust": {
-            "mean": 15.4,
-            "sd": 1.2
+            "mean": 15.2,
+            "sd": 1.5
           },
           "wealthConcentration": {
-            "mean": 83.2,
-            "sd": 0.4
+            "mean": 83.4,
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 54.9,
-            "sd": 5.2
+            "mean": 56.9,
+            "sd": 7
           },
           "stability": {
-            "mean": 30.6,
-            "sd": 5.2
+            "mean": 29.9,
+            "sd": 8.2
           },
           "stateCapacity": {
-            "mean": 35,
-            "sd": 0.6
+            "mean": 34.7,
+            "sd": 0.7
           },
           "epistemicHealth": {
-            "mean": 4.6,
+            "mean": 4.5,
             "sd": 0.5
           },
           "wellbeing": {
-            "mean": 38.2,
-            "sd": 5.6
+            "mean": 36.6,
+            "sd": 6
           },
           "militaryPower": {
             "mean": 36,
             "sd": 0
           },
           "polarization": {
-            "mean": 51.9,
-            "sd": 0.3
+            "mean": 52,
+            "sd": 0.2
           },
           "institutionalLockIn": {
             "mean": 47,
             "sd": 0.2
           },
           "genderEquity": {
-            "mean": 34,
-            "sd": 0.2
+            "mean": 33.9,
+            "sd": 0.4
           },
           "institutionalQuality": {
-            "mean": 27,
+            "mean": 26.9,
             "sd": 0.6
           }
         },
         {
           "turn": 15,
           "socialTrust": {
-            "mean": 15.8,
-            "sd": 0.5
+            "mean": 15.6,
+            "sd": 0.7
           },
           "wealthConcentration": {
             "mean": 84,
             "sd": 0
           },
           "corruption": {
-            "mean": 54,
-            "sd": 5.2
+            "mean": 56,
+            "sd": 6.9
           },
           "stability": {
-            "mean": 32.1,
-            "sd": 6
+            "mean": 31.4,
+            "sd": 6.2
           },
           "stateCapacity": {
-            "mean": 35.3,
+            "mean": 35,
             "sd": 0.8
           },
           "epistemicHealth": {
@@ -6685,50 +6685,50 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 39.8,
-            "sd": 4.7
+            "mean": 38.2,
+            "sd": 4.8
           },
           "militaryPower": {
             "mean": 37,
-            "sd": 0
+            "sd": 0.2
           },
           "polarization": {
-            "mean": 50.7,
-            "sd": 0.5
+            "mean": 50.9,
+            "sd": 0.4
           },
           "institutionalLockIn": {
             "mean": 48,
             "sd": 0
           },
           "genderEquity": {
-            "mean": 36,
-            "sd": 0.2
+            "mean": 35.9,
+            "sd": 0.4
           },
           "institutionalQuality": {
-            "mean": 27.9,
-            "sd": 0.5
+            "mean": 27.6,
+            "sd": 0.7
           }
         },
         {
           "turn": 16,
           "socialTrust": {
-            "mean": 15.8,
-            "sd": 0.5
+            "mean": 15.7,
+            "sd": 0.7
           },
           "wealthConcentration": {
-            "mean": 84,
-            "sd": 0.2
+            "mean": 84.2,
+            "sd": 0.4
           },
           "corruption": {
-            "mean": 54.1,
-            "sd": 6.5
+            "mean": 55.2,
+            "sd": 6.8
           },
           "stability": {
             "mean": 31.7,
-            "sd": 8.3
+            "sd": 3.3
           },
           "stateCapacity": {
-            "mean": 35.4,
+            "mean": 35.1,
             "sd": 0.7
           },
           "epistemicHealth": {
@@ -6736,8 +6736,8 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 40.4,
-            "sd": 4.6
+            "mean": 38.8,
+            "sd": 5.6
           },
           "militaryPower": {
             "mean": 37,
@@ -6752,43 +6752,43 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 37.8,
-            "sd": 0.5
+            "mean": 37.7,
+            "sd": 0.6
           },
           "institutionalQuality": {
-            "mean": 28,
-            "sd": 0.6
+            "mean": 27.8,
+            "sd": 0.9
           }
         },
         {
           "turn": 17,
           "socialTrust": {
             "mean": 15.8,
-            "sd": 0.6
+            "sd": 0.5
           },
           "wealthConcentration": {
-            "mean": 84.2,
-            "sd": 0.4
+            "mean": 84.3,
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 53.8,
-            "sd": 6.2
+            "mean": 54.7,
+            "sd": 6.6
           },
           "stability": {
-            "mean": 32.8,
-            "sd": 7.6
+            "mean": 32.6,
+            "sd": 2.6
           },
           "stateCapacity": {
-            "mean": 35.5,
-            "sd": 0.8
+            "mean": 35.1,
+            "sd": 0.7
           },
           "epistemicHealth": {
-            "mean": 2.3,
+            "mean": 2.2,
             "sd": 0.4
           },
           "wellbeing": {
-            "mean": 41,
-            "sd": 5
+            "mean": 39.7,
+            "sd": 4.6
           },
           "militaryPower": {
             "mean": 38,
@@ -6803,34 +6803,34 @@
             "sd": 0.2
           },
           "genderEquity": {
-            "mean": 39.6,
-            "sd": 0.6
+            "mean": 39.5,
+            "sd": 0.7
           },
           "institutionalQuality": {
-            "mean": 28.8,
-            "sd": 0.8
+            "mean": 28.6,
+            "sd": 0.9
           }
         },
         {
           "turn": 18,
           "socialTrust": {
-            "mean": 15.1,
-            "sd": 3.5
+            "mean": 15.4,
+            "sd": 0.9
           },
           "wealthConcentration": {
-            "mean": 84.2,
-            "sd": 0.4
+            "mean": 84.4,
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 52.9,
-            "sd": 6.1
+            "mean": 54,
+            "sd": 6.4
           },
           "stability": {
             "mean": 31.8,
-            "sd": 8.9
+            "sd": 6.2
           },
           "stateCapacity": {
-            "mean": 36,
+            "mean": 35.5,
             "sd": 0.9
           },
           "epistemicHealth": {
@@ -6838,12 +6838,12 @@
             "sd": 0.5
           },
           "wellbeing": {
-            "mean": 40.5,
-            "sd": 5.9
+            "mean": 38.6,
+            "sd": 5.6
           },
           "militaryPower": {
-            "mean": 38.8,
-            "sd": 0.4
+            "mean": 38.5,
+            "sd": 0.5
           },
           "polarization": {
             "mean": 48,
@@ -6854,34 +6854,34 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 41.4,
-            "sd": 0.6
+            "mean": 41.1,
+            "sd": 0.7
           },
           "institutionalQuality": {
-            "mean": 28.9,
-            "sd": 0.7
+            "mean": 28.8,
+            "sd": 0.9
           }
         },
         {
           "turn": 19,
           "socialTrust": {
-            "mean": 14.6,
-            "sd": 3.6
+            "mean": 14.9,
+            "sd": 3.5
           },
           "wealthConcentration": {
-            "mean": 84.3,
+            "mean": 84.5,
             "sd": 0.5
           },
           "corruption": {
-            "mean": 52.3,
-            "sd": 6.1
+            "mean": 53.3,
+            "sd": 6.4
           },
           "stability": {
             "mean": 30.8,
-            "sd": 9.2
+            "sd": 7.3
           },
           "stateCapacity": {
-            "mean": 36.1,
+            "mean": 35.8,
             "sd": 0.9
           },
           "epistemicHealth": {
@@ -6889,7 +6889,7 @@
             "sd": 0.4
           },
           "wellbeing": {
-            "mean": 38.8,
+            "mean": 38.6,
             "sd": 8.4
           },
           "militaryPower": {
@@ -6898,54 +6898,54 @@
           },
           "polarization": {
             "mean": 47,
-            "sd": 0.2
+            "sd": 0
           },
           "institutionalLockIn": {
             "mean": 54,
             "sd": 0.2
           },
           "genderEquity": {
-            "mean": 42.9,
+            "mean": 42.8,
             "sd": 0.4
           },
           "institutionalQuality": {
-            "mean": 29.7,
-            "sd": 0.8
+            "mean": 29.4,
+            "sd": 1.1
           }
         },
         {
           "turn": 20,
           "socialTrust": {
-            "mean": 13.1,
-            "sd": 5.6
+            "mean": 15.6,
+            "sd": 1.2
           },
           "wealthConcentration": {
-            "mean": 84.5,
-            "sd": 0.5
+            "mean": 84.7,
+            "sd": 0.6
           },
           "corruption": {
-            "mean": 52,
-            "sd": 5.9
+            "mean": 52.9,
+            "sd": 6.1
           },
           "stability": {
-            "mean": 27.3,
-            "sd": 13.1
+            "mean": 31.3,
+            "sd": 7.3
           },
           "stateCapacity": {
-            "mean": 36.3,
-            "sd": 1
+            "mean": 36,
+            "sd": 0.7
           },
           "epistemicHealth": {
             "mean": 0,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 36.1,
-            "sd": 11.3
+            "mean": 39.9,
+            "sd": 7.3
           },
           "militaryPower": {
-            "mean": 39.9,
-            "sd": 0.4
+            "mean": 39.5,
+            "sd": 0.5
           },
           "polarization": {
             "mean": 47,
@@ -6956,43 +6956,43 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 42.9,
+            "mean": 42.8,
             "sd": 0.4
           },
           "institutionalQuality": {
-            "mean": 29.8,
-            "sd": 0.9
+            "mean": 29.5,
+            "sd": 1
           }
         },
         {
           "turn": 21,
           "socialTrust": {
-            "mean": 14.1,
-            "sd": 3.7
+            "mean": 15.2,
+            "sd": 3.5
           },
           "wealthConcentration": {
-            "mean": 84.8,
-            "sd": 0.5
+            "mean": 85,
+            "sd": 0.7
           },
           "corruption": {
-            "mean": 51.4,
-            "sd": 6
+            "mean": 52.4,
+            "sd": 6.1
           },
           "stability": {
-            "mean": 27.1,
-            "sd": 11.2
+            "mean": 32.5,
+            "sd": 9.3
           },
           "stateCapacity": {
-            "mean": 36.4,
-            "sd": 0.9
+            "mean": 36.1,
+            "sd": 0.8
           },
           "epistemicHealth": {
             "mean": 0,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 35.7,
-            "sd": 9.1
+            "mean": 40,
+            "sd": 8.2
           },
           "militaryPower": {
             "mean": 40,
@@ -7003,51 +7003,51 @@
             "sd": 0
           },
           "institutionalLockIn": {
-            "mean": 57,
-            "sd": 0.2
+            "mean": 56.9,
+            "sd": 0.3
           },
           "genderEquity": {
-            "mean": 42.9,
+            "mean": 42.8,
             "sd": 0.4
           },
           "institutionalQuality": {
-            "mean": 30.6,
-            "sd": 1
+            "mean": 30.4,
+            "sd": 1.2
           }
         },
         {
           "turn": 22,
           "socialTrust": {
-            "mean": 15.5,
-            "sd": 1.1
+            "mean": 15.6,
+            "sd": 1.2
           },
           "wealthConcentration": {
-            "mean": 85,
-            "sd": 0.4
+            "mean": 85.3,
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 51,
-            "sd": 5.7
+            "mean": 52,
+            "sd": 6.1
           },
           "stability": {
-            "mean": 29.4,
-            "sd": 8.4
+            "mean": 33,
+            "sd": 9
           },
           "stateCapacity": {
-            "mean": 36.5,
-            "sd": 1
+            "mean": 36.4,
+            "sd": 0.9
           },
           "epistemicHealth": {
             "mean": 0,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 37.2,
-            "sd": 7.6
+            "mean": 40,
+            "sd": 8.1
           },
           "militaryPower": {
-            "mean": 40.8,
-            "sd": 0.4
+            "mean": 40.5,
+            "sd": 0.5
           },
           "polarization": {
             "mean": 46,
@@ -7058,34 +7058,34 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 43,
-            "sd": 0.6
+            "mean": 42.9,
+            "sd": 0.5
           },
           "institutionalQuality": {
-            "mean": 30.7,
-            "sd": 1.1
+            "mean": 30.4,
+            "sd": 1.2
           }
         },
         {
           "turn": 23,
           "socialTrust": {
-            "mean": 15.9,
-            "sd": 0.2
+            "mean": 15.2,
+            "sd": 3.5
           },
           "wealthConcentration": {
-            "mean": 85.1,
-            "sd": 0.4
+            "mean": 85.3,
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 50.9,
-            "sd": 5.6
+            "mean": 51.9,
+            "sd": 5.9
           },
           "stability": {
-            "mean": 32.1,
-            "sd": 6.7
+            "mean": 32.3,
+            "sd": 8.1
           },
           "stateCapacity": {
-            "mean": 36.9,
+            "mean": 36.5,
             "sd": 1.1
           },
           "epistemicHealth": {
@@ -7093,50 +7093,50 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 39.1,
-            "sd": 6.5
+            "mean": 39.9,
+            "sd": 9.2
           },
           "militaryPower": {
             "mean": 41,
-            "sd": 0
+            "sd": 0.2
           },
           "polarization": {
             "mean": 45,
             "sd": 0
           },
           "institutionalLockIn": {
-            "mean": 60,
-            "sd": 0.2
+            "mean": 59.9,
+            "sd": 0.4
           },
           "genderEquity": {
-            "mean": 43.1,
-            "sd": 0.7
+            "mean": 43,
+            "sd": 0.6
           },
           "institutionalQuality": {
-            "mean": 30.7,
-            "sd": 1.1
+            "mean": 30.4,
+            "sd": 1.2
           }
         },
         {
           "turn": 24,
           "socialTrust": {
-            "mean": 16.1,
-            "sd": 0.4
+            "mean": 14.1,
+            "sd": 4.9
           },
           "wealthConcentration": {
-            "mean": 85.3,
-            "sd": 0.4
+            "mean": 85.4,
+            "sd": 0.5
           },
           "corruption": {
-            "mean": 51.4,
-            "sd": 6.9
+            "mean": 51.3,
+            "sd": 5.8
           },
           "stability": {
-            "mean": 31.6,
-            "sd": 9.5
+            "mean": 29.9,
+            "sd": 8
           },
           "stateCapacity": {
-            "mean": 37,
+            "mean": 36.6,
             "sd": 1.1
           },
           "epistemicHealth": {
@@ -7144,11 +7144,11 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 40.6,
-            "sd": 5.9
+            "mean": 37.3,
+            "sd": 9.9
           },
           "militaryPower": {
-            "mean": 41.6,
+            "mean": 41.4,
             "sd": 0.5
           },
           "polarization": {
@@ -7160,85 +7160,85 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 43.2,
+            "mean": 43.1,
             "sd": 0.7
           },
           "institutionalQuality": {
-            "mean": 31.5,
-            "sd": 1.2
+            "mean": 31.1,
+            "sd": 1.5
           }
         },
         {
           "turn": 25,
           "socialTrust": {
-            "mean": 14.5,
-            "sd": 4.9
+            "mean": 15.6,
+            "sd": 1.7
           },
           "wealthConcentration": {
-            "mean": 85.3,
+            "mean": 85.4,
             "sd": 0.5
           },
           "corruption": {
-            "mean": 51.3,
-            "sd": 6.6
+            "mean": 51.4,
+            "sd": 5.8
           },
           "stability": {
-            "mean": 30.9,
-            "sd": 13.4
+            "mean": 32.4,
+            "sd": 6.1
           },
           "stateCapacity": {
-            "mean": 37.2,
-            "sd": 1.2
+            "mean": 36.8,
+            "sd": 1.1
           },
           "epistemicHealth": {
             "mean": 0,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 37.5,
-            "sd": 9.8
+            "mean": 38.8,
+            "sd": 7.8
           },
           "militaryPower": {
-            "mean": 42,
-            "sd": 0
+            "mean": 41.9,
+            "sd": 0.4
           },
           "polarization": {
-            "mean": 44.4,
+            "mean": 44.5,
             "sd": 0.5
           },
           "institutionalLockIn": {
-            "mean": 63,
-            "sd": 0.2
+            "mean": 62.9,
+            "sd": 0.4
           },
           "genderEquity": {
-            "mean": 43.4,
-            "sd": 0.8
+            "mean": 43.1,
+            "sd": 0.7
           },
           "institutionalQuality": {
-            "mean": 31.5,
-            "sd": 1.2
+            "mean": 31.3,
+            "sd": 1.3
           }
         },
         {
           "turn": 26,
           "socialTrust": {
-            "mean": 15.8,
-            "sd": 1.8
+            "mean": 14.3,
+            "sd": 4.9
           },
           "wealthConcentration": {
-            "mean": 85.5,
-            "sd": 0.5
+            "mean": 85.6,
+            "sd": 0.6
           },
           "corruption": {
-            "mean": 51.2,
-            "sd": 6.5
+            "mean": 52.3,
+            "sd": 6.9
           },
           "stability": {
-            "mean": 31.8,
-            "sd": 11.5
+            "mean": 28.9,
+            "sd": 12
           },
           "stateCapacity": {
-            "mean": 37.4,
+            "mean": 37,
             "sd": 1.3
           },
           "epistemicHealth": {
@@ -7246,12 +7246,12 @@
             "sd": 0
           },
           "wellbeing": {
-            "mean": 38.7,
-            "sd": 7.9
+            "mean": 37.3,
+            "sd": 8.7
           },
           "militaryPower": {
-            "mean": 42.4,
-            "sd": 0.5
+            "mean": 42.2,
+            "sd": 0.4
           },
           "polarization": {
             "mean": 44,
@@ -7262,94 +7262,94 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 43.5,
-            "sd": 0.8
+            "mean": 43.2,
+            "sd": 0.7
           },
           "institutionalQuality": {
-            "mean": 31.6,
-            "sd": 1.1
+            "mean": 31.4,
+            "sd": 1.2
           }
         },
         {
           "turn": 27,
           "socialTrust": {
-            "mean": 15.4,
-            "sd": 3.6
+            "mean": 14.8,
+            "sd": 3.8
           },
           "wealthConcentration": {
-            "mean": 85.6,
+            "mean": 85.7,
             "sd": 0.7
           },
           "corruption": {
-            "mean": 51.4,
-            "sd": 6.4
+            "mean": 52.2,
+            "sd": 6.9
           },
           "stability": {
-            "mean": 29.9,
-            "sd": 14.3
+            "mean": 27.8,
+            "sd": 9.2
           },
           "stateCapacity": {
-            "mean": 37.5,
-            "sd": 1.6
+            "mean": 37.2,
+            "sd": 1.2
           },
           "epistemicHealth": {
             "mean": 0,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 37.9,
-            "sd": 8.4
+            "mean": 36.7,
+            "sd": 10
           },
           "militaryPower": {
-            "mean": 42.9,
-            "sd": 0.4
+            "mean": 42.5,
+            "sd": 0.5
           },
           "polarization": {
             "mean": 44,
             "sd": 0
           },
           "institutionalLockIn": {
-            "mean": 65.9,
-            "sd": 0.3
+            "mean": 65.8,
+            "sd": 0.4
           },
           "genderEquity": {
-            "mean": 43.5,
-            "sd": 0.8
+            "mean": 43.3,
+            "sd": 0.7
           },
           "institutionalQuality": {
-            "mean": 31.6,
+            "mean": 31.4,
             "sd": 1.2
           }
         },
         {
           "turn": 28,
           "socialTrust": {
-            "mean": 15.2,
-            "sd": 3.7
+            "mean": 15.6,
+            "sd": 1.4
           },
           "wealthConcentration": {
-            "mean": 85.6,
-            "sd": 0.7
+            "mean": 85.8,
+            "sd": 0.8
           },
           "corruption": {
-            "mean": 51.4,
-            "sd": 6.2
+            "mean": 52.3,
+            "sd": 6.9
           },
           "stability": {
-            "mean": 30.1,
-            "sd": 14.7
+            "mean": 28.6,
+            "sd": 5.3
           },
           "stateCapacity": {
-            "mean": 37.6,
-            "sd": 1.6
+            "mean": 37.3,
+            "sd": 1.2
           },
           "epistemicHealth": {
             "mean": 0,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 36.6,
-            "sd": 9.2
+            "mean": 36.5,
+            "sd": 8
           },
           "militaryPower": {
             "mean": 43,
@@ -7364,35 +7364,35 @@
             "sd": 0
           },
           "genderEquity": {
-            "mean": 43.5,
-            "sd": 0.8
+            "mean": 43.4,
+            "sd": 0.6
           },
           "institutionalQuality": {
-            "mean": 31.6,
+            "mean": 31.4,
             "sd": 1.2
           }
         },
         {
           "turn": 29,
           "socialTrust": {
-            "mean": 15.2,
-            "sd": 3.7
+            "mean": 16,
+            "sd": 0.8
           },
           "wealthConcentration": {
-            "mean": 85.8,
+            "mean": 86,
             "sd": 0.8
           },
           "corruption": {
-            "mean": 51.3,
-            "sd": 6.2
+            "mean": 52.2,
+            "sd": 6.6
           },
           "stability": {
-            "mean": 30.9,
-            "sd": 9.8
+            "mean": 30.4,
+            "sd": 4.4
           },
           "stateCapacity": {
-            "mean": 37.9,
-            "sd": 1.8
+            "mean": 37.4,
+            "sd": 1.3
           },
           "epistemicHealth": {
             "mean": 0,
@@ -7400,78 +7400,78 @@
           },
           "wellbeing": {
             "mean": 37,
-            "sd": 6.8
+            "sd": 7.4
           },
           "militaryPower": {
-            "mean": 43.5,
-            "sd": 0.6
+            "mean": 43.3,
+            "sd": 0.4
           },
           "polarization": {
-            "mean": 43.5,
+            "mean": 43.6,
             "sd": 0.5
           },
           "institutionalLockIn": {
-            "mean": 68.9,
-            "sd": 0.3
+            "mean": 68.8,
+            "sd": 0.4
           },
           "genderEquity": {
             "mean": 43.5,
-            "sd": 0.9
+            "sd": 0.6
           },
           "institutionalQuality": {
-            "mean": 31.9,
+            "mean": 31.6,
             "sd": 1.4
           }
         },
         {
           "turn": 30,
           "socialTrust": {
-            "mean": 15.3,
-            "sd": 4.1
+            "mean": 15.4,
+            "sd": 3.6
           },
           "wealthConcentration": {
-            "mean": 85.8,
+            "mean": 86,
             "sd": 0.8
           },
           "corruption": {
-            "mean": 51.5,
-            "sd": 6.1
+            "mean": 52.3,
+            "sd": 6.5
           },
           "stability": {
-            "mean": 30.6,
-            "sd": 10
+            "mean": 29,
+            "sd": 7.6
           },
           "stateCapacity": {
-            "mean": 38,
-            "sd": 1.9
+            "mean": 37.6,
+            "sd": 1.5
           },
           "epistemicHealth": {
             "mean": 0,
             "sd": 0
           },
           "wellbeing": {
-            "mean": 36.5,
-            "sd": 8.7
+            "mean": 36.9,
+            "sd": 7.7
           },
           "militaryPower": {
-            "mean": 43.8,
-            "sd": 0.7
+            "mean": 43.5,
+            "sd": 0.5
           },
           "polarization": {
-            "mean": 43.1,
-            "sd": 0.4
+            "mean": 43.3,
+            "sd": 0.5
           },
           "institutionalLockIn": {
             "mean": 70,
             "sd": 0
           },
           "genderEquity": {
-            "mean": 43.7,
-            "sd": 1.1
+            "mean": 43.6,
+            "sd": 0.7
           },
           "institutionalQuality": {
-            "mean": 32.3,
-            "sd": 1.5
+            "mean": 31.9,
+            "sd": 1.6
           }
         }
       ],
@@ -7487,15 +7487,15 @@
           "key": "wellbeing",
           "phrase": "rising after turn 10",
           "verdict": "PASS",
-          "passRate": 50,
-          "avgScore": 0.526
+          "passRate": 55,
+          "avgScore": 0.603
         },
         {
           "key": "corruption",
           "phrase": "declining after turn 10",
           "verdict": "PASS",
-          "passRate": 90,
-          "avgScore": 0.9
+          "passRate": 95,
+          "avgScore": 0.95
         }
       ],
       "waypoints": [
@@ -7507,10 +7507,10 @@
               "metric": "stability",
               "expected": "< 20",
               "note": "State collapse",
-              "mean": 29.2,
-              "stddev": 5.4,
+              "mean": 27.4,
+              "stddev": 10.1,
               "pass": false,
-              "passRate": 10
+              "passRate": 15
             }
           ]
         },
@@ -7522,7 +7522,7 @@
               "metric": "stateCapacity",
               "expected": "> 25",
               "note": "RPF rebuilding state capacity",
-              "mean": 35.3,
+              "mean": 35,
               "stddev": 0.8,
               "pass": true,
               "passRate": 100
@@ -7531,8 +7531,8 @@
               "metric": "wellbeing",
               "expected": "> 15",
               "note": "GDP growth averaging 7-8%",
-              "mean": 39.8,
-              "stddev": 4.7,
+              "mean": 38.2,
+              "stddev": 4.8,
               "pass": true,
               "passRate": 100
             }
@@ -7546,26 +7546,26 @@
               "metric": "stateCapacity",
               "expected": "> 40",
               "note": "Significant institutional development",
-              "mean": 38,
-              "stddev": 1.9,
+              "mean": 37.6,
+              "stddev": 1.5,
               "pass": false,
-              "passRate": 5
+              "passRate": 0
             },
             {
               "metric": "corruption",
               "expected": "< 55",
               "note": "TI CPI improved to ~54/100",
-              "mean": 51.5,
-              "stddev": 6.1,
+              "mean": 52.3,
+              "stddev": 6.5,
               "pass": true,
-              "passRate": 80
+              "passRate": 75
             },
             {
               "metric": "genderEquity",
               "expected": "> 25",
               "note": "World-leading female representation",
-              "mean": 43.7,
-              "stddev": 1.1,
+              "mean": 43.6,
+              "stddev": 0.7,
               "pass": true,
               "passRate": 100
             }
